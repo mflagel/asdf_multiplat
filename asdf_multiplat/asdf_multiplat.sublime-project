@@ -1,0 +1,29 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "data"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "ui"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "utilities"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "main"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/ext"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/shaders"
+		}
+	]
+}

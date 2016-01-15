@@ -1,0 +1,592 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ADD_SHADER	data/content_manager.cpp	26;"	d	file:
+ADD_TEXTURE	data/content_manager.cpp	30;"	d	file:
+ASSERT	main/stdafx.h	203;"	d
+ASSERT	main/stdafx.h	212;"	d
+ASSERTS_ENABLED	main/stdafx.h	197;"	d
+ASSETS_PATH	main/stdafx.h	115;"	d
+ASSET_PATH	main/stdafx.h	116;"	d
+AddSamplers	data/content_manager.cpp	/^    void content_manager_t::AddSamplers(){$/;"	f	class:asdf::content_manager_t
+BUTTON_DISABLED_COLOR	ui/ui_base.h	12;"	d
+BUTTON_HIGHLIGHT_COLOR	ui/ui_base.h	14;"	d
+BUTTON_PRESSED_COLOR	ui/ui_base.h	13;"	d
+COLOR_BLACK	main/stdafx.h	227;"	d
+COLOR_BLUE	main/stdafx.h	231;"	d
+COLOR_CLEAR	main/stdafx.h	219;"	d
+COLOR_CORNFLOWER_BLUE	main/stdafx.h	238;"	d
+COLOR_CYAN	main/stdafx.h	232;"	d
+COLOR_DARKGRAY	main/stdafx.h	226;"	d
+COLOR_DARKGREY	main/stdafx.h	225;"	d
+COLOR_GRAY	main/stdafx.h	224;"	d
+COLOR_GREEN	main/stdafx.h	230;"	d
+COLOR_GREY	main/stdafx.h	223;"	d
+COLOR_LIGHTGRAY	main/stdafx.h	222;"	d
+COLOR_LIGHTGREY	main/stdafx.h	221;"	d
+COLOR_MAGENTA	main/stdafx.h	234;"	d
+COLOR_ORANGE	main/stdafx.h	237;"	d
+COLOR_RED	main/stdafx.h	229;"	d
+COLOR_TEAL	main/stdafx.h	236;"	d
+COLOR_WHITE	main/stdafx.h	220;"	d
+COLOR_YELLOW	main/stdafx.h	233;"	d
+CheckBounds	utilities/utilities.cpp	/^    bool CheckBounds(int x, int y, int minX, int maxX, int minY, int maxY){$/;"	f	namespace:asdf::util
+CheckBounds	utilities/utilities.cpp	/^    bool CheckBounds(int x, int y, int z, int minX, int maxX, int minY, int maxY, int minZ, int maxZ){$/;"	f	namespace:asdf::util
+CheckGLError	utilities/utilities_openGL.cpp	/^        bool CheckGLError(GLuint shader) {$/;"	f	namespace:asdf::util
+Content	data/content_manager.cpp	/^    content_manager_t Content;$/;"	m	namespace:asdf	file:
+DATA_SOURCES	asdf_multiplat.mk	/^DATA_SOURCES = $(SRCPATH)\/data\/shader.cpp 	    \\$/;"	m
+DEFAULT_TRANSFORM_COPYPASTA	ui/ui_base.cpp	14;"	d	file:
+DELETE_VECTOR_POINTERS	utilities/utilities.h	19;"	d
+ENDOF	main/stdafx.h	103;"	d
+FONTS_PATH	main/stdafx.h	152;"	d
+FONT_PATH	main/stdafx.h	153;"	d
+FOR_EACH	utilities/utilities.h	17;"	d
+FSHADER_PATH	main/stdafx.h	147;"	d
+FSHADER_PATH	main/stdafx.h	149;"	d
+FSHADER_PATH_1	main/stdafx.h	144;"	d
+FSHADER_PATH_2	main/stdafx.h	145;"	d
+FTGL_LIBRARY_STATIC	main/stdafx.h	14;"	d
+FindClosestVertexIndex	utilities/utilities.cpp	/^    size_t FindClosestVertexIndex(std::vector<b2Vec2> vertices, b2Vec2 positon){$/;"	f	namespace:asdf::util
+GLM_FORCE_CXX11	main/stdafx.h	48;"	d
+GLM_FORCE_RADIANS	main/stdafx.h	49;"	d
+GLM_SWIZZLE	main/stdafx.h	50;"	d
+GetB2FixtureVerts	utilities/utilities.cpp	/^    std::vector<b2Vec2> GetB2FixtureVerts(b2Fixture* fixture){$/;"	f	namespace:asdf::util
+GetCurrentDir	utilities/utilities.h	26;"	d
+GetCurrentDir	utilities/utilities.h	30;"	d
+GetMapKeys	utilities/utilities.h	/^    void GetMapKeys(const std::map<MapKeyType, MapValueType>& map, std::vector<MapKeyType>& out_keyList) {$/;"	f	namespace:asdf::util
+INCLUDEPATH	asdf_multiplat.mk	/^INCLUDEPATH = $(PROJPATH)\/include$/;"	m
+LAX_MACROS	main/stdafx.h	65;"	d
+LAX_MACROS	main/stdafx.h	67;"	d
+LINEAR_INTERP_FUNC	data/interpolator.h	9;"	d
+LOG	main/stdafx.h	59;"	d
+LOG_IF	main/stdafx.h	60;"	d
+MACRO_CONCAT	main/stdafx.h	97;"	d
+MACRO_CONCAT_HELPER	main/stdafx.h	96;"	d
+MAIN_SOURCES	asdf_multiplat.mk	/^MAIN_SOURCES = $(SRCPATH)\/main\/main.cpp 		\\$/;"	m
+MAKE_SHARED_SHADER	data/shader.h	33;"	d
+MAKE_SHARED_SHADER_	data/shader.h	34;"	d
+MAX_SPRITES	utilities/spritebatch.h	/^        MAX_SPRITES = 4096$/;"	e	enum:asdf::__anon2
+MEMBERS_MACRO	utilities/reflected_struct.h	47;"	d
+MEMBER_FUNCTION_PREDICATE	utilities/utilities.h	18;"	d
+OBJ_AS	utilities/utilities.h	21;"	d
+PI	main/stdafx.h	55;"	d
+PIXEL_TEX	data/content_manager.h	12;"	d
+PP_ARG_N	main/stdafx.h	78;"	d
+PP_NARG	main/stdafx.h	74;"	d
+PP_NARG_	main/stdafx.h	76;"	d
+PP_RSEQ_N	main/stdafx.h	86;"	d
+PROJNAME	asdf_multiplat.mk	/^PROJNAME = asdf_multiplat$/;"	m
+RESOURCE_DEPOT_H	data/resource_depot.h	2;"	d
+SELF_DIR	asdf_multiplat.mk	/^SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))$/;"	m
+SELMACRO_IMPL_2	main/stdafx.h	105;"	d
+SELMACRO_IMPL_2_	main/stdafx.h	110;"	d
+SELMACRO_IMPL_3	main/stdafx.h	106;"	d
+SELMACRO_IMPL_3_	main/stdafx.h	111;"	d
+SHADERS_PATH	main/stdafx.h	122;"	d
+SHADERS_PATH_	main/stdafx.h	123;"	d
+SHADER_DEFAULT_VER	main/stdafx.h	121;"	d
+SHADER_FILENAME	main/stdafx.h	125;"	d
+SHADER_PATH	main/stdafx.h	131;"	d
+SHADER_PATH	main/stdafx.h	133;"	d
+SHADER_PATH_1	main/stdafx.h	129;"	d
+SHADER_PATH_2	main/stdafx.h	128;"	d
+SHADER_PATH_3	main/stdafx.h	127;"	d
+SNPRINTF	main/stdafx.h	42;"	d
+SNPRINTF	main/stdafx.h	45;"	d
+SRCPATH	asdf_multiplat.mk	/^SRCPATH		= $(PROJPATH)\/$(PROJNAME)$/;"	m
+STRERROR	main/stdafx.h	41;"	d
+STRERROR	main/stdafx.h	44;"	d
+STRUCT_MACRO_THING	utilities/reflected_struct.h	52;"	d
+SetCurrentDir	utilities/utilities.h	27;"	d
+SetCurrentDir	utilities/utilities.h	31;"	d
+TEXTURES_PATH	main/stdafx.h	118;"	d
+TEXTURE_PATH	main/stdafx.h	119;"	d
+UI_RENDER_PARAMS	ui/ui_base.h	10;"	d
+UI_SOURCES	asdf_multiplat.mk	/^UI_SOURCES = $(SRCPATH)\/ui\/ui_base.cpp \\$/;"	m
+UTILITIES_SOURCES	asdf_multiplat.mk	/^UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)\/spritebatch.cpp 		\\$/;"	m
+VA_NARGS	main/stdafx.h	101;"	d
+VA_NUM_ARGS_IMPL	main/stdafx.h	99;"	d
+VA_NUM_ARGS_IMPL_	main/stdafx.h	100;"	d
+VSHADER_PATH	main/stdafx.h	139;"	d
+VSHADER_PATH	main/stdafx.h	141;"	d
+VSHADER_PATH_1	main/stdafx.h	136;"	d
+VSHADER_PATH_2	main/stdafx.h	137;"	d
+WINDOW_TITLE	main/asdf_multiplat.h	/^        std::string WINDOW_TITLE = "";$/;"	m	struct:asdf::asdf_multiplat_t
+aabb_	ui/ui_base.h	/^    struct aabb_$/;"	s	namespace:asdf
+active_task	utilities/thread_pool.h	/^        std::vector<task_t> active_task;$/;"	m	struct:asdf::thread_pool_t
+add_cell	ui/ui_base.cpp	/^    ui_view_t* ui_list_view_t::add_cell(shared_ptr<ui_view_t> cell)$/;"	f	class:asdf::ui_list_view_t
+add_cell	ui/ui_base.h	/^        T* add_cell(Args&& ...args)$/;"	f	struct:asdf::ui_list_view_t
+add_child	ui/ui_base.cpp	/^    ui_base_t* ui_base_t::add_child(shared_ptr<ui_base_t> child, size_t index\/*nullindex*\/)$/;"	f	class:asdf::ui_base_t
+add_child	ui/ui_base.h	/^        T* add_child(Args&& ...args)$/;"	f	struct:asdf::ui_base_t
+add_resource	data/resource_depot.h	/^    void add_resource(std::string const& resource_name, T const& resource) {$/;"	f	class:asdf::resource_depot_t
+add_row	ui/ui_base.cpp	/^    ui_list_view_t* ui_table_t::add_row(float height)$/;"	f	class:asdf::ui_table_t
+align	ui/text.cpp	/^    void text_info_t::align(glm::vec2 parent_halfsize)$/;"	f	class:asdf::text_info_t
+align	ui/ui_base.cpp	/^    void ui_base_t::align()$/;"	f	class:asdf::ui_base_t
+align	ui/ui_base.cpp	/^    void ui_list_view_t::align()$/;"	f	class:asdf::ui_list_view_t
+align	ui/ui_base.cpp	/^    void ui_table_t::align()$/;"	f	class:asdf::ui_table_t
+align	ui/ui_base.cpp	/^    void ui_view_t::align()$/;"	f	class:asdf::ui_view_t
+align	ui/ui_label.cpp	/^    void ui_label_t::align()$/;"	f	class:asdf::ui_label_t
+align_cells	ui/ui_base.cpp	/^    void ui_list_view_t::align_cells()$/;"	f	class:asdf::ui_list_view_t
+alignment	ui/text.h	/^        ui_alignment_e alignment = ui_align_center;$/;"	m	struct:asdf::text_info_t
+alignment	ui/ui_base.h	/^        ui_alignment_e alignment = ui_align_center;$/;"	m	struct:asdf::ui_base_t
+alignment_edge	ui/ui_base.h	/^        ui_alignment_edge_e alignment_edge = ui_align_edge_inside;$/;"	m	struct:asdf::ui_base_t
+app	main/asdf_multiplat.cpp	/^    asdf_multiplat_t app;$/;"	m	namespace:asdf	file:
+arg1_name	utilities/reflected_struct.h	/^            arg1_type arg1_name;                                \\$/;"	m	namespace:asdf
+array_view_	utilities/thread_pool.h	/^    struct array_view_$/;"	s	namespace:asdf
+asdf	data/content_manager.cpp	/^namespace asdf {$/;"	n	file:
+asdf	data/content_manager.h	/^namespace asdf {$/;"	n
+asdf	data/gl_resources.h	/^namespace asdf$/;"	n
+asdf	data/interpolator.h	/^namespace asdf$/;"	n
+asdf	data/resource_depot.h	/^namespace asdf {$/;"	n
+asdf	data/settings.h	/^namespace asdf {$/;"	n
+asdf	data/shader.cpp	/^namespace asdf {$/;"	n	file:
+asdf	data/shader.h	/^namespace asdf {$/;"	n
+asdf	data/texture.cpp	/^namespace asdf$/;"	n	file:
+asdf	data/texture.h	/^namespace asdf {$/;"	n
+asdf	main/asdf_multiplat.cpp	/^namespace asdf {$/;"	n	file:
+asdf	main/asdf_multiplat.h	/^namespace asdf {$/;"	n
+asdf	main/mouse_state.h	/^namespace asdf {$/;"	n
+asdf	main/stdafx.h	/^namespace asdf {$/;"	n
+asdf	ui/text.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui/text.h	/^namespace asdf$/;"	n
+asdf	ui/ui_base.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui/ui_base.h	/^namespace asdf$/;"	n
+asdf	ui/ui_drag_control.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui/ui_drag_control.h	/^namespace asdf$/;"	n
+asdf	ui/ui_label.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui/ui_label.h	/^namespace asdf$/;"	n
+asdf	utilities/camera.cpp	/^namespace asdf$/;"	n	file:
+asdf	utilities/camera.h	/^namespace asdf$/;"	n
+asdf	utilities/reflected_struct.h	/^namespace asdf$/;"	n
+asdf	utilities/spritebatch.cpp	/^namespace asdf {$/;"	n	file:
+asdf	utilities/spritebatch.h	/^namespace asdf {$/;"	n
+asdf	utilities/thread_pool.cpp	/^namespace asdf$/;"	n	file:
+asdf	utilities/thread_pool.h	/^namespace asdf$/;"	n
+asdf	utilities/utilities.cpp	/^namespace asdf {$/;"	n	file:
+asdf	utilities/utilities.h	/^namespace asdf {$/;"	n
+asdf	utilities/utilities_openGL.cpp	/^namespace asdf {$/;"	n	file:
+asdf	utilities/utilities_openGL.h	/^namespace asdf {$/;"	n
+asdf_fail	main/stdafx.cpp	/^void asdf_fail(char const* condition, char const* file, int line, ...) {$/;"	f
+asdf_multiplat_t	main/asdf_multiplat.cpp	/^    asdf_multiplat_t::asdf_multiplat_t()$/;"	f	class:asdf::asdf_multiplat_t
+asdf_multiplat_t	main/asdf_multiplat.h	/^    struct asdf_multiplat_t $/;"	s	namespace:asdf
+asdf_specific_t	main/asdf_multiplat.h	/^    struct asdf_specific_t$/;"	s	namespace:asdf
+average_frame_time	main/asdf_multiplat.cpp	/^    float asdf_multiplat_t::average_frame_time() const$/;"	f	class:asdf::asdf_multiplat_t
+base	ui/ui_drag_control.h	/^		std::shared_ptr<ui_base_t> base;$/;"	m	struct:asdf::drag_control_t
+base_disabled	ui/ui_base.h	/^        std::shared_ptr<ui_base_t> base_disabled;$/;"	m	struct:asdf::ui_button_t
+base_highlight	ui/ui_base.h	/^        std::shared_ptr<ui_base_t> base_highlight;$/;"	m	struct:asdf::ui_button_t
+base_pressed	ui/ui_base.h	/^        std::shared_ptr<ui_base_t> base_pressed;$/;"	m	struct:asdf::ui_button_t
+base_unpressed	ui/ui_base.h	/^        std::shared_ptr<ui_base_t> base_unpressed;$/;"	m	struct:asdf::ui_button_t
+batched_text	utilities/spritebatch.h	/^        std::vector<text_sprite_t> batched_text;$/;"	m	class:asdf::spritebatch_t
+begin	utilities/spritebatch.cpp	/^    void spritebatch_t::begin(glm::mat4 const& view_matrix, glm::mat4 const& projection_matrix) {$/;"	f	class:asdf::spritebatch_t
+begin	utilities/spritebatch.cpp	/^    void spritebatch_t::begin(glm::mat4 const& view_matrix\/*mat4()*\/) {$/;"	f	class:asdf::spritebatch_t
+bezier	utilities/utilities.h	/^    genType bezier($/;"	f	namespace:asdf
+binomial_coefficient	utilities/utilities.cpp	/^    uint64_t binomial_coefficient(uint64_t n, uint64_t k)$/;"	f	namespace:asdf::util
+borderless	data/settings.h	/^        bool borderless = false;$/;"	m	struct:asdf::settings_t
+button_state	main/mouse_state.h	/^        unsigned short button_state;$/;"	m	namespace:asdf
+button_state_e	ui/ui_base.h	/^        enum button_state_e {$/;"	g	struct:asdf::ui_button_t
+byte	main/stdafx.h	/^    typedef unsigned char   byte;$/;"	t	namespace:asdf
+calc	data/interpolator.h	/^        T calc() const$/;"	f	struct:asdf::interpolator_
+calc_aabb	ui/ui_base.cpp	/^    aabb_t ui_base_t::calc_aabb()$/;"	f	class:asdf::ui_base_t
+camera_t	utilities/camera.h	/^    struct camera_t$/;"	s	namespace:asdf
+cells	ui/ui_base.h	/^        std::vector<std::shared_ptr<ui_view_t>> cells;$/;"	m	struct:asdf::ui_list_view_t
+checkSDLError	utilities/utilities.cpp	/^    void checkSDLError(int line\/*=-1*\/){$/;"	f	namespace:asdf::util
+check_bounds	utilities/utilities.h	/^    bool check_bounds(T v, T min, T max) {$/;"	f	namespace:asdf::util
+children	ui/ui_base.h	/^        std::vector<std::shared_ptr<ui_base_t>> children;$/;"	m	struct:asdf::ui_base_t
+col_widths	ui/ui_base.h	/^        std::vector<float> col_widths;$/;"	m	struct:asdf::ui_table_t
+color	ui/ui_base.h	/^        color_t color;$/;"	m	struct:asdf::ui_base_t
+color	utilities/spritebatch.h	/^        color_t     color;$/;"	m	struct:asdf::sprite_t
+color	utilities/spritebatch.h	/^        color_t     color;$/;"	m	struct:asdf::sprite_vertex_t
+color	utilities/spritebatch.h	/^        color_t     color;$/;"	m	struct:asdf::text_sprite_t
+color_t	ui/ui_base.h	/^    typedef glm::vec4       color_t;$/;"	t	namespace:asdf
+color_t	utilities/spritebatch.h	/^typedef glm::vec4 color_t; \/\/referenced RGBA$/;"	t
+column_padding	ui/ui_base.h	/^        float column_padding = 0.0f;$/;"	m	struct:asdf::ui_table_t
+contains_impl	utilities/utilities.h	/^    inline bool contains_impl(const C& v, const T& x, long)$/;"	f	namespace:asdf::util
+contains_point	ui/ui_base.cpp	/^    bool ui_base_t::contains_point(vec3 point)$/;"	f	class:asdf::ui_base_t
+content_load_exception	data/content_manager.cpp	/^    content_load_exception::content_load_exception(std::string const& filepath, std::string const& loadError) $/;"	f	class:asdf::content_load_exception
+content_load_exception	data/texture.h	/^    struct content_load_exception : std::exception $/;"	s	namespace:asdf
+content_manager_t	data/content_manager.cpp	/^    content_manager_t::content_manager_t()$/;"	f	class:asdf::content_manager_t
+content_manager_t	data/content_manager.h	/^    class content_manager_t {$/;"	c	namespace:asdf
+count	utilities/thread_pool.h	/^        size_t count;$/;"	m	struct:asdf::array_view_
+create_shader_program	data/shader.cpp	/^    \/*static*\/GLuint shader_t::create_shader_program(const GLuint vs, const GLuint fs) $/;"	f	class:asdf::shader_t
+data	utilities/thread_pool.h	/^        T* data;$/;"	m	struct:asdf::array_view_
+debugging_sprites	utilities/spritebatch.h	/^        bool debugging_sprites;$/;"	m	class:asdf::spritebatch_t
+decltype	utilities/utilities.h	/^    -> decltype(c.find(x), true)$/;"	f	namespace:asdf::util
+default_resource	data/resource_depot.h	/^	T default_resource;$/;"	m	class:asdf::resource_depot_t
+delete_resource	data/resource_depot.h	/^	void delete_resource(std::string const& resourceName){$/;"	f	class:asdf::resource_depot_t
+dest	data/interpolator.h	/^        T  dest;$/;"	m	struct:asdf::interpolator_
+direction	utilities/camera.h	/^        glm::vec3 direction = glm::vec3{0.0f, 0.0f, -1.0f};$/;"	m	struct:asdf::camera_t
+disabled	ui/ui_base.h	/^            disabled$/;"	e	enum:asdf::ui_button_t::button_state_e
+divided_task_	utilities/thread_pool.h	/^        divided_task_(L _buffer, F&& task_func, size_t num_sub_tasks = 5)$/;"	f	struct:asdf::divided_task_
+divided_task_	utilities/thread_pool.h	/^    struct divided_task_$/;"	s	namespace:asdf
+down	ui/ui_base.h	/^            down,$/;"	e	enum:asdf::ui_button_t::button_state_e
+drag_control_t	ui/ui_drag_control.h	/^	struct drag_control_t$/;"	s	namespace:asdf
+drag_edge_dist_px	ui/ui_drag_control.h	/^		float drag_edge_dist_px = 10; \/\/how many px away from a drage edge before dragging is available$/;"	m	namespace:asdf::__anon1
+draw	utilities/spritebatch.cpp	/^    void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, color_t const& color\/*vec4(1.0f)*\/, glm::vec2 const& scale\/*vec2(1,1)*\/, float rotation\/*0*\/) {$/;"	f	class:asdf::spritebatch_t
+draw	utilities/spritebatch.cpp	/^    void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rectf_t const& src_rect, color_t const& color\/*vec4(1.0f)*\/, glm::vec2 const& scale\/*vec2(1,1)*\/, float rotation\/*0*\/) {$/;"	f	class:asdf::spritebatch_t
+draw	utilities/spritebatch.cpp	/^    void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, rectf_t dest_rect, color_t const& color\/*vec4(1.0f)*\/, float rotation\/*0*\/) {$/;"	f	class:asdf::spritebatch_t
+draw_mode	data/gl_resources.h	/^        GLuint draw_mode = GL_TRIANGLES;$/;"	m	struct:asdf::gl_renderable_t
+draw_text	utilities/spritebatch.cpp	/^    void spritebatch_t::draw_text(std::string const& str, FTFont* font, size_t face_size, glm::vec2 const& position, color_t color, float rotation) {$/;"	f	class:asdf::spritebatch_t
+enabled	ui/ui_base.h	/^        bool enabled = true;$/;"	m	struct:asdf::ui_base_t
+end	utilities/spritebatch.cpp	/^    void spritebatch_t::end() {$/;"	f	class:asdf::spritebatch_t
+exec_dir	main/asdf_multiplat.h	/^        std::string exec_dir = "";$/;"	m	struct:asdf::asdf_multiplat_t
+expansion_delta	ui/ui_base.h	/^        glm::vec3 expansion_delta = glm::vec3(0.0f);$/;"	m	struct:asdf::ui_base_t
+face_size	ui/text.h	/^        size_t face_size = 48;$/;"	m	struct:asdf::text_info_t
+face_size	utilities/spritebatch.h	/^        size_t face_size;$/;"	m	struct:asdf::text_sprite_t
+far_plane	utilities/camera.h	/^        float  far_plane =  1000;$/;"	m	struct:asdf::camera_t
+file_exists	utilities/utilities.cpp	/^    bool file_exists(std::string const& filepath)$/;"	f	namespace:asdf::util
+file_open_exception	utilities/utilities.cpp	/^        file_open_exception(std::string const& _filepath)$/;"	f	struct:asdf::util::file_open_exception
+file_open_exception	utilities/utilities.cpp	/^    struct file_open_exception : std::exception $/;"	s	namespace:asdf::util	file:
+filepath	data/texture.h	/^        std::string filepath;$/;"	m	struct:asdf::content_load_exception
+filepath	utilities/utilities.cpp	/^        std::string filepath;$/;"	m	struct:asdf::util::file_open_exception	file:
+font	ui/text.h	/^        FTFont* font = nullptr;$/;"	m	struct:asdf::text_info_t
+font	utilities/spritebatch.h	/^        FTFont* font;$/;"	m	struct:asdf::text_sprite_t
+fonts	data/content_manager.h	/^        resource_depot_t<FTFont*> fonts; \/\/use raw ptr, as FTGL explodes if I use shared ptr for some reason. might try unique_ptr$/;"	m	class:asdf::content_manager_t
+format	data/texture.h	/^        int format = 0;$/;"	m	class:asdf::texture_t
+fragment_shader_id	data/shader.h	/^        GLuint fragment_shader_id;$/;"	m	class:asdf::shader_t
+frame_time_index	main/asdf_multiplat.h	/^        size_t frame_time_index = 0;$/;"	m	struct:asdf::asdf_multiplat_t
+frame_times	main/asdf_multiplat.h	/^        std::array<float, 10> frame_times;$/;"	m	struct:asdf::asdf_multiplat_t
+fullscreen	data/settings.h	/^        bool fullscreen = false;$/;"	m	struct:asdf::settings_t
+get_bounds	ui/ui_base.cpp	/^    aabb_t get_bounds(std::vector<aabb_t> const& aabbs)$/;"	f	namespace:asdf
+get_current_working_directory	utilities/utilities.cpp	/^    std::string get_current_working_directory()$/;"	f	namespace:asdf::util
+get_height	data/texture.h	/^        inline size_t    get_height()    const { return height;     }$/;"	f	class:asdf::texture_t
+get_percentage	data/interpolator.h	/^        float get_percentage() const$/;"	f	struct:asdf::interpolator_
+get_resource	data/resource_depot.h	/^    T const& get_resource(std::string const& resource_name) {$/;"	f	class:asdf::resource_depot_t
+get_size	data/texture.h	/^        inline glm::vec2 get_size()      const { return glm::vec2(width, height); }$/;"	f	class:asdf::texture_t
+get_textureID	data/texture.h	/^        inline GLuint    get_textureID() const { return texture_id; }$/;"	f	class:asdf::texture_t
+get_width	data/texture.h	/^        inline size_t    get_width()     const { return width;      }$/;"	f	class:asdf::texture_t
+get_world_position	ui/ui_base.cpp	/^    vec3 ui_base_t::get_world_position()$/;"	f	class:asdf::ui_base_t
+get_world_transform	ui/ui_base.cpp	/^    mat4 ui_base_t::get_world_transform()$/;"	f	class:asdf::ui_base_t
+gl_clear_color	main/asdf_multiplat.h	/^        color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; \/\/cornflower blue makin it feel like XNA$/;"	m	struct:asdf::asdf_multiplat_t
+gl_context	main/asdf_multiplat.h	/^        SDL_GLContext   gl_context;$/;"	m	struct:asdf::asdf_multiplat_t
+gl_extensions	main/asdf_multiplat.h	/^        std::vector<std::string> gl_extensions;$/;"	m	struct:asdf::asdf_multiplat_t
+gl_initialized	main/asdf_multiplat.h	/^        bool gl_initialized = false;$/;"	m	struct:asdf::asdf_multiplat_t
+gl_renderable_t	data/gl_resources.h	/^    struct gl_renderable_t$/;"	s	namespace:asdf
+halfheight	data/texture.h	/^        float halfheight = 0;$/;"	m	class:asdf::texture_t
+halfsize	ui/text.h	/^        glm::vec2 halfsize;   $/;"	m	struct:asdf::text_info_t
+halfsize	ui/ui_base.h	/^        glm::vec2 halfsize; \/\/could make this a ref of halfsize3.xy$/;"	m	struct:asdf::ui_view_t
+halfsize3	ui/ui_base.h	/^        glm::vec3 halfsize3;$/;"	m	struct:asdf::ui_base_t
+halfwidth	data/texture.h	/^        float halfwidth = 0;$/;"	m	class:asdf::texture_t
+has_begun	utilities/spritebatch.h	/^        bool has_begun;$/;"	m	class:asdf::spritebatch_t
+height	data/texture.h	/^        int height = 0;$/;"	m	class:asdf::texture_t
+height	utilities/spritebatch.h	/^        float x, y, width, height;$/;"	m	struct:asdf::rectf_t
+height	utilities/spritebatch.h	/^        int x, y, width, height;$/;"	m	struct:asdf::rect_t
+highlighted	ui/ui_base.h	/^            highlighted,$/;"	e	enum:asdf::ui_button_t::button_state_e
+id	data/gl_resources.h	/^        GLuint id = UINT_MAX;$/;"	m	struct:asdf::vao_t
+id	data/gl_resources.h	/^        GLuint id = UINT_MAX;$/;"	m	struct:asdf::vbo_t
+in_focus	main/asdf_multiplat.h	/^        bool in_focus       = false;$/;"	m	struct:asdf::asdf_multiplat_t
+index_buffer	utilities/spritebatch.h	/^        GLuint index_buffer;$/;"	m	class:asdf::spritebatch_t
+init	data/content_manager.cpp	/^    void content_manager_t::init() {$/;"	f	class:asdf::content_manager_t
+init	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::init(std::string _exec_dir) {$/;"	f	class:asdf::asdf_multiplat_t
+init_SDL	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::init_SDL() {$/;"	f	class:asdf::asdf_multiplat_t
+init_framebuffer	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::init_framebuffer() {$/;"	f	class:asdf::asdf_multiplat_t
+init_openGL	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::init_openGL() {$/;"	f	class:asdf::asdf_multiplat_t
+int16	main/stdafx.h	/^    typedef signed   short  int16;$/;"	t	namespace:asdf
+int32	main/stdafx.h	/^    typedef signed   int    int32;$/;"	t	namespace:asdf
+int64	main/stdafx.h	/^    typedef signed   long   int64;$/;"	t	namespace:asdf
+int8	main/stdafx.h	/^    typedef signed   char   int8;$/;"	t	namespace:asdf
+interp_func	data/interpolator.h	/^        , interp_func(_func)$/;"	f	struct:asdf::interpolator_
+interp_func	data/interpolator.h	/^        interp_func_t interp_func = LINEAR_INTERP_FUNC; \/\/ return float between 0 and 1 from dt; I can maybe replace this with a template argument F$/;"	m	struct:asdf::interpolator_
+interpolator_	data/interpolator.h	/^        interpolator_(T _start, T _dest, float _time)$/;"	f	struct:asdf::interpolator_
+interpolator_	data/interpolator.h	/^        interpolator_(T _start, T _dest, float _time, interp_func_t _func)$/;"	f	struct:asdf::interpolator_
+interpolator_	data/interpolator.h	/^    struct interpolator_$/;"	s	namespace:asdf
+interrupt_handler	utilities/utilities.cpp	/^    void interrupt_handler(int x)$/;"	f	namespace:asdf::util
+introspective_struct_t	utilities/reflected_struct.h	/^    struct introspective_struct_t$/;"	s	namespace:asdf
+introspective_var_	utilities/reflected_struct.h	/^        introspective_var_(const char* _name, T& _var)$/;"	f	struct:asdf::introspective_var_
+introspective_var_	utilities/reflected_struct.h	/^    struct introspective_var_\/\/ : introspective_var_t$/;"	s	namespace:asdf
+is_dragging	ui/ui_drag_control.h	/^		bool is_dragging;$/;"	m	struct:asdf::drag_control_t
+is_finished	data/interpolator.h	/^        bool is_finished() const$/;"	f	struct:asdf::interpolator_
+loadError	data/texture.h	/^        std::string loadError;$/;"	m	struct:asdf::content_load_exception
+load_font	data/content_manager.h	/^    FTFont* load_font(const char* font_file_path)$/;"	f	namespace:asdf
+load_from	utilities/reflected_struct.h	/^        void load_from(const cJSON * const data)$/;"	f	struct:asdf::introspective_var_
+load_from	utilities/reflected_struct.h	/^        void load_from(const char* json_str)$/;"	f	struct:asdf::introspective_struct_t
+load_shader	data/shader.cpp	/^    \/*static*\/GLuint shader_t::load_shader(const char* filepath, GLuint shader_type) $/;"	f	class:asdf::shader_t
+load_texture	data/texture.cpp	/^    void texture_t::load_texture(std::string const& filepath)$/;"	f	class:asdf::texture_t
+load_uniforms	data/shader.cpp	/^    void shader_t::load_uniforms() {$/;"	f	class:asdf::shader_t
+lower_bound	ui/ui_base.h	/^        T lower_bound;$/;"	m	struct:asdf::aabb_
+lower_bound	ui/ui_base.h	/^        glm::vec3 lower_bound;$/;"	m	struct:asdf::ui_base_t
+main	main/main.cpp	/^int main(int argc, char* argv[]) $/;"	f
+matrix	ui/ui_base.h	/^        glm::mat3 matrix; \/\/rotation and scale$/;"	m	struct:asdf::ui_base_t
+member_name	utilities/reflected_struct.h	/^        const char* member_name;$/;"	m	struct:asdf::introspective_var_
+member_names	utilities/reflected_struct.h	/^		std::array<const char*, 1> member_names = {{ "test_int" }};$/;"	m	struct:struct_name
+member_types	utilities/reflected_struct.h	/^		std::array<const char*, 1> member_types = {{ "int" }};$/;"	m	struct:struct_name
+member_var	utilities/reflected_struct.h	/^        T& member_var;$/;"	m	struct:asdf::introspective_var_
+mouse_button_4	main/mouse_state.h	/^            mouse_button_4          = 8,$/;"	m	struct:asdf::mouse_state_t	typeref:enum:asdf::mouse_state_t::
+mouse_button_5	main/mouse_state.h	/^            mouse_button_5          = 16,$/;"	m	struct:asdf::mouse_state_t	typeref:enum:asdf::mouse_state_t::
+mouse_button_left	main/mouse_state.h	/^            mouse_button_left       = 1,$/;"	m	struct:asdf::mouse_state_t	typeref:enum:asdf::mouse_state_t::
+mouse_button_middle	main/mouse_state.h	/^            mouse_button_middle     = 2,$/;"	m	struct:asdf::mouse_state_t	typeref:enum:asdf::mouse_state_t::
+mouse_button_right	main/mouse_state.h	/^            mouse_button_right      = 4,$/;"	m	struct:asdf::mouse_state_t	typeref:enum:asdf::mouse_state_t::
+mouse_sensitivity	data/settings.h	/^        float mouse_sensitivity;$/;"	m	struct:asdf::settings_t
+mouse_state_t	main/mouse_state.h	/^        mouse_state_t()$/;"	f	namespace:asdf
+mouse_state_t	main/mouse_state.h	/^    struct mouse_state_t {$/;"	s	namespace:asdf
+name	data/shader.h	/^        std::string name;$/;"	m	class:asdf::shader_t
+name	data/texture.h	/^        std::string name = "";$/;"	m	class:asdf::texture_t
+names	utilities/reflected_struct.h	/^            std::array<const char*, 1> names = {{"asdfasdf"}};        \\$/;"	m	namespace:asdf
+near_plane	utilities/camera.h	/^        float near_plane = -1000;$/;"	m	struct:asdf::camera_t
+noexcept	data/texture.h	/^        virtual const char* what() const noexcept;$/;"	m	struct:asdf::content_load_exception
+noexcept	main/stdafx.h	35;"	d
+noexcept	main/stdafx.h	37;"	d
+normalize_sizes	ui/ui_base.cpp	/^    void ui_list_view_t::normalize_sizes()$/;"	f	class:asdf::ui_list_view_t
+nullindex	main/stdafx.h	56;"	d
+offset	ui/text.h	/^        glm::vec2 offset;$/;"	m	struct:asdf::text_info_t
+offset	ui/ui_base.h	/^        glm::vec3 offset; \/\/might remove this from base and only add to classes that need it$/;"	m	struct:asdf::ui_base_t
+on_changed_callback	ui/ui_base.h	/^        ui_function_t on_changed_callback;$/;"	m	struct:asdf::ui_slider_t
+on_end_callback	ui/ui_base.h	/^        ui_function_t on_end_callback;$/;"	m	struct:asdf::ui_button_t
+on_end_callback	ui/ui_base.h	/^        ui_function_t on_end_callback;$/;"	m	struct:asdf::ui_slider_t
+on_end_inside_callback	ui/ui_base.h	/^        ui_function_t on_end_inside_callback;$/;"	m	struct:asdf::ui_button_t
+on_end_inside_callback	ui/ui_base.h	/^        ui_function_t on_end_inside_callback;$/;"	m	struct:asdf::ui_slider_t
+on_event	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::on_event(SDL_Event* event) {$/;"	f	class:asdf::asdf_multiplat_t
+on_event	ui/ui_base.cpp	/^    bool ui_base_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_base_t
+on_event	ui/ui_base.cpp	/^    bool ui_button_t::on_event(SDL_Event* event , glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_button_t
+on_event	ui/ui_base.cpp	/^    bool ui_list_view_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_list_view_t
+on_event	ui/ui_base.cpp	/^    bool ui_slider_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_slider_t
+on_event	ui/ui_drag_control.cpp	/^	void drag_control_t::on_event(SDL_Event*)$/;"	f	class:asdf::drag_control_t
+on_event	utilities/camera.cpp	/^    void camera_t::on_event(SDL_Event* event)$/;"	f	class:asdf::camera_t
+on_start_callback	ui/ui_base.h	/^        ui_function_t on_start_callback;$/;"	m	struct:asdf::ui_button_t
+on_start_callback	ui/ui_base.h	/^        ui_function_t on_start_callback;$/;"	m	struct:asdf::ui_slider_t
+operator GLuint	data/gl_resources.h	/^        operator GLuint() const$/;"	f	struct:asdf::vao_t
+operator GLuint	data/gl_resources.h	/^        operator GLuint() const$/;"	f	struct:asdf::vbo_t
+operator []	data/resource_depot.h	/^	T const& operator[](std::string const& resourceName){$/;"	f	class:asdf::resource_depot_t
+operator []	utilities/str_const.h	/^    constexpr char operator[]( std::size_t n ) const {$/;"	f	class:str_const
+output_buffer	utilities/thread_pool.h	/^        L output_buffer;$/;"	m	struct:asdf::divided_task_
+override	ui/ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_button_t
+override	ui/ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui/ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui/ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui/ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_table_t
+override	ui/ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_view_t
+override	ui/ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_image_t
+override	ui/ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui/ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui/ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_view_t
+override	ui/ui_base.h	/^        virtual void set_size(glm::vec3 size) override;$/;"	m	struct:asdf::ui_view_t
+override	ui/ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_button_t
+override	ui/ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_image_t
+override	ui/ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui/ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui/ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_view_t
+override	ui/ui_label.h	/^        virtual void render( UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_label_t
+override	ui/ui_label.h	/^        virtual void render_debug() override;$/;"	m	struct:asdf::ui_label_t
+override	ui/ui_label.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_label_t
+override	ui/ui_label.h	/^        void align() override;$/;"	m	struct:asdf::ui_label_t
+p_	utilities/str_const.h	/^    const char * const p_;$/;"	m	class:str_const
+padding	ui/ui_base.h	/^        float padding = 0.0f;$/;"	m	struct:asdf::ui_list_view_t
+parent	ui/ui_base.h	/^        ui_base_t* parent;$/;"	m	struct:asdf::ui_base_t
+percentage	ui/ui_base.h	/^        float percentage;$/;"	m	struct:asdf::ui_slider_t
+position	ui/ui_base.h	/^        glm::vec3 position; \/\/relative to parent$/;"	m	struct:asdf::ui_base_t
+position	utilities/camera.h	/^        glm::vec3 position;$/;"	m	struct:asdf::camera_t
+position	utilities/spritebatch.h	/^        glm::vec2   position;$/;"	m	struct:asdf::sprite_t
+position	utilities/spritebatch.h	/^        glm::vec2   position;$/;"	m	struct:asdf::sprite_vertex_t
+position	utilities/spritebatch.h	/^        glm::vec2   position;$/;"	m	struct:asdf::text_sprite_t
+prev_button_state	main/mouse_state.h	/^        unsigned short prev_button_state;$/;"	m	namespace:asdf
+prevx	main/mouse_state.h	/^        float prevx, prevy, prevz;$/;"	m	namespace:asdf
+prevy	main/mouse_state.h	/^        float prevx, prevy, prevz;$/;"	m	namespace:asdf
+prevz	main/mouse_state.h	/^        float prevx, prevy, prevz;$/;"	m	namespace:asdf
+projection_matrix	data/shader.h	/^        glm::mat4 projection_matrix;$/;"	m	class:asdf::shader_t
+projection_ortho	utilities/camera.cpp	/^    mat4 camera_t::projection_ortho(float const& halfwidth, float const& halfheight) const$/;"	f	class:asdf::camera_t
+queued_tasks	utilities/thread_pool.h	/^        std::queue<task_t> queued_tasks;$/;"	m	struct:asdf::thread_pool_t
+read_text_file	utilities/utilities.cpp	/^    std::string read_text_file(std::string const& filepath) {$/;"	f	namespace:asdf::util
+rect_t	utilities/spritebatch.h	/^        rect_t(int x, int y, int width, int height)$/;"	f	struct:asdf::rect_t
+rect_t	utilities/spritebatch.h	/^    struct rect_t {$/;"	s	namespace:asdf
+rectf_t	utilities/spritebatch.h	/^        rectf_t(const rectf_t& rect)$/;"	f	struct:asdf::rectf_t
+rectf_t	utilities/spritebatch.h	/^        rectf_t(float x, float y, float width, float height)$/;"	f	struct:asdf::rectf_t
+rectf_t	utilities/spritebatch.h	/^        rectf_t(glm::vec2 const& pos, glm::vec2 const& size)$/;"	f	struct:asdf::rectf_t
+rectf_t	utilities/spritebatch.h	/^    struct rectf_t {$/;"	s	namespace:asdf
+refresh_params	data/texture.cpp	/^    void texture_t::refresh_params()$/;"	f	class:asdf::texture_t
+rename_resource	data/resource_depot.h	/^	void rename_resource(std::string const& currentName, std::string const& newName){$/;"	f	class:asdf::resource_depot_t
+render	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::render() {$/;"	f	class:asdf::asdf_multiplat_t
+render	ui/ui_base.cpp	/^    void ui_base_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_base_t
+render	ui/ui_base.cpp	/^    void ui_button_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_button_t
+render	ui/ui_base.cpp	/^    void ui_image_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_image_t
+render	ui/ui_base.cpp	/^    void ui_list_view_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_list_view_t
+render	ui/ui_base.cpp	/^    void ui_slider_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_slider_t
+render	ui/ui_base.cpp	/^    void ui_view_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_view_t
+render	ui/ui_label.cpp	/^    void ui_label_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_label_t
+render_batch	utilities/spritebatch.cpp	/^    void spritebatch_t::render_batch(shared_ptr<texture_t> const& texture) {        $/;"	f	class:asdf::spritebatch_t
+render_debug	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::render_debug() {$/;"	f	class:asdf::asdf_multiplat_t
+render_debug	ui/ui_base.cpp	/^    void ui_base_t::render_debug()$/;"	f	class:asdf::ui_base_t
+render_debug	ui/ui_label.cpp	/^    void ui_label_t::render_debug()$/;"	f	class:asdf::ui_label_t
+render_debug_views	main/asdf_multiplat.h	/^        bool render_debug_views = false;$/;"	m	struct:asdf::asdf_multiplat_t
+render_target	main/asdf_multiplat.h	/^        std::shared_ptr<texture_t> render_target;$/;"	m	struct:asdf::asdf_multiplat_t
+reset	data/interpolator.h	/^        void reset()$/;"	f	struct:asdf::interpolator_
+reset_smooth	data/interpolator.h	/^        void reset_smooth() \/\/ reset in a smooth way (ie: if max time is 5, current  is 5.1, current should be 0.1 to maintain that amount of time passing, otherwise the whole system loses that 0.1)$/;"	f	struct:asdf::interpolator_
+resize_to_fit	ui/ui_base.cpp	/^    void ui_base_t::resize_to_fit()$/;"	f	class:asdf::ui_base_t
+resize_to_text	ui/ui_label.cpp	/^    void ui_label_t::resize_to_text()$/;"	f	class:asdf::ui_label_t
+resolution_height	data/settings.h	/^        size_t resolution_height = 720;$/;"	m	struct:asdf::settings_t
+resolution_width	data/settings.h	/^        size_t resolution_width = 1280;$/;"	m	struct:asdf::settings_t
+resourceName	data/resource_depot.h	/^	std::string resourceName;$/;"	m	struct:asdf::resource_not_found_exception
+resource_depot_t	data/resource_depot.h	/^    resource_depot_t(T default_resource = 0)$/;"	f	class:asdf::resource_depot_t
+resource_depot_t	data/resource_depot.h	/^class resource_depot_t {$/;"	c	namespace:asdf
+resource_not_found_exception	data/content_manager.cpp	/^    resource_not_found_exception::resource_not_found_exception(std::string resourceName)$/;"	f	class:asdf::resource_not_found_exception
+resource_not_found_exception	data/resource_depot.h	/^struct resource_not_found_exception : std::exception {$/;"	s	namespace:asdf
+resources	data/resource_depot.h	/^    std::map<std::string, T> resources;$/;"	m	class:asdf::resource_depot_t
+rotation	utilities/spritebatch.h	/^        float       rotation;$/;"	m	struct:asdf::sprite_t
+rotation	utilities/spritebatch.h	/^        float       rotation;$/;"	m	struct:asdf::text_sprite_t
+row_heights	ui/ui_base.h	/^        std::vector<float> row_heights; \/\/might do a map<int, float> to reduce size$/;"	m	struct:asdf::ui_table_t
+rows	ui/ui_base.h	/^        std::vector<ui_list_view_t*> rows;$/;"	m	struct:asdf::ui_table_t
+running	main/asdf_multiplat.h	/^        bool running        = false;$/;"	m	struct:asdf::asdf_multiplat_t
+samplers	data/content_manager.h	/^        resource_depot_t<GLuint> samplers;$/;"	m	class:asdf::content_manager_t
+save_screenshot	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::save_screenshot(std::string file_path) const$/;"	f	class:asdf::asdf_multiplat_t
+scale	utilities/spritebatch.h	/^        glm::vec2   scale;$/;"	m	struct:asdf::sprite_t
+screen_to_texture_space	data/texture.cpp	/^    ivec2 screen_to_texture_space(ivec2 const& screen_pos, ivec2 const& texture_halfsize)$/;"	f	namespace:asdf
+screen_to_texture_space	data/texture.cpp	/^    ivec2 texture_t::screen_to_texture_space(ivec2 const& screen_pos) const$/;"	f	class:asdf::texture_t
+scroll_backwards_button	ui/ui_base.h	/^        std::shared_ptr<ui_button_t> scroll_backwards_button;$/;"	m	struct:asdf::ui_scrollbar_t
+scroll_forwards_button	ui/ui_base.h	/^        std::shared_ptr<ui_button_t> scroll_forwards_button;$/;"	m	struct:asdf::ui_scrollbar_t
+serializable_types_e	utilities/reflected_struct.h	/^    enum serializable_types_e$/;"	g
+set_column_padding	ui/ui_base.cpp	/^    void ui_table_t::set_column_padding(float _padding)$/;"	f	class:asdf::ui_table_t
+set_size	ui/ui_base.cpp	/^    void ui_base_t::set_size(vec3 size)$/;"	f	class:asdf::ui_base_t
+set_size	ui/ui_base.cpp	/^    void ui_view_t::set_size(vec2 _size)$/;"	f	class:asdf::ui_view_t
+set_size	ui/ui_base.cpp	/^    void ui_view_t::set_size(vec3 size)$/;"	f	class:asdf::ui_view_t
+set_size	ui/ui_base.h	/^        void set_size(float w, float h) {set_size(glm::vec2{w,h});}$/;"	f	struct:asdf::ui_view_t
+set_text	ui/ui_label.cpp	/^    void ui_label_t::set_text(std::string _str)$/;"	f	class:asdf::ui_label_t
+settings	main/asdf_multiplat.h	/^        settings_t settings;$/;"	m	struct:asdf::asdf_multiplat_t
+settings_t	data/settings.h	/^    struct settings_t {$/;"	s	namespace:asdf
+shader_program_id	data/shader.h	/^        GLuint shader_program_id;$/;"	m	class:asdf::shader_t
+shader_t	data/shader.cpp	/^    shader_t::shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath)$/;"	f	class:asdf::shader_t
+shader_t	data/shader.h	/^    class shader_t {$/;"	c	namespace:asdf
+shaders	data/content_manager.h	/^        resource_depot_t<std::shared_ptr<shader_t>> shaders;$/;"	m	class:asdf::content_manager_t
+size	ui/ui_base.h	/^        glm::vec2 size;     \/\/could make this a ref of size3.xy$/;"	m	struct:asdf::ui_view_t
+size	utilities/str_const.h	/^    constexpr std::size_t size() const { return sz_; }$/;"	f	class:str_const
+size3	ui/ui_base.h	/^        glm::vec3 size3; \/\/size allows getting a local AABB$/;"	m	struct:asdf::ui_base_t
+slide_end	ui/ui_base.h	/^        glm::vec3 slide_end;$/;"	m	struct:asdf::ui_slider_t
+slide_start	ui/ui_base.h	/^        glm::vec3 slide_start;$/;"	m	struct:asdf::ui_slider_t
+slider_button	ui/ui_base.h	/^        std::shared_ptr<ui_button_t> slider_button;$/;"	m	struct:asdf::ui_slider_t
+slider_image_back	ui/ui_base.h	/^        std::shared_ptr<ui_image_t>  slider_image_back;$/;"	m	struct:asdf::ui_slider_t
+slider_image_front	ui/ui_base.h	/^        std::shared_ptr<ui_image_t>  slider_image_front;$/;"	m	struct:asdf::ui_slider_t
+sprite_map	utilities/spritebatch.h	/^        std::map<std::shared_ptr<texture_t>, std::vector<sprite_t>> sprite_map; \/\/organizes the sprites by textureID$/;"	m	class:asdf::spritebatch_t
+sprite_t	utilities/spritebatch.h	/^        sprite_t(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rectf_t const& src_rect, color_t color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0)$/;"	f	struct:asdf::sprite_t
+sprite_t	utilities/spritebatch.h	/^    struct sprite_t {$/;"	s	namespace:asdf
+sprite_vertex_t	utilities/spritebatch.h	/^    struct sprite_vertex_t {$/;"	s	namespace:asdf
+spritebatch_shader	utilities/spritebatch.h	/^        std::shared_ptr<shader_t> spritebatch_shader;$/;"	m	class:asdf::spritebatch_t
+spritebatch_t	utilities/spritebatch.cpp	/^    spritebatch_t::spritebatch_t()$/;"	f	class:asdf::spritebatch_t
+spritebatch_t	utilities/spritebatch.h	/^    class spritebatch_t {$/;"	c	namespace:asdf
+src_rect	utilities/spritebatch.h	/^        rectf_t     src_rect;$/;"	m	struct:asdf::sprite_t
+start	data/interpolator.h	/^        T start;$/;"	m	struct:asdf::interpolator_
+state	ui/ui_base.h	/^        button_state_e state = up;$/;"	m	struct:asdf::ui_button_t
+str	ui/text.h	/^        std::string str;$/;"	m	struct:asdf::text_info_t
+str	ui/ui_label.h	/^        std::string const& str() const { return text.str; }$/;"	f	class:asdf::ui_label_t::std
+str	utilities/spritebatch.h	/^        std::string str;$/;"	m	struct:asdf::text_sprite_t
+str_const	utilities/str_const.h	/^    constexpr str_const( const char( & a )[ N ] )$/;"	f	class:str_const
+str_const	utilities/str_const.h	/^class str_const {$/;"	c
+stride	ui/ui_base.cpp	/^    float ui_list_view_t::stride(std::shared_ptr<ui_view_t> const& cell) const$/;"	f	class:asdf::ui_list_view_t
+struct_name	utilities/reflected_struct.h	/^    struct struct_name$/;"	s
+sz_	utilities/str_const.h	/^    const std::size_t sz_;$/;"	m	class:str_const
+task_futures	utilities/thread_pool.h	/^        std::vector<std::future<void>> task_futures;$/;"	m	struct:asdf::divided_task_
+terminate_handler	utilities/utilities.cpp	/^    void terminate_handler()$/;"	f	namespace:asdf::util
+test_int	utilities/reflected_struct.h	/^        int test_int;$/;"	m	struct:struct_name
+tex_coord	utilities/spritebatch.h	/^        glm::vec2   tex_coord;$/;"	m	struct:asdf::sprite_vertex_t
+text	ui/ui_label.h	/^        text_info_t text;$/;"	m	struct:asdf::ui_label_t
+text_info_t	ui/text.h	/^    struct text_info_t$/;"	s	namespace:asdf
+text_sprite_t	utilities/spritebatch.h	/^        text_sprite_t(std::string _str, FTFont* _font, size_t _face_size, glm::vec2 _position, color_t _color = color_t(1.0f), float _rotation = 0)$/;"	f	struct:asdf::text_sprite_t
+text_sprite_t	utilities/spritebatch.h	/^    struct text_sprite_t$/;"	s	namespace:asdf
+texture	ui/ui_base.h	/^        std::shared_ptr<texture_t> texture;$/;"	m	struct:asdf::ui_image_t
+texture	utilities/spritebatch.h	/^        std::shared_ptr<texture_t> texture;$/;"	m	struct:asdf::sprite_t
+texture_id	data/texture.h	/^        GLuint texture_id = 9001;$/;"	m	class:asdf::texture_t
+texture_t	data/texture.cpp	/^    texture_t::texture_t()$/;"	f	class:asdf::texture_t
+texture_t	data/texture.cpp	/^    texture_t::texture_t(std::string const& _name, color_t* color_data, size_t _width, size_t _height, bool generate_mipmaps)$/;"	f	class:asdf::texture_t
+texture_t	data/texture.cpp	/^    texture_t::texture_t(std::string const& _name, const GLuint texture_index)$/;"	f	class:asdf::texture_t
+texture_t	data/texture.cpp	/^    texture_t::texture_t(std::string const& _name, std::string const& filepath)$/;"	f	class:asdf::texture_t
+texture_t	data/texture.cpp	/^    texture_t::texture_t(std::string const& filepath)$/;"	f	class:asdf::texture_t
+texture_t	data/texture.h	/^    class texture_t $/;"	c	namespace:asdf
+texture_to_screen_space	data/texture.cpp	/^    ivec2 texture_t::texture_to_screen_space(ivec2 const& texture_pos) const$/;"	f	class:asdf::texture_t
+texture_to_screen_space	data/texture.cpp	/^    ivec2 texture_to_screen_space(ivec2 const& texture_pos, ivec2 const& texture_halfsize)$/;"	f	namespace:asdf
+textures	data/content_manager.h	/^        resource_depot_t<std::shared_ptr<texture_t>> textures;$/;"	m	class:asdf::content_manager_t
+thread_pool_t	utilities/thread_pool.h	/^    struct thread_pool_t$/;"	s	namespace:asdf
+to_JSON	utilities/reflected_struct.h	/^            to_JSON()$/;"	f	namespace:asdf
+togglable	ui/ui_base.h	/^        bool togglable; \/\/todo: make toggle button a subclass?$/;"	m	struct:asdf::ui_button_t
+toggled	ui/ui_base.h	/^        bool toggled;$/;"	m	struct:asdf::ui_button_t
+tokenize	utilities/utilities.cpp	/^    std::vector<std::string> tokenize(char* const str, char* const delimiters)$/;"	f	namespace:asdf::util
+top_parent	ui/ui_base.cpp	/^    ui_base_t* ui_base_t::top_parent()$/;"	f	class:asdf::ui_base_t
+types	utilities/reflected_struct.h	/^            std::array<const char*, 1> types = {{"asdf"}};            \\$/;"	m	namespace:asdf
+uchar	main/stdafx.h	/^    typedef unsigned char   uchar;$/;"	t	namespace:asdf
+ui_align_edge_center	ui/ui_base.h	/^          ui_align_edge_center = 0$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_align_edge_inside	ui/ui_base.h	/^        , ui_align_edge_inside$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_align_edge_outside	ui/ui_base.h	/^        , ui_align_edge_outside$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_alignment_edge_e	ui/ui_base.h	/^    enum ui_alignment_edge_e$/;"	g	namespace:asdf
+ui_base_t	ui/ui_base.cpp	/^    ui_base_t::ui_base_t(vec3 const& position, mat3 const& matrix\/*mat3()*\/)$/;"	f	class:asdf::ui_base_t
+ui_base_t	ui/ui_base.h	/^    struct ui_base_t {$/;"	s	namespace:asdf
+ui_button_t	ui/ui_base.cpp	/^    ui_button_t::ui_button_t(vec3 _position, vec3 size, bool togglable)$/;"	f	class:asdf::ui_button_t
+ui_button_t	ui/ui_base.h	/^    struct ui_button_t : ui_base_t {$/;"	s	namespace:asdf
+ui_function_t	ui/ui_base.h	/^    typedef std::function<void(ui_base_t* sender)> ui_function_t;$/;"	t	namespace:asdf
+ui_image_t	ui/ui_base.cpp	/^    ui_image_t::ui_image_t(color_t color, glm::vec2(position), glm::vec2(size)\/*vec2(nullindex)*\/, ui_alignment_e alignment\/*align_none*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui/ui_base.cpp	/^    ui_image_t::ui_image_t(color_t color, ui_alignment_e alignment\/*fill*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui/ui_base.cpp	/^    ui_image_t::ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2(position), glm::vec2(size)\/*vec2(nullindex)*\/, ui_alignment_e alignment\/*align_none*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui/ui_base.h	/^    struct ui_image_t : ui_view_t {$/;"	s	namespace:asdf
+ui_label_t	ui/ui_label.cpp	/^    ui_label_t::ui_label_t(string str, FTFont* font, glm::vec2 _position, ui_alignment_e alignment\/*ui_align_none*\/)$/;"	f	class:asdf::ui_label_t
+ui_label_t	ui/ui_label.cpp	/^    ui_label_t::ui_label_t(string str, FTFont* font, size_t face_size, ui_alignment_e text_alignment)$/;"	f	class:asdf::ui_label_t
+ui_label_t	ui/ui_label.h	/^    struct ui_label_t : ui_view_t$/;"	s	namespace:asdf
+ui_list_view_t	ui/ui_base.cpp	/^    : ui_list_view_t(position, size, alignment)$/;"	f	namespace:asdf
+ui_list_view_t	ui/ui_base.cpp	/^    ui_list_view_t::ui_list_view_t(vec2 position, vec2 size, ui_alignment_e alignment)$/;"	f	class:asdf::ui_list_view_t
+ui_list_view_t	ui/ui_base.h	/^    struct ui_list_view_t : ui_view_t$/;"	s	namespace:asdf
+ui_scrollbar_t	ui/ui_base.h	/^    struct ui_scrollbar_t : ui_slider_t {$/;"	s	namespace:asdf
+ui_slider_t	ui/ui_base.cpp	/^    ui_slider_t::ui_slider_t(std::shared_ptr<ui_button_t> button\/*nullptr*\/, std::shared_ptr<ui_image_t> front_img\/*nullptr*\/, std::shared_ptr<ui_image_t> back_img\/*nullptr*\/)$/;"	f	class:asdf::ui_slider_t
+ui_slider_t	ui/ui_base.h	/^    struct ui_slider_t : ui_base_t {$/;"	s	namespace:asdf
+ui_table_t	ui/ui_base.h	/^    struct ui_table_t : ui_list_view_t$/;"	s	namespace:asdf
+ui_view_t	ui/ui_base.cpp	/^    ui_view_t::ui_view_t(vec2 const& _position, ui_alignment_e _alignment)$/;"	f	class:asdf::ui_view_t
+ui_view_t	ui/ui_base.cpp	/^    ui_view_t::ui_view_t(vec2 const& _position, vec2 const& size, ui_alignment_e alignment)$/;"	f	class:asdf::ui_view_t
+ui_view_t	ui/ui_base.h	/^    struct ui_view_t : ui_base_t {$/;"	s	namespace:asdf
+uint	main/stdafx.h	/^    typedef unsigned int    uint;$/;"	t	namespace:asdf
+uint16	main/stdafx.h	/^    typedef unsigned short  uint16;$/;"	t	namespace:asdf
+uint32	main/stdafx.h	/^    typedef unsigned int    uint32;$/;"	t	namespace:asdf
+uint64	main/stdafx.h	/^    typedef unsigned long   uint64;$/;"	t	namespace:asdf
+uint8	main/stdafx.h	/^    typedef unsigned char   uint8;$/;"	t	namespace:asdf
+ulong	main/stdafx.h	/^    typedef unsigned long   ulong;$/;"	t	namespace:asdf
+uniforms	data/shader.h	/^        std::unordered_map<std::string, GLint> uniforms;$/;"	m	class:asdf::shader_t
+up	ui/ui_base.h	/^            up,$/;"	e	enum:asdf::ui_button_t::button_state_e
+update	data/interpolator.h	/^        void update(float dt)$/;"	f	struct:asdf::interpolator_
+update	main/asdf_multiplat.cpp	/^    void asdf_multiplat_t::update() {$/;"	f	class:asdf::asdf_multiplat_t
+update	main/mouse_state.h	/^        inline void update() {            $/;"	f	namespace:asdf
+update	ui/ui_base.cpp	/^    void ui_base_t::update(float dt)$/;"	f	class:asdf::ui_base_t
+update	ui/ui_base.cpp	/^    void ui_button_t::update(float dt)$/;"	f	class:asdf::ui_button_t
+update	ui/ui_base.cpp	/^    void ui_image_t::update(float dt)$/;"	f	class:asdf::ui_image_t
+update	ui/ui_base.cpp	/^    void ui_list_view_t::update(float dt)$/;"	f	class:asdf::ui_list_view_t
+update	ui/ui_base.cpp	/^    void ui_slider_t::update(float dt)$/;"	f	class:asdf::ui_slider_t
+update	ui/ui_base.cpp	/^    void ui_view_t::update(float dt)$/;"	f	class:asdf::ui_view_t
+update	ui/ui_label.cpp	/^    void ui_label_t::update(float dt)$/;"	f	class:asdf::ui_label_t
+update_wvp_uniform	data/shader.cpp	/^    void shader_t::update_wvp_uniform() {$/;"	f	class:asdf::shader_t
+upper_bound	ui/ui_base.h	/^        T upper_bound;$/;"	m	struct:asdf::aabb_
+upper_bound	ui/ui_base.h	/^        glm::vec3 upper_bound;$/;"	m	struct:asdf::ui_base_t
+use_program	data/shader.h	/^        inline void use_program() { glUseProgram(shader_program_id); }$/;"	f	class:asdf::shader_t
+ushort	main/stdafx.h	/^    typedef unsigned short  ushort;$/;"	t	namespace:asdf
+util	utilities/utilities.cpp	/^    namespace util {$/;"	n	namespace:asdf	file:
+util	utilities/utilities.h	/^    namespace util {$/;"	n	namespace:asdf
+util	utilities/utilities_openGL.cpp	/^    namespace util {$/;"	n	namespace:asdf	file:
+util	utilities/utilities_openGL.h	/^    namespace util {$/;"	n	namespace:asdf
+vao	data/gl_resources.h	/^        vao_t vao;$/;"	m	struct:asdf::gl_renderable_t
+vao_t	data/gl_resources.h	/^        vao_t()$/;"	f	struct:asdf::vao_t
+vao_t	data/gl_resources.h	/^    struct vao_t$/;"	s	namespace:asdf
+vbo	data/gl_resources.h	/^        vbo_t vbo;$/;"	m	struct:asdf::gl_renderable_t
+vbo_t	data/gl_resources.h	/^        vbo_t()$/;"	f	struct:asdf::vbo_t
+vbo_t	data/gl_resources.h	/^    struct vbo_t$/;"	s	namespace:asdf
+vertex_buffer	utilities/spritebatch.h	/^        GLuint vertex_buffer;$/;"	m	class:asdf::spritebatch_t
+vertex_shader_id	data/shader.h	/^        GLuint vertex_shader_id;$/;"	m	class:asdf::shader_t
+vertical	ui/ui_base.h	/^        bool vertical = true; \/\/todo: deprecate in favour of direction$/;"	m	struct:asdf::ui_list_view_t
+view_matrix	data/shader.h	/^        glm::mat4 view_matrix;$/;"	m	class:asdf::shader_t
+view_matrix	utilities/camera.cpp	/^    mat4 camera_t::view_matrix() const$/;"	f	class:asdf::camera_t
+visible	ui/ui_base.h	/^        bool visible = true;$/;"	m	struct:asdf::ui_base_t
+what	data/content_manager.cpp	/^    const char* resource_not_found_exception::what() const $/;"	f	class:asdf::resource_not_found_exception
+width	data/texture.h	/^        int width = 0;$/;"	m	class:asdf::texture_t
+width	utilities/spritebatch.h	/^        float x, y, width, height;$/;"	m	struct:asdf::rectf_t
+width	utilities/spritebatch.h	/^        int x, y, width, height;$/;"	m	struct:asdf::rect_t
+working_directory	main/asdf_multiplat.h	/^        std::string working_directory = "";$/;"	m	struct:asdf::asdf_multiplat_t
+world_matrix	data/shader.h	/^        glm::mat4 world_matrix;$/;"	m	class:asdf::shader_t
+write	data/texture.cpp	/^    void texture_t::write(const color_t* color_data)$/;"	f	class:asdf::texture_t
+write	data/texture.cpp	/^    void texture_t::write(const color_t* color_data, const size_t _width, const size_t _height)$/;"	f	class:asdf::texture_t
+write_text_file	utilities/utilities.cpp	/^    void write_text_file(std::string const& filepath, std::string const& data)$/;"	f	namespace:asdf::util
+x	main/mouse_state.h	/^        float x, y, z;$/;"	m	namespace:asdf
+x	utilities/spritebatch.h	/^        float x, y, width, height;$/;"	m	struct:asdf::rectf_t
+x	utilities/spritebatch.h	/^        int x, y, width, height;$/;"	m	struct:asdf::rect_t
+y	main/mouse_state.h	/^        float x, y, z;$/;"	m	namespace:asdf
+y	utilities/spritebatch.h	/^        float x, y, width, height;$/;"	m	struct:asdf::rectf_t
+y	utilities/spritebatch.h	/^        int x, y, width, height;$/;"	m	struct:asdf::rect_t
+z	main/mouse_state.h	/^        float x, y, z;$/;"	m	namespace:asdf
+~asdf_multiplat_t	main/asdf_multiplat.cpp	/^    asdf_multiplat_t::~asdf_multiplat_t() {$/;"	f	class:asdf::asdf_multiplat_t
+~content_manager_t	data/content_manager.cpp	/^    content_manager_t::~content_manager_t()$/;"	f	class:asdf::content_manager_t
+~shader_t	data/shader.cpp	/^    shader_t::~shader_t() {$/;"	f	class:asdf::shader_t
+~spritebatch_t	utilities/spritebatch.cpp	/^    spritebatch_t::~spritebatch_t() {$/;"	f	class:asdf::spritebatch_t
+~texture_t	data/texture.cpp	/^    texture_t::~texture_t()$/;"	f	class:asdf::texture_t
+~ui_base_t	ui/ui_base.cpp	/^    ui_base_t::~ui_base_t()$/;"	f	class:asdf::ui_base_t
+~vao_t	data/gl_resources.h	/^        ~vao_t()$/;"	f	struct:asdf::vao_t
+~vbo_t	data/gl_resources.h	/^        ~vbo_t()$/;"	f	struct:asdf::vbo_t

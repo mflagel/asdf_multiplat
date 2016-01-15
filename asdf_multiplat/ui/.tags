@@ -1,0 +1,184 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BUTTON_DISABLED_COLOR	ui_base.h	12;"	d
+BUTTON_HIGHLIGHT_COLOR	ui_base.h	14;"	d
+BUTTON_PRESSED_COLOR	ui_base.h	13;"	d
+DEFAULT_TRANSFORM_COPYPASTA	ui_base.cpp	14;"	d	file:
+UI_RENDER_PARAMS	ui_base.h	10;"	d
+aabb_	ui_base.h	/^    struct aabb_$/;"	s	namespace:asdf
+add_cell	ui_base.cpp	/^    ui_view_t* ui_list_view_t::add_cell(shared_ptr<ui_view_t> cell)$/;"	f	class:asdf::ui_list_view_t
+add_cell	ui_base.h	/^        T* add_cell(Args&& ...args)$/;"	f	struct:asdf::ui_list_view_t
+add_child	ui_base.cpp	/^    ui_base_t* ui_base_t::add_child(shared_ptr<ui_base_t> child, size_t index\/*nullindex*\/)$/;"	f	class:asdf::ui_base_t
+add_child	ui_base.h	/^        T* add_child(Args&& ...args)$/;"	f	struct:asdf::ui_base_t
+add_row	ui_base.cpp	/^    ui_list_view_t* ui_table_t::add_row(float height)$/;"	f	class:asdf::ui_table_t
+align	text.cpp	/^    void text_info_t::align(glm::vec2 parent_halfsize)$/;"	f	class:asdf::text_info_t
+align	ui_base.cpp	/^    void ui_base_t::align()$/;"	f	class:asdf::ui_base_t
+align	ui_base.cpp	/^    void ui_list_view_t::align()$/;"	f	class:asdf::ui_list_view_t
+align	ui_base.cpp	/^    void ui_table_t::align()$/;"	f	class:asdf::ui_table_t
+align	ui_base.cpp	/^    void ui_view_t::align()$/;"	f	class:asdf::ui_view_t
+align	ui_label.cpp	/^    void ui_label_t::align()$/;"	f	class:asdf::ui_label_t
+align_cells	ui_base.cpp	/^    void ui_list_view_t::align_cells()$/;"	f	class:asdf::ui_list_view_t
+alignment	text.h	/^        ui_alignment_e alignment = ui_align_center;$/;"	m	struct:asdf::text_info_t
+alignment	ui_base.h	/^        ui_alignment_e alignment = ui_align_center;$/;"	m	struct:asdf::ui_base_t
+alignment_edge	ui_base.h	/^        ui_alignment_edge_e alignment_edge = ui_align_edge_inside;$/;"	m	struct:asdf::ui_base_t
+asdf	text.cpp	/^namespace asdf$/;"	n	file:
+asdf	text.h	/^namespace asdf$/;"	n
+asdf	ui_base.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui_base.h	/^namespace asdf$/;"	n
+asdf	ui_drag_control.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui_drag_control.h	/^namespace asdf$/;"	n
+asdf	ui_label.cpp	/^namespace asdf$/;"	n	file:
+asdf	ui_label.h	/^namespace asdf$/;"	n
+base	ui_drag_control.h	/^		std::shared_ptr<ui_base_t> base;$/;"	m	struct:asdf::drag_control_t
+base_disabled	ui_base.h	/^        std::shared_ptr<ui_base_t> base_disabled;$/;"	m	struct:asdf::ui_button_t
+base_highlight	ui_base.h	/^        std::shared_ptr<ui_base_t> base_highlight;$/;"	m	struct:asdf::ui_button_t
+base_pressed	ui_base.h	/^        std::shared_ptr<ui_base_t> base_pressed;$/;"	m	struct:asdf::ui_button_t
+base_unpressed	ui_base.h	/^        std::shared_ptr<ui_base_t> base_unpressed;$/;"	m	struct:asdf::ui_button_t
+button_state_e	ui_base.h	/^        enum button_state_e {$/;"	g	struct:asdf::ui_button_t
+calc_aabb	ui_base.cpp	/^    aabb_t ui_base_t::calc_aabb()$/;"	f	class:asdf::ui_base_t
+cells	ui_base.h	/^        std::vector<std::shared_ptr<ui_view_t>> cells;$/;"	m	struct:asdf::ui_list_view_t
+children	ui_base.h	/^        std::vector<std::shared_ptr<ui_base_t>> children;$/;"	m	struct:asdf::ui_base_t
+col_widths	ui_base.h	/^        std::vector<float> col_widths;$/;"	m	struct:asdf::ui_table_t
+color	ui_base.h	/^        color_t color;$/;"	m	struct:asdf::ui_base_t
+color_t	ui_base.h	/^    typedef glm::vec4       color_t;$/;"	t	namespace:asdf
+column_padding	ui_base.h	/^        float column_padding = 0.0f;$/;"	m	struct:asdf::ui_table_t
+contains_point	ui_base.cpp	/^    bool ui_base_t::contains_point(vec3 point)$/;"	f	class:asdf::ui_base_t
+disabled	ui_base.h	/^            disabled$/;"	e	enum:asdf::ui_button_t::button_state_e
+down	ui_base.h	/^            down,$/;"	e	enum:asdf::ui_button_t::button_state_e
+drag_control_t	ui_drag_control.h	/^	struct drag_control_t$/;"	s	namespace:asdf
+drag_edge_dist_px	ui_drag_control.h	/^		float drag_edge_dist_px = 10; \/\/how many px away from a drage edge before dragging is available$/;"	m	namespace:asdf::__anon1
+enabled	ui_base.h	/^        bool enabled = true;$/;"	m	struct:asdf::ui_base_t
+expansion_delta	ui_base.h	/^        glm::vec3 expansion_delta = glm::vec3(0.0f);$/;"	m	struct:asdf::ui_base_t
+face_size	text.h	/^        size_t face_size = 48;$/;"	m	struct:asdf::text_info_t
+font	text.h	/^        FTFont* font = nullptr;$/;"	m	struct:asdf::text_info_t
+get_bounds	ui_base.cpp	/^    aabb_t get_bounds(std::vector<aabb_t> const& aabbs)$/;"	f	namespace:asdf
+get_world_position	ui_base.cpp	/^    vec3 ui_base_t::get_world_position()$/;"	f	class:asdf::ui_base_t
+get_world_transform	ui_base.cpp	/^    mat4 ui_base_t::get_world_transform()$/;"	f	class:asdf::ui_base_t
+halfsize	text.h	/^        glm::vec2 halfsize;   $/;"	m	struct:asdf::text_info_t
+halfsize	ui_base.h	/^        glm::vec2 halfsize; \/\/could make this a ref of halfsize3.xy$/;"	m	struct:asdf::ui_view_t
+halfsize3	ui_base.h	/^        glm::vec3 halfsize3;$/;"	m	struct:asdf::ui_base_t
+highlighted	ui_base.h	/^            highlighted,$/;"	e	enum:asdf::ui_button_t::button_state_e
+is_dragging	ui_drag_control.h	/^		bool is_dragging;$/;"	m	struct:asdf::drag_control_t
+lower_bound	ui_base.h	/^        T lower_bound;$/;"	m	struct:asdf::aabb_
+lower_bound	ui_base.h	/^        glm::vec3 lower_bound;$/;"	m	struct:asdf::ui_base_t
+matrix	ui_base.h	/^        glm::mat3 matrix; \/\/rotation and scale$/;"	m	struct:asdf::ui_base_t
+normalize_sizes	ui_base.cpp	/^    void ui_list_view_t::normalize_sizes()$/;"	f	class:asdf::ui_list_view_t
+offset	text.h	/^        glm::vec2 offset;$/;"	m	struct:asdf::text_info_t
+offset	ui_base.h	/^        glm::vec3 offset; \/\/might remove this from base and only add to classes that need it$/;"	m	struct:asdf::ui_base_t
+on_changed_callback	ui_base.h	/^        ui_function_t on_changed_callback;$/;"	m	struct:asdf::ui_slider_t
+on_end_callback	ui_base.h	/^        ui_function_t on_end_callback;$/;"	m	struct:asdf::ui_button_t
+on_end_callback	ui_base.h	/^        ui_function_t on_end_callback;$/;"	m	struct:asdf::ui_slider_t
+on_end_inside_callback	ui_base.h	/^        ui_function_t on_end_inside_callback;$/;"	m	struct:asdf::ui_button_t
+on_end_inside_callback	ui_base.h	/^        ui_function_t on_end_inside_callback;$/;"	m	struct:asdf::ui_slider_t
+on_event	ui_base.cpp	/^    bool ui_base_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_base_t
+on_event	ui_base.cpp	/^    bool ui_button_t::on_event(SDL_Event* event , glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_button_t
+on_event	ui_base.cpp	/^    bool ui_list_view_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_list_view_t
+on_event	ui_base.cpp	/^    bool ui_slider_t::on_event(SDL_Event* event, glm::vec3 const& _position, glm::mat3 const& _matrix)$/;"	f	class:asdf::ui_slider_t
+on_event	ui_drag_control.cpp	/^	void drag_control_t::on_event(SDL_Event*)$/;"	f	class:asdf::drag_control_t
+on_start_callback	ui_base.h	/^        ui_function_t on_start_callback;$/;"	m	struct:asdf::ui_button_t
+on_start_callback	ui_base.h	/^        ui_function_t on_start_callback;$/;"	m	struct:asdf::ui_slider_t
+override	ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_button_t
+override	ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui_base.h	/^        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_table_t
+override	ui_base.h	/^        virtual void align() override;$/;"	m	struct:asdf::ui_view_t
+override	ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_image_t
+override	ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui_base.h	/^        virtual void render(UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_view_t
+override	ui_base.h	/^        virtual void set_size(glm::vec3 size) override;$/;"	m	struct:asdf::ui_view_t
+override	ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_button_t
+override	ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_image_t
+override	ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_list_view_t
+override	ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_slider_t
+override	ui_base.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_view_t
+override	ui_label.h	/^        virtual void render( UI_RENDER_PARAMS) override;$/;"	m	struct:asdf::ui_label_t
+override	ui_label.h	/^        virtual void render_debug() override;$/;"	m	struct:asdf::ui_label_t
+override	ui_label.h	/^        virtual void update(float dt) override;$/;"	m	struct:asdf::ui_label_t
+override	ui_label.h	/^        void align() override;$/;"	m	struct:asdf::ui_label_t
+padding	ui_base.h	/^        float padding = 0.0f;$/;"	m	struct:asdf::ui_list_view_t
+parent	ui_base.h	/^        ui_base_t* parent;$/;"	m	struct:asdf::ui_base_t
+percentage	ui_base.h	/^        float percentage;$/;"	m	struct:asdf::ui_slider_t
+position	ui_base.h	/^        glm::vec3 position; \/\/relative to parent$/;"	m	struct:asdf::ui_base_t
+render	ui_base.cpp	/^    void ui_base_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_base_t
+render	ui_base.cpp	/^    void ui_button_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_button_t
+render	ui_base.cpp	/^    void ui_image_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_image_t
+render	ui_base.cpp	/^    void ui_list_view_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_list_view_t
+render	ui_base.cpp	/^    void ui_slider_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_slider_t
+render	ui_base.cpp	/^    void ui_view_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_view_t
+render	ui_label.cpp	/^    void ui_label_t::render(vec3 const& _position, mat3 const& _matrix, color_t const& _color)$/;"	f	class:asdf::ui_label_t
+render_debug	ui_base.cpp	/^    void ui_base_t::render_debug()$/;"	f	class:asdf::ui_base_t
+render_debug	ui_label.cpp	/^    void ui_label_t::render_debug()$/;"	f	class:asdf::ui_label_t
+resize_to_fit	ui_base.cpp	/^    void ui_base_t::resize_to_fit()$/;"	f	class:asdf::ui_base_t
+resize_to_text	ui_label.cpp	/^    void ui_label_t::resize_to_text()$/;"	f	class:asdf::ui_label_t
+row_heights	ui_base.h	/^        std::vector<float> row_heights; \/\/might do a map<int, float> to reduce size$/;"	m	struct:asdf::ui_table_t
+rows	ui_base.h	/^        std::vector<ui_list_view_t*> rows;$/;"	m	struct:asdf::ui_table_t
+scroll_backwards_button	ui_base.h	/^        std::shared_ptr<ui_button_t> scroll_backwards_button;$/;"	m	struct:asdf::ui_scrollbar_t
+scroll_forwards_button	ui_base.h	/^        std::shared_ptr<ui_button_t> scroll_forwards_button;$/;"	m	struct:asdf::ui_scrollbar_t
+set_column_padding	ui_base.cpp	/^    void ui_table_t::set_column_padding(float _padding)$/;"	f	class:asdf::ui_table_t
+set_size	ui_base.cpp	/^    void ui_base_t::set_size(vec3 size)$/;"	f	class:asdf::ui_base_t
+set_size	ui_base.cpp	/^    void ui_view_t::set_size(vec2 _size)$/;"	f	class:asdf::ui_view_t
+set_size	ui_base.cpp	/^    void ui_view_t::set_size(vec3 size)$/;"	f	class:asdf::ui_view_t
+set_size	ui_base.h	/^        void set_size(float w, float h) {set_size(glm::vec2{w,h});}$/;"	f	struct:asdf::ui_view_t
+set_text	ui_label.cpp	/^    void ui_label_t::set_text(std::string _str)$/;"	f	class:asdf::ui_label_t
+size	ui_base.h	/^        glm::vec2 size;     \/\/could make this a ref of size3.xy$/;"	m	struct:asdf::ui_view_t
+size3	ui_base.h	/^        glm::vec3 size3; \/\/size allows getting a local AABB$/;"	m	struct:asdf::ui_base_t
+slide_end	ui_base.h	/^        glm::vec3 slide_end;$/;"	m	struct:asdf::ui_slider_t
+slide_start	ui_base.h	/^        glm::vec3 slide_start;$/;"	m	struct:asdf::ui_slider_t
+slider_button	ui_base.h	/^        std::shared_ptr<ui_button_t> slider_button;$/;"	m	struct:asdf::ui_slider_t
+slider_image_back	ui_base.h	/^        std::shared_ptr<ui_image_t>  slider_image_back;$/;"	m	struct:asdf::ui_slider_t
+slider_image_front	ui_base.h	/^        std::shared_ptr<ui_image_t>  slider_image_front;$/;"	m	struct:asdf::ui_slider_t
+state	ui_base.h	/^        button_state_e state = up;$/;"	m	struct:asdf::ui_button_t
+str	text.h	/^        std::string str;$/;"	m	struct:asdf::text_info_t
+str	ui_label.h	/^        std::string const& str() const { return text.str; }$/;"	f	class:asdf::ui_label_t::std
+stride	ui_base.cpp	/^    float ui_list_view_t::stride(std::shared_ptr<ui_view_t> const& cell) const$/;"	f	class:asdf::ui_list_view_t
+text	ui_label.h	/^        text_info_t text;$/;"	m	struct:asdf::ui_label_t
+text_info_t	text.h	/^    struct text_info_t$/;"	s	namespace:asdf
+texture	ui_base.h	/^        std::shared_ptr<texture_t> texture;$/;"	m	struct:asdf::ui_image_t
+togglable	ui_base.h	/^        bool togglable; \/\/todo: make toggle button a subclass?$/;"	m	struct:asdf::ui_button_t
+toggled	ui_base.h	/^        bool toggled;$/;"	m	struct:asdf::ui_button_t
+top_parent	ui_base.cpp	/^    ui_base_t* ui_base_t::top_parent()$/;"	f	class:asdf::ui_base_t
+ui_align_edge_center	ui_base.h	/^          ui_align_edge_center = 0$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_align_edge_inside	ui_base.h	/^        , ui_align_edge_inside$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_align_edge_outside	ui_base.h	/^        , ui_align_edge_outside$/;"	e	enum:asdf::ui_alignment_edge_e
+ui_alignment_edge_e	ui_base.h	/^    enum ui_alignment_edge_e$/;"	g	namespace:asdf
+ui_base_t	ui_base.cpp	/^    ui_base_t::ui_base_t(vec3 const& position, mat3 const& matrix\/*mat3()*\/)$/;"	f	class:asdf::ui_base_t
+ui_base_t	ui_base.h	/^    struct ui_base_t {$/;"	s	namespace:asdf
+ui_button_t	ui_base.cpp	/^    ui_button_t::ui_button_t(vec3 _position, vec3 size, bool togglable)$/;"	f	class:asdf::ui_button_t
+ui_button_t	ui_base.h	/^    struct ui_button_t : ui_base_t {$/;"	s	namespace:asdf
+ui_function_t	ui_base.h	/^    typedef std::function<void(ui_base_t* sender)> ui_function_t;$/;"	t	namespace:asdf
+ui_image_t	ui_base.cpp	/^    ui_image_t::ui_image_t(color_t color, glm::vec2(position), glm::vec2(size)\/*vec2(nullindex)*\/, ui_alignment_e alignment\/*align_none*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui_base.cpp	/^    ui_image_t::ui_image_t(color_t color, ui_alignment_e alignment\/*fill*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui_base.cpp	/^    ui_image_t::ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2(position), glm::vec2(size)\/*vec2(nullindex)*\/, ui_alignment_e alignment\/*align_none*\/)$/;"	f	class:asdf::ui_image_t
+ui_image_t	ui_base.h	/^    struct ui_image_t : ui_view_t {$/;"	s	namespace:asdf
+ui_label_t	ui_label.cpp	/^    ui_label_t::ui_label_t(string str, FTFont* font, glm::vec2 _position, ui_alignment_e alignment\/*ui_align_none*\/)$/;"	f	class:asdf::ui_label_t
+ui_label_t	ui_label.cpp	/^    ui_label_t::ui_label_t(string str, FTFont* font, size_t face_size, ui_alignment_e text_alignment)$/;"	f	class:asdf::ui_label_t
+ui_label_t	ui_label.h	/^    struct ui_label_t : ui_view_t$/;"	s	namespace:asdf
+ui_list_view_t	ui_base.cpp	/^    : ui_list_view_t(position, size, alignment)$/;"	f	namespace:asdf
+ui_list_view_t	ui_base.cpp	/^    ui_list_view_t::ui_list_view_t(vec2 position, vec2 size, ui_alignment_e alignment)$/;"	f	class:asdf::ui_list_view_t
+ui_list_view_t	ui_base.h	/^    struct ui_list_view_t : ui_view_t$/;"	s	namespace:asdf
+ui_scrollbar_t	ui_base.h	/^    struct ui_scrollbar_t : ui_slider_t {$/;"	s	namespace:asdf
+ui_slider_t	ui_base.cpp	/^    ui_slider_t::ui_slider_t(std::shared_ptr<ui_button_t> button\/*nullptr*\/, std::shared_ptr<ui_image_t> front_img\/*nullptr*\/, std::shared_ptr<ui_image_t> back_img\/*nullptr*\/)$/;"	f	class:asdf::ui_slider_t
+ui_slider_t	ui_base.h	/^    struct ui_slider_t : ui_base_t {$/;"	s	namespace:asdf
+ui_table_t	ui_base.h	/^    struct ui_table_t : ui_list_view_t$/;"	s	namespace:asdf
+ui_view_t	ui_base.cpp	/^    ui_view_t::ui_view_t(vec2 const& _position, ui_alignment_e _alignment)$/;"	f	class:asdf::ui_view_t
+ui_view_t	ui_base.cpp	/^    ui_view_t::ui_view_t(vec2 const& _position, vec2 const& size, ui_alignment_e alignment)$/;"	f	class:asdf::ui_view_t
+ui_view_t	ui_base.h	/^    struct ui_view_t : ui_base_t {$/;"	s	namespace:asdf
+up	ui_base.h	/^            up,$/;"	e	enum:asdf::ui_button_t::button_state_e
+update	ui_base.cpp	/^    void ui_base_t::update(float dt)$/;"	f	class:asdf::ui_base_t
+update	ui_base.cpp	/^    void ui_button_t::update(float dt)$/;"	f	class:asdf::ui_button_t
+update	ui_base.cpp	/^    void ui_image_t::update(float dt)$/;"	f	class:asdf::ui_image_t
+update	ui_base.cpp	/^    void ui_list_view_t::update(float dt)$/;"	f	class:asdf::ui_list_view_t
+update	ui_base.cpp	/^    void ui_slider_t::update(float dt)$/;"	f	class:asdf::ui_slider_t
+update	ui_base.cpp	/^    void ui_view_t::update(float dt)$/;"	f	class:asdf::ui_view_t
+update	ui_label.cpp	/^    void ui_label_t::update(float dt)$/;"	f	class:asdf::ui_label_t
+upper_bound	ui_base.h	/^        T upper_bound;$/;"	m	struct:asdf::aabb_
+upper_bound	ui_base.h	/^        glm::vec3 upper_bound;$/;"	m	struct:asdf::ui_base_t
+vertical	ui_base.h	/^        bool vertical = true; \/\/todo: deprecate in favour of direction$/;"	m	struct:asdf::ui_list_view_t
+visible	ui_base.h	/^        bool visible = true;$/;"	m	struct:asdf::ui_base_t
+~ui_base_t	ui_base.cpp	/^    ui_base_t::~ui_base_t()$/;"	f	class:asdf::ui_base_t
