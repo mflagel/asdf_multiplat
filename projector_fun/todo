@@ -1,0 +1,51 @@
+--- Big Giant projector_fun TODO List ---
+
+-- Current Thought Flow --
+polygon_path_machine:
+    Im not sure if the path state should itself know when to transition to a new path state,
+    or if the state machine should be polling the current state for what to throw on next.
+    I think I'm trying to shoehorn functionality in without implementing the concept of Events
+    and event handling. Or even writing out state diagrams of what I want a given machine to do
+
+    rework the state machines such that states transition to/from events, not other states
+
+    actually a finite state machine might be a bad idea for polygon movement since the only
+    thing that causes a state change is the current state itself, therefor why not just implement
+    this with a while loop
+
+bezier curve generation
+    (properly?) wrote/re-wrote bezier curve func to be cubic so it takes 2 control points
+    testing it with points forming a rectangle gives what looks like an incorrect curve in the second half
+        not sure what's going on there. the points are correct and are being used in the correct order
+        I even fixed bezier() now that I more closely looked at the formula and remembred how the hell polynomials work
+        ... I have no idea what I did but it works now. sweet!
+
+
+-- UNSORTED --
+metaballs n stuff
+throw a movable camera into this so I can look at things beyond the window bounds
+implement splines to compliment bezier curves (saves having to do control points)
+add a way to save the framebuffer to an image (preferably png)
+implement variable-degree bezier curves (instead of only cubic)
+write a set of RAII wrapper classes for openGL resources (vbos, vaos, etc)
+write custom polygon_state_machine allocator?
+
+-- RENDERING --
+vector rendering (specifically to render bezier curves)
+allow for polygon generation functions to return what type of openGL draw mode should be used
+    either by returning a touple, or by turning polygon_t into a struct instead of an alias of std::vector
+instanced rendering?
+
+-- STATE MACHINE BACKEND --
+rework state machines such that states transition to/from events, not other states
+delayed state machine transitions
+
+-- STATE MACHINE FRONTEND --
+polygons following paths
+morphing polygons (modifyng geometry over time)
+
+-- PATTERNS --
+scanner lines with rainbow colours instead of solid colours
+design/find a scripting syntax for user defined patterns and write the loading/setup code
+    JSON to define shapes/polygons, paths/path_nodes, etc
+    load with cJSON and spit out some data (don't bother with reflection, this isn't really direct de-serialization)
