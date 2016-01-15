@@ -1,0 +1,14 @@
+/bin/win32/Debug/*.pdb
+/build/win32/*.sdf
+/build/win32/SDL2.dll
+/build/win32/AsdfMultiplat.v12.suo
+/build/win32/glew32.dll
+/obj/
+/build/win32/ipch/asdfmultiplat-dda67d59/*.ipch
+/bin/
+/include/
+*.sublime-workspace
+*.tags
+*.tags_sorted_by_file
+*.project
+*.cproject
