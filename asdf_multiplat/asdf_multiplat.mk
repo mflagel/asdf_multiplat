@@ -33,8 +33,8 @@ INCLUDES   += $(SRCPATH)/data 	  \
 SRCPATH		= $(PROJPATH)/$(PROJNAME)
 
 MAIN_SOURCES = $(SRCPATH)/main/main.cpp 		\
-			  $(SRCPATH)/main/stdafx.cpp 		\
-			  $(SRCPATH)/main/asdf_multiplat.cpp 		\
+			   $(SRCPATH)/main/stdafx.cpp 		\
+			   $(SRCPATH)/main/asdf_multiplat.cpp 		\
 
 DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
@@ -47,6 +47,7 @@ UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)/spritebatch.cpp 		\
 					$(UTILITIES_SRC_PATH)/utilities_openGL.cpp 	\
 
 UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
+			 $(SRCPATH)/ui/ui_button.cpp \
              $(SRCPATH)/ui/ui_label.cpp \
              $(SRCPATH)/ui/text.cpp \
 

@@ -18,6 +18,7 @@ ASDFDIR = /home/mathias/Programming/AsdfMultiplat/obj/asdf_multiplat/linux
 ASDFASDF = $(ASDFDIR)/asdf_multiplat.o   \
 		   $(ASDFDIR)/spritebatch.o      \
 		   $(ASDFDIR)/ui_base.o          \
+		   $(ASDFDIR)/ui_button.o        \
 		   $(ASDFDIR)/ui_label.o          \
 		   $(ASDFDIR)/text.o          \
 		   $(ASDFDIR)/utilities_openGL.o \

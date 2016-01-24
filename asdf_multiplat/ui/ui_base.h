@@ -27,6 +27,7 @@ namespace asdf
 {
     struct ui_base_t;
     struct ui_label_t;
+    struct ui_button_t;
 
     typedef std::function<void(ui_base_t* sender)> ui_function_t;
     typedef glm::vec4       color_t;
@@ -37,6 +38,13 @@ namespace asdf
         T upper_bound;
         T lower_bound;
     };
+
+    // TODO: rename this something less stupid;
+    // I should just remove this, it's kind of lazy to begin with
+    #define DEFAULT_TRANSFORM_COPYPASTA        \
+        vec3 position_ = _position + position; \
+        mat3 matrix_ = _matrix * matrix;       \
+        color_t color_ = _color * color;
 
     using aabb_t = aabb_<glm::vec3>;
     using aabb2_t = aabb_<glm::vec2>;
@@ -163,37 +171,6 @@ namespace asdf
 
         virtual void update(float dt) override;
         virtual void render(UI_RENDER_PARAMS) override;
-    };
-
-    /// UI Button
-    struct ui_button_t : ui_base_t {
-        enum button_state_e {
-            up,
-            down,
-            highlighted,
-            disabled
-        };
-
-        button_state_e state = up;
-        bool togglable; //todo: make toggle button a subclass?
-        bool toggled;
-
-        std::shared_ptr<ui_base_t> base_unpressed;
-        std::shared_ptr<ui_base_t> base_highlight;
-        std::shared_ptr<ui_base_t> base_pressed;
-        std::shared_ptr<ui_base_t> base_disabled;
-
-        ui_function_t on_start_callback;
-        ui_function_t on_end_callback;
-        ui_function_t on_end_inside_callback;
-
-        ui_button_t(glm::vec3 position, glm::vec3 size, bool togglable = false);
-
-        // void align() override;
-
-        virtual void update(float dt) override;
-        virtual void render(UI_RENDER_PARAMS);
-        virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;
     };
 
     struct ui_slider_t : ui_base_t {
