@@ -71,12 +71,12 @@ $(warning Todo - Implement DEBUG)
 CFLAGS += -DDEBUG
 endif
 
-# Make
 
 # if rebuild is the target,  prevent all from initiating
 # compiliation before the object files are destroyed
 ifeq ($(MAKECMDGOALS), rebuild)
-all: clean
+$(info Requiring clean to finish before before objects are compiled)
+$(OBJECTS): clean
 endif
 
 all: $(PROJNAME)
