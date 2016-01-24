@@ -32,7 +32,8 @@ namespace gurps_track
 
         extra_info = add_cell<label_t>("(W/W) 00 + 0");
 
-        increment_button = extra_info->add_child<button_view_t>("+", [this](ui_base_t*){ this->increment_point_value(); } );
+        increment_button = extra_info->add_child<button_view_t>("+", [this](ui_base_t*){ 
+            this->increment_point_value(); } );
         decrement_button = extra_info->add_child<button_view_t>("-", [this](ui_base_t*){ this->decrement_point_value(); } );
         
         skill_name->	 alignment = ui_align_left;
@@ -96,7 +97,7 @@ namespace gurps_track
     , character(std::move(_character))
     {
     	physical_skills = add_cell<collapsable_list_view_t>("Physical");
-    	  mental_skills = add_cell<collapsable_list_view_t>("Mental");
+    	  // mental_skills = add_cell<collapsable_list_view_t>("Mental");
 
         rebuild_list();
     }
@@ -105,7 +106,7 @@ namespace gurps_track
     {
         //todo: do something more optimal than destroying all cells and rebuilding
         physical_skills->cells.erase(physical_skills->cells.begin() + 1, physical_skills->cells.end());
-		  mental_skills->cells.erase(  mental_skills->cells.begin() + 1,   mental_skills->cells.end());
+		  // mental_skills->cells.erase(  mental_skills->cells.begin() + 1,   mental_skills->cells.end());
 
         for(size_t i = 0; i < character->skills.size(); ++i)
         {
@@ -115,7 +116,7 @@ namespace gurps_track
             }
             else
             {
-            	mental_skills->add_cell<character_skill_library_entry_t>(this, i);
+            	// mental_skills->add_cell<character_skill_library_entry_t>(this, i);
             }
         }
 
