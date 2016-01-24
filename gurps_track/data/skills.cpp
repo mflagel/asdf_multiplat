@@ -54,11 +54,19 @@ namespace gurps_track
 		}
 		else
 		{
-			return curve[curve.size() - 1] * (1 + cost_index - curve.size());
+		   // everything past curve.size() is incremented on by the diff
+		   // between the last and second last elements
+		   // example: if grabbing cost for physical_hard level 10:
+		   //          16 + (16-8) * (1 + 10 - physical_curve.size())
+
+			ASSERT(curve.size() > 1, "");
+			auto diff = curve[curve.size() - 1] - curve[curve.size() - 2];
+
+			return curve[curve.size() - 1] + (diff * (1 + cost_index - curve.size()));
 		}
 	}
 
-    int get_skill_improvement_cost(skill_difficulty_e difficulty, int point_cost_start, int point_cost_end)
+    int get_skill_improvement_cost(skill_difficulty_e difficulty, size_t cost_index_start, size_t cost_index_end);
 	{
 		LOG_IF(point_cost_start == point_cost_end, "getting skill improvement cost for an improvement of zero");
 
@@ -66,10 +74,9 @@ namespace gurps_track
 		// size_t cur_index = get_skill_cost_index(cur_point_cost, difficulty);
 
 		ASSERT(false, "todo: get_skill_improvement_cost()");
-		// for(size_t i = cur_index; i < cur_index + num_improvements; ++i)
-		// {
-		// 	improvement_cost += 
-		// }
+		
+		//lazy
+		return point_cost_from_index(cost_index_end) - point_cost_from_index(cost_index_start);
 	}
 
 	bool skill_t::is_physical() const
@@ -94,7 +101,7 @@ namespace gurps_track
 
 	int skill_listing_t::improvement_cost() const
 	{
-		return point_cost_from_index(skill.difficulty, num_improvements + 1);
+		return point_cost_from_index(skill.difficulty, num_improvements + 1) - point_cost();
 	}
 
     int skill_listing_t::get_effective_skill(int stat_value, int modifiers) const
