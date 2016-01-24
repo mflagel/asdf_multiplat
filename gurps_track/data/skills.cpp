@@ -66,17 +66,12 @@ namespace gurps_track
 		}
 	}
 
-    int get_skill_improvement_cost(skill_difficulty_e difficulty, size_t cost_index_start, size_t cost_index_end);
+    int get_skill_improvement_cost(skill_difficulty_e difficulty, size_t cost_index_start, size_t cost_index_end)
 	{
-		LOG_IF(point_cost_start == point_cost_end, "getting skill improvement cost for an improvement of zero");
-
-		int improvement_cost = 0;
-		// size_t cur_index = get_skill_cost_index(cur_point_cost, difficulty);
-
-		ASSERT(false, "todo: get_skill_improvement_cost()");
+		LOG_IF(cost_index_start == cost_index_end, "getting skill improvement cost for an improvement of zero");
 		
 		//lazy
-		return point_cost_from_index(cost_index_end) - point_cost_from_index(cost_index_start);
+		return point_cost_from_index(difficulty, cost_index_end) - point_cost_from_index(difficulty, cost_index_start);
 	}
 
 	bool skill_t::is_physical() const
