@@ -6,7 +6,6 @@
 /obj/
 /build/win32/ipch/asdfmultiplat-dda67d59/*.ipch
 /bin/
-/include/
 *.sublime-workspace
 *.tags
 *.tags_sorted_by_file
