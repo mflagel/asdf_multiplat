@@ -1,0 +1,1024 @@
+{
+  "skills": [
+    {
+      "name": "Animal Handling",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Falconry",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Packing",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Animal Handling-6 or IQ-6"
+    },
+    {
+      "name": "Riding (any type)",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to Animal Handling-3 or DX-5"
+    },
+    {
+      "name": "Teamster",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to Animal Handling-4 or Riding-2"
+    },
+    {
+      "name": "Veterinary/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to any appropriate Medical skill-5*, or Animal Handling-5"
+    },
+    {
+      "name": "Artist",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Bard",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Performance-2"
+    },
+    {
+      "name": "Calligraphy",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to Artist-2 or DX-5"
+    },
+    {
+      "name": "Dancing",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5"
+    },
+    {
+      "name": "Musical Instrument",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to any similar instrument-3"
+    },
+    {
+      "name": "Photography/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Poetry",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Language-5"
+    },
+    {
+      "name": "Sculpting",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or IQ-5"
+    },
+    {
+      "name": "Singing",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to HT-4"
+    },
+    {
+      "name": "Writing",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Language-5"
+    },
+    {
+      "name": "Acrobatics",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Breath Control",
+      "description": "",
+      "difficulty": 5,
+      "defaults": "No default"
+    },
+    {
+      "name": "Free Fall/TL",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or HT-5"
+    },
+    {
+      "name": "Jumping",
+      "description": "",
+      "difficulty": 0,
+      "defaults": "No default"
+    },
+    {
+      "name": "Parachuting",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or IQ-6"
+    },
+    {
+      "name": "Scuba",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Swimming-5"
+    },
+    {
+      "name": "Skiing",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Sports (many types)",
+      "description": "",
+      "difficulty": 1,
+      "defaults": "Varies"
+    },
+    {
+      "name": "Swimming",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to ST-5 or DX-4"
+    },
+    {
+      "name": "Throwing",
+      "description": "",
+      "difficulty": 2,
+      "defaults": "No default"
+    },
+    {
+      "name": "Axe/Mace",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5"
+    },
+    {
+      "name": "Axe Throwing",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Battlesuit/TL",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-5, DX-5, Exoskeleton-2, or Vacc Suit-3"
+    },
+    {
+      "name": "Beam Weapons/TL",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or (other Beam Weapons skill)-4"
+    },
+    {
+      "name": "Blackjack",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Black Powder Weapons",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Blowpipe",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Bolas",
+      "description": "",
+      "difficulty": 1,
+      "defaults": "No default"
+    },
+    {
+      "name": "Bow",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Brawling",
+      "description": "",
+      "difficulty": 0,
+      "defaults": "No default"
+    },
+    {
+      "name": "Broadsword",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5, Shortsword-2 or Force Sword-3"
+    },
+    {
+      "name": "Buckler",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or Shield-2"
+    },
+    {
+      "name": "Crossbow",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Fast-Draw",
+      "description": "",
+      "difficulty": 0,
+      "defaults": "No default"
+    },
+    {
+      "name": "Fencing",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5"
+    },
+    {
+      "name": "Flail",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Force Shield",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Force Sword",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5, or any Sword skill-3"
+    },
+    {
+      "name": "Gunner/TL",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or (other Gunner skill)-4"
+    },
+    {
+      "name": "Guns/TL",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or (other Gun skill)-4"
+    },
+    {
+      "name": "Judo",
+      "description": "",
+      "difficulty": 2,
+      "defaults": "No default"
+    },
+    {
+      "name": "Karate",
+      "description": "",
+      "difficulty": 2,
+      "defaults": "No default"
+    },
+    {
+      "name": "Knife",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Knife Throwing",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Lance",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to Spear-3 for those who have Riding at 12+; DX-6 for others"
+    },
+    {
+      "name": "Lasso (Riata)",
+      "description": "",
+      "difficulty": 1,
+      "defaults": "No default"
+    },
+    {
+      "name": "Net",
+      "description": "",
+      "difficulty": 2,
+      "defaults": "No default"
+    },
+    {
+      "name": "Polearm",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5"
+    },
+    {
+      "name": "Shield",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or Buckler-2"
+    },
+    {
+      "name": "Shortsword",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5, Broadsword-2, or Force Sword-3"
+    },
+    {
+      "name": "Sling",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Spear",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or Staff-2"
+    },
+    {
+      "name": "Spear Thrower",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-4 or Spear Throwing-4"
+    },
+    {
+      "name": "Spear Throwing",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or Spear Thrower -4"
+    },
+    {
+      "name": "Speed-Load",
+      "description": "",
+      "difficulty": 0,
+      "defaults": "No default"
+    },
+    {
+      "name": "Staff",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-5 or Spear-2"
+    },
+    {
+      "name": "Thrown Weapon",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4"
+    },
+    {
+      "name": "Two-Handed Axe/Mace",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5"
+    },
+    {
+      "name": "Two-Handed Sword",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or Force Sword-3"
+    },
+    {
+      "name": "Whip",
+      "description": "",
+      "difficulty": 1,
+      "defaults": "No default"
+    },
+    {
+      "name": "Armoury/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, (weapon skill)-6, or Blacksmith-3 (for weapons at TL4 or below)"
+    },
+    {
+      "name": "Blacksmith/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 orJeweler-4"
+    },
+    {
+      "name": "Carpentry",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4 or DX-4"
+    },
+    {
+      "name": "Cooking",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Jeweler/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Blacksmith-4"
+    },
+    {
+      "name": "Leatherworking",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4 or DX-5"
+    },
+    {
+      "name": "Mechanic/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Engineer-4*"
+    },
+    {
+      "name": "Pottery",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Shipbuilding/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Woodworking",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or Carpentry-3"
+    },
+    {
+      "name": "Gesture",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4 or Sign Language"
+    },
+    {
+      "name": "Sign Language",
+      "description": "",
+      "difficulty": 4,
+      "defaults": "No default"
+    },
+    {
+      "name": "Telegraphy",
+      "description": "",
+      "difficulty": 3,
+      "defaults": "No default"
+    },
+    {
+      "name": "Diagnosis/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6, First Aid-8, Veterinary-5 or Physician-4"
+    },
+    {
+      "name": "First Aid/TL",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to Physician, IQ-5, Veterinary-5 or Physiology-5"
+    },
+    {
+      "name": "Hypnotism",
+      "description": "",
+      "difficulty": 5,
+      "defaults": "No default"
+    },
+    {
+      "name": "Physician/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Veterinary-5, First Aid-11 or IQ-7"
+    },
+    {
+      "name": "Surgery/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Veterinary-5, Physician-5, Physiology-8 or First Aid-12"
+    },
+    {
+      "name": "Climbing",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to DX-5 or ST-5"
+    },
+    {
+      "name": "Fishing",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Navigation/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Astronomy-5 or Seamanship-5"
+    },
+    {
+      "name": "Seamanship/TL",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Survival (area type)",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, Naturalist-3, or Survival (other area type)-3"
+    },
+    {
+      "name": "Tracking",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Naturalist-5"
+    },
+    {
+      "name": "Accounting",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-10, Merchant-5 or Mathematics-5"
+    },
+    {
+      "name": "Computer Operation/TL",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Electronics Operation/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or appropriate Electronics-3"
+    },
+    {
+      "name": "Heraldry",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Savoir-Faire-3"
+    },
+    {
+      "name": "Law",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Agronomy/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Alchemy/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults": "No default"
+    },
+    {
+      "name": "Anthropology",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Archaeology",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Architecture/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Astrogation/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to Navigation-5, Astronomy-4 or Mathematics-4"
+    },
+    {
+      "name": "Astronomy/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Biochemistry/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Chemistry-5"
+    },
+    {
+      "name": "Botany/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Agronomy-5"
+    },
+    {
+      "name": "Chemistry/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Criminology/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Ecology/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Naturalist-3"
+    },
+    {
+      "name": "Economics",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Merchant-6"
+    },
+    {
+      "name": "Electronics/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to (other Electronics)-4"
+    },
+    {
+      "name": "Engineer/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to appropriate Mechanic specialty-6"
+    },
+    {
+      "name": "Forensics/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Criminology-4"
+    },
+    {
+      "name": "Genetics/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Biochemistry-5 or Physiology-5"
+    },
+    {
+      "name": "Geology/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Prospecting-4"
+    },
+    {
+      "name": "History",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Archaeology-6"
+    },
+    {
+      "name": "Linguistics",
+      "description": "",
+      "difficulty": 5,
+      "defaults": "No default"
+    },
+    {
+      "name": "Literature",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Mathematics",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Metallurgy/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to Blacksmith-8, Jeweler-8, Armoury-8 or Chemistry-5"
+    },
+    {
+      "name": "Meteorology/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Occultism",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Physics/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Physiology/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-7, or to any medical skill-5*"
+    },
+    {
+      "name": "Prospecting/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Geology-4"
+    },
+    {
+      "name": "Psychology",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Research",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Writing-3"
+    },
+    {
+      "name": "Theology",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Zoology/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or any Animal skill-6"
+    },
+    {
+      "name": "Acting",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, Bard-5 or Performance-2"
+    },
+    {
+      "name": "Administration",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-6 or Merchant-3"
+    },
+    {
+      "name": "Area Knowledge",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4*"
+    },
+    {
+      "name": "Carousing",
+      "description": "",
+      "difficulty": 1,
+      "defaults": "No default"
+    },
+    {
+      "name": "Diplomacy",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Fast-Talk",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Acting-5"
+    },
+    {
+      "name": "Gambling",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Mathematics-5"
+    },
+    {
+      "name": "Leadership",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to ST-5"
+    },
+    {
+      "name": "Merchant",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Performance",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, Acting-2 or Bard-2"
+    },
+    {
+      "name": "Politics",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Diplomacy-5"
+    },
+    {
+      "name": "Savoir-Faire",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Sex Appeal",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to HT-3"
+    },
+    {
+      "name": "Strategy",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6, Tactics-6 or other Strategy type-4"
+    },
+    {
+      "name": "Tactics",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Strategy-6"
+    },
+    {
+      "name": "Teaching",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Camouflage",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4 or Survival-2"
+    },
+    {
+      "name": "Demolition/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, Underwater Demolition-2, or Engineer-3"
+    },
+    {
+      "name": "Detect Lies",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6 or Psychology-4"
+    },
+    {
+      "name": "Disguise",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Escape",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6"
+    },
+    {
+      "name": "Forgery/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6, DX-8 or Artist-5"
+    },
+    {
+      "name": "Holdout",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Sleight of Hand-3"
+    },
+    {
+      "name": "ntelligence Analysis/TL",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Interrogation",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5 or Intimidation-3"
+    },
+    {
+      "name": "Lip Reading",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to your Vision roll-IQ"
+    },
+    {
+      "name": "Lockpicking/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Pickpocket",
+      "description": "",
+      "difficulty": 2,
+      "defaults":  "Defaults to DX-6 or Sleight of Hand-4"
+    },
+    {
+      "name": "Poisons",
+      "description": "",
+      "difficulty": 5,
+      "defaults":  "Defaults to IQ-6, Chemistry-5 or Physician-3"
+    },
+    {
+      "name": "Scrounging",
+      "description": "",
+      "difficulty": 3,
+      "defaults":  "Defaults to IQ-4"
+    },
+    {
+      "name": "Shadowing",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-6 or Stealth-4 (on foot only)"
+    },
+    {
+      "name": "Sleight of Hand",
+      "description": "",
+      "difficulty": 2,
+      "defaults": "No default"
+    },
+    {
+      "name": "Stealth",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-5 or DX-5"
+    },
+    {
+      "name": "Streetwise",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5"
+    },
+    {
+      "name": "Traps/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to IQ-5, DX-5 or Lockpicking-3"
+    },
+    {
+      "name": "Underwater Demolition/TL",
+      "description": "",
+      "difficulty": 4,
+      "defaults":  "Defaults to Demolition-2"
+    },
+    {
+      "name": "Ventriloquism",
+      "description": "",
+      "difficulty": 5,
+      "defaults": "No default"
+    },
+    {
+      "name": "Bicycling",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-4 or Motorcycle"
+    },
+    {
+      "name": "Boating",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-5, DX-5 or Powerboat-3"
+    },
+    {
+      "name": "Driving/TL (vehicle type)",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-5 or DX-5"
+    },
+    {
+      "name": "Motorcycle/TL",
+      "description": "",
+      "difficulty": 0,
+      "defaults":  "Defaults to DX-5, IQ-5 or Bicycling-5"
+    },
+    {
+      "name": "Piloting/TL (aircraft type)",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-6"
+    },
+    {
+      "name": "Powerboat/TL",
+      "description": "",
+      "difficulty": 1,
+      "defaults":  "Defaults to IQ-5, DX-5 or Boating-3"
+    }
+  ]
+}

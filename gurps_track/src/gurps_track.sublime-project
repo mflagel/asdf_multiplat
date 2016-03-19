@@ -1,0 +1,30 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": ".",
+			"folder_exclude_patterns": ["CMakeFiles"]
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/asdf_multiplat"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/ext"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/shaders"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/build"
+		}
+	],
+	"settings":
+	{
+		"sublimegdb_commandline": "gdb --interpreter=mi dasmusic"
+	}
+}
