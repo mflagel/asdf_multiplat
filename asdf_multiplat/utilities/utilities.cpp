@@ -46,7 +46,10 @@ namespace asdf {
     void interrupt_handler(int x)
     {
         LOG("\nInterrupt Signal");
-        app.running = false;
+
+        // FIXME commenting this out so that gurps_track will work
+        // Will set it up to use global app struct later
+        // app.running = false;
     }
 
     struct file_open_exception : std::exception 
@@ -191,18 +194,20 @@ namespace asdf {
         return tokens;
     }
 
-    void checkSDLError(int line/*=-1*/){
-    #ifndef NDEBUG
-	    const char *error = SDL_GetError();
-	    if (*error != '\0')
-	    {
-		    printf("SDL Error: %s\n", error);
-		    if (line != -1)
-			    printf(" + line: %i\n", line);
-		    SDL_ClearError();
-	    }
-    #endif
-    }
+    /// FIXME move somewhere specific to SDL or something
+    /// otherwise non-sdl projects cant use this file
+    // void checkSDLError(int line/*=-1*/){
+    // #ifndef NDEBUG
+	   //  const char *error = SDL_GetError();
+	   //  if (*error != '\0')
+	   //  {
+		  //   printf("SDL Error: %s\n", error);
+		  //   if (line != -1)
+			 //    printf(" + line: %i\n", line);
+		  //   SDL_ClearError();
+	   //  }
+    // #endif
+    // }
 
     /************************************************************************/
     /* GetB2FixtureVerts
