@@ -23,7 +23,7 @@ namespace ui
 	{
 		auto button_toggle_func = [this](bool on)
 		{
-			if(on)
+			if(!on)
 			{
 				ASSERT(parent.character, "This button should not be pressable if the skill list does not have an attached character");
 				parent.character->learn_skill(parent.skills[index], 1);
