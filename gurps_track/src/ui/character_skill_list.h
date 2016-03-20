@@ -41,7 +41,7 @@ namespace ui
 
 		character_skill_list_entry_t(character_skill_list_t& _parent, size_t index);
 
-		void set_data(data::learned_skill_t const&);
+		void set_data(data::character_t const&, size_t skill_index);
 	};
 
 	/*
@@ -62,9 +62,13 @@ namespace ui
     */
 	struct character_skill_list_t : mk::Board
 	{
+		mk::List* scroll_list;
+
 		data::character_t& character;
 
 		character_skill_list_t(data::character_t& _character);
+
+		void rebuild();
 	};
 }
 }
