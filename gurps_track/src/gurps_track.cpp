@@ -10,7 +10,7 @@
 #include <kiui/Ui/Nano/mkGlWindow.h>
 
 #include "data/character.h"
-#include "ui/character_main_layout.h"
+#include "ui/main_layout.h"
 #include "ui/skill_list_layout.h"
 
 #define ASSETS_PATH "../assets/"
@@ -29,14 +29,26 @@ int main(int argc, char *argv[])
 	uiwindow.init();
 
 	mk::Form& root = uiwindow.rootForm();
-
 	mk::StyleParser parser(uiwindow.styler());
+	// parser.loadStyleSheet(root.sheet().uiWindow().resourcePath() + "interface/styles/blendish_dark.yml");
 	
-	character_t test_char("");
-	skill_list_t test_skills("../assets/data/gurps_skills.json");
+	Header& header = root.sheet().emplace<Header>();
+	// Board& body = root.sheet().emplace<Board>();
+	// LayerSheet& body = board.emplace<LayerSheet>();
 
-	// root.sheet().emplace<character_main_layout_t>(&test_char);
-	root.sheet().emplace<skill_library_t>(test_skills, &test_char);
+	// todo: replace with icons
+	header.emplace<Button>("New");
+	header.emplace<Button>("Open");
+	header.emplace<Button>("Save");
+	header.emplace<Button>("Save As");
+
+	{
+		character_t test_char("");
+		skill_list_t test_skills("../assets/data/gurps_skills.json");
+
+		root.sheet().emplace<main_layout_t>(&test_char);
+		// root.sheet().emplace<skill_library_t>(test_skills, &test_char);
+	}
 
 	bool pursue = true;
 	while (pursue)
