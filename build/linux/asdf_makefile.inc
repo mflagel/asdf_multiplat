@@ -42,7 +42,7 @@ CLANG_EXTENSIONS := -fms-extensions
 DAS_FLAGS 		 := $(WARNING_FLAGS) $(CLANG_EXTENSIONS) -g -pedantic -fmacro-backtrace-limit=20
 CFLAGS  		 := $(DAS_FLAGS) -fPIC
 # use deffered assignment for CPPFLAGS so it will include anything CFLAGS gets later
-CPPFLAGS 		  = $(CFLAGS) -fPIC -stdlib=libstdc++ -std=c++11
+CPPFLAGS 		  = $(CFLAGS) -fPIC -stdlib=libstdc++ -std=c++14
 LINK_FLAGS 		 := $(DAS_FLAGS) -L/usr/lib
 
 ifndef PROJNAME

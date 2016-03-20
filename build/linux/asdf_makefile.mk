@@ -98,9 +98,9 @@ intro:
 	pwd
 	@echo Libs: $(LIBS)
 	# @echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
-	# @echo LINK_FLAGS: $(LINK_FLAGS)
 	# @echo CFLAGS: $(CFLAGS)
-	# @echo CPPFLAGS: $(CPPFLAGS)
+	@echo CPPFLAGS: $(CPPFLAGS)
+	@echo LINK_FLAGS: $(LINK_FLAGS)
 
 	# @echo Objs: $(OBJECTS)
 	# @echo Srcs: $(SOURCES)
