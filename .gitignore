@@ -4,6 +4,7 @@
 /build/win32/AsdfMultiplat.v12.suo
 /build/win32/glew32.dll
 /obj/
+/CMakeFiles/
 /build/win32/ipch/asdfmultiplat-dda67d59/*.ipch
 /bin/
 *.sublime-workspace
