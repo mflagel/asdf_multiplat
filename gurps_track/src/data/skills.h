@@ -204,7 +204,7 @@ namespace data
         int improvement_cost() const;
 
         int get_effective_skill(int stat_value, int modifiers = 0) const;
-        int get_effective_skill(character_t* character) const;
+        int get_effective_skill(character_t const& character) const;
     };
 
     // todo: use something like a map so I can do something more efficient than increment search

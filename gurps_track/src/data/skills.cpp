@@ -112,17 +112,17 @@ namespace data
     }
 
     /// Todo: handle skills that default off of ST or HT
-    int learned_skill_t::get_effective_skill(character_t* character) const
+    int learned_skill_t::get_effective_skill(character_t const& character) const
     {
     	int stat_value = 0;
 
     	if(skill.is_physical())
     	{
-    		stat_value = character->DX();
+    		stat_value = character.DX();
     	}
     	else if(skill.is_mental())
     	{
-    		stat_value = character->IQ();
+    		stat_value = character.IQ();
     	}
 
     	//todo: handle skill bonuses from traits or special rules
