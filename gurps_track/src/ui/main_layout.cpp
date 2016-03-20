@@ -16,14 +16,11 @@ namespace ui
 {
 	struct character_skills_layout_t : mk::Page
 	{
-		skill_list_t all_skills;
-
-		character_skills_layout_t(data::character_t &);
+		character_skills_layout_t(data::character_t&, data::skill_list_t& all_skills);
 	};
 
-	character_skills_layout_t::character_skills_layout_t(data::character_t& _character)
+	character_skills_layout_t::character_skills_layout_t(data::character_t& _character, skill_list_t& all_skills)
 	: Page("Skills")
-	, all_skills(skill_list_t("../assets/data/gurps_skills.json"))
 	{
 		Tabber& tabs = emplace<Tabber>();
 
@@ -34,7 +31,7 @@ namespace ui
 		all.emplace<skill_library_t>(all_skills, &_character);
 	}
 
-	main_layout_t::main_layout_t(data::character_t& _character)
+	main_layout_t::main_layout_t(data::character_t& _character, skill_list_t& all_skills)
 	: Board()
 	{
 		Tabber& tabber = emplace<Tabber>();
@@ -44,7 +41,7 @@ namespace ui
 
 		Page& combat    = tabber.emplace<Page>("Stats");
 		Page& traits    = tabber.emplace<Page>("Traits");
-		Page& skills    = tabber.emplace<character_skills_layout_t>(_character);
+		Page& skills    = tabber.emplace<character_skills_layout_t>(_character, all_skills);
 		Page& spells    = tabber.emplace<Page>("Spells");
 	}
 

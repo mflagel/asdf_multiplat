@@ -21,21 +21,22 @@ namespace ui
 	, parent(_parent)
 	, index(_index)
 	{
-		auto improve_skill = [this](Button&)
+		auto improve_skill = [this](Button&) -> void
 		{
 			parent.character.improve_skill(index);
 		};
-		auto un_improve_skill = [this](Button&)
+		auto un_improve_skill = [this](Button&) -> void
 		{
-			/// TODO: un_improve button callback
+			/// TODO:
+			LOG("TODO: un_improve button callback");
 		};
 
 		name            = &mHeader->emplace<Label>("n");
 		difficulty      = &mHeader->emplace<Label>("d");
 		point_cost      = &mHeader->emplace<Label>("[-]");
 		effective_skill = &mHeader->emplace<Label>("-");
-		improve_btn     = &mHeader->emplace<Button>("+", std::move(improve_skill));
-		un_improve_btn  = &mHeader->emplace<Button>("-", std::move(un_improve_skill));
+		improve_btn     = &mHeader->emplace<Button>("+", std::move(improve_skill) );
+		un_improve_btn  = &mHeader->emplace<Button>("-", std::move(un_improve_skill) );
 
 		set_data(parent.character, index);
 		collapse();
@@ -54,6 +55,7 @@ namespace ui
 		// description.setLabel(skill.description);
 		description.setLabel("test description");
 	}
+
 
 	character_skill_list_t::character_skill_list_t(data::character_t& _character)
 	: Board()
