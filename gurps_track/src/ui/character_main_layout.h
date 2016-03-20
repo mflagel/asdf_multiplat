@@ -42,12 +42,12 @@ namespace ui
 
 	struct title_display_t : mk::Expandbox
 	{
-		title_display_t(data::character_t*);
+		title_display_t(data::character_t&);
 	};
 
 	struct character_portrait_t : mk::Expandbox
 	{
-		character_portrait_t(data::character_t*);
+		character_portrait_t(data::character_t&);
 	};
 
 	struct point_cost_summary_t : mk::Expandbox
@@ -79,18 +79,20 @@ namespace ui
 
 		std::array<mk::Label*, category_count> cost_labels;
 
-		point_cost_summary_t(data::character_t*);
-		void set_data(data::character_t*);
+		point_cost_summary_t(data::character_t&);
+		void set_data(data::character_t&);
 	};
 
 	struct experience_log_t : mk::Expandbox
 	{
-		experience_log_t(data::character_t*);
+		experience_log_t(data::character_t&);
 	};
 
+	/// TODO: rename this to something like "Character Basics"
+	/// 'main' should refer to the parent of this layout
 	struct character_main_layout_t : mk::Sheet
 	{
-		character_main_layout_t(data::character_t*);
+		character_main_layout_t(data::character_t&);
 	};
 }
 }

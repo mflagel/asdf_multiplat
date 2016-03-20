@@ -23,17 +23,17 @@ namespace ui
 	// | Race            |
 	// | Date Modified   |
 	// +-----------------+
-	title_display_t::title_display_t(character_t* _character)
+	title_display_t::title_display_t(character_t& _character)
 	: Expandbox("Character Title")
 	{
-		emplace<Label>(string("Name: " + _character->name));
-		emplace<Label>(string("Description: " + _character->description));
-		emplace<Label>(string("Race: " + _character->race.name));
-		// emplace<Label>(string("#: " + to_string(character->version) + " | " + date.to_string());  //FIXME
+		emplace<Label>(string("Name: " + _character.name));
+		emplace<Label>(string("Description: " + _character.description));
+		emplace<Label>(string("Race: " + _character.race.name));
+		// emplace<Label>(string("#: " + to_string(character.version) + " | " + date.to_string());  //FIXME
 	}
 
 
-	character_portrait_t::character_portrait_t(character_t* _character)
+	character_portrait_t::character_portrait_t(character_t& _character)
 	: Expandbox("Portrait")
 	{
 		//todo: emplace an image
@@ -48,7 +48,7 @@ namespace ui
 	// +-----------------+
 	constexpr std::array<const char*, point_cost_summary_t::category_count> point_cost_summary_t::category_names;
 
-	point_cost_summary_t::point_cost_summary_t(character_t* _character)
+	point_cost_summary_t::point_cost_summary_t(character_t& _character)
 	: Expandbox("Point Cost Summary")
 	{
 		StringVector table_titles(point_cost_summary_t::category_names.begin(), point_cost_summary_t::category_names.end());
@@ -64,14 +64,12 @@ namespace ui
 		set_data(_character);
 	}
 
-	void point_cost_summary_t::set_data(character_t* character)
+	void point_cost_summary_t::set_data(character_t& character)
 	{
-		ASSERT(character, "");
-
 		int adv_total = 0;
 		int disadv_total = 0;
 		int quirk_total = 0;
-		for(auto const& trait : character->traits)
+		for(auto const& trait : character.traits)
 		{
 		    if(trait.is_advantage())
 		    {
@@ -87,31 +85,31 @@ namespace ui
 		    }
 		}
 
-		cost_labels[stats]->        setLabel(to_string(character->stats_point_cost()));
-		// cost_labels[race]->         setLabel(to_string(character->race.point_cost()));
+		cost_labels[stats]->        setLabel(to_string(character.stats_point_cost()));
+		// cost_labels[race]->         setLabel(to_string(character.race.point_cost()));
 		cost_labels[advantages]->   setLabel(to_string(adv_total));
 		cost_labels[disadvantages]->setLabel(to_string(disadv_total));
 		cost_labels[quirks]->       setLabel(to_string(quirk_total));
-		cost_labels[skills]->       setLabel(to_string(static_cast<int>(character->skills_point_cost())));
-		cost_labels[spells]->       setLabel(to_string(character->spells_point_cost()));
+		cost_labels[skills]->       setLabel(to_string(static_cast<int>(character.skills_point_cost())));
+		cost_labels[spells]->       setLabel(to_string(character.spells_point_cost()));
 		//lazy, should save totals I grabbed before to the stack and sum them here rather than re-loop
-		cost_labels[total]->        setLabel(to_string(character->total_point_cost()));
+		cost_labels[total]->        setLabel(to_string(character.total_point_cost()));
 	}
 
 
-	experience_log_t::experience_log_t(character_t* _character)
+	experience_log_t::experience_log_t(character_t& _character)
 	: Expandbox("Experience Log")
 	{
-		for(auto const& transaction : _character->point_transactions)
+		for(auto const& transaction : _character.point_transactions)
 		{
 			emplace<Label>(to_string(transaction.amount) + " (" + transaction.description + ")");
 		}
 
-		emplace<Label>("Unspent Points: " + to_string(_character->unspent_points));
+		emplace<Label>("Unspent Points: " + to_string(_character.unspent_points));
 	}
 
 
-	character_main_layout_t::character_main_layout_t(character_t* _character)
+	character_main_layout_t::character_main_layout_t(character_t& _character)
 	: Sheet()
 	{
 		this->emplace<title_display_t>(_character);
