@@ -23,8 +23,13 @@ namespace ui
 		character.emplace<character_main_layout_t>(_character);
 
 		Page& combat    = tabber.emplace<Page>("Stats");
+
 		Page& traits    = tabber.emplace<Page>("Traits");
+
 		Page& skills    = tabber.emplace<Page>("Skills");
+		skills.emplace<Button>("Add Skills");
+		character.emplace<character_skill_list_t>(_character);
+
 		Page& spells    = tabber.emplace<Page>("Spells");
 	}
 
