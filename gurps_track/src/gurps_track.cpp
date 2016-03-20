@@ -44,10 +44,8 @@ int main(int argc, char *argv[])
 
 	{
 		character_t test_char("");
-		skill_list_t test_skills("../assets/data/gurps_skills.json");
-
+		
 		root.sheet().emplace<main_layout_t>(test_char);
-		// root.sheet().emplace<skill_library_t>(test_skills, test_char);
 	}
 
 	bool pursue = true;
