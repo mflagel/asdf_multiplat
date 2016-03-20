@@ -46,10 +46,12 @@ namespace ui
 	|-|+|SkillZZ    (P/A)-|
 	+---------------------+
 	*/
-	struct skill_library_t : mk::Sheet
+	struct skill_library_t : mk::Board
 	{
 		data::skill_list_t const& skills;
 		data::character_t* character = nullptr;
+
+
 
 		skill_library_t(data::skill_list_t const&, data::character_t* _character = nullptr);
 	};

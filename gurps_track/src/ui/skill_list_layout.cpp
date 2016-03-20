@@ -1,14 +1,10 @@
 #include "stdafx.h"
 #include "skill_list_layout.h"
 
-#include <cJSON/cJSON.h>
-#include <asdfm/utilities/utilities.h>
-
 #include "data/character.h"
 
 using namespace std;
 using namespace mk;
-using namespace asdf;
 
 namespace gurps_track
 {
@@ -67,14 +63,15 @@ namespace ui
 	}
 
 	skill_library_t::skill_library_t(skill_list_t const& _skills, data::character_t* _character)
-	: Sheet()
+	: Board()
 	, skills(_skills)
 	, character(_character)
 	{
-		for(size_t i = 0; i < /*skills.size()*/10; ++i)
-		{
-			emplace<skill_library_entry_t>(*this, i);
+		List& list = emplace<List>();
 
+		for(size_t i = 0; i < skills.size(); ++i)
+		{
+			list.emplace<skill_library_entry_t>(*this, i);
 		}
 	}
 
