@@ -39,7 +39,9 @@ namespace ui
 		Page& character = tabber.emplace<Page>("Character");
 		character.emplace<character_main_layout_t>(_character);
 
-		Page& combat    = tabber.emplace<Page>("Stats");
+		Page& combat    = tabber.emplace<Page>("Combat");
+		combat.emplace<character::combat_t>(_character);
+
 		Page& traits    = tabber.emplace<Page>("Traits");
 		Page& skills    = tabber.emplace<character_skills_layout_t>(_character, all_skills);
 		Page& spells    = tabber.emplace<Page>("Spells");

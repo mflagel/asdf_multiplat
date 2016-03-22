@@ -2,6 +2,7 @@
 #include <kiui/Ui/mkUiTypes.h>
 
 #include "character_main_layout.h"
+#include "character_combat.h"
 #include "character_skill_list.h"
 
 namespace gurps_track
