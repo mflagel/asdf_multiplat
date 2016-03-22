@@ -126,6 +126,7 @@ namespace data
         , encumberance_medium
         , encumberance_heavy
         , encumberance_extra_heavy
+        , encumberance_count
     };
 
     constexpr std::array<int, encumberance_extra_heavy + 1> encumberance_mults = 
@@ -135,6 +136,15 @@ namespace data
         ,  8 //encumberance_medium
         , 12 //encumberance_heavy
         , 20 //encumberance_extra_heavy
+    };
+
+    constexpr std::array<const char*, encumberance_count> encumberance_names =
+    {
+          "None"
+        , "Light"
+        , "Medium"
+        , "Heavy"
+        , "Extra Heavy"
     };
 
     constexpr float get_encumberance_weight(const int ST, const encumberance_e encumberance)
