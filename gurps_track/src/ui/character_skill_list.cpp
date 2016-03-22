@@ -23,7 +23,11 @@ namespace ui
 	{
 		auto improve_skill = [this](Button&) -> void
 		{
-			parent.character.improve_skill(index);
+			if(parent.character.improve_skill(index))
+			{
+				learned_skill_t const& learned_skill = parent.character.skills[index];
+				effective_skill->setLabel(to_string(learned_skill.get_effective_skill(parent.character)));
+			}
 		};
 		auto un_improve_skill = [this](Button&) -> void
 		{

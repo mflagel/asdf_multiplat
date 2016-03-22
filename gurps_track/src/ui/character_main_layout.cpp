@@ -17,7 +17,6 @@ using namespace data;
 
 namespace ui
 {
-
 	// +-----------------+
 	// | Name            |
 	// | Race            |
