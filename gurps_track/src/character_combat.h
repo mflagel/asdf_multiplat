@@ -100,7 +100,6 @@ namespace character
 			data::base_stat_e stat;
 
 			base_stat_t(data::character_t&, data::base_stat_e);
-
 			void set_data(data::character_t const&);
 		};
 
@@ -110,7 +109,6 @@ namespace character
 			data::derived_stat_e stat;
 
 			derived_stat_t(data::character_t&, data::derived_stat_e);
-
 			void set_data(data::character_t const&);
 		};
 
@@ -123,7 +121,6 @@ namespace character
 		stat_t* health  = nullptr;
 
 		stats_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 
@@ -142,7 +139,6 @@ namespace character
 		std::array<mk::Label*, data::encumberance_count> encumberance_labels;
 
 		encumberance_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 
@@ -153,7 +149,6 @@ namespace character
 		mk::Label* other_armor;
 
 		armor_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 
@@ -162,7 +157,6 @@ namespace character
 		std::vector<mk::Expandbox*> attack_boxes;
 
 		attacks_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 
@@ -173,7 +167,6 @@ namespace character
 		std::vector<mk::Expandbox*> weapon_parries;
 
 		defenses_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 
@@ -181,16 +174,26 @@ namespace character
 	{
 		struct effect_t : mk::Expandbox
 		{
+			mk::Textbox* name_textbox = nullptr;
 			std::vector<mk::Label*> modifiers;
 
-			effect_t(data::status_effect_t);
+			status_effects_t& parent;
+			size_t index;
+
+			effect_t(status_effects_t&, size_t _index);
+			void set_data(data::status_effect_t const&);
+			void remove_effect();
 		};
 
-		std::vector<effect_t> effects;
+		mk::List* effects = nullptr;
+		
+		data::character_t& character;
 
 		status_effects_t(data::character_t&);
-
 		void set_data(data::character_t const&);
+
+		void add_new_effect();
+		void remove_effect(size_t effect_index);
 	};
 
 	struct active_spells_t : mk::Expandbox
@@ -204,7 +207,6 @@ namespace character
 		mk::Label* num_active_spells = nullptr;
 
 		active_spells_t(data::character_t&);
-
 		void set_data(data::character_t const&);
 	};
 

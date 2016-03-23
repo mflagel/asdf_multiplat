@@ -194,13 +194,58 @@ namespace character
 
 
 	///
-	status_effects_t::status_effects_t(data::character_t&)
+	status_effects_t::status_effects_t(data::character_t& _character)
 	: Expandbox("Status Effects")
+	, character(_character)
 	{
+		mHeader->emplace<Button>("Add Effect", [this](Button&){this->add_new_effect();});
+
+		effects = &emplace<List>();
+
+		set_data(character);
 	}
 
-	void status_effects_t::set_data(data::character_t const&)
+	void status_effects_t::set_data(data::character_t const& character)
 	{
+		effects->clear();
+
+		for(size_t i = 0; i < character.status_effects.size(); ++i)
+		{
+			effects->emplace<effect_t>(*this, i);
+		}
+	}
+
+	void status_effects_t::remove_effect(size_t effect_index)
+	{
+		ASSERT(effect_index < effects->count(), "");
+
+		effects->release(effect_index);
+		for(size_t i = effect_index; i < effects->count(); ++i)
+		{
+			effects->at(effect_index)->as<effect_t>().index -= 1;
+		}
+
+		character.remove_effect(effect_index);
+	}
+
+	void status_effects_t::add_new_effect()
+	{
+		// effects->emplace<status_effects_t>(status_effects_t
+	}
+
+
+	///
+	status_effects_t::effect_t::effect_t(status_effects_t& _parent, size_t _index)
+	: Expandbox("")
+	, parent(_parent)
+	, index(_index)
+	{
+		name_textbox = &mHeader->emplace<Textbox>("");
+	}
+
+	void status_effects_t::effect_t::set_data(data::status_effect_t const&)
+	{
+
 	}
 
 
