@@ -163,10 +163,10 @@ namespace data
         void derive_stats();
         void cache_mods();
 
-        void add_effect(const status_effect_t);
+        void add_effect(status_effect_t);
         // bool remove_effect(const status_effect_t);
         // bool remove_effect(status_effect_t*);
-        // bool remove_effect(size_t index);
+        void remove_effect(size_t index);
 
         int get_stat(base_stat_e) const;
         int get_stat(derived_stat_e) const;
@@ -209,6 +209,9 @@ namespace data
         
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
+
+    private:
+        void cache_effect(const status_effect_t);
     };
 }
 }

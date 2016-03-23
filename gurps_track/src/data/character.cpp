@@ -174,7 +174,7 @@ namespace data
         {
             for(auto const& effect : trait.status_effects)
             {
-                add_effect(effect);
+                cache_effect(effect);
             }
         }
 
@@ -182,12 +182,18 @@ namespace data
         {
             for(auto const& effect : trait.status_effects)
             {
-                add_effect(effect);
+                cache_effect(effect);
             }
         }
     }
 
-    void character_t::add_effect(const status_effect_t effect)
+    void character_t::add_effect(status_effect_t effect)
+    {
+        status_effects.push_back(effect);
+        cache_effect(effect);
+    }
+
+    void character_t::cache_effect(const status_effect_t effect)
     {
         size_t i = effect_type_indexes[effect.effect_type] + effect.type_index;
         stat_mod_cache[i] += effect.amount;
@@ -201,10 +207,17 @@ namespace data
     // {
     //
     // }
-    // bool character_t::remove_effect(size_t index)
-    // {
-    //
-    // }
+    void character_t::remove_effect(size_t index)
+    {
+        ASSERT(index < status_effects.size(), "");
+
+        //un-cache mod
+        auto const& effect = status_effects[index];
+        size_t i = effect_type_indexes[effect.effect_type] + effect.type_index;
+        stat_mod_cache[i] -= effect.amount;
+
+        status_effects.erase(status_effects.begin() + index);
+    }
 
 
     int character_t::get_stat(base_stat_e stat) const
