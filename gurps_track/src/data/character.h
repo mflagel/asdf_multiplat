@@ -27,8 +27,6 @@ namespace data
 
     struct status_effect_t
     {
-        //in theory I could make this a bool but I figure another type might exist later
-
         std::string name = "";
         effect_type_e effect_type = effect_base_stat; //in theory I could use a variant instead
         int type_index = 0; //ie: stat_ST, stat_hearing, etc
@@ -99,6 +97,18 @@ namespace data
         void from_JSON(cJSON*);
     };
 
+    /// Todo: wait until spell listing/adding is done before doing this
+    // struct active_spell_t
+    // {
+    //     std::string name = "";
+    //     size_t effective_maintenance_cost = 0;
+    //     date_t time_cast;
+    //     size_t duration = 0;
+    //     size_t success_amount = 0;
+
+    //     active_spell_t(spell_t const&);
+    // };
+
     struct armor_t
     {
         armor_type_e type = armor_none;
@@ -124,6 +134,7 @@ namespace data
         learned_skills_list_t spells;
 
         std::vector<status_effect_t> status_effects; //currently active spells/ailments/etc
+
 
         character_info_t();
     };
