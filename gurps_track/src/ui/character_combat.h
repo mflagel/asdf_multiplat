@@ -185,7 +185,7 @@ namespace character
 			void remove_effect();
 		};
 
-		mk::List* effects = nullptr;
+		mk::Sheet* effects = nullptr;
 		
 		data::character_t& character;
 
@@ -211,7 +211,7 @@ namespace character
 	};
 
 
-	struct combat_t : mk::Board
+	struct combat_t : mk::ScrollSheet
 	{
 		combat_t(data::character_t&);
 	};

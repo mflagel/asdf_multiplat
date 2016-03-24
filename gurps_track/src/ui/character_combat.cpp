@@ -16,7 +16,7 @@ namespace ui
 namespace character
 {
 	combat_t::combat_t(data::character_t& _character)
-	: Board()
+	: ScrollSheet()
 	{
 		emplace<stats_t>         (_character);
 		emplace<encumberance_t>  (_character);
@@ -200,7 +200,7 @@ namespace character
 	{
 		mHeader->emplace<Button>("Add Effect", [this](Button&){this->add_new_effect();});
 
-		effects = &emplace<List>();
+		effects = &emplace<Sheet>();
 
 		set_data(character);
 	}
@@ -215,6 +215,11 @@ namespace character
 		}
 	}
 
+	void status_effects_t::add_new_effect()
+	{
+		character.add_effect(data::status_effect_t{"new effect"});
+		effects->emplace<effect_t>(*this, character.status_effects.size() - 1);
+	}
 	void status_effects_t::remove_effect(size_t effect_index)
 	{
 		ASSERT(effect_index < effects->count(), "");
@@ -228,24 +233,22 @@ namespace character
 		character.remove_effect(effect_index);
 	}
 
-	void status_effects_t::add_new_effect()
-	{
-		// effects->emplace<status_effects_t>(status_effects_t
-	}
-
 
 	///
 	status_effects_t::effect_t::effect_t(status_effects_t& _parent, size_t _index)
-	: Expandbox("")
+	: Expandbox(" ")
 	, parent(_parent)
 	, index(_index)
 	{
-		name_textbox = &mHeader->emplace<Textbox>("");
+		name_textbox = &mHeader->emplace<Textbox>("test_name");
+		mHeader->emplace<Button>("X", [this](Button&){parent.remove_effect(index);});
+
+		set_data(parent.character.status_effects[index]);
 	}
 
-	void status_effects_t::effect_t::set_data(data::status_effect_t const&)
+	void status_effects_t::effect_t::set_data(data::status_effect_t const& effect)
 	{
-
+		
 	}
 
 
