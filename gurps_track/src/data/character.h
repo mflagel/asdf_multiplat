@@ -29,10 +29,10 @@ namespace data
     {
         //in theory I could make this a bool but I figure another type might exist later
 
-        std::string name;
-        effect_type_e effect_type; //in theory I could use a variant instead
-        int type_index; //ie: stat_ST, stat_hearing, etc
-        int amount;
+        std::string name = "";
+        effect_type_e effect_type = effect_base_stat; //in theory I could use a variant instead
+        int type_index = 0; //ie: stat_ST, stat_hearing, etc
+        int amount = 0;
 
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
