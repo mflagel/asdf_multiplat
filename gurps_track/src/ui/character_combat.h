@@ -206,6 +206,8 @@ namespace character
 
 		mk::Label* num_active_spells = nullptr;
 
+		data::character_t& character;
+
 		active_spells_t(data::character_t&);
 		void set_data(data::character_t const&);
 	};

@@ -240,7 +240,7 @@ namespace character
 	, parent(_parent)
 	, index(_index)
 	{
-		name_textbox = &mHeader->emplace<Textbox>("test_name");
+		name_textbox = &mHeader->emplace<Textbox>("-");
 		mHeader->emplace<Button>("X", [this](Button&){parent.remove_effect(index);});
 
 		set_data(parent.character.status_effects[index]);
@@ -248,14 +248,18 @@ namespace character
 
 	void status_effects_t::effect_t::set_data(data::status_effect_t const& effect)
 	{
-		
+		//apparently you can't directly set the text in a textbox. wtf
 	}
 
 
 	///
-	active_spells_t::active_spells_t(data::character_t&)
+	active_spells_t::active_spells_t(data::character_t& _character)
 	: Expandbox("Active Spells")
+	, character(_character)
 	{
+		mHeader->emplace<Button>("Add Spell", [this](Button&){/*todo*/});
+
+		emplace<Label>("Magery: todo");
 	}
 
 	void active_spells_t::set_data(data::character_t const&)
