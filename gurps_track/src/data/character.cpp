@@ -189,6 +189,7 @@ namespace data
 
     void character_t::add_effect(status_effect_t effect)
     {
+        LOG("Adding status effect: %s", effect.name.c_str());
         status_effects.push_back(effect);
         cache_effect(effect);
     }
@@ -210,6 +211,7 @@ namespace data
     void character_t::remove_effect(size_t index)
     {
         ASSERT(index < status_effects.size(), "");
+        LOG("Removing status effect: %s", status_effects[index].name.c_str());
 
         //un-cache mod
         auto const& effect = status_effects[index];
