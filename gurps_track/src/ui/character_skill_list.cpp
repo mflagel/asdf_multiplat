@@ -51,7 +51,7 @@ namespace ui
 		learned_skill_t const& learned_skill = character.skills[skill_index];
 		auto const& skill = learned_skill.skill;
 		name->setLabel(skill.name);
-		difficulty->setLabel(  "(" + std::string(skill_difficulty_abbreviations[skill.difficulty]) + ")" );
+		difficulty->setLabel(  "(" + skill.difficulty_string() + ")" );
 
 		point_cost->setLabel( "[" + to_string(learned_skill.point_cost()) + "]  " );
 		effective_skill->setLabel(to_string(learned_skill.get_effective_skill(character)));

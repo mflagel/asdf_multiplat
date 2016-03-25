@@ -45,7 +45,7 @@ namespace ui
 	void skill_library_entry_t::set_data(skill_t const& skill)
 	{
 		name->setLabel(skill.name);
-		difficulty->setLabel(  "(" + std::string(skill_difficulty_abbreviations[skill.difficulty]) + ")" );
+		difficulty->setLabel(  "(" + skill.difficulty_string() + ")" );
 
 		description.setLabel(skill.description);
 		description.setLabel("test description");
