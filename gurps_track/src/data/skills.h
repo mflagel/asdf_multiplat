@@ -56,46 +56,27 @@ namespace data
 
     enum skill_difficulty_e
     {
-          physical_easy = 0
-        , physical_average
-        , physical_hard
-        , mental_easy
-        , mental_average
-        , mental_hard
-        , mental_very_hard
+          easy
+        , average
+        , hard
+        , very_hard
         , skill_difficulty_count
     };
 
     constexpr std::array<const char*, skill_difficulty_count> skill_difficulty_abbreviations =
     {
-          "P/E"
-        , "P/A"
-        , "P/H"
-        , "M/E"
-        , "M/A"
-        , "M/H"
-        , "M/VH"
+          "E"
+        , "A"
+        , "H"
+        , "VH"
     };
-
-    constexpr bool is_physical(skill_difficulty_e difficulty)
-    {
-        return int(difficulty) >= physical_easy && int(difficulty) <= physical_hard;
-    }
-
-    constexpr bool is_mental(skill_difficulty_e difficulty)
-    {
-        return int(difficulty) >= mental_easy && int(difficulty) <= mental_hard;
-    }
 
     constexpr std::array<int, skill_difficulty_count> skill_start_value =
     {
-          -1 // P/E  easy skills start at -1 at half a point
-        , -2 // P/A  average start at -2
-        , -3 // P/H  etc...
-        , -1 // M/E
-        , -2 // M/A
-        , -3 // M/H
-        , -4 // M/VH
+          -1 // E  easy skills start at -1 at half a point
+        , -2 // A  average start at -2
+        , -3 // H  etc...
+        , -4 // VH
     };
 
     constexpr std::array<int, 6> physical_skill_cost_curve =
@@ -128,12 +109,12 @@ namespace data
         , 12
     };
 
-    constexpr std::array<int, 6> get_skill_cost_curve(skill_difficulty_e difficulty);
+    constexpr std::array<int, 6> get_skill_cost_curve(skill_difficulty_e, base_stat_e);
 
-    size_t get_skill_cost_index(skill_difficulty_e difficulty, int point_cost);
-    int point_cost_from_index(skill_difficulty_e difficulty, size_t cost_index);
+    size_t get_skill_cost_index(skill_difficulty_e, base_stat_e, int point_cost);
+    int point_cost_from_index(skill_difficulty_e, base_stat_e, size_t cost_index);
 
-    int get_skill_improvement_cost(skill_difficulty_e difficulty, int point_cost_start, int point_cost_end);
+    int get_skill_improvement_cost(skill_difficulty_e, base_stat_e, int point_cost_start, int point_cost_end);
 
 
     struct skill_default_t
@@ -149,6 +130,8 @@ namespace data
     {
         std::string name;
         std::string description;
+
+        base_stat_e base_stat;
         skill_difficulty_e difficulty;
         //int min_tech_level
 
@@ -160,12 +143,13 @@ namespace data
 
         bool is_physical() const;
         bool is_mental() const;
+        std::string difficulty_string() const;
 
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
     };
 
-    struct spell_t : skill_t
+    struct spell_t
     {
         enum duration_type_e
         {
@@ -173,6 +157,10 @@ namespace data
             , duration_permenant
             , duration_block
         };
+
+        std::string name;
+        std::string description;
+        skill_difficulty_e difficulty; // should always be 
 
         size_t initial_cost;
         size_t maintenance_cost;

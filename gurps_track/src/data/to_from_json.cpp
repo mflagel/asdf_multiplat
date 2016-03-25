@@ -272,6 +272,7 @@ namespace data
     {
         CJSON_GET_STR(name);
         CJSON_GET_STR(description);
+        CJSON_GET_ENUM_INT(base_stat, base_stat_e);
         CJSON_GET_ENUM_INT(difficulty, skill_difficulty_e);
         CJSON_GET_STR(defaults);
     }
