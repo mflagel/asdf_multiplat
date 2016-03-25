@@ -155,12 +155,10 @@ namespace data
         derived_stats[stat_movement]    = std::floor( (DX() + HT()) / 4.0f );
 
         auto iq = IQ();
-        derived_stats[stat_willpower] = iq;
-        derived_stats[stat_vision]    = iq;
-        derived_stats[stat_hearing]   = iq;
-        derived_stats[stat_smell]     = iq;
-        derived_stats[stat_taste]     = iq;
-        derived_stats[stat_touch]     = iq;
+        derived_stats[stat_willpower]   = iq;
+        derived_stats[stat_vision]      = iq;
+        derived_stats[stat_hearing]     = iq;
+        derived_stats[stat_smell_taste] = iq;
     }
 
     void character_t::cache_mods()
@@ -387,7 +385,7 @@ namespace data
     {
         ASSERT(!has_skill(skill.name), "Skill already learned");
 
-        LOG("Skill added: %s (%s) at %i points", skill.name.c_str(), skill_difficulty_abbreviations[skill.difficulty], initial_points);
+        LOG("Skill added: %s (%s) at %i points", skill.name.c_str(), skill.difficulty_string().c_str(), initial_points);
         skills.push_back(learned_skill_t(std::move(skill), initial_points));
     }
 

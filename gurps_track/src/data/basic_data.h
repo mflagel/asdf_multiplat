@@ -28,15 +28,13 @@ namespace data
 
     enum derived_stat_e
     {
-          stat_HP        = 0
-        , stat_fatigue   = 1
-        , stat_movement  = 2
-        , stat_willpower = 3
-        , stat_vision    = 4
-        , stat_hearing   = 5
-        , stat_smell     = 6
-        , stat_taste     = 7
-        , stat_touch     = 8 // I don't think I've ever done a touch sense roll
+          stat_HP          = 0
+        , stat_fatigue     = 1
+        , stat_movement    = 2
+        , stat_willpower   = 3
+        , stat_vision      = 4
+        , stat_hearing     = 5
+        , stat_smell_taste = 6
         , derived_stat_count
     };
 
@@ -48,7 +46,7 @@ namespace data
     };
 
     constexpr size_t sense_stat_start_index = stat_vision;
-    constexpr size_t sense_stat_end_index = stat_touch;
+    constexpr size_t sense_stat_end_index = stat_smell_taste;
 
     constexpr std::array<const char*, base_stat_count> base_stat_names =
     {
@@ -67,9 +65,7 @@ namespace data
         , "Willpower"
         , "Vision"
         , "Hearing"
-        , "Smell"
-        , "Taste"
-        , "Touch"
+        , "Taste/Smell"
     };
 
     constexpr std::array<int, 21> stat_point_costs = 
