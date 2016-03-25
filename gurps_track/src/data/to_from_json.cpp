@@ -264,6 +264,7 @@ namespace data
         CJSON_CREATE_ROOT();
         CJSON_ADD_STR(name);
         CJSON_ADD_STR(description);
+        CJSON_ADD_INT(base_stat);
         CJSON_ADD_INT(difficulty);
         CJSON_ADD_STR(defaults)
         return root;
@@ -277,11 +278,49 @@ namespace data
         CJSON_GET_STR(defaults);
     }
 
-
     void skill_list_t::from_JSON(cJSON* root)
     {
         auto& skills = *this;
         CJSON_GET_ITEM_VECTOR(skills);
+    }
+
+    /*******************************/
+    /*****  SPELL
+    /*******************************/
+
+    cJSON* spell_t::to_JSON() const
+    {
+        CJSON_CREATE_ROOT();
+        CJSON_ADD_STR(name);
+        CJSON_ADD_STR(description);
+        CJSON_ADD_INT(difficulty);
+        CJSON_ADD_INT(initial_cost);
+        CJSON_ADD_INT(maintenance_cost);
+        CJSON_ADD_INT(duration);
+        CJSON_ADD_INT(time_to_cast);
+        CJSON_ADD_INT(duration_type);
+        CJSON_ADD_INT(defense_type);
+        CJSON_ADD_STR(info);
+        return root;
+    }
+    void spell_t::from_JSON(cJSON* root)
+    {
+        CJSON_GET_STR(name);
+        CJSON_GET_STR(description);
+        CJSON_GET_ENUM_INT(difficulty, skill_difficulty_e);
+        CJSON_GET_INT(initial_cost);
+        CJSON_GET_INT(maintenance_cost);
+        CJSON_GET_INT(duration);
+        CJSON_GET_INT(time_to_cast);
+        CJSON_GET_ENUM_INT(duration_type, spell_t::duration_type_e);
+        CJSON_GET_ENUM_INT(defense_type, defense_type_e);
+        CJSON_GET_STR(info);
+    }
+
+    void spell_list_t::from_JSON(cJSON* root)
+    {
+        auto& spells = *this;
+        CJSON_GET_ITEM_VECTOR(spells);
     }
 }
 }

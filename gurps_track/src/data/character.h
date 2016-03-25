@@ -205,8 +205,11 @@ namespace data
         void take_damage(int damage_taken, damage_type_e, hit_location_e);
 
         inline bool has_skill(skill_t const& skill) const { return has_skill(skill.name); }
+        inline bool has_spell(spell_t const& spell) const { return has_spell(spell.name); }
         bool has_skill(std::string const& skill_name) const;
+        bool has_spell(std::string const& spell_name) const;
         void learn_skill(skill_t, int initial_points = 0);
+        void learn_spell(spell_t, int initial_points = 0);
         
         bool can_improve_skill(size_t listing_index/*, int amount = 1*/) const;
         bool improve_skill(size_t listing_index/*, int amount = 1*/);

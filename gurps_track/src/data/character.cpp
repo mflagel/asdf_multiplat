@@ -389,6 +389,25 @@ namespace data
         skills.push_back(learned_skill_t(std::move(skill), initial_points));
     }
 
+    bool character_t::has_spell(std::string const& spell_name) const
+    {
+        for(auto listing : spells)
+        {
+            if(listing.spell.name == spell_name)
+                return true;
+        }
+
+        return false;
+    }
+
+    void character_t::learn_spell(spell_t spell, int initial_points)
+    {
+        ASSERT(!has_spell(spell.name), "Spell already learned");
+        LOG("Spell added: %s  at %i points", spell.name.c_str(), initial_points);
+        spells.push_back(learned_spell_t(std::move(spell), initial_points));
+    }
+
+
     // void character_t::upgrade_skill(std::string const& skill_name)
     // {
     //     ASSERT(has_skill(skill_name), "Cannot upgrade non-learned skill");

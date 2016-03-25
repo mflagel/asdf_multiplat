@@ -56,10 +56,10 @@ namespace data
 
     enum skill_difficulty_e
     {
-          easy
-        , average
-        , hard
-        , very_hard
+          skill_difficulty_easy
+        , skill_difficulty_average
+        , skill_difficulty_hard
+        , skill_difficulty_very_hard
         , skill_difficulty_count
     };
 
@@ -171,6 +171,9 @@ namespace data
         defense_type_e defense_type;   //only applicable if duration_block type spell
 
         std::string info;
+
+        cJSON* to_JSON() const;
+        void from_JSON(cJSON*);
     };
 
     
@@ -230,6 +233,16 @@ namespace data
 
         skill_list_t(){}
         skill_list_t(std::string const& filepath);
+
+        void from_JSON(cJSON*); // defined in to_from_json.cpp
+    };
+
+    struct spell_list_t : std::vector<spell_t>
+    {
+        using std::vector<spell_t>::vector;
+
+        spell_list_t(){}
+        spell_list_t(std::string const& filepath);
 
         void from_JSON(cJSON*); // defined in to_from_json.cpp
     };

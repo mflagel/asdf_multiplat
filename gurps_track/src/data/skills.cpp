@@ -16,7 +16,7 @@ namespace data
 	{
 	    if(stat == stat_IQ)
 	    {
-	    	if(difficulty == very_hard)
+	    	if(difficulty == skill_difficulty_very_hard)
 	    	{
 	    	    return mental_VH_skill_cost_curve;
 	    	}
