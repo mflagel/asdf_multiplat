@@ -160,7 +160,7 @@ namespace data
 
         std::string name;
         std::string description;
-        skill_difficulty_e difficulty; // should always be 
+        skill_difficulty_e difficulty;
 
         size_t initial_cost;
         size_t maintenance_cost;
@@ -181,29 +181,48 @@ namespace data
 
     struct character_t;
 
+
     struct learned_skill_t
     {
         skill_t skill;
         size_t num_improvements = 0;
 
-        learned_skill_t(skill_t _skill, int _initial_improvement_level);
+        // default for initial will be 0 for GURPS 3rd,  1 for 4th
+        learned_skill_t(skill_t _skill, int _initial_improvement_level)
+        : skill(std::move(_skill))
+        , num_improvements(_initial_improvement_level)
+        {
+        }
 
-        int point_cost() const;
-        int improvement_cost() const;
+        inline int point_cost() const       { return point_cost_from_index(skill.difficulty, skill.base_stat, num_improvements); }
+        inline int improvement_cost() const { return point_cost_from_index(skill.difficulty, skill.base_stat, num_improvements + 1) - point_cost(); }
 
-        int get_effective_skill(int stat_value, int modifiers = 0) const;
+        inline int get_effective_skill(int stat_value, int modifiers = 0) const { return stat_value + skill_start_value[skill.difficulty] + num_improvements + modifiers; }
         int get_effective_skill(character_t const& character) const;
     };
 
-    // todo: use something like a map so I can do something more efficient than increment search
-    // potentially an unordered_map<string, skill_listing>
-    // struct learned_skills_list_t
-    // {
-    //     std::vector<skill_listing_t> skills;
+    // not really worth templating vs copy-paste + edit, since there will only ever 
+    // be two types (learned spell and learned skill
+    struct learned_spell_t
+    {
+        spell_t spell;
+        size_t num_improvements = 1;
 
-    //     learned_skills_list_t get_skill(std::string name);
-    // };
+        learned_spell_t(spell_t _spell, int _initial_improvement_level = 1)
+        : spell(std::move(_spell))
+        , num_improvements(_initial_improvement_level)
+        {
+        }
+
+        inline int point_cost() const       { return point_cost_from_index(spell.difficulty, stat_IQ, num_improvements); }
+        inline int improvement_cost() const { return point_cost_from_index(spell.difficulty, stat_IQ, num_improvements + 1) - point_cost(); }
+
+        inline int get_effective_skill(int stat_value, int modifiers = 0) const { return stat_IQ + skill_start_value[spell.difficulty] + num_improvements + modifiers; }
+        int get_effective_skill(character_t const& character) const;
+    };
+
     using learned_skills_list_t = std::vector<learned_skill_t>;
+    using learned_spells_list_t = std::vector<learned_spell_t>;
 
     struct skill_list_t : std::vector<skill_t>
     {

@@ -92,40 +92,20 @@ namespace data
 		return std::string(base_stat_names[base_stat]) + "/" + std::string(skill_difficulty_abbreviations[difficulty]);
 	}
 
-	learned_skill_t::learned_skill_t(skill_t _skill, int _initial_improvement_level)
-	: skill(std::move(_skill))
-	, num_improvements(_initial_improvement_level)
-	{
-	}
-
-	int learned_skill_t::point_cost() const
-	{
-		return point_cost_from_index(skill.difficulty, skill.base_stat, num_improvements);
-	}
-
-	int learned_skill_t::improvement_cost() const
-	{
-		return point_cost_from_index(skill.difficulty, skill.base_stat, num_improvements + 1) - point_cost();
-	}
-
-    int learned_skill_t::get_effective_skill(int stat_value, int modifiers) const
-    {
-    	return stat_value + skill_start_value[skill.difficulty] + num_improvements + modifiers;
-    }
-
     /// Todo: handle skills that default off of ST or HT
     int learned_skill_t::get_effective_skill(character_t const& character) const
     {
-    	int stat_value = 0;
+    	int stat_value = character.get_stat(skill.base_stat);
 
-    	if(skill.is_physical())
-    	{
-    		stat_value = character.DX();
-    	}
-    	else if(skill.is_mental())
-    	{
-    		stat_value = character.IQ();
-    	}
+    	//todo: handle skill bonuses from traits or special rules
+    	int modifiers = 0;
+
+    	return get_effective_skill(stat_value, modifiers);
+    }
+
+    int learned_spell_t::get_effective_skill(character_t const& character) const
+    {
+    	int stat_value = character.IQ();// + character.magery();
 
     	//todo: handle skill bonuses from traits or special rules
     	int modifiers = 0;

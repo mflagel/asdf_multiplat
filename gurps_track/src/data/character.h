@@ -131,10 +131,9 @@ namespace data
         std::vector<trait_t> traits; //advantages, disadvantages, and quirks
 
         learned_skills_list_t skills;
-        learned_skills_list_t spells;
+        learned_spells_list_t spells;
 
         std::vector<status_effect_t> status_effects; //currently active spells/ailments/etc
-
 
         character_info_t();
     };
