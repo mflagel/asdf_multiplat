@@ -11,3 +11,15 @@ The project started out in Windows using as much C++11 as MSVC allowed, but almo
 
 Most of asdf_multiplat was written in 2013, and was modified and expanded in 2015+
 The difference between new and old is usually easy to spot given the shift in formatting style
+
+
+Sub-Projects
+============
+GURPS Track
+------------
+A program to create and manage characters for the Generic Universal RolePlaying System tabletop ruleset. Built using [kiUi](https://github.com/hugoam/kiui) as a user interface library, as I was growing frustrated with my own UI code in asdf_multiplat.
+
+
+Projector Fun
+-------------
+A small sandbox to play around with rendering and geometry (meta-balls, bezier curves, 2D meshes, etc). Nothing exceptional
