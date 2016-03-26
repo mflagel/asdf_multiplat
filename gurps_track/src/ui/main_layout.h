@@ -1,9 +1,9 @@
 #include <kiui/Ui/mkUiConfig.h>
 #include <kiui/Ui/mkUiTypes.h>
 
-#include "character_main_layout.h"
-#include "character_combat.h"
-#include "character_skill_list.h"
+#include "character/overview.h"
+#include "character/combat.h"
+#include "character/skill_list.h"
 
 namespace gurps_track
 {

@@ -11,7 +11,9 @@ namespace data
 
 namespace ui
 {
-	/***  Character Main Layout ***
+namespace character
+{
+	/***  Overview ***
 	+--------------------+
 	| Name               |
 	| Race               |
@@ -45,9 +47,9 @@ namespace ui
 		title_display_t(data::character_t&);
 	};
 
-	struct character_portrait_t : mk::Expandbox
+	struct portrait_t : mk::Expandbox
 	{
-		character_portrait_t(data::character_t&);
+		portrait_t(data::character_t&);
 	};
 
 	struct point_cost_summary_t : mk::Expandbox
@@ -90,9 +92,11 @@ namespace ui
 
 	/// TODO: rename this to something like "Character Basics"
 	/// 'main' should refer to the parent of this layout
-	struct character_main_layout_t : mk::Sheet
+	struct overview_t : mk::Sheet
 	{
-		character_main_layout_t(data::character_t&);
+		overview_t(data::character_t&);
 	};
+
+}
 }
 }

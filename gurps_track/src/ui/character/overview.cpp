@@ -1,4 +1,4 @@
-#include "character_main_layout.h"
+#include "overview.h"
 
 #include <Ui/mkUiConfig.h>
 #include <Ui/mkUiTypes.h>
@@ -17,6 +17,8 @@ using namespace data;
 
 namespace ui
 {
+namespace character
+{
 	// +-----------------+
 	// | Name            |
 	// | Race            |
@@ -32,7 +34,7 @@ namespace ui
 	}
 
 
-	character_portrait_t::character_portrait_t(character_t& _character)
+	portrait_t::portrait_t(character_t& _character)
 	: Expandbox("Portrait")
 	{
 		//todo: emplace an image
@@ -108,14 +110,15 @@ namespace ui
 	}
 
 
-	character_main_layout_t::character_main_layout_t(character_t& _character)
+	overview_t::overview_t(character_t& _character)
 	: Sheet()
 	{
-		this->emplace<title_display_t>(_character);
-		this->emplace<character_portrait_t>(_character);
+		this->emplace<title_display_t>     (_character);
+		this->emplace<portrait_t>          (_character);
 		this->emplace<point_cost_summary_t>(_character);
-		this->emplace<experience_log_t>(_character);
+		this->emplace<experience_log_t>    (_character);
 	}
 
+}
 }
 }

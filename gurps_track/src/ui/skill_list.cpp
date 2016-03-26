@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "skill_list_layout.h"
+#include "skill_list.h"
 
 #include "data/character.h"
 
@@ -15,7 +15,7 @@ namespace ui
 {
 
 
-	skill_library_entry_t::skill_library_entry_t(skill_library_t& _parent, size_t _index)
+	skill_list_entry_t::skill_list_entry_t(skill_list_t& _parent, size_t _index)
 	: Expandbox(" ", true)
 	, description(emplace<Label>("dsc"))
 	, parent(_parent)
@@ -42,7 +42,7 @@ namespace ui
 		collapse();
 	}
 
-	void skill_library_entry_t::set_data(skill_t const& skill)
+	void skill_list_entry_t::set_data(skill_t const& skill)
 	{
 		name->setLabel(skill.name);
 		difficulty->setLabel(  "(" + skill.difficulty_string() + ")" );
@@ -62,7 +62,7 @@ namespace ui
 		}
 	}
 
-	skill_library_t::skill_library_t(skill_list_t const& _skills, data::character_t* _character)
+	skill_list_t::skill_list_t(data::skill_list_t const& _skills, data::character_t* _character)
 	: Board()
 	, skills(_skills)
 	, character(_character)
@@ -71,7 +71,7 @@ namespace ui
 
 		for(size_t i = 0; i < skills.size(); ++i)
 		{
-			list.emplace<skill_library_entry_t>(*this, i);
+			list.emplace<skill_list_entry_t>(*this, i);
 		}
 	}
 

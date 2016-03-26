@@ -6,13 +6,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 file(GLOB HEADER_FILES 	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 						"${CMAKE_CURRENT_SOURCE_DIR}/data/*.h"
-					    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.h")
+					    "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.h"
+					    "${CMAKE_CURRENT_SOURCE_DIR}/ui/character/*.h")
 
 # according to cmake docs, using glob in this manner is bad
 # but this is how kiui uses it
 file(GLOB SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 					   "${CMAKE_CURRENT_SOURCE_DIR}/data/*.cpp"
 					   "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.cpp"
+					   "${CMAKE_CURRENT_SOURCE_DIR}/ui/character/*.cpp"
 					   "${CMAKE_CURRENT_SOURCE_DIR}/../../ext/cJSON/cJSON.c"
 					   "${CMAKE_CURRENT_SOURCE_DIR}/../../asdf_multiplat/utilities/str_const.cpp"
 					   "${CMAKE_CURRENT_SOURCE_DIR}/../../asdf_multiplat/utilities/utilities.cpp"

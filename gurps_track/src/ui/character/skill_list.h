@@ -13,8 +13,9 @@ namespace data
 
 namespace ui
 {
-
-	struct character_skill_list_t;
+namespace character
+{
+	struct skill_list_t;
 
 	/*
 	+---------------------+
@@ -24,7 +25,7 @@ namespace ui
 	|  Description        |
 	+---------------------+
 	 */
-	struct character_skill_list_entry_t : mk::Expandbox
+	struct skill_list_entry_t : mk::Expandbox
 	{
 		mk::Label*  name            = nullptr;
 		mk::Label*  difficulty      = nullptr;
@@ -36,10 +37,10 @@ namespace ui
 		mk::Label* modifier_info = nullptr; //ex: '+1 from Combat Reflexes' or 'defaulted from Throwing'
 		mk::Label& description;
 
-		character_skill_list_t& parent;
+		skill_list_t& parent;
 		size_t index = 900001;
 
-		character_skill_list_entry_t(character_skill_list_t& _parent, size_t index);
+		skill_list_entry_t(skill_list_t& _parent, size_t index);
 
 		void set_data(data::character_t const&, size_t skill_index);
 	};
@@ -60,15 +61,17 @@ namespace ui
     |  ... 0.5 14 (M/A) |
     +-----------------+
     */
-	struct character_skill_list_t : mk::Board
+	struct skill_list_t : mk::Board
 	{
 		mk::List* scroll_list;
 
 		data::character_t& character;
 
-		character_skill_list_t(data::character_t& _character);
+		skill_list_t(data::character_t& _character);
 
 		void rebuild();
 	};
+
+}
 }
 }

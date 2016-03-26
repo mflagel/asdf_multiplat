@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "character_skill_list.h"
+#include "skill_list.h"
 
 #include "data/character.h"
 
@@ -13,9 +13,10 @@ using namespace data;
 
 namespace ui
 {
+namespace character
+{
 
-
-	character_skill_list_entry_t::character_skill_list_entry_t(character_skill_list_t& _parent, size_t _index)
+	skill_list_entry_t::skill_list_entry_t(skill_list_t& _parent, size_t _index)
 	: Expandbox(" ", true)
 	, description(emplace<Label>("dsc"))
 	, parent(_parent)
@@ -46,7 +47,7 @@ namespace ui
 		collapse();
 	}
 
-	void character_skill_list_entry_t::set_data(data::character_t const& character, size_t skill_index)
+	void skill_list_entry_t::set_data(data::character_t const& character, size_t skill_index)
 	{
 		learned_skill_t const& learned_skill = character.skills[skill_index];
 		auto const& skill = learned_skill.skill;
@@ -61,7 +62,7 @@ namespace ui
 	}
 
 
-	character_skill_list_t::character_skill_list_t(data::character_t& _character)
+	skill_list_t::skill_list_t(data::character_t& _character)
 	: Board()
 	, character(_character)
 	{
@@ -74,14 +75,15 @@ namespace ui
 		rebuild();
 	}
 
-	void character_skill_list_t::rebuild()
+	void skill_list_t::rebuild()
 	{
 		scroll_list->clear();
 		for(size_t i = 0; i < character.skills.size(); ++i)
 		{
-			scroll_list->emplace<character_skill_list_entry_t>(*this, i);
+			scroll_list->emplace<skill_list_entry_t>(*this, i);
 		}
 	}
 
+}
 }
 }

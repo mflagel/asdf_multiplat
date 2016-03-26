@@ -14,7 +14,7 @@ namespace data
 namespace ui
 {
 
-	struct skill_library_t;
+	struct skill_list_t;
 
 	/*
 	+---------------------+
@@ -22,7 +22,7 @@ namespace ui
 	|  Description        |
 	+---------------------+
 	*/
-	struct skill_library_entry_t : mk::Expandbox
+	struct skill_list_entry_t : mk::Expandbox
 	{
 		mk::Label* name        = nullptr;
 		mk::Label* difficulty  = nullptr;
@@ -30,10 +30,10 @@ namespace ui
 
 		mk::Label& description;
 
-		skill_library_t& parent;
+		skill_list_t& parent;
 		size_t index;
 
-		skill_library_entry_t(skill_library_t& _parent, size_t index);
+		skill_list_entry_t(skill_list_t& _parent, size_t index);
 
 		void set_data(data::skill_t const&);
 	};
@@ -46,14 +46,12 @@ namespace ui
 	|-|+|SkillZZ    (P/A)-|
 	+---------------------+
 	*/
-	struct skill_library_t : mk::Board
+	struct skill_list_t : mk::Board
 	{
 		data::skill_list_t const& skills;
 		data::character_t* character = nullptr;
 
-
-
-		skill_library_t(data::skill_list_t const&, data::character_t* _character = nullptr);
+		skill_list_t(data::skill_list_t const&, data::character_t* _character = nullptr);
 	};
 }
 }

@@ -11,7 +11,6 @@
 
 #include "data/character.h"
 #include "ui/main_layout.h"
-#include "ui/skill_list_layout.h"
 
 #define ASSETS_PATH "../assets/"
 
@@ -43,7 +42,7 @@ int main(int argc, char *argv[])
 	header.emplace<Button>("Save As");
 
 	character_t test_char("");
-	skill_list_t all_skills{"../assets/data/gurps_skills.json"};
+	data::skill_list_t all_skills{"../assets/data/gurps_skills.json"};
 	
 	test_char.learn_skill(all_skills[0]);
 

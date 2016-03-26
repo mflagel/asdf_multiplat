@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "character.h"
-#include "ui/skill_list_layout.h"
+#include "ui/skill_list.h"
 
 using namespace std;
 using namespace glm;
