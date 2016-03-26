@@ -83,10 +83,10 @@ namespace ui
 		}
 
 
-		cost->        setLabel(to_string(spell.initial_cost)    );
-		maintenance-> setLabel(to_string(spell.maintenance_cost));
-		time_to_cast->setLabel(to_string(spell.time_to_cast)    );
-		duration->    setLabel(to_string(spell.duration)        );
+		cost->        setLabel(spell.initial_cost);
+		maintenance-> setLabel(spell.maintenance_cost);
+		time_to_cast->setLabel(spell.time_to_cast);
+		duration->    setLabel(spell.duration);
 
 		description->setLabel(spell.description);
 		description->setLabel("test description");

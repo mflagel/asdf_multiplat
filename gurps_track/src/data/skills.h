@@ -162,10 +162,14 @@ namespace data
         std::string description;
         skill_difficulty_e difficulty;
 
-        size_t initial_cost;
-        size_t maintenance_cost;
-        size_t duration;
-        size_t time_to_cast;
+        // using strings, since sometimes the values are more complicated
+        // ex: variable costs or times to cast found in Teleport or Dispel Magic
+        // Will use some sort of special character to signify values that are
+        // modified by higher spell level.
+        std::string initial_cost;
+        std::string maintenance_cost;
+        std::string duration;
+        std::string time_to_cast;
 
         duration_type_e duration_type;
         defense_type_e defense_type;   //only applicable if duration_block type spell
