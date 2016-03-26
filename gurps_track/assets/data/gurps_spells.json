@@ -1,0 +1,16 @@
+{
+  "spells": [
+    {
+      "name": "Levitation",
+      "description": "",
+      "difficulty": 2,
+      "initial_cost": ,
+      "maintenance_cost": ,
+      "duration": ,
+      "time_to_cast": ,
+      "duration_type": 0,
+      "defense_type": 0,
+      "info": ""
+    }
+  ]
+}
