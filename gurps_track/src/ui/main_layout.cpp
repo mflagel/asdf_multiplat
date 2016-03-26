@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "main_layout.h"
 
-#include "ui/skill_list.h"
 #include "data/character.h"
+#include "skill_list.h"
+#include "character/overview.h"
+#include "character/combat.h"
+#include "character/traits.h"
+#include "character/skill_list.h"
 
 using namespace std;
 using namespace mk;
@@ -43,6 +47,8 @@ namespace ui
 		combat.emplace<character::combat_t>(_character);
 
 		Page& traits    = tabber.emplace<Page>("Traits");
+		traits.emplace<character::traits_t>(_character);
+
 		Page& skills    = tabber.emplace<skills_layout_t>(_character, all_skills);
 		Page& spells    = tabber.emplace<Page>("Spells");
 	}
