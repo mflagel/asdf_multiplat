@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "character.h"
 
+#include "asdfm/utilities/utilities.h"
+
 using namespace std;
 using namespace glm;
 
@@ -51,11 +53,11 @@ namespace data
     : character_info_t()
     , character_filepath(filepath)
     {
-        // try
-        // {
-        //     load_from_file(filepath);
-        // }
-        // catch (...)
+        try
+        {
+            load_from_file(filepath);
+        }
+        catch (...)
         {
             load_default_data();
             // load_test_data();
@@ -467,8 +469,7 @@ namespace data
         std::string json_str = cJSON_Print(root);
         cJSON_Delete(root);
 
-        /// FIXME: Add util stuff from asdf_multiplat
-        // util::write_text_file(filepath, json_str);
+        asdf::util::write_text_file(filepath, json_str);
     }
 
     void character_t::save_data()
@@ -485,22 +486,22 @@ namespace data
     void character_t::load_from_file(std::string filepath)
     {
         /// FIXME: Add util stuff from asdf_multiplat
-        // std::string json_str = util::read_text_file(filepath);
-        // cJSON* root = cJSON_Parse(json_str.c_str());
+        std::string json_str = asdf::util::read_text_file(filepath);
+        cJSON* root = cJSON_Parse(json_str.c_str());
 
-        // ASSERT(root, "");
-        // ASSERT(cJSON_GetObjectItem(root, "character_info"), "");
-        // from_JSON(cJSON_GetObjectItem(root, "character_info"));
-        // cJSON_Delete(root);
+        ASSERT(root, "");
+        ASSERT(cJSON_GetObjectItem(root, "character_info"), "");
+        from_JSON(cJSON_GetObjectItem(root, "character_info"));
+        cJSON_Delete(root);
 
-        // cache_mods();
-        // derive_stats();
+        cache_mods();
+        derive_stats();
 
-        // unspent_points = 0;
-        // for(auto const& transaction : point_transactions)
-        // {
-        //     unspent_points += transaction.amount;
-        // }
+        unspent_points = 0;
+        for(auto const& transaction : point_transactions)
+        {
+            unspent_points += transaction.amount;
+        }
     }
 }
 }
