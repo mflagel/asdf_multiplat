@@ -1,0 +1,326 @@
+{
+	"character_info":	{
+		"save_format_version":	0,
+		"version":	0,
+		"date_modified":	{
+			"day":	0,
+			"month":	0,
+			"year":	0
+		},
+		"point_transactions":	[],
+		"name":	"Karalieth",
+		"description":	"Motus Magus and Master of Time and Space",
+		"portrait_filepath":	"",
+		"base_stats":	[10, 11, 14, 10],
+		"current_fatigue":	13,
+		"current_HP":	10,
+		"race":	{
+			"name":	"Elf",
+			"description":	"This is really just a test race, nothing actually from the book\n Testing new lines in descriptions",
+			"traits":	[{
+					"name":	"Elf Stats",
+					"description":	"Not as strong as other races, but quicker and more intelligent",
+					"point_cost":	10,
+					"status_effects":	[{
+							"name":	"Elf Strength",
+							"effect_type":	0,
+							"type_index":	0,
+							"amount":	-1
+						}, {
+							"name":	"Elf Dexterity",
+							"effect_type":	0,
+							"type_index":	2,
+							"amount":	1
+						}, {
+							"name":	"Elf Intelligence",
+							"effect_type":	0,
+							"type_index":	3,
+							"amount":	1
+						}]
+				}, {
+					"name":	"Attractive",
+					"description":	"Elves are Sexy",
+					"point_cost":	10,
+					"status_effects":	[]
+				}, {
+					"name":	"Combat Reflexes",
+					"description":	" +1 to any Active Defense; +1 on any Fast-Draw skill; +2 to any Fright Check, never \"freeze\"; Side gets +1 on initiative, +2 if you are leader. +6 on IQ roll to recover from surprise or mental \"stun.\"",
+					"point_cost":	10,
+					"status_effects":	[]
+				}, {
+					"name":	"Magery",
+					"description":	"Elves are Magical",
+					"point_cost":	15,
+					"status_effects":	[{
+							"name":	"Elf Magery",
+							"effect_type":	2,
+							"type_index":	0,
+							"amount":	1
+						}]
+				}, {
+					"name":	"Musical Ability",
+					"description":	" +2 to any musical skill",
+					"point_cost":	10,
+					"status_effects":	[]
+				}, {
+					"name":	"Unaging",
+					"description":	"",
+					"point_cost":	10,
+					"status_effects":	[]
+				}, {
+					"name":	"Code of Honor",
+					"description":	"Code of Honor: Live Elegant Life",
+					"point_cost":	-10,
+					"status_effects":	[]
+				}, {
+					"name":	"Sense of Duty",
+					"description":	"Sense of Duty (Nature)",
+					"point_cost":	-10,
+					"status_effects":	[]
+				}]
+		},
+		"traits":	[{
+				"name":	"Literacy",
+				"description":	"The ability toy read. Costs 10 points in an environment where literacy is not common",
+				"point_cost":	10,
+				"status_effects":	[]
+			}, {
+				"name":	"Extra Fatigue",
+				"description":	"Costs 3 per level, reccomended not going above 4 or 5",
+				"point_cost":	12,
+				"status_effects":	[{
+						"name":	"Extra Fatigue",
+						"effect_type":	1,
+						"type_index":	1,
+						"amount":	4
+					}]
+			}, {
+				"name":	"Acute Vision",
+				"description":	"Costs 2 per level, increases roll in non-magical vision checks",
+				"point_cost":	12,
+				"status_effects":	[{
+						"name":	"Acute Vision",
+						"effect_type":	1,
+						"type_index":	4,
+						"amount":	3
+					}]
+			}, {
+				"name":	"Fanaticism",
+				"description":	"",
+				"point_cost":	-15,
+				"status_effects":	[]
+			}, {
+				"name":	"Megalomaniac",
+				"description":	"Fanaticism for oneself; Egomaniac",
+				"point_cost":	-10,
+				"status_effects":	[]
+			}, {
+				"name":	"Curious",
+				"description":	"Roll against Will to avoid getting into trouble with your curiosity",
+				"point_cost":	-5,
+				"status_effects":	[]
+			}, {
+				"name":	"Dislikes Authority",
+				"description":	"",
+				"point_cost":	-1,
+				"status_effects":	[]
+			}, {
+				"name":	"Obnoxious Drunk",
+				"description":	"",
+				"point_cost":	-1,
+				"status_effects":	[]
+			}, {
+				"name":	"Flamboyant Showoff",
+				"description":	"",
+				"point_cost":	-1,
+				"status_effects":	[]
+			}, {
+				"name":	"Illusion Entertainer",
+				"description":	"",
+				"point_cost":	0,
+				"status_effects":	[]
+			}, {
+				"name":	"Dislikes Undead",
+				"description":	"",
+				"point_cost":	-1,
+				"status_effects":	[]
+			}],
+		"skills": [{
+				"skill": {
+					"name": "Knife",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 0,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 2
+			},
+			{
+				"skill": {
+					"name": "Fast Draw (Knife)",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 0,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},{
+				"skill": {
+					"name": "Innate Atttack (Poltergeist)",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 0,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 4
+			},{
+				"skill": {
+					"name": "Aerobatics",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Stealth",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 1,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Body Sense",
+					"description": "",
+					"base_stat": 1,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 3
+			},
+			{
+				"skill": {
+					"name": "Public Speaking",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 1,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Savoir-Faire (Elven Society)",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 0,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Hurdy Gurdy",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Artist (Illusion)",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Tactics",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 2
+			},{
+				"skill": {
+					"name": "Naturalist",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "History (Elven)",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 2,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Area Knowledge (Great Forest)",
+					"description": "",
+					"base_stat": 2,
+					"difficulty": 0,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			},
+			{
+				"skill": {
+					"name": "Alchemy",
+					"description": "",
+					"base_stat": 3,
+					"difficulty": 1,
+					"defaults": "",
+					"categories": 0
+					},
+				"num_improvements": 1
+			}],
+		"spells": [{
+				"spell": {
+					"name": "Lend Strength",
+					"description": "",
+					"difficulty": 2,
+					"initial_cost": "0",
+					"maintenance_cost": "0",
+					"duration": "0",
+					"time_to_cast": "0",
+					"duration_type": 0,
+					"defense_type": 0,
+					"info": ""
+					},
+				"num_improvements": 1
+			}]
+	}
+}
