@@ -32,7 +32,7 @@ namespace character
 	{
 		name->setLabel(trait.name);
 		cost->setLabel("[" + to_string(trait.point_cost) + "]");
-		description->setLabel(trait.description);
+		// description->setLabel(trait.description);
 	}
 
 
