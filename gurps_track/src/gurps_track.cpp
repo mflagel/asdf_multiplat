@@ -41,10 +41,8 @@ int main(int argc, char *argv[])
 	header.emplace<Button>("Save");
 	header.emplace<Button>("Save As");
 
-	character_t test_char("");
+	character_t test_char("../assets/characters/Karalieth.grp");
 	data::skill_list_t all_skills{"../assets/data/gurps_skills.json"};
-	
-	test_char.learn_skill(all_skills[0]);
 
 	root.sheet().emplace<main_layout_t>(test_char, all_skills);
 
