@@ -194,6 +194,8 @@ namespace data
         skill_t skill;
         size_t num_improvements = 0;
 
+        learned_skill_t() = default;
+
         // default for initial will be 0 for GURPS 3rd,  1 for 4th
         learned_skill_t(skill_t _skill, int _initial_improvement_level)
         : skill(std::move(_skill))
@@ -206,6 +208,9 @@ namespace data
 
         inline int get_effective_skill(int stat_value, int modifiers = 0) const { return stat_value + skill_start_value[skill.difficulty] + num_improvements + modifiers; }
         int get_effective_skill(character_t const& character) const;
+
+        cJSON* to_JSON() const;
+        void from_JSON(cJSON*);
     };
 
     // not really worth templating vs copy-paste + edit, since there will only ever 
@@ -226,6 +231,9 @@ namespace data
 
         inline int get_effective_skill(int stat_value, int modifiers = 0) const { return stat_IQ + skill_start_value[spell.difficulty] + num_improvements + modifiers; }
         int get_effective_skill(character_t const& character) const;
+
+        cJSON* to_JSON() const;
+        void from_JSON(cJSON*);
     };
 
     using learned_skills_list_t = std::vector<learned_skill_t>;

@@ -212,6 +212,9 @@ namespace data
 
         CJSON_ADD_ITEM_ARRAY(traits);
 
+        CJSON_ADD_ITEM_ARRAY(skills);
+        CJSON_ADD_ITEM_ARRAY(spells);
+
         return root;
     }
 
@@ -240,6 +243,9 @@ namespace data
         CJSON_GET_ITEM(race);
 
         CJSON_GET_ITEM_VECTOR(traits);
+
+        CJSON_GET_ITEM_VECTOR(skills);
+        // CJSON_GET_ITEM_VECTOR(spells);
     }
 
     /*******************************/
@@ -284,6 +290,20 @@ namespace data
         CJSON_GET_ITEM_VECTOR(skills);
     }
 
+    cJSON* learned_skill_t::to_JSON() const
+    {
+        CJSON_CREATE_ROOT();
+        CJSON_ADD_ITEM(skill);
+        CJSON_ADD_INT(num_improvements);
+        return root;
+    }
+
+    void learned_skill_t::from_JSON(cJSON* root)
+    {
+        CJSON_GET_ITEM(skill);
+        CJSON_GET_INT(num_improvements);
+    }
+
     /*******************************/
     /*****  SPELL
     /*******************************/
@@ -321,6 +341,20 @@ namespace data
     {
         auto& spells = *this;
         CJSON_GET_ITEM_VECTOR(spells);
+    }
+
+    cJSON* learned_spell_t::to_JSON() const
+    {
+        CJSON_CREATE_ROOT();
+        CJSON_ADD_ITEM(spell);
+        CJSON_ADD_INT(num_improvements);
+        return root;
+    }
+
+    void learned_spell_t::from_JSON(cJSON* root)
+    {
+        CJSON_GET_ITEM(spell);
+        CJSON_GET_INT(num_improvements);
     }
 }
 }
