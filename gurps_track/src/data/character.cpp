@@ -153,8 +153,9 @@ namespace data
         derived_stats[stat_HP]      = HT();
         derived_stats[stat_fatigue] = ST();
 
-        // stat_basic_speed = ((DX() + HT()) * 100) / 4.0f;
-        derived_stats[stat_movement]    = std::floor( (DX() + HT()) / 4.0f );
+        derived_stats[stat_speed]      = ((DX() + HT()) * 100) / 4.0f;
+        derived_stats[stat_movement]   = std::floor( (DX() + HT()) / 4.0f );
+        derived_stats[stat_initiative] = derived_stats[stat_speed];
 
         auto iq = IQ();
         derived_stats[stat_willpower]   = iq;
@@ -221,6 +222,15 @@ namespace data
         status_effects.erase(status_effects.begin() + index);
     }
 
+    float character_t::basic_speed() const
+    {
+        return get_stat(stat_speed) / 100.0f;
+    }
+
+    float character_t::base_initiative() const
+    {
+        return get_stat(stat_initiative) / 100.0f;
+    }
 
     int character_t::get_stat(base_stat_e stat) const
     {
@@ -238,6 +248,13 @@ namespace data
     int character_t::get_cached_mod(derived_stat_e stat) const
     {
         return stat_mod_cache[stat + base_stat_count];
+    }
+
+
+    encumberance_e character_t::encumberance() const
+    {
+        int weight = weight_combat + (weight_pack * wearing_pack);
+        return get_encumberance(ST(), weight);
     }
 
 

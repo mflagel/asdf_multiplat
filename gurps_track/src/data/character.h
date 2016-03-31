@@ -154,6 +154,7 @@ namespace data
         //this will eventually be replaced with gear section
         float weight_combat = 0.0f;
         float weight_pack = 0.0f;
+        bool  wearing_pack = true;
 
         std::array<armor_t, armor_region_count> armor_info; //this will eventually be derived from gear and status effects
         std::array<int, base_stat_count + derived_stat_count> stat_mod_cache;
@@ -167,8 +168,8 @@ namespace data
         // int magery() const      { return get_stat(stat_magery);  }
         int max_HP() const      { return get_stat(stat_HP);      }
         int max_fatigue() const { return get_stat(stat_fatigue); }
-        float basic_speed() const { return static_cast<float>(DX() + HT()) / 4.0f; }
-        int movement() const      { return static_cast<int>(basic_speed()); } //truncate
+        float basic_speed() const;
+        float base_initiative() const;
         
         void derive_stats();
         void cache_mods();
@@ -183,7 +184,7 @@ namespace data
         int get_cached_mod(base_stat_e) const;
         int get_cached_mod(derived_stat_e) const;
 
-        // encumberance_e get_encumberance() const;
+        encumberance_e encumberance() const;
 
         int PD(armor_region_e) const;
         int DR(armor_region_e) const;
