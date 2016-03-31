@@ -19,6 +19,7 @@ namespace character
 	: ScrollSheet()
 	{
 		emplace<stats_t>         (_character);
+		emplace<movement_t>		 (_character);
 		emplace<encumberance_t>  (_character);
 		emplace<armor_t>         (_character);
 		emplace<attacks_t>       (_character);
@@ -29,7 +30,7 @@ namespace character
 
 
 	///
-	stats_t::stat_t::stat_t(std::string const& name)
+	stat_t::stat_t(std::string const& name)
 	{
 		Expandbox& expnd = emplace<Expandbox>(name, true);
 		value_label = &expnd.header()->emplace<Label>("-");
@@ -41,15 +42,15 @@ namespace character
 		expnd.collapse();
 	}
 
-	stats_t::base_stat_t::base_stat_t(data::character_t& _character, data::base_stat_e _stat)
-	: stats_t::stat_t(base_stat_names[_stat])
+	base_stat_t::base_stat_t(data::character_t& _character, data::base_stat_e _stat)
+	: stat_t(base_stat_names[_stat])
 	, character(_character)
 	, stat(_stat)
 	{
 		set_data(character);
 	}
 
-	void stats_t::base_stat_t::set_data(data::character_t const& character)
+	void base_stat_t::set_data(data::character_t const& character)
 	{
 		value_label->setLabel(to_string(character.base_stats[stat]));
 		point_cost_label->setLabel("["
@@ -57,7 +58,7 @@ namespace character
 			+ "]");
 	}
 
-	stats_t::derived_stat_t::derived_stat_t(data::character_t& _character, data::derived_stat_e _stat)
+	derived_stat_t::derived_stat_t(data::character_t& _character, data::derived_stat_e _stat)
 	: stat_t(derived_stat_names[_stat])
 	, character(_character)
 	, stat(_stat)
@@ -65,7 +66,7 @@ namespace character
 		set_data(character);
 	}
 
-	void stats_t::derived_stat_t::set_data(data::character_t const& character)
+	void derived_stat_t::set_data(data::character_t const& character)
 	{
 		value_label->setLabel(to_string(character.derived_stats[stat]));
 		point_cost_label->setLabel("[todo]");
@@ -104,6 +105,35 @@ namespace character
 
 
 	///
+	movement_t::movement_t(data::character_t& _character)
+	: Expandbox("Movement")
+	{
+		Sequence& seq1 = emplace<Sequence>();
+		speed        = &seq1.emplace<stat_t>("Speed");
+		move         = &seq1.emplace<stat_t>("Move");
+
+		Sequence& seq2 = emplace<Sequence>();
+		initiative   = &seq2.emplace<stat_t>("Initiative");
+		encumberance = &seq2.emplace<stat_t>("Encumberance");
+
+		set_data(_character);
+	}
+
+	void movement_t::set_data(const data::character_t& character)
+	{
+		char spd[16];
+		snprintf(spd, 16, "%0.2f", character.basic_speed());
+		char init[16];
+		snprintf(init, 16, "%0.2f", character.basic_speed());
+
+		speed->value_label->setLabel( std::string(spd) );
+		move-> value_label->setLabel( to_string(character.get_stat(stat_movement)) );
+		initiative->value_label->setLabel( std::string(init) );
+		encumberance->value_label->setLabel( encumberance_names[character.encumberance()] );
+	}
+
+
+	///
 	encumberance_t::encumberance_t(data::character_t& _character)
 	: Expandbox("Encumberance")
 	{
@@ -115,11 +145,39 @@ namespace character
 			seq.emplace<Label>(data::encumberance_names[i]);
 			encumberance_labels[i] = &seq.emplace<Label>("-");
 		}
+
+
+		Sequence& seq1 = emplace<Sequence>();
+		seq1.emplace<Label>("Combat Weight: ");
+		combat_weight = &seq1.emplace<Label>("c");
+
+		Sequence& seq2 = emplace<Sequence>();
+		seq2.emplace<Label>("Pack Weight: ");
+		pack_weight = &seq2.emplace<Label>("p");
+
+		Sequence& seq3 = emplace<Sequence>();
+		seq3.emplace<Label>("Total Weight: ");
+		total_weight = &seq3.emplace<Label>("t");
+
+		set_data(_character);
 	}
 
-	void encumberance_t::set_data(data::character_t const&)
+	void encumberance_t::set_data(data::character_t const& character)
 	{
-		//TODO
+		for(size_t i = 0; i < encumberance_count; ++i)
+		{
+			int weight = get_encumberance_weight(character.ST(), encumberance_e(i));
+			encumberance_labels[i]->setLabel(to_string(weight));
+		}
+
+		char bufs[3][16];
+		snprintf(bufs[0], 16, "%0.2f", character.weight_combat);
+		snprintf(bufs[1], 16, "%0.2f", character.weight_pack);
+		snprintf(bufs[2], 16, "%0.2f", character.weight_combat + character.weight_pack);
+
+		combat_weight->setLabel( std::string(bufs[0]) );
+		pack_weight->  setLabel( std::string(bufs[1]) );
+		total_weight-> setLabel( std::string(bufs[2]) );
 	}
 
 

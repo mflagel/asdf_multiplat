@@ -84,34 +84,34 @@ namespace character
 	+-----------------+
 	*/
 
+	struct stat_t : mk::Sequence
+	{
+		mk::Label* value_label;
+		mk::Label* point_cost_label;
+
+		stat_t(std::string const& name);
+	};
+
+	struct base_stat_t : stat_t
+	{
+		data::character_t& character;
+		data::base_stat_e stat;
+
+		base_stat_t(data::character_t&, data::base_stat_e);
+		void set_data(data::character_t const&);
+	};
+
+	struct derived_stat_t : stat_t
+	{
+		data::character_t& character;
+		data::derived_stat_e stat;
+
+		derived_stat_t(data::character_t&, data::derived_stat_e);
+		void set_data(data::character_t const&);
+	};
+
 	struct stats_t : mk::Expandbox
 	{
-		struct stat_t : mk::Sequence
-		{
-			mk::Label* value_label;
-			mk::Label* point_cost_label;
-
-			stat_t(std::string const& name);
-		};
-
-		struct base_stat_t : stat_t
-		{
-			data::character_t& character;
-			data::base_stat_e stat;
-
-			base_stat_t(data::character_t&, data::base_stat_e);
-			void set_data(data::character_t const&);
-		};
-
-		struct derived_stat_t : stat_t
-		{
-			data::character_t& character;
-			data::derived_stat_e stat;
-
-			derived_stat_t(data::character_t&, data::derived_stat_e);
-			void set_data(data::character_t const&);
-		};
-
 		stat_t* st = nullptr;
 		stat_t* dx = nullptr;
 		stat_t* iq = nullptr;
@@ -126,17 +126,22 @@ namespace character
 
 	struct movement_t : mk::Expandbox
 	{
-		mk::Label* speed        = nullptr;
-		mk::Label* move         = nullptr;
-		mk::Label* initiative   = nullptr;
-		mk::Label* encumberance = nullptr;
+		stat_t* speed        = nullptr;
+		stat_t* move         = nullptr;
+		stat_t* initiative   = nullptr;
+		stat_t* encumberance = nullptr;
 
 		movement_t(data::character_t&);
+		void set_data(const data::character_t&);
 	};
 
 	struct encumberance_t : mk::Expandbox
 	{
 		std::array<mk::Label*, data::encumberance_count> encumberance_labels;
+
+		mk::Label* combat_weight;
+		mk::Label* pack_weight;
+		mk::Label* total_weight;
 
 		encumberance_t(data::character_t&);
 		void set_data(data::character_t const&);
