@@ -7,6 +7,7 @@
 #include "character/combat.h"
 #include "character/traits.h"
 #include "character/skill_list.h"
+#include "character/spell_list.h"
 
 using namespace std;
 using namespace mk;
@@ -50,7 +51,9 @@ namespace ui
 		traits.emplace<character::traits_t>(_character);
 
 		Page& skills    = tabber.emplace<skills_layout_t>(_character, all_skills);
+
 		Page& spells    = tabber.emplace<Page>("Spells");
+		spells.emplace<ui::character::spell_list_t>(_character);
 	}
 
 }
