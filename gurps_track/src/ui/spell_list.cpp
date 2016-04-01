@@ -15,6 +15,30 @@ namespace ui
 {
 
 
+	spell_properties_t::spell_properties_t()
+	{
+		Sequence& seq1 = emplace<Sequence>();
+		seq1.emplace<Label>("Cost: ");
+		cost  		= &seq1.emplace<Label>("c");
+		seq1.emplace<Label>("Maint: ");
+		maintenance = &seq1.emplace<Label>("m");
+
+		Sequence& seq2 = emplace<Sequence>();
+		seq1.emplace<Label>("TTC: ");
+		time_to_cast = &seq2.emplace<Label>("t");
+		seq1.emplace<Label>("Duration: ");
+		duration     = &seq2.emplace<Label>("d");
+	}
+
+	void spell_properties_t::set_data(data::spell_t const& spell)
+	{
+		cost->        setLabel(spell.initial_cost);
+		maintenance-> setLabel(spell.maintenance_cost);
+		time_to_cast->setLabel(spell.time_to_cast);
+		duration->    setLabel(spell.duration);
+	}
+
+
 	/*
 	+---------------------+
 	|-Spell Name - 15 |+|-|
@@ -50,17 +74,7 @@ namespace ui
 		difficulty = &mHeader->emplace<Label>("n");
 		add_remove_button = &mHeader->emplace<InputBool>("<-", true, std::move(button_toggle_func), true);
 
-		Sequence& seq1 = emplace<Sequence>();
-		seq1.emplace<Label>("Cost: ");
-		cost  		= &seq1.emplace<Label>("c");
-		seq1.emplace<Label>("Maint: ");
-		maintenance = &seq1.emplace<Label>("m");
-
-		Sequence& seq2 = emplace<Sequence>();
-		seq1.emplace<Label>("TTC: ");
-		time_to_cast = &seq2.emplace<Label>("t");
-		seq1.emplace<Label>("Duration: ");
-		duration     = &seq2.emplace<Label>("d");
+		properties = &emplace<spell_properties_t>();		
 
 		Expandbox& desc_box = emplace<Expandbox>("Description");
 		description = &desc_box.emplace<Label>("-");
@@ -82,11 +96,7 @@ namespace ui
 			difficulty->setLabel(" ");
 		}
 
-
-		cost->        setLabel(spell.initial_cost);
-		maintenance-> setLabel(spell.maintenance_cost);
-		time_to_cast->setLabel(spell.time_to_cast);
-		duration->    setLabel(spell.duration);
+		properties.set_data(spell);
 
 		description->setLabel(spell.description);
 		description->setLabel("test description");

@@ -16,9 +16,21 @@ namespace ui
 
 	struct spell_list_t;
 
+	struct spell_properties_t : mk::Sheet
+	{
+		mk::Label* cost;
+		mk::Label* maintenance;
+		mk::Label* time_to_cast;
+		mk::Label* duration;
+		mk::Label* description;
+
+		spell_properties_t();
+		void set_data(data::spell_t const&);
+	};
+
 	/*
 	+---------------------+
-	|-Spell Name - 15 |+|-|
+	|-Spell Name      [+]-|
 	| Cost: 2   Maint: 1  |
 	| TTC:  1   Dur: 1m   |
 	|- Description       -|
@@ -35,11 +47,8 @@ namespace ui
 		mk::Label* difficulty  = nullptr;
 		mk::InputBool* add_remove_button = nullptr;
 
-		mk::Label* cost;
-		mk::Label* maintenance;
-		mk::Label* time_to_cast;
-		mk::Label* duration;
-		mk::Label* description;
+		spell_properties_t* properties = nullptr;
+		mk::Label* description = nullptr;
 
 		spell_list_t& parent;
 		size_t index;
