@@ -19,17 +19,17 @@ namespace character
 
 	spell_list_entry_t::spell_list_entry_t(spell_list_t& _parent, size_t _index)
 	: Expandbox(" ", true)
-	, description(emplace<Label>("dsc"))
 	, parent(_parent)
 	, index(_index)
 	{
 		auto improve_spell = [this](Button&) -> void
 		{
-			if(parent.character.improve_spell(index))
-			{
-				learned_spell_t const& learned_spell = parent.character.spells[index];
-				effective_spell->setLabel(to_string(learned_spell.get_effective_spell(parent.character)));
-			}
+			/// TODO: spell improvement
+			// if(parent.character.improve_spell(index))
+			// {
+			// 	learned_spell_t const& learned_spell = parent.character.spells[index];
+			// 	effective_skill->setLabel(to_string(learned_spell.get_effective_skill(parent.character)));
+			// }
 		};
 		auto un_improve_spell = [this](Button&) -> void
 		{
@@ -37,10 +37,16 @@ namespace character
 			LOG("TODO: un_improve button callback");
 		};
 
+
+		name            = &mHeader->emplace<Label>("n");
+		difficulty      = &mHeader->emplace<Label>("d");
+		point_cost      = &mHeader->emplace<Label>("[-]");
+		effective_skill = &mHeader->emplace<Label>("-");
+
 		improve_btn     = &mHeader->emplace<Button>("+", std::move(improve_spell) );
 		un_improve_btn  = &mHeader->emplace<Button>("-", std::move(un_improve_spell) );
 
-		properties = emplace<spell_properties_t>();
+		properties = &emplace<spell_properties_t>();
 
 		Expandbox& desc_box = emplace<Expandbox>("Description");
 		description = &desc_box.emplace<Label>("-");
@@ -51,11 +57,11 @@ namespace character
 
 	void spell_list_entry_t::set_data(data::character_t const& character, size_t spell_index)
 	{
-		learned_spell_t const& learned_spell = character.spell[spell_index];
+		learned_spell_t const& learned_spell = character.spells[spell_index];
 		auto const& spell = learned_spell.spell;
 		name->setLabel(spell.name);
 
-		if(spell.difficulty != difficulty_very_hard)
+		if(spell.difficulty != skill_difficulty_very_hard)
 		{
 			difficulty->setLabel( "(" + spell.difficulty_string() + ")" );
 		}
@@ -65,12 +71,12 @@ namespace character
 		}
 
 		point_cost->setLabel( "[" + to_string(learned_spell.point_cost()) + "]  " );
-		effective_spell->setLabel(to_string(learned_spell.get_effective_skill(character)));
+		effective_skill->setLabel(to_string(learned_spell.get_effective_skill(character)));
 
-		properties.set_data(spell);
+		properties->set_data(spell);
 
-		// description.setLabel(spell.description);
-		description.setLabel("test description");
+		// description->setLabel(spell.description);
+		description->setLabel("test description");
 	}
 
 
@@ -82,17 +88,17 @@ namespace character
 		//      spells changes
 		emplace<Button>("Refresh", [this](Button&){ rebuild(); });
 
-		scroll_list = &emplace<List>();
+		list = &emplace<List>();
 
 		rebuild();
 	}
 
 	void spell_list_t::rebuild()
 	{
-		scroll_list->clear();
+		list->clear();
 		for(size_t i = 0; i < character.spells.size(); ++i)
 		{
-			scroll_list->emplace<spell_list_entry_t>(*this, i);
+			list->emplace<spell_list_entry_t>(*this, i);
 		}
 	}
 

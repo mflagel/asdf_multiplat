@@ -44,10 +44,12 @@ namespace character
 
 		spell_properties_t* properties = nullptr;
 
-		skill_list_t& parent;
+		mk::Label* description = nullptr;
+
+		spell_list_t& parent;
 		size_t index = 900001;
 
-		skill_list_entry_t(spell_list_t& _parent, size_t index);
+		spell_list_entry_t(spell_list_t& _parent, size_t index);
 
 		void set_data(data::character_t const&, size_t spell_index);
 	};
