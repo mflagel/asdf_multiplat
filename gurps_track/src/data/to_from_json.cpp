@@ -245,7 +245,7 @@ namespace data
         CJSON_GET_ITEM_VECTOR(traits);
 
         CJSON_GET_ITEM_VECTOR(skills);
-        // CJSON_GET_ITEM_VECTOR(spells);
+        CJSON_GET_ITEM_VECTOR(spells);
     }
 
     /*******************************/
