@@ -96,7 +96,7 @@ namespace ui
 			difficulty->setLabel(" ");
 		}
 
-		properties.set_data(spell);
+		properties->set_data(spell);
 
 		description->setLabel(spell.description);
 		description->setLabel("test description");
