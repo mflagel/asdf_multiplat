@@ -28,9 +28,11 @@ namespace data
     struct status_effect_t
     {
         std::string name = "";
-        effect_type_e effect_type = effect_base_stat; //in theory I could use a variant instead
+        effect_type_e effect_type = effect_base_stat; //in theory I could use a variant or a union instead
         int type_index = 0; //ie: stat_ST, stat_hearing, etc
         int amount = 0;
+
+        std::string get_stat_name() const;
 
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);

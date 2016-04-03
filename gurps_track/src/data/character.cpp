@@ -14,6 +14,23 @@ namespace data
 {
     // using namespace basic_info;
 
+    std::string status_effect_t::get_stat_name() const
+    {
+        switch(effect_type)
+        {
+            case effect_base_stat:
+                return base_stat_names[type_index];
+            case effect_derived_stat:
+                return derived_stat_names[type_index];
+            case effect_special_stat:
+                return special_stat_names[type_index];
+
+            default:
+                ASSERT(false, "invalid effect type");
+                return "Unexpected Effect Type";
+        }
+    }
+
     bool trait_t::is_advantage() const
     {
         return point_cost > 0;
