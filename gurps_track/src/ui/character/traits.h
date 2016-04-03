@@ -1,3 +1,4 @@
+#pragma once
 
 #include <kiui/Ui/mkUiConfig.h>
 #include <kiui/Ui/mkUiTypes.h>
@@ -18,10 +19,23 @@ namespace character
 	struct traits_t;
 
 
+
+	/*
+	+-----------------------+
+	| Effect Name   Mod Amt |
+	+-----------------------+
+	 */
+	// struct status_effect_entry_t : mk::Label
+	// {
+		
+	// };
+
+
 	/*
 	+-----------------------+
 	|- Trait Name [12]  [X]-|
-	|    Stat +1            |
+	|    Status Effect 1    |
+	|    Status Effect 2    |
 	|    Description        |
 	+-----------------------+
 	 */

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <kiui/Ui/mkUiConfig.h>
 #include <kiui/Ui/mkUiTypes.h>
 
