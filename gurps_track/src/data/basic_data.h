@@ -70,6 +70,12 @@ namespace data
         , "Taste/Smell"
     };
 
+    constexpr std::array<const char*, derived_stat_count> special_stat_names = 
+    {
+          "Magery"
+        , "Clerical Investment"
+    };
+
     constexpr std::array<int, 21> stat_point_costs = 
     {
           90001 //stat value of 0 is not possible
