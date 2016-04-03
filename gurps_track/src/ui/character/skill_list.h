@@ -63,7 +63,7 @@ namespace character
     */
 	struct skill_list_t : mk::Board
 	{
-		mk::List* scroll_list;
+		mk::List* list;
 
 		data::character_t& character;
 

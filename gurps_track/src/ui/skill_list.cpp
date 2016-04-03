@@ -63,8 +63,7 @@ namespace ui
 	}
 
 	skill_list_t::skill_list_t(data::skill_list_t const& _skills, data::character_t* _character)
-	: Board()
-	, skills(_skills)
+	: skills(_skills)
 	, character(_character)
 	{
 		List& list = emplace<List>();

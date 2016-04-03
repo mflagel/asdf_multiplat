@@ -104,8 +104,7 @@ namespace ui
 	}
 
 	spell_list_t::spell_list_t(data::spell_list_t const& _spells, data::character_t* _character)
-	: Board()
-	, spells(_spells)
+	: spells(_spells)
 	, character(_character)
 	{
 		List& list = emplace<List>();

@@ -37,7 +37,6 @@ namespace character
 			LOG("TODO: un_improve button callback");
 		};
 
-
 		name            = &mHeader->emplace<Label>("n");
 		difficulty      = &mHeader->emplace<Label>("d");
 		point_cost      = &mHeader->emplace<Label>("[-]");

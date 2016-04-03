@@ -63,24 +63,23 @@ namespace character
 
 
 	skill_list_t::skill_list_t(data::character_t& _character)
-	: Board()
-	, character(_character)
+	: character(_character)
 	{
 		//todo: make the tab rebuild automatically if the number of learned
 		//      skills changes
 		emplace<Button>("Refresh", [this](Button&){ rebuild(); });
 
-		scroll_list = &emplace<List>();
+		list = &emplace<List>();
 
 		rebuild();
 	}
 
 	void skill_list_t::rebuild()
 	{
-		scroll_list->clear();
+		list->clear();
 		for(size_t i = 0; i < character.skills.size(); ++i)
 		{
-			scroll_list->emplace<skill_list_entry_t>(*this, i);
+			list->emplace<skill_list_entry_t>(*this, i);
 		}
 	}
 
