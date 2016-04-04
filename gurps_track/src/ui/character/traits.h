@@ -10,6 +10,7 @@ namespace data
 {
 	struct character_t;
 	struct trait_t;
+	struct status_effect_t;
 }
 
 namespace ui
@@ -25,10 +26,11 @@ namespace character
 	| Effect Name   Mod Amt |
 	+-----------------------+
 	 */
-	// struct status_effect_entry_t : mk::Label
-	// {
-		
-	// };
+	struct status_effect_t : mk::Label
+	{
+		status_effect_t(data::status_effect_t&);
+		void set_data(data::status_effect_t const&);
+	};
 
 
 	/*
@@ -45,13 +47,14 @@ namespace character
 		mk::Label* cost;
 		mk::Label* description;
 
-		std::vector<mk::Label*> modifiers;
+		std::vector<status_effect_t*> modifiers;
 
-		traits_t& parent;
+		std::vector<data::trait_t>& traits_data;
 		size_t index;
 
+		trait_entry_t(std::vector<data::trait_t>&, size_t index);
 		trait_entry_t(traits_t&, size_t index);
-		void set_data(data::trait_t const&);
+		void set_data(data::trait_t&);
 	};
 
 
