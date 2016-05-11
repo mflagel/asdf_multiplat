@@ -30,11 +30,13 @@ namespace data
     {
           stat_HP          = 0
         , stat_fatigue     = 1
-        , stat_movement    = 2
-        , stat_willpower   = 3
-        , stat_vision      = 4
-        , stat_hearing     = 5
-        , stat_smell_taste = 6
+        , stat_speed       = 2
+        , stat_movement    = 3
+        , stat_initiative  = 4
+        , stat_willpower   = 5
+        , stat_vision      = 6
+        , stat_hearing     = 7
+        , stat_smell_taste = 8
         , derived_stat_count
     };
 
@@ -62,8 +64,9 @@ namespace data
     {
           "HP"
         , "Fatigue"
-        // , "Speed"
+        , "Speed"
         , "Movement"
+        , "Initiative"
         , "Willpower"
         , "Vision"
         , "Hearing"
