@@ -24,13 +24,26 @@
 // #include <Box2D/Box2D.h>
 // #endif
 
-#ifndef _MSC_VER
-#define noexcept noexcept
+#ifdef _MSC_VER
+#define MSVC
 #else
-#define noexcept //MSVC is STILL a terrible compiler
+#undef MSVC
 #endif
 
-#ifndef _MSC_VER
+//#ifndef MSVC
+//#define noexcept noexcept
+//#else
+//#define noexcept //MSVC is STILL a terrible compiler
+//#endif
+
+//msvc constexpr is still really lacking
+#ifndef MSVC
+#define MSVC_CONSTEXPR constexpr
+#else
+#define MSVC_CONSTEXPR inline
+#endif
+
+#ifndef MSVC
 #define STRERROR(errno, buffer, buffsize) strerror_r(errno, buffer, buffsize); //UNIX
 #define SNPRINTF(str, size, msg, ...) snprintf(str, size, msg, __VA_ARGS__);
 #else
@@ -144,31 +157,6 @@
 
 // #define FONTS_PATH MACRO_CONCAT(ASSETS_PATH,"fonts/")
 // #define FONT_PATH(font_filename) (MACRO_CONCAT(FONTS_PATH, font_filename))
-
-
-//BASE TYPE TYPEDEFS
-// namespace asdf {
-    typedef signed   short  int16;
-    typedef unsigned short  uint16;
-    typedef unsigned short  ushort;
-
-    typedef signed   int    int32;
-    typedef unsigned int    uint32;
-    typedef unsigned int    uint;
-
-    typedef signed   long   int64;
-    typedef unsigned long   uint64;
-    typedef unsigned long   ulong;
-
-    typedef signed   char   int8;
-    typedef unsigned char   uint8;
-    typedef unsigned char   uchar;
-    typedef unsigned char   byte;
-
-
-    //other typedefs
-    // typedef glm::vec4       color_t;
-// }
 
 
 //useful includes
