@@ -12,23 +12,6 @@ namespace gurps_track
 {
 namespace data
 {
-	constexpr std::array<int, 6> get_skill_cost_curve(skill_difficulty_e difficulty, base_stat_e stat)
-	{
-	    if(stat == stat_IQ)
-	    {
-	    	if(difficulty == skill_difficulty_very_hard)
-	    	{
-	    	    return mental_VH_skill_cost_curve;
-	    	}
-
-	    	return mental_skill_cost_curve;
-	    }
-	    else
-	    {
-	        return physical_skill_cost_curve;
-	    }
-	}
-
 	size_t get_skill_cost_index(skill_difficulty_e difficulty, base_stat_e stat, int point_cost)
 	{
 	    int index = 0;
@@ -90,11 +73,6 @@ namespace data
 	std::string skill_t::difficulty_string() const
 	{
 		return std::string(base_stat_names[base_stat]) + "/" + std::string(skill_difficulty_abbreviations[difficulty]);
-	}
-
-	std::string spell_t::difficulty_string() const
-	{
-		return std::string(base_stat_names[stat_IQ]) + "/" + std::string(skill_difficulty_abbreviations[difficulty]);
 	}
 
     /// Todo: handle skills that default off of ST or HT
