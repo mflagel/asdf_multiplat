@@ -1,9 +1,11 @@
 #pragma once
 
+#ifdef __clang__ 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wc++11-compat-deprecated-writable-strings"
 #pragma clang diagnostic ignored "-Wmissing-braces"
 #pragma clang diagnostic ignored "-Wc++1y-extensions" //will remove this when I upgrade my clang and switch to c++14
+#endif
 
 #include "stdafx.h"
 #include "asdfm/utilities/str_const.h"
@@ -467,4 +469,6 @@ namespace data
 }
 }
 
+#ifdef __clang__ 
 #pragma clang diagnostic pop
+#endif
