@@ -2,12 +2,12 @@
   "spells": [
     {
       "name": "Levitation",
-      "description": "",
+      "description": "Subject must be a living being. The subject floats through the air, moving as the caster wills. Maximum Move while levitating is 3 (maximum vertical movement 3 yards per turn). If the caster is levitating himself, he can fight normally while levitating; if someone else is the subject, any DX-based skill is at -3.",
       "difficulty": 2,
-      "initial_cost": ,
-      "maintenance_cost": ,
-      "duration": ,
-      "time_to_cast": ,
+      "initial_cost": "1 per 80lb (min 2)",
+      "maintenance_cost": "half",
+      "duration": "1 min",
+      "time_to_cast": "2",
       "duration_type": 0,
       "defense_type": 0,
       "info": ""
