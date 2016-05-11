@@ -157,7 +157,7 @@ namespace data
         bool  wearing_pack = true;
 
         std::array<armor_t, armor_region_count> armor_info; //this will eventually be derived from gear and status effects
-        std::array<int, base_stat_count + derived_stat_count> stat_mod_cache;
+        std::array<int, total_stat_count> stat_mod_cache;
 
         character_t(std::string filepath);
 
