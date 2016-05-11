@@ -11,7 +11,9 @@ namespace gurps_track
 {
 namespace data
 {
-    enum skill_category_e
+    // will replace this with data driven categories so it can be more customizable
+    // keeping the code here for easy copypasta later
+    /*enum skill_category_e
     {
           skill_category_none          = 0
         , skill_category_animal        = 0x1
@@ -53,6 +55,7 @@ namespace data
         , "Theif/Spy"
         , "Vehicle"
     };
+    */
 
     enum skill_difficulty_e
     {
@@ -109,7 +112,22 @@ namespace data
         , 12
     };
 
-    constexpr std::array<int, 6> get_skill_cost_curve(skill_difficulty_e, base_stat_e);
+    MSVC_CONSTEXPR std::array<int, 6> get_skill_cost_curve(skill_difficulty_e difficulty, base_stat_e stat)
+	{
+	    if(stat == stat_IQ)
+	    {
+	    	if(difficulty == skill_difficulty_very_hard)
+	    	{
+	    	    return mental_VH_skill_cost_curve;
+	    	}
+
+	    	return mental_skill_cost_curve;
+	    }
+	    else
+	    {
+	        return physical_skill_cost_curve;
+	    }
+	}
 
     size_t get_skill_cost_index(skill_difficulty_e, base_stat_e, int point_cost);
     int point_cost_from_index(skill_difficulty_e, base_stat_e, size_t cost_index);
@@ -138,8 +156,6 @@ namespace data
         std::string defaults;
         // std::vector<skill_default_t> defaults;
         //std::vector<std::string> prerequisites
-
-        uint32 categories;
 
         bool is_physical() const;
         bool is_mental() const;
@@ -176,8 +192,6 @@ namespace data
 
         std::string info;
 
-        std::string difficulty_string() const;
-
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
     };
@@ -196,7 +210,7 @@ namespace data
         skill_t skill;
         size_t num_improvements = 0;
 
-        learned_skill_t() = default; //default ctor required for serialization
+        learned_skill_t() = default;
 
         // default for initial will be 0 for GURPS 3rd,  1 for 4th
         learned_skill_t(skill_t _skill, int _initial_improvement_level)
@@ -222,9 +236,6 @@ namespace data
         spell_t spell;
         size_t num_improvements = 1;
 
-        learned_spell_t() = default;  //default ctor required for serialization
-
-        // default initial level at 1, since no spell can be at half a point
         learned_spell_t(spell_t _spell, int _initial_improvement_level = 1)
         : spell(std::move(_spell))
         , num_improvements(_initial_improvement_level)
