@@ -30,13 +30,11 @@ namespace data
     {
           stat_HP          = 0
         , stat_fatigue     = 1
-        , stat_speed       = 2
-        , stat_movement    = 3
-        , stat_initiative  = 4
-        , stat_willpower   = 5
-        , stat_vision      = 6
-        , stat_hearing     = 7
-        , stat_smell_taste = 8
+        , stat_movement    = 2
+        , stat_willpower   = 3
+        , stat_vision      = 4
+        , stat_hearing     = 5
+        , stat_smell_taste = 6
         , derived_stat_count
     };
 
@@ -46,6 +44,8 @@ namespace data
         , stat_clerical_investment
         , special_stat_count
     };
+
+    constexpr size_t total_stat_count = base_stat_count + derived_stat_count + special_stat_count;
 
     constexpr size_t sense_stat_start_index = stat_vision;
     constexpr size_t sense_stat_end_index = stat_smell_taste;
@@ -62,9 +62,8 @@ namespace data
     {
           "HP"
         , "Fatigue"
-        , "Speed"
+        // , "Speed"
         , "Movement"
-        , "Initiative"
         , "Willpower"
         , "Vision"
         , "Hearing"
@@ -96,14 +95,12 @@ namespace data
         , 175   // 20
     };
 
-    //every level beyond 20 costs an additional 25 points
-    // return stat_point_costs[std::min(level, size_t(20))] + (25 * std::max(level, size_t(20)) - 20);
+    
     constexpr int get_stat_point_cost(size_t level)
-    {
-        auto cost = stat_point_costs[level > 20 ? 20 : level];
-        cost += 25 * (20 - (level > 20 ? level : 20));
-        return cost;
-    }
+	{
+		return stat_point_costs[level > 20 ? 20 : level] + 25 * (20 - (level > 20 ? level : 20));
+	}
+
 
     constexpr int get_stat_point_improvement_cost(size_t from_level, size_t to_level)
     {
@@ -151,7 +148,7 @@ namespace data
         return ST * encumberance_mults[encumberance];
     }
 
-    /*constexpr*/ inline encumberance_e get_encumberance(const int ST, const float weight)
+    MSVC_CONSTEXPR encumberance_e get_encumberance(const int ST, const float weight)
     {
         for(size_t i = 0; i < encumberance_mults.size(); ++i)
         {
@@ -350,44 +347,73 @@ namespace data
         , "F"
     };
 
-    constexpr armor_region_e armor_region_from_hit_location(const hit_location_e hit_location)
+	MSVC_CONSTEXPR armor_region_e armor_region_from_hit_location(const hit_location_e hit_location)
     {
-        switch(hit_location)
+        switch (hit_location)
         {
-            case hit_locaiton_torso: [[clang::fallthrough]];
-            case hit_location_torso_vital_organ:
-                return armor_region_body;
+        case hit_locaiton_torso: [[clang::fallthrough]];
+        case hit_location_torso_vital_organ:
+            return armor_region_body;
 
-            case hit_location_head: [[clang::fallthrough]];
-            case hit_location_brain: [[clang::fallthrough]];
-            case hit_location_eyes:
-                return armor_region_head;
+        case hit_location_head: [[clang::fallthrough]];
+        case hit_location_brain: [[clang::fallthrough]];
+        case hit_location_eyes:
+            return armor_region_head;
 
-            case hit_location_arm_left: [[clang::fallthrough]];
-            case hit_location_arm_right:
-                return armor_region_arms;
+        case hit_location_arm_left: [[clang::fallthrough]];
+        case hit_location_arm_right:
+            return armor_region_arms;
 
-            case hit_location_hand_left: [[clang::fallthrough]];
-            case hit_location_hand_right:
-                return armor_region_hands;
+        case hit_location_hand_left: [[clang::fallthrough]];
+        case hit_location_hand_right:
+            return armor_region_hands;
 
-            case hit_location_leg_left: [[clang::fallthrough]];
-            case hit_location_leg_right:
-                return armor_region_legs;
+        case hit_location_leg_left: [[clang::fallthrough]];
+        case hit_location_leg_right:
+            return armor_region_legs;
 
-            case hit_location_foot_left: [[clang::fallthrough]];
-            case hit_location_foot_right:
-                return armor_region_feet;
+        case hit_location_foot_left: [[clang::fallthrough]];
+        case hit_location_foot_right:
+            return armor_region_feet;
 
-            case hit_location_weapon:
-                return armor_region_none;
+        case hit_location_weapon:
+            return armor_region_none;
 
-            default:
-                return armor_region_none;
+        default:
+            return armor_region_none;
         }
     }
 
-    // constexpr int calc_damage(int damage, damage_type_e, armor_type_e = armor_none);
+    MSVC_CONSTEXPR int calc_damage(size_t damage, damage_type_e damage_type, armor_type_e armor_type, int DR_mod)
+    {
+        switch(damage_type)
+        {
+            case damage_pure: //ignore armor
+            {
+                return damage;
+            }
+
+            case damage_lightning:
+            {
+                //all but 1 damage ignored for metal armor  (might be all armor ignored?)
+                if(armor_type >= armor_chainmail && armor_type <= armor_heavy_plate)
+                {
+                    return (damage - glm::min(damage, armor_info[armor_type].DR));
+                }
+            }
+            [[clang::fallthrough]];
+
+            case damage_crushing: [[clang::fallthrough]];
+            case damage_cutting:  [[clang::fallthrough]];
+            case damage_impaling:
+            {
+                return (damage - glm::min(damage, armor_info[armor_type].DR)) * damage_type_mults[damage_type];
+            }
+
+            default:
+                return damage;
+        }
+    }
 
 
 
@@ -429,42 +455,6 @@ namespace data
     //     //convert from_amt to copper and then from copper to to_amt
     //     return (amt * currency_value[from_type]) / currency_value[to_type];
     // }
-
-
-    /*************************************************/
-    /*** 
-    /*************************************************/
-    constexpr size_t calc_damage(size_t damage, damage_type_e damage_type, armor_type_e armor_type, int DR_mod)
-    {
-        switch(damage_type)
-        {
-            case damage_pure: //ignore armor
-            {
-                return damage;
-            }
-
-            case damage_lightning:
-            {
-                //all but 1 damage ignored for metal armor  (might be all armor ignored?)
-                if(armor_type >= armor_chainmail && armor_type <= armor_heavy_plate)
-                {
-                    return (damage - glm::min(damage, armor_info[armor_type].DR));
-                }
-            }
-            [[clang::fallthrough]];
-
-            case damage_crushing: [[clang::fallthrough]];
-            case damage_cutting:  [[clang::fallthrough]];
-            case damage_impaling:
-            {
-                return (damage - glm::min(damage, armor_info[armor_type].DR)) * damage_type_mults[damage_type];
-            }
-
-            default:
-                return damage;
-        }
-    }
-// }
 }
 }
 
