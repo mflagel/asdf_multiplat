@@ -12,6 +12,8 @@
 #include "data/character.h"
 #include "ui/main_layout.h"
 
+#include <asdfm/utilities/utilities.h>
+
 #define ASSETS_PATH "../assets/"
 
 using namespace mk;
@@ -21,6 +23,10 @@ using namespace gurps_track::ui;
 
 int main(int argc, char *argv[])
 {
+    auto cwd = asdf::util::get_current_working_directory();
+
+    printf("cwd: %s", cwd.c_str());
+
 	mk::GlWindow glwindow(500, 800, "kiUi demo DAS TEST", ASSETS_PATH);
 	glwindow.initContext();
 
@@ -30,7 +36,8 @@ int main(int argc, char *argv[])
 	mk::Form& root = uiwindow.rootForm();
 	mk::StyleParser parser(uiwindow.styler());
 	// parser.loadStyleSheet(root.sheet().uiWindow().resourcePath() + "interface/styles/blendish_dark.yml");
-	
+
+
 	Header& header = root.sheet().emplace<Header>();
 	// Board& body = root.sheet().emplace<Board>();
 	// LayerSheet& body = board.emplace<LayerSheet>();
@@ -41,8 +48,8 @@ int main(int argc, char *argv[])
 	header.emplace<Button>("Save");
 	header.emplace<Button>("Save As");
 
-	character_t test_char("../assets/characters/Karalieth.grp");
-	data::skill_list_t all_skills{"../assets/data/gurps_skills.json"};
+    character_t test_char(string(ASSETS_PATH) + "characters/Karalieth.grp");
+    data::skill_list_t all_skills{string(ASSETS_PATH) + "data/gurps_skills.json"};
 
 	root.sheet().emplace<main_layout_t>(test_char, all_skills);
 
