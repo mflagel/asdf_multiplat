@@ -27,9 +27,9 @@ namespace character
 	title_display_t::title_display_t(character_t& _character)
 	: Expandbox("Character Title")
 	{
-		emplace<Label>(string("Name: " + _character.name));
-		emplace<Label>(string("Description: " + _character.description));
-		emplace<Label>(string("Race: " + _character.race.name));
+		emplace<Label>(std::string("Name: " + _character.name));
+		emplace<Label>(std::string("Description: " + _character.description));
+		emplace<Label>(std::string("Race: " + _character.race.name));
 		// emplace<Label>(string("#: " + to_string(character.version) + " | " + date.to_string());  //FIXME
 	}
 
