@@ -71,9 +71,9 @@ namespace data
     //todo: make a to_string overload for this (and support user_defined to_string overloads in general)
     struct date_t
     {
-        uint8 day = 0;
-        uint8 month = 0;
-        uint16 year = 0;
+        uint8_t day = 0;
+        uint8_t month = 0;
+        uint16_t year = 0;
 
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
@@ -198,8 +198,8 @@ namespace data
         int spells_point_cost() const;
         double total_point_cost() const;
 
-        void spend_points(uint16 amount, std::string memo);
-        void gain_points(uint16 amount, std::string memo);
+        void spend_points(uint16_t amount, std::string memo);
+        void gain_points(uint16_t amount, std::string memo);
         void points_transaction(int amount, std::string memo);
 
         void heal_damage(int amount_healed);

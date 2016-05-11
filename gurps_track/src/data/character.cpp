@@ -108,7 +108,7 @@ namespace data
         test_race_trait.name = "test race trait 1";
         test_race_trait.description = "description for test race trait 1";
         test_race_trait.point_cost = 10;
-        test_race_trait.status_effects.push_back(status_effect_t{"test effect", effect_base_stat, stat_ST, 2});
+        //test_race_trait.status_effects.push_back(status_effect_t{"test effect", effect_base_stat, stat_ST, 2});  //FIXME MSVC
         race.traits.push_back(move(test_race_trait));
 
 
@@ -359,12 +359,14 @@ namespace data
     }
 
 
-    void character_t::spend_points(uint16 amount, std::string memo)
+    //void character_t::spend_points(uint16_t amount, std::string memo)  ///FIXME MSVC ambiguous symbol
+	void character_t::spend_points(unsigned short amount, std::string memo)
     {
         points_transaction(-amount, move(memo));
     }
 
-    void character_t::gain_points(uint16 amount, std::string memo)
+    //void character_t::gain_points(uint16_t amount, std::string memo)  ///FIXME MSVC ambiguous symbol
+	void character_t::gain_points(unsigned short amount, std::string memo)
     {
         points_transaction(amount, move(memo));
     }
