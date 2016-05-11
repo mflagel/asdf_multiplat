@@ -11,6 +11,7 @@
 
 #ifdef _MSC_VER
 //#include <Winbase.h>
+#include <windows.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -110,12 +111,20 @@ namespace asdf {
     bool file_exists(std::string const& filepath)
     {
 #ifdef _MSC_VER
+        /*
         if (FILE *file = fopen(filepath.c_str(), "r")) {
             fclose(file);
             return true;
         } else {
             return false;
-        }   
+        }
+        */
+        //return PathFileExists(filepath.c_str()) > 0;
+
+        DWORD dwAttrib = GetFileAttributes(filepath.c_str());
+
+        return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
+         !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #else
         struct stat buffer;   
         return (stat (filepath.c_str(), &buffer) == 0); 
@@ -185,11 +194,21 @@ namespace asdf {
     {
         std::vector<std::string> tokens;
 
+#ifdef _MSC_VER
+        char* next_token = nullptr;
+
+        char* token = strtok_s(str, delimiters, &next_token);
+        while (token != nullptr) {
+            tokens.push_back(std::string(token));
+            token = strtok_s(nullptr, delimiters, &next_token);
+        }
+#else
         char* token = std::strtok(str, delimiters);
         while (token != nullptr) {
             tokens.push_back(std::string(token));
             token = std::strtok(nullptr, delimiters);
         }
+#endif
 
         return tokens;
     }
