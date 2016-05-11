@@ -129,7 +129,6 @@
   <ItemGroup>
     <ClCompile Include="..\asdf_multiplat\utilities\utilities.cpp" />
     <ClCompile Include="..\ext\cJSON\cJSON.c" />
-    <ClCompile Include="src\data\basic_data.cpp" />
     <ClCompile Include="src\data\character.cpp" />
     <ClCompile Include="src\data\skills.cpp" />
     <ClCompile Include="src\data\to_from_json.cpp" />
