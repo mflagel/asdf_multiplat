@@ -142,7 +142,7 @@ namespace data
         test_disadvantage.name = "test disadvantage 1";
         test_disadvantage.description = "description for test disadvantage 1";
         test_disadvantage.point_cost = 25;
-        test_disadvantage.status_effects.push_back(status_effect_t{"test effect", effect_derived_stat, stat_willpower, -2});
+        //test_disadvantage.status_effects.push_back(status_effect_t{"test effect", effect_derived_stat, stat_willpower, -2});  //FIXME MSVC
         traits.push_back(test_disadvantage);
 
         trait_t test_quirk;
