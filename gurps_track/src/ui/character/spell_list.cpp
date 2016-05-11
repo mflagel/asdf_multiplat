@@ -45,7 +45,7 @@ namespace character
 		improve_btn     = &mHeader->emplace<Button>("+", std::move(improve_spell) );
 		un_improve_btn  = &mHeader->emplace<Button>("-", std::move(un_improve_spell) );
 
-		properties = &emplace<spell_properties_t>();
+		//properties = &emplace<spell_properties_t>();
 
 		Expandbox& desc_box = emplace<Expandbox>("Description");
 		description = &desc_box.emplace<Label>("-");
@@ -72,7 +72,7 @@ namespace character
 		point_cost->setLabel( "[" + to_string(learned_spell.point_cost()) + "]  " );
 		effective_skill->setLabel(to_string(learned_spell.get_effective_skill(character)));
 
-		properties->set_data(spell);
+		// properties->set_data(spell);
 
 		// description->setLabel(spell.description);
 		description->setLabel("test description");

@@ -70,9 +70,14 @@ namespace data
 	{
 		return base_stat == stat_IQ;
 	}
+
 	std::string skill_t::difficulty_string() const
 	{
 		return std::string(base_stat_names[base_stat]) + "/" + std::string(skill_difficulty_abbreviations[difficulty]);
+	}
+	std::string spell_t::difficulty_string() const
+	{
+	    return std::string(base_stat_names[stat_IQ]) + "/" + std::string(skill_difficulty_abbreviations[difficulty]);
 	}
 
     /// Todo: handle skills that default off of ST or HT
