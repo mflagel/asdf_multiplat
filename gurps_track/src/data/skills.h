@@ -192,6 +192,8 @@ namespace data
 
         std::string info;
 
+        std::string difficulty_string() const;
+
         cJSON* to_JSON() const;
         void from_JSON(cJSON*);
     };
@@ -210,7 +212,7 @@ namespace data
         skill_t skill;
         size_t num_improvements = 0;
 
-        learned_skill_t() = default;
+        learned_skill_t() = default;  //default ctor required for serialization
 
         // default for initial will be 0 for GURPS 3rd,  1 for 4th
         learned_skill_t(skill_t _skill, int _initial_improvement_level)
