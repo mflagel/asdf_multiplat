@@ -56,6 +56,12 @@
 #define CLANG_DIAGNOSTIC_IGNORE(to_ignore)
 #endif
 
+#ifdef __clang__
+#define FALLTHROUGH [[clang::fallthrough]]
+#else
+#define FALLTHROUGH
+#endif
+
 #define GLM_FORCE_CXX11
 #define GLM_FORCE_RADIANS
 #define GLM_SWIZZLE

@@ -360,28 +360,28 @@ namespace data
     {
         switch (hit_location)
         {
-        case hit_locaiton_torso: [[clang::fallthrough]];
+        case hit_locaiton_torso: FALLTHROUGH;
         case hit_location_torso_vital_organ:
             return armor_region_body;
 
-        case hit_location_head: [[clang::fallthrough]];
-        case hit_location_brain: [[clang::fallthrough]];
+        case hit_location_head: FALLTHROUGH;
+        case hit_location_brain: FALLTHROUGH;
         case hit_location_eyes:
             return armor_region_head;
 
-        case hit_location_arm_left: [[clang::fallthrough]];
+        case hit_location_arm_left: FALLTHROUGH;
         case hit_location_arm_right:
             return armor_region_arms;
 
-        case hit_location_hand_left: [[clang::fallthrough]];
+        case hit_location_hand_left: FALLTHROUGH;
         case hit_location_hand_right:
             return armor_region_hands;
 
-        case hit_location_leg_left: [[clang::fallthrough]];
+        case hit_location_leg_left: FALLTHROUGH;
         case hit_location_leg_right:
             return armor_region_legs;
 
-        case hit_location_foot_left: [[clang::fallthrough]];
+        case hit_location_foot_left: FALLTHROUGH;
         case hit_location_foot_right:
             return armor_region_feet;
 

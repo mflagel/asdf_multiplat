@@ -7,7 +7,8 @@ using namespace glm;
 
 #include "cJSON/cJSON.h"
 
-#pragma clang diagnostic ignored "-Wunused-macros"
+CLANG_DIAGNOSTIC_PUSH
+CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros")
 
 namespace gurps_track
 {
@@ -358,3 +359,5 @@ namespace data
     }
 }
 }
+
+CLANG_DIAGNOSTIC_POP
