@@ -1,7 +1,7 @@
 #pragma once
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wc++11-compat-deprecated-writable-strings"
+CLANG_DIAGNOSTIC_PUSH
+CLANG_DIAGNOSTIC_IGNORE("-Wc++11-compat-deprecated-writable-strings")
 
 #include "basic_data.h"
 
@@ -279,4 +279,4 @@ namespace data
 }
 }
 
-#pragma clang diagnostic pop
+CLANG_DIAGNOSTIC_POP

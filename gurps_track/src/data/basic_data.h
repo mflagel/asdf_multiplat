@@ -1,14 +1,12 @@
 #pragma once
 
-#ifdef __clang__ 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wc++11-compat-deprecated-writable-strings"
-#pragma clang diagnostic ignored "-Wmissing-braces"
-#pragma clang diagnostic ignored "-Wc++1y-extensions" //will remove this when I upgrade my clang and switch to c++14
-#endif
-
 #include "stdafx.h"
 #include "asdfm/utilities/str_const.h"
+
+CLANG_DIAGNOSTIC_PUSH
+CLANG_DIAGNOSTIC_IGNORE("-Wc++11-compat-deprecated-writable-strings")
+CLANG_DIAGNOSTIC_IGNORE("-Wmissing-braces")
+CLANG_DIAGNOSTIC_IGNORE("-Wc++1y-extensions") //will remove this when I upgrade my clang and switch to c++14
 
 namespace gurps_track
 {
@@ -469,6 +467,4 @@ namespace data
 }
 }
 
-#ifdef __clang__ 
-#pragma clang diagnostic pop
-#endif
+CLANG_DIAGNOSTIC_POP
