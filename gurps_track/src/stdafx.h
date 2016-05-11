@@ -30,25 +30,30 @@
 #undef MSVC
 #endif
 
-//#ifndef MSVC
-//#define noexcept noexcept
-//#else
-//#define noexcept //MSVC is STILL a terrible compiler
-//#endif
-
 //msvc constexpr is still really lacking
-#ifndef MSVC
-#define MSVC_CONSTEXPR constexpr
-#else
+#ifdef MSVC
 #define MSVC_CONSTEXPR inline
+#else
+#define MSVC_CONSTEXPR constexpr
 #endif
 
-#ifndef MSVC
-#define STRERROR(errno, buffer, buffsize) strerror_r(errno, buffer, buffsize); //UNIX
-#define SNPRINTF(str, size, msg, ...) snprintf(str, size, msg, __VA_ARGS__);
-#else
+#ifdef MSVC
 #define STRERROR(errno, buffer, buffsize) strerror_s(buffer, buffsize, errno); //MSVC
 #define SNPRINTF(str, size, msg, ...) sprintf_s(str, size, msg, __VA_ARGS__);
+#else
+#define STRERROR(errno, buffer, buffsize) strerror_r(errno, buffer, buffsize); //UNIX
+#define SNPRINTF(str, size, msg, ...) snprintf(str, size, msg, __VA_ARGS__);
+#endif
+
+
+#ifdef __clang__
+#define CLANG_DIAGNOSTIC_PUSH _Pragma(clang diagnostic push);
+#define CLANG_DIAGNOSTIC_POP _Pragma(clang diagnostic pop);
+#define CLANG_DIAGNOSTIC_IGNORE(to_ignore) _Pragma(clang diagnostic ignored to_ignore);
+#else
+#define CLANG_DIAGNOSTIC_PUSH 
+#define CLANG_DIAGNOSTIC_POP
+#define CLANG_DIAGNOSTIC_IGNORE(to_ignore)
 #endif
 
 #define GLM_FORCE_CXX11
