@@ -154,7 +154,8 @@ namespace data
 
     constexpr float get_encumberance_weight(const int ST, const encumberance_e encumberance)
     {
-        return ST * encumberance_mults[encumberance];
+        // if ST is so high that it overflows a float, there's probably a massive problem
+        return static_cast<float>(ST) * encumberance_mults[encumberance];
     }
 
     MSVC_CONSTEXPR encumberance_e get_encumberance(const int ST, const float weight)
@@ -410,13 +411,15 @@ namespace data
                     return (damage - glm::min(damage, armor_info[armor_type].DR));
                 }
             }
-            [[clang::fallthrough]];
+            FALLTHROUGH
 
-            case damage_crushing: [[clang::fallthrough]];
-            case damage_cutting:  [[clang::fallthrough]];
+            case damage_crushing: FALLTHROUGH;
+            case damage_cutting:  FALLTHROUGH;
             case damage_impaling:
             {
-                return (damage - glm::min(damage, armor_info[armor_type].DR)) * damage_type_mults[damage_type];
+                int pre_multed = (damage - glm::min(damage, armor_info[armor_type].DR));
+                float multed = static_cast<float>(pre_multed) * damage_type_mults[damage_type];
+                return static_cast<int>(std::floor(multed));
             }
 
             default:
