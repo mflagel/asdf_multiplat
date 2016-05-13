@@ -57,9 +57,9 @@ namespace ui
 		maintenance = &seq1.emplace<Label>("m");
 
 		Sequence& seq2 = emplace<Sequence>();
-		seq1.emplace<Label>("TTC: ");
+		seq2.emplace<Label>("TTC: ");
 		time_to_cast = &seq2.emplace<Label>("t");
-		seq1.emplace<Label>("Duration: ");
+		seq2.emplace<Label>("Duration: ");
 		duration     = &seq2.emplace<Label>("d");
 
 		Expandbox& desc_box = emplace<Expandbox>("Description");
@@ -89,7 +89,6 @@ namespace ui
 		duration->    setLabel(spell.duration);
 
 		description->setLabel(spell.description);
-		description->setLabel("test description");
 
 		if(parent.character)
 		{
