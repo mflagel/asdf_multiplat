@@ -50,8 +50,9 @@ int main(int argc, char *argv[])
 
     character_t test_char(string(ASSETS_PATH) + "characters/Karalieth.grp");
     data::skill_list_t all_skills{string(ASSETS_PATH) + "data/gurps_skills.json"};
+    data::spell_list_t all_spells{string(ASSETS_PATH) + "data/gurps_spells.json"};
 
-	root.sheet().emplace<main_layout_t>(test_char, all_skills);
+	root.sheet().emplace<main_layout_t>(test_char, all_skills, all_spells);
 
 	bool pursue = true;
 	while (pursue)
