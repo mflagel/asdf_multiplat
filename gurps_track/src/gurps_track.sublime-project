@@ -8,6 +8,10 @@
 		},
 		{
 			"follow_symlinks": true,
+			"path": "../assets"
+		},
+		{
+			"follow_symlinks": true,
 			"path": "/home/mathias/gdrive/Programming/AsdfMultiplat/asdf_multiplat"
 		},
 		{
