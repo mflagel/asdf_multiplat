@@ -114,5 +114,18 @@ namespace data
 
 	    LOG("Skills Loaded: %zu", this->size());
     }
+
+    spell_list_t::spell_list_t(std::string const& filepath)
+    {
+        LOG("loading spells from %s", filepath.c_str());
+        std::string json_str = util::read_text_file(filepath);
+        cJSON* root = cJSON_Parse(json_str.c_str());
+
+        ASSERT(root, "");
+        from_JSON(root);
+        cJSON_Delete(root);
+
+        LOG("Spells Loaded: %zu", this->size());
+    }
 }
 }
