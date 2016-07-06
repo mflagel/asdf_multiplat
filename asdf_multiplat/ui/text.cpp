@@ -19,7 +19,8 @@ namespace asdf
         //start centered
         offset = -halfsize;
 
-
+        /// FIXME
+        /*
         if((alignment & ui_align_top) > 0)
         {
             ASSERT((alignment & ui_align_bottom) == 0, "No vertical stretch for text");
@@ -51,5 +52,6 @@ namespace asdf
            offset.x += parent_halfsize.x;
            offset.x -= halfsize.x;
         }
+        */
     }
 }

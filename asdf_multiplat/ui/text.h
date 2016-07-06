@@ -1,9 +1,10 @@
 #pragma once;
 
-#include "stdafx.h"
+#include <string>
+
 #include <FTGL/ftgl.h>
 
-#include "ui_base.h"
+//#include "ui_base.h"
 
 namespace asdf
 {
@@ -12,7 +13,7 @@ namespace asdf
         std::string str;
         FTFont* font = nullptr;
         size_t face_size = 32;
-        ui_alignment_e alignment = ui_align_center;
+        //ui_alignment_e alignment = ui_align_center; /// FIXME
 
         glm::vec2 offset;
         glm::vec2 halfsize;   
