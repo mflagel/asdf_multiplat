@@ -100,11 +100,16 @@ namespace asdf {
     /* Iterates through all entries of a map and copies the keys into a
     /* std::vector of keys
     /************************************************************************/
-    template <class MapKeyType, class MapValueType>
-    void GetMapKeys(const std::map<MapKeyType, MapValueType>& map, std::vector<MapKeyType>& out_keyList) {
+    template <typename MapKeyType, typename MapValueType>
+    std::vector<MapKeyType> GetMapKeys(std::map<MapKeyType, MapValueType> const& map)
+    {
+        std::vector<MapKeyType> out_keyList;
+
 	    for_each(map.begin(), map.end(), [&](const std::pair<MapKeyType, MapValueType>& entry){
 		    out_keyList.push_back(entry.first);
 	    });
+
+        return out_keyList;
     }
 
     std::vector<std::string> tokenize(char* const str, char* const delimiters);
