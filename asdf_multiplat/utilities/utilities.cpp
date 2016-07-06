@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "utilities.h"
 
-#include <cstring>
-
 // #include "reflected_struct.h"
 
 // #include "rapidjson/rapidjson.h"
@@ -10,7 +8,6 @@
 // #include "rapidjson/writer.h"
 
 #ifdef _MSC_VER
-//#include <Winbase.h>
 #include <windows.h>
 #else
 #include <sys/stat.h>
@@ -111,16 +108,6 @@ namespace asdf {
     bool file_exists(std::string const& filepath)
     {
 #ifdef _MSC_VER
-        /*
-        if (FILE *file = fopen(filepath.c_str(), "r")) {
-            fclose(file);
-            return true;
-        } else {
-            return false;
-        }
-        */
-        //return PathFileExists(filepath.c_str()) > 0;
-
         DWORD dwAttrib = GetFileAttributes(filepath.c_str());
 
         return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
@@ -215,18 +202,18 @@ namespace asdf {
 
     /// FIXME move somewhere specific to SDL or something
     /// otherwise non-sdl projects cant use this file
-    // void checkSDLError(int line/*=-1*/){
-    // #ifndef NDEBUG
-	   //  const char *error = SDL_GetError();
-	   //  if (*error != '\0')
-	   //  {
-		  //   printf("SDL Error: %s\n", error);
-		  //   if (line != -1)
-			 //    printf(" + line: %i\n", line);
-		  //   SDL_ClearError();
-	   //  }
-    // #endif
-    // }
+     void checkSDLError(int line/*=-1*/){
+     #ifndef NDEBUG
+	     const char *error = SDL_GetError();
+	     if (*error != '\0')
+	     {
+		     printf("SDL Error: %s\n", error);
+		     if (line != -1)
+			     printf(" + line: %i\n", line);
+		     SDL_ClearError();
+	     }
+     #endif
+     }
 
     /************************************************************************/
     /* GetB2FixtureVerts
