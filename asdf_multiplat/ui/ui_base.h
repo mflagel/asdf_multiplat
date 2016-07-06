@@ -5,10 +5,7 @@
 #include <functional>
 
 #include <SDL/SDL_events.h>
-
-//#include "utilities_openGL.h"
-//#include "texture.h"
-//#include "shader.h"
+#include <glm/glm.hpp>
 
 #define UI_RENDER_PARAMS glm::vec3 const& _position, glm::mat3 const& _matrix, color_t const& _color
 
@@ -16,7 +13,8 @@
 #define BUTTON_PRESSED_COLOR   glm::vec4(0.5f)
 #define BUTTON_HIGHLIGHT_COLOR glm::vec4(1.5f)
 
-//#define nullindex 0xFFFFFFFF
+//TODO: put this and the one in stdafx somewhere better
+#define nullindex 0xFFFFFFFF
 
 /** Todo **
     Remove the render_debug() function from everything and
