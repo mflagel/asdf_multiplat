@@ -1,9 +1,14 @@
 #include "stdafx.h"
 #include "asdf_multiplat.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtx/transform.hpp>
+//#include <glm/gtx/rotate_vector.hpp>
+
+#include "data/content_manager.h"
+#include "ui/ui_base.h"
+#include "utilities/spritebatch.h"
+#include "utilities/utilities.h"
 
 
 using namespace asdf::util;
@@ -45,7 +50,7 @@ namespace asdf {
         init_SDL();
         init_openGL();
 
-        Content.init();
+        //Content.init();
         spritebatch = make_shared<spritebatch_t>();
 
         main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
@@ -64,10 +69,10 @@ namespace asdf {
 
 
     void asdf_multiplat_t::update() {
-        uint currentTicks = SDL_GetTicks();
+        uint32_t currentTicks = SDL_GetTicks();
         float timeElapsed = (currentTicks - prev_ticks) / 1000.0f;
 
-        frame_times[++frame_time_index] = timeElapsed;
+        frame_times[frame_time_index++] = timeElapsed;
         frame_time_index %= frame_times.size();
 
         prev_ticks = currentTicks;
@@ -241,7 +246,7 @@ namespace asdf {
 
 
         //create window
-        uint flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+        uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
         if (settings.fullscreen)
             flags |= SDL_WINDOW_FULLSCREEN;

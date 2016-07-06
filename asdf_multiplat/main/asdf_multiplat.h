@@ -1,10 +1,20 @@
 #pragma once
-// #include <FTGL\ftgl.h>
-#include "settings.h"
-#include "spritebatch.h"
-#include "ui_base.h"
+
+#include <array>
+#include <vector>
+#include <memory>
+
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+
+#include "data/settings.h"
 
 namespace asdf {
+
+    struct texture_t;
+    struct spritebatch_t;
+    struct ui_view_t;
 
     struct asdf_specific_t
     {
@@ -33,7 +43,8 @@ namespace asdf {
         std::shared_ptr<texture_t> render_target;
         GLuint      render_depth_buffer{9001};
         GLuint      quad_VBO{9001};
-        color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
+        //color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
+        glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};
         
         bool running        = false;
         bool gl_initialized = false;
