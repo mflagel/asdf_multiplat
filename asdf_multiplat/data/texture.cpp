@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "texture.h"
 
+#include "main/asdf_multiplat.h"
+#include "utilities/utilities_openGL.h"
+
 using namespace glm;
 
 namespace asdf
@@ -44,10 +47,13 @@ namespace asdf
     : name{_name}
     , width{_width}
     , height{_height}
-    , halfwidth{_width / 2.0f}
-    , halfheight{_height / 2.0f}
+    , halfwidth{_width / 2}
+    , halfheight{_height / 2}
     , format{GL_RGBA}
     {
+        ASSERT(std::div(long(_width), 2L).rem == 0, "Width of texture \'%s\' must be divisible by 2", _name.c_str());
+        ASSERT(std::div(long(_height), 2L).rem == 0, "Height of texture \'%s\' must be divisible by 2", _name.c_str());
+
         glGenTextures(1, &texture_id);
         
         write(color_data);
@@ -113,11 +119,16 @@ namespace asdf
 
     void texture_t::refresh_params()
     {
+        int _width, _height;
+
         glBindTexture(GL_TEXTURE_2D, texture_id);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &_width);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &_height);
         glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        width = glm::abs(_width);
+        height = glm::abs(_height);
     }
 
     ivec2 texture_t::texture_to_screen_space(ivec2 const& texture_pos) const

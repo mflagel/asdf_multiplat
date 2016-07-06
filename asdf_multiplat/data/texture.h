@@ -1,5 +1,9 @@
 #pragma once
 
+#include <exception>
+#include <string>
+
+#include <glm/glm.hpp>
 #include <SOIL/SOIL.h>
 
 namespace asdf {
@@ -19,10 +23,10 @@ namespace asdf {
     public:
         std::string name = "";
         GLuint texture_id = 9001;
-        int width = 0;
-        int height = 0;
-        float halfwidth = 0;
-        float halfheight = 0;
+        size_t width = 0;
+        size_t height = 0;
+        size_t halfwidth = 0;
+        size_t halfheight = 0;
         int format = 0;
         //int numChannels = 0;
 
