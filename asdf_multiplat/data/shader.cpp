@@ -57,8 +57,8 @@ namespace asdf {
         ASSERT(app.gl_initialized, "Loading a shader before openGL has been initialized");
         ASSERT(!CheckGLError(), "GL Error before loading shader");
 
-        std::string fuck = read_text_file(filepath);
-        const char* shader_src = fuck.c_str();
+        std::string shader_str = read_text_file(filepath);
+        const char* shader_src = shader_str.c_str();
 
         GLuint shader = glCreateShader(shader_type);
         glShaderSource(shader, 1, (const GLchar**)&shader_src, nullptr);
