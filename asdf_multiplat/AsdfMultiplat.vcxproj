@@ -44,7 +44,7 @@
     <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(ProjectDir)/../bin/win32;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
     <LibraryPath>../lib;../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <OutDir>..\lib\win32\x86</OutDir>
+    <OutDir>..\lib\win32\x86\</OutDir>
     <IntDir>..\obj\asdf_multiplat\win32\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <TargetExt>.lib</TargetExt>
@@ -82,6 +82,7 @@
     <ClCompile Include="data\shader.cpp" />
     <ClCompile Include="data\texture.cpp" />
     <ClCompile Include="main\asdf_multiplat.cpp" />
+    <ClCompile Include="ui\polygon.cpp" />
     <ClCompile Include="ui\text.cpp" />
     <ClCompile Include="ui\ui_base.cpp" />
     <ClCompile Include="ui\ui_button.cpp" />
@@ -94,12 +95,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\content_manager.h" />
+    <ClInclude Include="data\gl_resources.h" />
     <ClInclude Include="data\resource_depot.h" />
     <ClInclude Include="data\settings.h" />
     <ClInclude Include="data\shader.h" />
     <ClInclude Include="data\texture.h" />
     <ClInclude Include="main\asdf_multiplat.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ui\polygon.h" />
     <ClInclude Include="ui\text.h" />
     <ClInclude Include="ui\ui_base.h" />
     <ClInclude Include="ui\ui_button.h" />
