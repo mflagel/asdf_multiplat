@@ -32,6 +32,11 @@
 #include <ctype.h>
 #include "cJSON.h"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
+
 static const char *ep;
 
 const char *cJSON_GetErrorPtr(void) {return ep;}
@@ -748,3 +753,8 @@ void cJSON_Minify(char *json)
 	}
 	*into=0;	/* and null-terminate. */
 }
+
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
