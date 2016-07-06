@@ -2,6 +2,9 @@
 #include "ui_label.h"
 #include "utilities.h"
 
+#include "asdf_multiplat.h"
+#include "spritebatch.h"
+
 using namespace glm;
 using namespace std;
 using namespace asdf::util;
@@ -21,7 +24,7 @@ namespace asdf
     {
         text.font = font;
         text.face_size = face_size;
-        text.alignment = text.alignment;
+        //text.alignment = text.alignment;  /// FIXME
         
         set_text(std::move(str));
     }
