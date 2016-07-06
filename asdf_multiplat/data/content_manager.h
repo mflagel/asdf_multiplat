@@ -3,8 +3,8 @@
 #include <memory>
 #include <FTGL/ftgl.h>
 #include "resource_depot.h"
-#include "utilities.h"
-#include "utilities_openGL.h"
+#include "utilities/utilities.h"
+#include "utilities/utilities_openGL.h"
 #include "shader.h"
 #include "texture.h"
 
