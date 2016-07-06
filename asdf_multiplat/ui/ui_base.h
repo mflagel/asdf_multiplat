@@ -1,11 +1,14 @@
 #pragma once;
 
-#include "stdafx.h"
+#include <vector>
+#include <memory>
+#include <functional>
+
 #include <SDL/SDL_events.h>
 
-#include "utilities_openGL.h"
-#include "texture.h"
-#include "shader.h"
+//#include "utilities_openGL.h"
+//#include "texture.h"
+//#include "shader.h"
 
 #define UI_RENDER_PARAMS glm::vec3 const& _position, glm::mat3 const& _matrix, color_t const& _color
 
@@ -25,6 +28,9 @@
 
 namespace asdf
 {
+    struct texture_t;
+    struct shader_t;
+
     struct ui_base_t;
     struct ui_label_t;
     struct ui_button_t;
@@ -49,7 +55,7 @@ namespace asdf
     using aabb_t = aabb_<glm::vec3>;
     using aabb2_t = aabb_<glm::vec2>;
 
-    enum ui_alignment_e : uint32 {
+    enum ui_alignment_e : uint32_t {
         ui_align_none = 0, // No alignment means position is world-relative not parent-relative
         ui_align_center = 1,
 
@@ -165,8 +171,10 @@ namespace asdf
     struct ui_image_t : ui_view_t {
         std::shared_ptr<texture_t> texture;
 
-        ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2(position), glm::vec2(size) = glm::vec2(nullindex), ui_alignment_e alignment = ui_align_center);
-        ui_image_t(color_t color, glm::vec2(position), glm::vec2(size) = glm::vec2(nullindex), ui_alignment_e alignment = ui_align_center);
+        //ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2(position), glm::vec2(size) = glm::vec2(nullindex), ui_alignment_e alignment = ui_align_center);
+        ui_image_t(std::shared_ptr<texture_t> _texture, glm::vec2 _position, glm::vec2 _size = glm::vec2(nullindex), ui_alignment_e _alignment = ui_align_center);
+        //ui_image_t(color_t color, glm::vec2(position), glm::vec2(size) = glm::vec2(nullindex), ui_alignment_e alignment = ui_align_center);
+        ui_image_t(color_t color, glm::vec2 _position, glm::vec2 _size = glm::vec2(nullindex), ui_alignment_e alignment = ui_align_center);
         ui_image_t(color_t color, ui_alignment_e align = ui_align_fill);
 
         virtual void update(float dt) override;

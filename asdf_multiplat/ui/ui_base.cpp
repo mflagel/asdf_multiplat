@@ -1,9 +1,14 @@
 #pragma clang diagnostic ignored "-Wunused-parameter"
 
 #include "stdafx.h"
+
 #include "ui_base.h"
 #include "ui_button.h"
 #include "utilities.h"
+#include "spritebatch.h"
+
+#include "asdf_multiplat.h"
+#include "content_manager.h"
 
 using namespace glm;
 using namespace std;
@@ -341,7 +346,7 @@ namespace asdf
     /************************************************************************/
     /* UI Image
     /************************************************************************/
-    ui_image_t::ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2(position), glm::vec2(size)/*vec2(nullindex)*/, ui_alignment_e alignment/*align_none*/)
+    ui_image_t::ui_image_t(std::shared_ptr<texture_t> texture, glm::vec2 position, glm::vec2 size/*vec2(nullindex)*/, ui_alignment_e alignment/*align_none*/)
         : ui_view_t(position, size, alignment)
         , texture(texture)
     {
@@ -351,7 +356,7 @@ namespace asdf
         }
     }
 
-    ui_image_t::ui_image_t(color_t color, glm::vec2(position), glm::vec2(size)/*vec2(nullindex)*/, ui_alignment_e alignment/*align_none*/)
+    ui_image_t::ui_image_t(color_t color, glm::vec2 position, glm::vec2 size/*vec2(nullindex)*/, ui_alignment_e alignment/*align_none*/)
         : ui_view_t(position, size, alignment)
         , texture(Content.textures["pixel"])
     {
