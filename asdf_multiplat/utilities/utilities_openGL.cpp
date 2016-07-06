@@ -1,40 +1,57 @@
 #include "stdafx.h"
+
 #include <stdio.h>
+#include <string>
+
 #include "utilities_openGL.h"
 //#include "shader.h"
 
 namespace asdf {
     namespace util {
 
-        bool CheckGLError(GLuint shader) {
-        GLint glStatus;
-        GLchar *glErrorMsg = 0;
-        GLsizei glErrLen = 256;
+        /// I'm not entirely sure why these functions return true if there's an error, but whatever
 
-        if (shader != nullindex) {
+        bool CheckShader(GLuint shader)
+        {
+            GLint glStatus;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &glStatus);
-            if (glStatus == GL_FALSE) {
-                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &glErrLen);
-                glErrorMsg = (GLchar *)malloc((glErrLen + 50)*sizeof(char));
-                //SNPRINTF(glErrorMsg, glErrLen + 50, "%s\n", "Failed to compile the shader!");
-                glGetShaderInfoLog(shader, glErrLen, nullptr, &glErrorMsg[strlen(glErrorMsg)]);
-                fprintf(stderr, "%s\n", glErrorMsg);
-                free(glErrorMsg);
+
+            if(glStatus = GL_FALSE)
+            {
+                GLint error_length = 0;
+                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &error_length);
+
+                std::string gl_error_str(error_length, '\n');
+                glGetShaderInfoLog(shader, error_length, nullptr, &(gl_error_str[0]));
+
+                fprintf(stderr, "Failed to compile shader!\n%s\n", gl_error_str.data());
                 return true;
             }
+
+            return false;
         }
 
-        GLenum errCode;
-        const GLubyte *errString;
+        bool CheckGLError(GLuint shader)
+        {
+            if(shader != nullindex)
+            {
+                CheckShader(shader);
+            }
 
-        if ((errCode = glGetError()) != GL_NO_ERROR) {
-            errString = gluErrorString(errCode);
-            fprintf(stderr, "OpenGL Error: %s\n", errString);
-            return true;
+            GLenum errCode;
+            const GLubyte *errString;
+
+            if ((errCode = glGetError()) != GL_NO_ERROR) {
+                errString = gluErrorString(errCode);
+                fprintf(stderr, "OpenGL Error: %s\n", errString);
+                return true;
+            }
+
+            return false;
         }
 
-        return false;
-    }
+        bool CheckGLError() { return CheckGLError(0xFFFFFFFF); }
+
 
     }
 }

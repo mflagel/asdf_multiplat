@@ -1,13 +1,15 @@
 #pragma once
 
-#include "stdafx.h"
 #include <GL/glew.h>
 
 namespace asdf {
     namespace util {
 
-    //function declarations
-    bool CheckGLError(GLuint shader = 0xFFFFFFFF);
+    bool CheckShader(GLuint shader);
+    bool CheckGLError(GLuint shader/* = 0xFFFFFFFF*/);
+
+    // for some absurd reason, msvc is saying the default arg is redefined so I have to overload
+    bool CheckGLError();
 
     }
 }
