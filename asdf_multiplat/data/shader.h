@@ -20,7 +20,8 @@ namespace asdf {
         shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath);
         ~shader_t();
 
-        shader_t& operator=(const shader_t& rhs);
+        shader_t(const shader_t&) = delete;
+        shader_t& operator=(const shader_t& rhs) = delete;
 
         inline void use_program() { glUseProgram(shader_program_id); }
         void load_uniforms();
