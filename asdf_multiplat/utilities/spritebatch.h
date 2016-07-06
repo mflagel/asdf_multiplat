@@ -2,19 +2,15 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 
-#include "text.h"
-#include "utilities_openGL.h"
-#include "texture.h"
-#include "shader.h"
-
-typedef glm::vec4 color_t; //referenced RGBA
+struct FTFont;
 
 namespace asdf {
 
-    enum {
-        MAX_SPRITES = 4096
-    };
+    struct shader_t;
+
+    constexpr size_t MAX_SPRITES = 4096;
 
 
     /************************************************************************/

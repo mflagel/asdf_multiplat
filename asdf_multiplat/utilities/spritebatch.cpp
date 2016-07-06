@@ -14,8 +14,7 @@ using namespace asdf::util;
 namespace asdf {
 
     spritebatch_t::spritebatch_t()
-        : spritebatch_shader(MAKE_SHARED_SHADER(spritebatch))
-        //: spritebatch_shader(Content.shaders["textured"])
+        : spritebatch_shader(/*MAKE_SHARED_SHADER(spritebatch)*/nullptr)  //commented out for projects with binaries in an unexpected location
         , vertex_buffer(nullindex)
         , index_buffer(nullindex)
         , has_begun(false)
@@ -112,8 +111,7 @@ namespace asdf {
         glBindSampler(0, Content.samplers["LinearClamp"]);
         //glBindSampler(0, Content.samplers["LinearRepeat"]);
 
-        std::vector<std::shared_ptr<texture_t>> textures_used;
-        GetMapKeys<std::shared_ptr<texture_t>, std::vector <sprite_t>> (sprite_map, textures_used);
+        auto textures_used = GetMapKeys<std::shared_ptr<texture_t>, std::vector <sprite_t>> (sprite_map);
 
         if (textures_used.size() > 0) {
             for (auto const& texture : textures_used)
