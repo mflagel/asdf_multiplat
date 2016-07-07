@@ -2,7 +2,7 @@
 
 #include <vector>
 
-//#include <glm/glm.hpp>
+#include <glm/glm.hpp>
 
 #include "ui/ui_base.h"
 #include "data/gl_resources.h"
@@ -11,8 +11,8 @@ namespace asdf
 {
 	struct  polygon_vertex_t
 	{
-		//glm::vec3   position;
-		//color_t     color;
+		glm::vec3   position;
+		color_t     color;
 	};
 	
 	using polygon_t = std::vector<polygon_vertex_t>;
