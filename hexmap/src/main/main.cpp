@@ -1,8 +1,8 @@
 #pragma clang diagnostic ignored "-Wunused-parameter"
 
 #include "stdafx.h"
-#include <asdfm/main/asdf_multiplat.h>
-#include <asdfm/utilities/utilities.h>
+#include <asdf_multiplat/main/asdf_multiplat.h>
+#include <asdf_multiplat/utilities/utilities.h>
 
 #include "hexmap.h"
 
@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
 
     app.init(std::move(exec_dir));
 
-    hex_map_t hex_map;
-    app.specific = &hex_map;
-    hex_map.init();
+    hexmap_t hexmap;
+    app.specific = &hexmap;
+    hexmap.init();
 
 	SDL_Event event;
 
