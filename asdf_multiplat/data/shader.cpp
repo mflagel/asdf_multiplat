@@ -18,6 +18,7 @@ namespace asdf {
         , shader_program_id(create_shader_program(vertex_shader_id, fragment_shader_id))
     {
         load_uniforms();
+        ASSERT(!CheckGLError(), "Error creating shader \'%s\'", name.c_str());
     }
 
     shader_t::~shader_t() {
@@ -42,7 +43,8 @@ namespace asdf {
         }
     }
 
-    void shader_t::update_wvp_uniform() {
+    void shader_t::update_wvp_uniform()
+    {
         ASSERT(!CheckGLError(), "Error before updating shader WVP uniform");
         glm::mat4 wvp = projection_matrix * view_matrix * world_matrix;
         glUniformMatrix4fv(uniforms.at("WVP"), 1, GL_FALSE, glm::value_ptr(wvp));
@@ -55,7 +57,7 @@ namespace asdf {
         LOG("loading shader: %s", filepath);
         ASSERT(util::file_exists(filepath), "Shader file \"%s\" does not exist", filepath);
         ASSERT(app.gl_initialized, "Loading a shader before openGL has been initialized");
-        ASSERT(!CheckGLError(), "GL Error before loading shader");
+        ASSERT(!CheckGLError(), "GL Error before loading shader \'%s\'", filepath);
 
         std::string shader_str = read_text_file(filepath);
         const char* shader_src = shader_str.c_str();
@@ -64,8 +66,9 @@ namespace asdf {
         glShaderSource(shader, 1, (const GLchar**)&shader_src, nullptr);
         glCompileShader(shader);
 
-        ASSERT(CheckGLError(shader) == 0, "Error creating shader");
-        if (CheckGLError(shader)) {
+        bool shader_error = CheckGLError(shader);
+        ASSERT(!shader_error, "Error creating shader");
+        if (shader_error) {
             LOG("--------Error in shader source:\n");
             LOG(shader_src);
 

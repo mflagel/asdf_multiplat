@@ -23,12 +23,14 @@ namespace asdf {
         shader_t(const shader_t&) = delete;
         shader_t& operator=(const shader_t& rhs) = delete;
 
-        inline void use_program() { glUseProgram(shader_program_id); }
+        inline void use_program() { glUseProgram(shader_program_id); }  //TODO: deprecate in favour of GL_State::bind_shader
         void load_uniforms();
         void update_wvp_uniform();
 
         static GLuint load_shader(const char* filepath, GLuint shader_type);
         static GLuint create_shader_program(const GLuint vs, const GLuint fs);
+
+
     };
 
 #define MAKE_SHARED_SHADER(shader_name) (make_shared<shader_t>(#shader_name, VSHADER_PATH(#shader_name), FSHADER_PATH(#shader_name)))
