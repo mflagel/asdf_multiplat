@@ -16,7 +16,7 @@ namespace asdf {
             GLint glStatus;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &glStatus);
 
-            if(glStatus = GL_FALSE)
+            if(glStatus == GL_FALSE)
             {
                 GLint error_length = 0;
                 glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &error_length);
@@ -33,21 +33,24 @@ namespace asdf {
 
         bool CheckGLError(GLuint shader)
         {
+            bool had_error = false;
+
             if(shader != nullindex)
             {
-                CheckShader(shader);
+                had_error = CheckShader(shader);
             }
 
-            GLenum errCode;
-            const GLubyte *errString;
-
-            if ((errCode = glGetError()) != GL_NO_ERROR) {
+            GLenum errCode = GL_NO_ERROR;
+            
+            while((errCode = glGetError()) != GL_NO_ERROR)
+            {
+                const GLubyte *errString;
                 errString = gluErrorString(errCode);
                 fprintf(stderr, "OpenGL Error: %s\n", errString);
-                return true;
+                had_error = true;
             }
 
-            return false;
+            return had_error;
         }
 
         bool CheckGLError() { return CheckGLError(0xFFFFFFFF); }
