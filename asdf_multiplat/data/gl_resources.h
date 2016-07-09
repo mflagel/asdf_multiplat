@@ -1,7 +1,13 @@
 #pragma once
 
-#include <gl\glew.h>
+#include <array>
 #include <climits>
+#include <memory>
+
+#include <gl\glew.h>
+
+#include "gl_vertex_spec.h"
+#include "shader.h"
 
 namespace asdf
 {
@@ -23,11 +29,6 @@ namespace asdf
 
         vao_t(vao_t&&) = default;
         vao_t& operator=(vao_t&&) = default;
-
-        operator GLuint() const
-        {
-            return id;
-        }
     };
 
     struct vbo_t
@@ -48,11 +49,6 @@ namespace asdf
 
         vbo_t(vbo_t&&) = default;
         vbo_t& operator=(vbo_t&&) = default;
-
-        operator GLuint() const
-        {
-            return id;
-        }
     };
 
     struct gl_renderable_t
@@ -62,8 +58,8 @@ namespace asdf
         size_t num_verts{0};
         GLuint draw_mode = GL_TRIANGLES;
 
-        gl_renderable_t();
-        ~gl_renderable_t();
+        gl_renderable_t(){}
+        virtual ~gl_renderable_t(){}
 
         gl_renderable_t(const gl_renderable_t&) = delete;
         gl_renderable_t& operator=(const gl_renderable_t&) = delete;
@@ -71,4 +67,26 @@ namespace asdf
         gl_renderable_t(gl_renderable_t&&) = default;
         gl_renderable_t& operator=(gl_renderable_t&&) = default;
     };
+
+
+
+    struct gl_state_t
+    {
+        GLuint current_vao = 0;
+        GLuint current_vbo = 0;
+
+        GLuint current_shader = 0;
+
+        void bind(vao_t const&);
+        void bind(vbo_t const&);
+        void bind(std::shared_ptr<shader_t> const& shader);
+
+        void unbind_vao();
+        void unbind_vbo();
+        void unbind_shader();
+
+        bool assert_sync(); //ensures the values here are sync'd with openGL
+    };
+
+    extern gl_state_t GL_State;
 }
