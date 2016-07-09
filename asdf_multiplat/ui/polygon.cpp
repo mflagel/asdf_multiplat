@@ -2,6 +2,7 @@
 #include "polygon.h"
 
 #include "data/content_manager.h"
+#include "data/gl_resources.h"
 #include "utilities/utilities_openGL.h"
 
 using namespace glm;
@@ -10,8 +11,6 @@ namespace asdf
 {
     using namespace util;
     using namespace std;
-
-    // constexpr uint32 position_attrib_loc = 0;
 
     ui_polygon_t::ui_polygon_t()
     :ui_base_t(glm::vec3(0.0f))
@@ -27,9 +26,9 @@ namespace asdf
     void ui_polygon_t::set_data(polygon_t const& points)
     {
         LOG_IF(CheckGLError(), "Error before polygon creation");
-        glBindVertexArray(vao);
+        GL_State.bind(vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        GL_State.bind(vbo);
         glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(polygon_vertex_t), (void*)(points.data()), GL_STATIC_DRAW);
 
         {
@@ -41,13 +40,13 @@ namespace asdf
             glEnableVertexAttribArray(posAttrib);
             glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, stride, 0);
 
-            GLint colorAttrib = glGetAttribLocation(shader->shader_program_id, "Color");
+            GLint colorAttrib = glGetAttribLocation(shader->shader_program_id, "VertColor");
             glEnableVertexAttribArray(colorAttrib);
             glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
         }
 
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GL_State.unbind_vao();
+        GL_State.unbind_vbo();
 
         num_verts = points.size();
 
@@ -59,9 +58,9 @@ namespace asdf
     // void ui_polygon_t::render(glm::vec3 const& _position, glm::mat3 const& _matrix, color_t const& _color)
     void ui_polygon_t::render()
     {
-        glBindVertexArray(vao);
+        GL_State.bind(vao);
         glDrawArrays(draw_mode, 0, num_verts);
-        glBindVertexArray(0);
+        GL_State.unbind_vao();
     }
 
     /*
