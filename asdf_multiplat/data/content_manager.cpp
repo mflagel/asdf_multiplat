@@ -7,7 +7,11 @@
 using namespace std;
 //using namespace boost::filesystem;
 
-namespace asdf {
+namespace asdf
+{
+    ///
+    content_manager_t Content;
+    ///
 
     content_load_exception::content_load_exception(std::string const& filepath, std::string const& loadError) 
         : filepath(filepath), loadError(loadError) 
@@ -20,8 +24,6 @@ namespace asdf {
     {}
     const char* resource_not_found_exception::what() const 
     { return ("Could not find resource: " + resourceName).c_str(); }
-
-    content_manager_t Content;
 
 #define ADD_SHADER(shader_name) \
     std::shared_ptr<shader_t> shader_name = MAKE_SHARED_SHADER(shader_name); \
