@@ -136,7 +136,10 @@
     <ClCompile Include="src\ui\character\combat.cpp" />
     <ClCompile Include="src\ui\character\overview.cpp" />
     <ClCompile Include="src\ui\character\skill_list.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(filename)_2.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(filename)_character.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="src\ui\character\spell_list.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(filename)_character.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="src\ui\character\traits.cpp" />
     <ClCompile Include="src\ui\main_layout.cpp" />
@@ -152,6 +155,7 @@
     <ClInclude Include="src\ui\character\combat.h" />
     <ClInclude Include="src\ui\character\overview.h" />
     <ClInclude Include="src\ui\character\skill_list.h" />
+    <ClInclude Include="src\ui\character\spell_list.h" />
     <ClInclude Include="src\ui\character\traits.h" />
     <ClInclude Include="src\ui\main_layout.h" />
     <ClInclude Include="src\ui\skill_list.h" />
