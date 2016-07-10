@@ -144,6 +144,7 @@ clean:
 ###############################
 define BUILD_SHIT
 
+# Compiler -c CFlags -I Includes Sysincludes -o objectname sourcefile
 $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.c | intro
 	@echo -e $$(CYAN)$<$$(ENDCOLOR)
 	@$$(CC) -c $$(CFLAGS) -I $$(INCLUDES) $$(SYSINCLUDES) -o $$@ $$<
