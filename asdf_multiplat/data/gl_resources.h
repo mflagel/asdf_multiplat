@@ -4,7 +4,7 @@
 #include <climits>
 #include <memory>
 
-#include <gl\glew.h>
+#include <gl/glew.h>
 
 #include "gl_vertex_spec.h"
 #include "shader.h"

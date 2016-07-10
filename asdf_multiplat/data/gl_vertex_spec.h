@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl\glew.h>
+#include <gl/glew.h>
 
 #include "shader.h"
 
@@ -78,7 +78,7 @@ namespace asdf
         {
             size_t stride = get_stride();
             size_t offset = 0;
-            for_each(vertex_attribs, [&offset, stride](auto const& attrib)
+            for_each(vertex_attribs, [&shader, &offset, stride](auto const& attrib)
             {
                 GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, attrib.name);
                 glEnableVertexAttribArray(attrib_loc);
