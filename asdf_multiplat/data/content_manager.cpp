@@ -40,8 +40,39 @@ namespace asdf
     {
     }
 
-    void content_manager_t::init() {
+    std::string find_folder(std::string const& name, size_t max_search_dist = 5)
+    {
+        path = name;
+        size_t search_dist = 0;
+
+        for(;;)
+        {
+            if(search_dist == max_search_dist)
+            {
+                return "";
+            }
+
+            //search upwards
+            if(is_directory(name))
+            {
+                return path;
+            }
+            else
+            {
+                path.insert(0, "../");
+                ++search_dist;
+            }
+        }
+    }
+
+    void content_manager_t::init()
+    {
         LOG("Initializing Content");
+
+
+
+
+
 
         //textures
         ADD_TEXTURE("debug", "debug_purple.png");
@@ -66,6 +97,11 @@ namespace asdf
         AddSamplers();
 
         LOG("Content Initialized");
+    }
+
+    bool content_manager_t::load_shader(std::string const& name)
+    {
+
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {
