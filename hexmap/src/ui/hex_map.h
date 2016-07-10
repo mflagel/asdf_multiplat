@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 #include "asdf_multiplat/ui/polygon.h"
 #include "asdf_multiplat/ui/ui_base.h"
