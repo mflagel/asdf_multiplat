@@ -8,6 +8,6 @@
 //#include "targetver.h"
 
 //std includes
-#include "../../asdf_multiplat/main/stdafx.h"
+#include "../../asdf_multiplat/stdafx.h"
 
 #include "projector_fun.h"
