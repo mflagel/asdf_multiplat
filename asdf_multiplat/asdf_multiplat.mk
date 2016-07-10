@@ -26,19 +26,21 @@ SYSINCLUDES += $(INCLUDEPATH)
 INCLUDES   += $(SRCPATH)/data 	  \
 			  $(SRCPATH)/main 	  \
 			  $(SRCPATH)/ui 	  \
-			  $(SRCPATH)/utilities
+			  $(SRCPATH)/utilities \
+			  $(SRCPATH)
 ###############################
 
 ########### SOURCES ###########
 SRCPATH		= $(PROJPATH)/$(PROJNAME)
 
 MAIN_SOURCES = $(SRCPATH)/main/main.cpp 		\
-			   $(SRCPATH)/main/stdafx.cpp 		\
+			   $(SRCPATH)/stdafx.cpp 		\
 			   $(SRCPATH)/main/asdf_multiplat.cpp 		\
 
 DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
 			   $(SRCPATH)/data/texture.cpp 	    \
+			   $(SRCPATH)/data/gl_resources.cpp 	    \
 
 UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)/spritebatch.cpp 		\
 					$(UTILITIES_SRC_PATH)/thread_pool.cpp 	\
@@ -50,6 +52,7 @@ UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
 			 $(SRCPATH)/ui/ui_button.cpp \
              $(SRCPATH)/ui/ui_label.cpp \
              $(SRCPATH)/ui/text.cpp \
+             $(SRCPATH)/ui/polygon.cpp \
 
 SOURCES += $(MAIN_SOURCES) $(DATA_SOURCES) $(UTILITIES_SOURCES) $(UI_SOURCES)
 
