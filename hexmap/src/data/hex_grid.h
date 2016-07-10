@@ -2,8 +2,10 @@
 
 #include <vector>
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
+namespace asdf
+{
 namespace hexmap
 {
 namespace data
@@ -34,5 +36,6 @@ namespace data
 
         hex_grid_t(glm::ivec2 size);
     };
+}
 }
 }

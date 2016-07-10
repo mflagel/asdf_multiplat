@@ -1,6 +1,8 @@
 #include "hex_grid.h"
 
 
+namespace asdf
+{
 namespace hexmap
 {
 namespace data
@@ -20,5 +22,6 @@ namespace data
     hex_grid_t::hex_grid_t(glm::ivec2 size)
     {
     }
+}
 }
 }
