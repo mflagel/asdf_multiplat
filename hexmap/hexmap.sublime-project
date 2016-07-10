@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "../asdf_multiplat"
+		},
+		{
+			"path": "../shaders"
+		}
+	]
+}
