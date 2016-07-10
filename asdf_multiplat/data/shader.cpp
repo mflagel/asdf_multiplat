@@ -67,7 +67,6 @@ namespace asdf {
         glCompileShader(shader);
 
         bool shader_error = CheckGLError(shader);
-        ASSERT(!shader_error, "Error creating shader");
         if (shader_error) {
             LOG("--------Error in shader source:\n");
             LOG(shader_src);
@@ -78,6 +77,7 @@ namespace asdf {
 #endif
             return GLuint(nullindex);
         }
+        ASSERT(!shader_error, "Error creating shader");
         
         //free(shader_src);
         return shader;
