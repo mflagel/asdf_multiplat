@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "utilities.h"
 
+#include <cstring>  //for std::strtok
+
 // #include "reflected_struct.h"
 
 // #include "rapidjson/rapidjson.h"
