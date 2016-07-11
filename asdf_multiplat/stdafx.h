@@ -121,33 +121,6 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
 #define SHADERS_PATH "../../shaders/"
 #define SHADERS_PATH_(glsl_ver) MACRO_CONCAT(SHADERS_PATH, MACRO_CONCAT(#glsl_ver,"/"))
 
-#define SHADER_FILENAME(shader_name, glsl_ver, ext) MACRO_CONCAT(shader_name, MACRO_CONCAT(MACRO_CONCAT("_",#glsl_ver), ext))
-
-#define SHADER_PATH_3(shader_name, glsl_ver, ext)   (MACRO_CONCAT(SHADERS_PATH_(glsl_ver), SHADER_FILENAME(shader_name, glsl_ver, ext)))
-#define SHADER_PATH_2(shader_filename, glsl_ver)    (MACRO_CONCAT(SHADERS_PATH_(glsl_ver), shader_filename))
-#define SHADER_PATH_1(shader_filename)              (MACRO_CONCAT(SHADERS_PATH_(SHADER_DEFAULT_VER), shader_filename))
-#if(LAX_MACROS)
-#define SHADER_PATH(...) SELMACRO_IMPL_3_((##__VA_ARGS__, SHADER_PATH_3(__VA_ARGS__), SHADER_PATH_2(__VA_ARGS__), SHADER_PATH_1(__VA_ARGS__))) 
-#else
-#define SHADER_PATH(...) SELMACRO_IMPL_3(##__VA_ARGS__, SHADER_PATH_3(__VA_ARGS__), SHADER_PATH_2(__VA_ARGS__), SHADER_PATH_1(__VA_ARGS__))
-#endif
-
-#define VSHADER_PATH_1(shader_name)               (SHADER_PATH(shader_name, SHADER_DEFAULT_VER, ".vert"))
-#define VSHADER_PATH_2(shader_name, glsl_ver)    (SHADER_PATH(shader_name, glsl_ver, ".vert"))
-#if(LAX_MACROS)
-#define VSHADER_PATH(...) SELMACRO_IMPL_2_((__VA_ARGS__, VSHADER_PATH_2(__VA_ARGS__), VSHADER_PATH_1(__VA_ARGS__))) 
-#else
-#define VSHADER_PATH(...) SELMACRO_IMPL_2(__VA_ARGS__, VSHADER_PATH_2(__VA_ARGS__), VSHADER_PATH_1(__VA_ARGS__))
-#endif
-
-#define FSHADER_PATH_1(shader_name)               (SHADER_PATH(shader_name, SHADER_DEFAULT_VER, ".frag"))
-#define FSHADER_PATH_2(shader_name, glsl_ver)    (SHADER_PATH(shader_name, glsl_ver, ".frag"))
-#if(LAX_MACRO)
-#define FSHADER_PATH(...) SELMACRO_IMPL_2_((__VA_ARGS__, FSHADER_PATH_2(__VA_ARGS__), FSHADER_PATH_1(__VA_ARGS__)))
-#else
-#define FSHADER_PATH(...) SELMACRO_IMPL_2(__VA_ARGS__, FSHADER_PATH_2(__VA_ARGS__), FSHADER_PATH_1(__VA_ARGS__))
-#endif
-
 #define FONTS_PATH MACRO_CONCAT(ASSETS_PATH,"fonts/")
 #define FONT_PATH(font_filename) (MACRO_CONCAT(FONTS_PATH, font_filename))
 
