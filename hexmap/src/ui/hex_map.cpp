@@ -44,9 +44,6 @@ namespace ui
 
     void hex_map_t::render_grid_overlay()
     {
-        //test
-        //hexagon.render();
-
         GL_State.bind(hexagon.vao);
         glDrawArraysInstanced(hexagon.draw_mode, 0, 6, 10);
         GL_State.unbind_vao();
