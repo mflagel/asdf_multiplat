@@ -89,9 +89,9 @@
     <IncludePath>../src/main;../src;../../;../../asdf_multiplat;../../include/;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>../../lib;../../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
     <SourcePath>../;../../ext/;/main;/data;/ui;/utilities;$(VC_SourcePath)</SourcePath>
-    <OutDir>../bin/win32/$(PlatformShortName)</OutDir>
+    <OutDir>../bin/win32/$(PlatformShortName)/</OutDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IntDir>../obj/win32/$(PlatformShortName)/$(Configuration)</IntDir>
+    <IntDir>../obj/win32/$(PlatformShortName)/$(Configuration)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
