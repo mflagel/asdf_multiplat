@@ -50,8 +50,9 @@ namespace asdf {
         init_SDL();
         init_openGL();
 
-        //Content.init();
+        Content.init();
         spritebatch = make_shared<spritebatch_t>();
+        spritebatch->spritebatch_shader = Content.shaders["spritebatch"];
 
         main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
     }
