@@ -95,7 +95,10 @@ namespace asdf {
     // void write_json_file(rapidjson::Document&, std::string const& filepath);
 
     std::string get_current_working_directory();
-    bool file_exists(std::string const& filepath);
+    bool is_directory(std::string const& filepath);
+    bool is_file(std::string const& filepath);
+
+    std::string find_folder(std::string const& name, size_t max_search_dist = 5);
 
     /************************************************************************/
     /* Random Number Generation

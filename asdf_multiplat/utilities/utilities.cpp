@@ -65,7 +65,7 @@ namespace asdf {
     };
 
     std::string read_text_file(std::string const& filepath) {
-        if(!file_exists(filepath))
+        if(!is_file(filepath))
         {
             throw file_open_exception(filepath);
         }
@@ -107,7 +107,21 @@ namespace asdf {
         }
     }
 
-    bool file_exists(std::string const& filepath)
+    bool is_directory(std::string const& filepath)
+    {
+        #ifdef _MSC_VER
+        DWORD dwAttrib = GetFileAttributes(filepath.c_str());
+
+        return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
+         (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) > 0);
+#else
+        struct stat path_stat;
+        stat(filepath.c_str(), &path_stat);
+        return S_ISDIR(path_stat);
+#endif
+    }
+
+    bool is_file(std::string const& filepath)
     {
 #ifdef _MSC_VER
         DWORD dwAttrib = GetFileAttributes(filepath.c_str());
@@ -115,9 +129,35 @@ namespace asdf {
         return (dwAttrib != INVALID_FILE_ATTRIBUTES && 
          !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #else
-        struct stat buffer;   
-        return (stat (filepath.c_str(), &buffer) == 0); 
+        struct stat path_stat;
+        stat(filepath.c_str(), &path_stat);
+        return S_ISREG(path_stat);
 #endif
+    }
+
+    std::string find_folder(std::string const& name, size_t max_search_dist)
+    {
+        auto path = name;
+        size_t search_dist = 0;
+
+        for(;;)
+        {
+            if(search_dist == max_search_dist)
+            {
+                return "";
+            }
+
+            //search upwards
+            if(is_directory(path))
+            {
+                return path;
+            }
+            else
+            {
+                path.insert(0, "../");
+                ++search_dist;
+            }
+        }
     }
 
 //     Document read_json_file(std::string const& filepath)
