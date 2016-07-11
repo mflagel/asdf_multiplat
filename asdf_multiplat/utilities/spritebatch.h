@@ -80,18 +80,17 @@ namespace asdf {
     /************************************************************************/
     class spritebatch_t {
     public:
-        bool debugging_sprites;
-        std::shared_ptr<shader_t> spritebatch_shader;
+        bool debugging_sprites = false;
+        std::shared_ptr<shader_t> spritebatch_shader = nullptr;
 
     private:        
-        GLuint vertex_buffer;
-        GLuint index_buffer;
+        GLuint vertex_buffer = 0;
+        GLuint index_buffer = 0;
+        bool has_begun = false;
 
         //might be faster to store it all in one big vector and then sort it afterwards
         std::map<std::shared_ptr<texture_t>, std::vector<sprite_t>> sprite_map; //organizes the sprites by textureID
         std::vector<text_sprite_t> batched_text;
-
-        bool has_begun;
 
     public:
         spritebatch_t();

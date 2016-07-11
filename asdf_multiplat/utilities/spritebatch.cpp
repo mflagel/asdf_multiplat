@@ -14,11 +14,6 @@ using namespace asdf::util;
 namespace asdf {
 
     spritebatch_t::spritebatch_t()
-        : spritebatch_shader(/*MAKE_SHARED_SHADER(spritebatch)*/nullptr)  //commented out for projects with binaries in an unexpected location
-        , vertex_buffer(nullindex)
-        , index_buffer(nullindex)
-        , has_begun(false)
-        , debugging_sprites(false)
     {
         glGenBuffers(1, &vertex_buffer);
         glGenBuffers(1, &index_buffer);
@@ -45,6 +40,7 @@ namespace asdf {
         begin(view_matrix, proj);
     }
     void spritebatch_t::begin(glm::mat4 const& view_matrix, glm::mat4 const& projection_matrix) {
+        ASSERT(spritebatch_shader, "Trying to begin() without a shader");
         ASSERT(!has_begun, "beginning spritebatch before current batch has ended");
         ASSERT(!CheckGLError(), "GL Error before spritebatch_t::begin()");
 
@@ -137,7 +133,7 @@ namespace asdf {
             if(ftfont_pos.x < (screen_halfw * 2) && ftfont_pos.y > 0)
             {
                 text.font->FaceSize(text.face_size);
-                text.font->Render(text.str.c_str(), -1, FTPoint(ftfont_pos.x, ftfont_pos.y));
+                //text.font->Render(text.str.c_str(), -1, FTPoint(ftfont_pos.x, ftfont_pos.y));  /// FIXME
             }
         }
 
