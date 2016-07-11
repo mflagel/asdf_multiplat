@@ -1,21 +1,26 @@
 #pragma once
 
-#include "asdfm/main/asdf_multiplat.h"
-#include "asdfm/data/shader.h"
-#include "asdfm/utilities/camera.h"
+#include "asdf_multiplat/main/asdf_multiplat.h"
+#include "asdf_multiplat/data/shader.h"
+#include "asdf_multiplat/utilities/camera.h"
+#include "asdf_multiplat/utilities/utilities.h"
 
+#include "ui/hex_map.h"
 
 namespace asdf
 {
+
 namespace hexmap
 {
-    struct hex_map_t : asdf_specific_t
+    struct hexmap_t : asdf_specific_t
     {
         camera_t camera;
         std::shared_ptr<shader_t> shader = nullptr;
 
-        hex_map_t();
-        ~hex_map_t();
+        std::unique_ptr<ui::hex_map_t> test_hex_map;
+
+        hexmap_t();
+        ~hexmap_t();
 
         void init();
 
