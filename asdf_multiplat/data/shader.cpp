@@ -11,6 +11,11 @@ using namespace asdf::util;
 
 namespace asdf {
 
+    shader_t::shader_t(std::string const& name, std::string vshader_filepath, std::string fshader_filepath)
+    : shader_t(name, vshader_filepath.c_str(), fshader_filepath.c_str())
+    {
+    }
+
     shader_t::shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath)
         : name(name)
         , vertex_shader_id(load_shader(vshader_filepath, GL_VERTEX_SHADER))
@@ -55,7 +60,7 @@ namespace asdf {
     /*static*/GLuint shader_t::load_shader(const char* filepath, GLuint shader_type) 
     {
         LOG("loading shader: %s", filepath);
-        ASSERT(util::file_exists(filepath), "Shader file \"%s\" does not exist", filepath);
+        ASSERT(util::is_file(filepath), "Shader file \"%s\" does not exist", filepath);
         ASSERT(app.gl_initialized, "Loading a shader before openGL has been initialized");
         ASSERT(!CheckGLError(), "GL Error before loading shader \'%s\'", filepath);
 

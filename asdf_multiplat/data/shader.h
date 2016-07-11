@@ -17,6 +17,7 @@ namespace asdf {
         glm::mat4 view_matrix;
         glm::mat4 projection_matrix;
 
+        shader_t(std::string const& name, std::string vshader_filepath, std::string fshader_filepath);
         shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath);
         ~shader_t();
 
@@ -32,7 +33,4 @@ namespace asdf {
 
 
     };
-
-#define MAKE_SHARED_SHADER(shader_name) (make_shared<shader_t>(#shader_name, VSHADER_PATH(#shader_name), FSHADER_PATH(#shader_name)))
-#define MAKE_SHARED_SHADER_(shader_name, glsl_vers) (make_shared<shader_t>(#shader_name, VSHADER_PATH(#shader_name, glsl_vers), FSHADER_PATH(#shader_name, glsl_vers)))
 }
