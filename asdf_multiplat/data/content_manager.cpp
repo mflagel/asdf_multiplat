@@ -4,11 +4,15 @@
 #include <unordered_map>
 #include <SOIL/SOIL.h>
 
+#include "utilities/utilities.h"
+
 using namespace std;
 //using namespace boost::filesystem;
 
 namespace asdf
 {
+    using namespace util;
+
     ///
     content_manager_t Content;
     ///
@@ -40,68 +44,57 @@ namespace asdf
     {
     }
 
-    std::string find_folder(std::string const& name, size_t max_search_dist = 5)
-    {
-        path = name;
-        size_t search_dist = 0;
-
-        for(;;)
-        {
-            if(search_dist == max_search_dist)
-            {
-                return "";
-            }
-
-            //search upwards
-            if(is_directory(name))
-            {
-                return path;
-            }
-            else
-            {
-                path.insert(0, "../");
-                ++search_dist;
-            }
-        }
-    }
-
     void content_manager_t::init()
     {
         LOG("Initializing Content");
 
 
+        asset_path = find_folder("assets");
+        shader_path = find_folder("shaders");
 
-
-
+        LOG_IF(asset_path.length() > 0, "Could not find asset folder");
+        LOG_IF(shader_path.length() > 0, "Could not find shader folder");
 
         //textures
-        ADD_TEXTURE("debug", "debug_purple.png");
-        ADD_TEXTURE("pixel", "pixel.bmp");
-        ADD_TEXTURE("particle_test", "particle_test_texture.png");
+        //ADD_TEXTURE("debug", "debug_purple.png");
+        //ADD_TEXTURE("pixel", "pixel.bmp");
+        //ADD_TEXTURE("particle_test", "particle_test_texture.png");
 
         // //shaders
-        ADD_SHADER(passthrough);
-        // ADD_SHADER(colored);
-        // ADD_SHADER(point_sprite);
-        // ADD_SHADER(textured);
+        shaders.add_resource("passthrough", create_shader("passthrough", 330));
+        shaders.add_resource("colored", create_shader("colored", 330));
+        shaders.add_resource("spritebatch", create_shader("spritebatch", 330));
+
         shaders.default_resource = shaders["passthrough"];
 
-        //fonts
-        fonts.add_resource( "arial",   new FTPixmapFont(FONT_PATH("arial.ttf")) );
-        fonts.add_resource( "consolas", new FTPixmapFont(FONT_PATH("Consolas.ttf")) );
 
-        fonts["arial"]->FaceSize(72);
-        fonts["consolas"]->FaceSize(72);
-        fonts.default_resource = fonts["consolas"];
+        //fonts
+        //fonts.add_resource( "arial",   new FTPixmapFont(FONT_PATH("arial.ttf")) );
+        //fonts.add_resource( "consolas", new FTPixmapFont(FONT_PATH("Consolas.ttf")) );
+
+        //fonts["arial"]->FaceSize(72);
+        //fonts["consolas"]->FaceSize(72);
+        //fonts.default_resource = fonts["consolas"];
 
         AddSamplers();
 
         LOG("Content Initialized");
     }
 
-    bool content_manager_t::load_shader(std::string const& name)
+    shared_ptr<shader_t> content_manager_t::create_shader(string const& name, size_t glsl_ver)
     {
+        ASSERT(shader_path.length() > 0, "Loading shader before shader path is set");
 
+        string ver_str = to_string(glsl_ver);
+        auto ver_path = string(shader_path + "/" + ver_str);                    // ex: ".../shaders/330"
+        auto shd_path = string(ver_path + "/" + name + "_" + ver_str);   // .../shaders/330/shadername_330
+
+        auto vsh_path = string(shd_path + ".vert");
+        auto fsh_path = string(shd_path + ".frag");
+
+        auto shader = make_shared<shader_t>(name, vsh_path, fsh_path);
+
+        return shader;
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {
