@@ -27,10 +27,14 @@ namespace character
     title_display_t::title_display_t(character_t& _character)
     : Expandbox("Character Title")
     {
-        emplace<Label>(std::string("Name: " + _character.name));
-        emplace<Label>(std::string("Description: " + _character.description));
-        emplace<Label>(std::string("Race: " + _character.race.name));
+        emplace<labeled_textbox_t>("Name: ", _character.name));
+        emplace<labeled_textbox_t>("Description:, ", _character.description));
+        emplace<labeled_textbox_t>("Race: ", _character.race.name));
         // emplace<Label>(string("#: " + to_string(character.version) + " | " + date.to_string());  //FIXME
+
+        name
+        description
+        race
     }
 
 
@@ -117,6 +121,16 @@ namespace character
         this->emplace<portrait_t>          (_character);
         this->emplace<point_cost_summary_t>(_character);
         this->emplace<experience_log_t>    (_character);
+    }
+
+
+
+    labeled_textbox_t::labeled_textbox_t(std::string const& label_str, std::string const& textbox_str)
+    : mk::Sequence()
+    , label(emplace<Label>(label_str))
+    , textbox(emplace<Textbox>(textbox_str))
+    {
+
     }
 
 }

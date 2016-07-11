@@ -92,10 +92,23 @@ namespace character
         experience_log_t(data::character_t&);
     };
 
-    /// TODO: rename this to something like "Character Basics"
-    /// 'main' should refer to the parent of this layout
+    struct labeled_textbox_t : mk::Sequence
+    {
+        mk::Label& label;
+        mk::Textbox& textbox;
+
+        labeled_textbox_t(std::string const& label_str, std::string const& textbox_str);
+    };
+
+    /**
+    **/
     struct overview_t : mk::Sheet
     {
+        mk::labeled_textbox_t* name        = nullptr;
+        mk::labeled_textbox_t* description = nullptr;
+        mk::labeled_textbox_t* race        = nullptr;
+        mk::Label* date_modified = nullptr;
+
         overview_t(data::character_t&);
     };
 
