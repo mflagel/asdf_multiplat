@@ -30,7 +30,5 @@ namespace asdf {
 
         static GLuint load_shader(const char* filepath, GLuint shader_type);
         static GLuint create_shader_program(const GLuint vs, const GLuint fs);
-
-
     };
 }
