@@ -6,6 +6,7 @@
 #include "asdf_multiplat/utilities/camera.h"
 #include "asdf_multiplat/utilities/utilities.h"
 
+#include "data/hex_grid.h"
 #include "ui/hex_map.h"
 
 namespace asdf
@@ -18,7 +19,8 @@ namespace hexmap
         camera_t camera;
         input::input_handler_sdl2_t camera_controller;
 
-        std::unique_ptr<ui::hex_map_t> test_hex_map;
+        data::hex_grid_t hex_grid;
+        std::unique_ptr<ui::hex_map_t> hex_map;
 
         hexmap_t();
         ~hexmap_t();

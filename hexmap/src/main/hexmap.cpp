@@ -22,6 +22,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
+    : hex_grid(ivec2(11, 10))
     {
     }
 
@@ -47,8 +48,7 @@ namespace hexmap
         camera_controller.position.x = 5; //5 hexes right
         camera_controller.position.z = 100.0; //use camera z as zoom
 
-        test_hex_map = make_unique<ui::hex_map_t>();
-        
+        hex_map = make_unique<ui::hex_map_t>(hex_grid);
 
         ASSERT(!CheckGLError(), "GL Error in projector_fun_t::init()");
     }
@@ -71,13 +71,13 @@ namespace hexmap
         auto h = (float)app.settings.resolution_height;
         auto viewport = vec2(w,h) / camera.position.z;  //divide by camera z to shrink viewport and zoom in
 
-        auto const& shader = test_hex_map->shader;
+        auto const& shader = hex_map->shader;
         shader->use_program();
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho(viewport.x / 2.0f, viewport.y / 2.0f);
         shader->update_wvp_uniform();
 
-        test_hex_map->render_grid_overlay();
+        hex_map->render();
 
         LOG_IF(CheckGLError(), "Error during hex_map_t::render()");
     }
