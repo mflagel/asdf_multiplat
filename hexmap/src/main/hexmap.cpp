@@ -77,14 +77,9 @@ namespace hexmap
         LOG_IF(CheckGLError(), "Error during hex_map_t::render()");
     }
 
-    void on_event(SDL_Event* event)
+    void hexmap_t::on_event(SDL_Event* event)
     {
-        switch (event->type)
-        {
-        case SDL_KEYDOWN:
-            //todo: handle camera movement
-            break;
-        }
+        
     }
 
 }
