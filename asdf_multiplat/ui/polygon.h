@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 
 #include "data/gl_resources.h"
-#include "utilities/utilities_openGL.h"
 
 namespace asdf
 {
@@ -33,7 +32,7 @@ namespace asdf
 
         void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)
         {
-            LOG_IF(util::CheckGLError(), "Error before rendered_polygon_::set_data()");
+            LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
             GL_State.bind(vao);
 
             GL_State.bind(vbo);
@@ -47,7 +46,7 @@ namespace asdf
 
             num_verts = verts.size();
 
-            LOG_IF(util::CheckGLError(), "Error during rendered_polygon_::set_data()");
+            LOG_IF(CheckGLError(), "Error during rendered_polygon_::set_data()");
             LOG("setup polygon vbo %i with %zu vertexes", vbo.id, verts.size());
         }
 
