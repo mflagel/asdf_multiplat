@@ -80,9 +80,9 @@ namespace asdf {
             int asdfa;
             std::cin >> asdfa;
 #endif
+            EXPLODE("Error creating shader");
             return GLuint(nullindex);
         }
-        ASSERT(!shader_error, "Error creating shader");
         
         //free(shader_src);
         return shader;
