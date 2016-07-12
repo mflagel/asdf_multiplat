@@ -15,7 +15,6 @@ namespace hexmap
     struct hexmap_t : asdf_specific_t
     {
         camera_t camera;
-        std::shared_ptr<shader_t> shader = nullptr;
 
         std::unique_ptr<ui::hex_map_t> test_hex_map;
 
@@ -27,7 +26,7 @@ namespace hexmap
         void update(float dt);
         void render();
 
-        void on_event(SDL_Event*){}
+        void on_event(SDL_Event*);
     };
 }
 }
