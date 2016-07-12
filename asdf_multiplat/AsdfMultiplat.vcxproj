@@ -93,7 +93,6 @@
     <ClCompile Include="utilities\camera.cpp" />
     <ClCompile Include="utilities\spritebatch.cpp" />
     <ClCompile Include="utilities\utilities.cpp" />
-    <ClCompile Include="utilities\utilities_openGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\content_manager.h" />
@@ -117,7 +116,6 @@
     <ClInclude Include="utilities\spritebatch.h" />
     <ClInclude Include="utilities\str_const.h" />
     <ClInclude Include="utilities\utilities.h" />
-    <ClInclude Include="utilities\utilities_openGL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
