@@ -41,8 +41,11 @@ namespace hexmap
         auto shader = Content.create_shader("hexmap", 330);
         Content.shaders.add_resource(shader);
 
-        camera.position.x = 5; //5 hexes right
-        camera.position.z = 100.0; //use camera z as zoom
+        //camera.position.x = 5; //5 hexes right
+        //camera.position.z = 100.0; //use camera z as zoom
+
+        camera_controller.position.x = 5; //5 hexes right
+        camera_controller.position.z = 100.0; //use camera z as zoom
 
         test_hex_map = make_unique<ui::hex_map_t>();
         
@@ -57,11 +60,13 @@ namespace hexmap
             dt = max_delta_time;
             LOG("**Time delta bigger than %f seconds", max_delta_time);
         }
+
+        camera_controller.update(dt);
+        camera.position = camera_controller.position;
     }
 
     void hexmap_t::render()
     {
-
         auto w = (float)app.settings.resolution_width;
         auto h = (float)app.settings.resolution_height;
         auto viewport = vec2(w,h) / camera.position.z;  //divide by camera z to shrink viewport and zoom in
@@ -79,7 +84,8 @@ namespace hexmap
 
     void hexmap_t::on_event(SDL_Event* event)
     {
-        
+        camera_controller.on_event(event);
+        camera.position = camera_controller.position;
     }
 
 }
