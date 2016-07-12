@@ -35,8 +35,10 @@ namespace ui
     const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
 
 
-    hex_map_t::hex_map_t()
+    hex_map_t::hex_map_t(data::hex_grid_t const& _hex_grid)
+    : hex_grid(_hex_grid)
     {
+
         shader = Content.shaders["hexmap"];
 
         polygon_t verts(6);
@@ -54,21 +56,31 @@ namespace ui
         hexagon.draw_mode = GL_LINE_LOOP;
     }
 
-    void hex_map_t::render_grid_overlay()
+    void hex_map_t::render()
+    {
+        render_grid_overlay(hex_grid.size);
+    }
+
+    void hex_map_t::render_grid_overlay(glm::ivec2 grid_size)
     {
         GL_State.bind(shader);
 
         GL_State.bind(hexagon.vao);
 
-        shader->world_matrix[3][0] = 0;
-        shader->world_matrix[3][1] = 0;
-        shader->update_wvp_uniform();
-        glDrawArraysInstanced(hexagon.draw_mode, 0, 6, 10); //start at 0th, draw 6 points per shape, draw 100 shapes
+        for(size_t y = 0; y < grid_size.y * 2; ++y)  //use size.y * 2, since each loop iteration increments a half-height
+        {
+            bool even_row = (y%2 == 0);
+            shader->world_matrix[3][0] = !even_row * hex_width_d4 * 3;  //offset horizontally for odd y positions
+            shader->world_matrix[3][1] = -hex_height_d2 * y;  //height offset
 
-        shader->world_matrix[3][0] = hex_width_d4 * 3;
-        shader->world_matrix[3][1] = -hex_height_d2;
-        shader->update_wvp_uniform();
-        glDrawArraysInstanced(hexagon.draw_mode, 0, 6, 10);
+            shader->update_wvp_uniform();
+
+            //if an odd width, draw an extra hex every even row
+            size_t n = std::floor(grid_size.x / 2.0f);
+            n += ((grid_size.x % 2 == 1) * even_row);
+
+            glDrawArraysInstanced(hexagon.draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
+        }
 
         GL_State.unbind_vao();
     }
