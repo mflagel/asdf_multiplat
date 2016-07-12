@@ -77,6 +77,8 @@ namespace asdf
     template <gl_buffer_targets_e BufferTarget>
     struct gl_buffer_object_ : opengl_object_t
     {
+        GLenum usage = GL_DYNAMIC_DRAW;
+
         gl_buffer_object_()
         {
             glGenBuffers(1, &id);
@@ -93,10 +95,16 @@ namespace asdf
         gl_buffer_object_(gl_buffer_object_&&) = default;
         gl_buffer_object_& operator=(gl_buffer_object_&&) = default;
 
-        void buffer_data(GLsizeiptr size, const GLvoid * data, GLenum usage)
+        void buffer_data(GLsizeiptr size, const GLvoid * data)
         {
-            //TODO: this buffer is bound to the given target
+            ASSERT(GL_State.current_vbo == id, "need to bind this buffer before sending data");  /// FIXME check the right buffer, not just VBO. Requires I write code for gl_state_t to track it
             glBufferData(gl_buffer_target_enum_values[BufferTarget], size, data, usage);
+        }
+
+        void buffer_data(GLsizeiptr size, const GLvoid * data, GLenum _usage)
+        {
+            usage = _usage;
+            buffer_data(size, data);
         }
     };
 
