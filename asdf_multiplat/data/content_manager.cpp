@@ -142,7 +142,7 @@ namespace asdf
 
         samplers.default_resource = tempSamplers[0];
     
-    	ASSERT(!util::CheckGLError(), "Error loading samplers");
+    	ASSERT(!CheckGLError(), "Error loading samplers");
     }
     //
     ////void ContentManager::AddPixelTexture(){

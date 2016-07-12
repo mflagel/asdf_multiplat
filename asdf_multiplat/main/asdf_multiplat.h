@@ -38,7 +38,6 @@ namespace asdf {
         std::array<float, 10> frame_times;
         size_t frame_time_index = 0;
 
-        std::vector<std::string> gl_extensions;
         GLuint      framebuffer{9001};
         std::shared_ptr<texture_t> render_target;
         GLuint      render_depth_buffer{9001};
@@ -47,7 +46,6 @@ namespace asdf {
         glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};
         
         bool running        = false;
-        bool gl_initialized = false;
         bool in_focus       = false;
         std::string WINDOW_TITLE = "";
 
@@ -68,8 +66,6 @@ namespace asdf {
         void init(std::string _exec_dir);
 
         void init_SDL();
-        void init_openGL();
-        void init_framebuffer();
 
         void update();
         void render();

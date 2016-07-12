@@ -48,7 +48,7 @@ namespace asdf {
         LOG("Working Dir: %s", working_directory.c_str());
 
         init_SDL();
-        init_openGL();
+        GL_State.init_openGL();
 
         Content.init();
         spritebatch = make_shared<spritebatch_t>();
@@ -274,47 +274,6 @@ namespace asdf {
         LOG("SDL Initialized");
     }
 
-    void asdf_multiplat_t::init_openGL() {
-        GLenum err = glewInit();
-        ASSERT(err == GLEW_OK, "Error: %s\n", glewGetErrorString(err));
-        ASSERT(!CheckGLError(), "OpenGL Error after glewInit");
-
-        LOG("### Using OpenGL Version: %s ###\n\n", glGetString(GL_VERSION));
-
-        /*const GLfloat quadVerts[] = {
-            -1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f,
-            -1.0f, 1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            1.0f, 1.0f, 0.0f,
-        };
-
-        glGenBuffers(1, &quad_VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVerts), quadVerts, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        if (!InitFrameBuffer())
-            return false;
-            */
-        gl_initialized = true;
-        LOG("OpenGL Initialized");
-        LOG("--Supported OpenGL Extensions--")
-
-        gl_extensions = tokenize((char*)(glGetString(GL_EXTENSIONS)), " ");
-
-        for(auto const& ext : gl_extensions)
-        {
-            LOG("%s", ext.c_str());
-        }
-
-        LOG("--");
-    }
-
-    void asdf_multiplat_t::init_framebuffer() {
-
-    }
 
     //todo: append date/time info so I get unique screenshot names
     //todo: save as png

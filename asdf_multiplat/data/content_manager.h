@@ -4,7 +4,7 @@
 #include <FTGL/ftgl.h>
 #include "resource_depot.h"
 #include "utilities/utilities.h"
-#include "utilities/utilities_openGL.h"
+#include "data/gl_resources.h"
 #include "shader.h"
 #include "texture.h"
 

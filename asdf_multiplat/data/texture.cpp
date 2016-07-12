@@ -2,7 +2,7 @@
 #include "texture.h"
 
 #include "main/asdf_multiplat.h"
-#include "utilities/utilities_openGL.h"
+#include "data/gl_resources.h"
 
 using namespace glm;
 
@@ -10,13 +10,13 @@ namespace asdf
 {
     texture_t::texture_t()
     {
-        ASSERT(app.gl_initialized, "Error: Creating texture before openGL has been initialized");
-        LOG_IF(util::CheckGLError(), "GL Error before instantiating blank texture");
+        ASSERT(GL_State.initialized, "Error: Creating texture before openGL has been initialized");
+        LOG_IF(CheckGLError(), "GL Error before instantiating blank texture");
 
         
         glGenTextures(1, &texture_id);
 
-        if(util::CheckGLError() == 0)
+        if(CheckGLError() == 0)
         {
             LOG("Created blank texture with id: %u", texture_id);
             ASSERT(texture_id != 9001, "texture_id not initialized");
@@ -61,10 +61,10 @@ namespace asdf
         if(generate_mipmaps)
         {
             glGenerateMipmap(GL_TEXTURE_2D);
-            ASSERT(!util::CheckGLError(), "Error loading mipmaps for texture \"%s\" after loading from color_t array", name.c_str());
+            ASSERT(!CheckGLError(), "Error loading mipmaps for texture \"%s\" after loading from color_t array", name.c_str());
         }
 
-        LOG_IF(!util::CheckGLError(), "successfully created texture \"%s\" size {%zu, %zu} from color_t array", name.c_str(), width, height);
+        LOG_IF(!CheckGLError(), "successfully created texture \"%s\" size {%zu, %zu} from color_t array", name.c_str(), width, height);
     }
 
     texture_t::~texture_t()
@@ -84,7 +84,7 @@ namespace asdf
 
     void texture_t::write(const color_t* color_data)
     {
-        ASSERT(!util::CheckGLError(), "Error before writing to texture \"%s\" from color_t array", name.c_str());
+        ASSERT(!CheckGLError(), "Error before writing to texture \"%s\" from color_t array", name.c_str());
         ASSERT(texture_id > 0, "");
 
         glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -98,7 +98,7 @@ namespace asdf
                    , GL_FLOAT
                    , color_data);
 
-        ASSERT(!util::CheckGLError(), "Error writing to texture \"%s\" from color_t array", name.c_str());
+        ASSERT(!CheckGLError(), "Error writing to texture \"%s\" from color_t array", name.c_str());
     }
 
     void texture_t::load_texture(std::string const& filepath)
