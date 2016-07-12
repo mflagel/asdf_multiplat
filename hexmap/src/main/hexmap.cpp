@@ -6,7 +6,6 @@
 #include "asdf_multiplat/data/content_manager.h"
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/utilities/spritebatch.h"
-#include "asdf_multiplat/utilities/utilities_openGL.h"
 
 
 using namespace std;
@@ -22,7 +21,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
-    : hex_grid(ivec2(11, 10))
+    : hex_grid(ivec2(100, 100))
     {
     }
 
@@ -42,11 +41,8 @@ namespace hexmap
         auto shader = Content.create_shader("hexmap", 330);
         Content.shaders.add_resource(shader);
 
-        //camera.position.x = 5; //5 hexes right
-        //camera.position.z = 100.0; //use camera z as zoom
-
         camera_controller.position.x = 5; //5 hexes right
-        camera_controller.position.z = 100.0; //use camera z as zoom
+        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
 
         hex_map = make_unique<ui::hex_map_t>(hex_grid);
 
@@ -69,7 +65,9 @@ namespace hexmap
     {
         auto w = (float)app.settings.resolution_width;
         auto h = (float)app.settings.resolution_height;
-        auto viewport = vec2(w,h) / camera.position.z;  //divide by camera z to shrink viewport and zoom in
+        auto zoom = camera.position.z * camera.position.z;
+
+        auto viewport = vec2(w,h) / zoom;
 
         auto const& shader = hex_map->shader;
         shader->use_program();
