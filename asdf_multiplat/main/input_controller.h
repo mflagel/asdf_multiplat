@@ -38,6 +38,8 @@ namespace input
         , down
         , left
         , right
+        , forward
+        , backward
         , num_direction_inputs
     };
 
@@ -47,6 +49,8 @@ namespace input
         , SDLK_DOWN
         , SDLK_LEFT
         , SDLK_RIGHT
+        , SDLK_RCTRL
+        , SDLK_RSHIFT
     };
 
     struct sdl2_keyboard_handler_t

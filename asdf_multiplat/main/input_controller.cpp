@@ -17,6 +17,9 @@ namespace input
         direction.y += 1.0f * input_state[up];
         direction.y -= 1.0f * input_state[down];
 
+        direction.z += 1.0f * input_state[forward];
+        direction.z -= 1.0f * input_state[backward];
+
         if(direction != vec3(0.0f))
             direction = normalize(direction);
     }
