@@ -61,9 +61,9 @@ namespace asdf
         //ADD_TEXTURE("particle_test", "particle_test_texture.png");
 
         // //shaders
-        shaders.add_resource("passthrough", create_shader("passthrough", 330));
-        shaders.add_resource("colored", create_shader("colored", 330));
-        shaders.add_resource("spritebatch", create_shader("spritebatch", 330));
+        shaders.add_resource(create_shader("passthrough", 330));
+        shaders.add_resource(create_shader("colored", 330));
+        shaders.add_resource(create_shader("spritebatch", 330));
 
         shaders.default_resource = shaders["passthrough"];
 

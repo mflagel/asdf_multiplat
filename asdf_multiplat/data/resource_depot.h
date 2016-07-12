@@ -33,6 +33,11 @@ public:
         return get_resource(resourceName);
 	}
 
+    void add_resource(T const& resource)
+    {
+        add_resource(resource->name, resource);
+    }
+
     void add_resource(std::string const& resource_name, T const& resource) {
     	LOG("Adding resource %s", resource_name.c_str());
         resources[resource_name] = std::move(resource);
