@@ -2,6 +2,7 @@
 
 #include <gl/glew.h>
 
+#include "utilities/utilities.h"
 #include "shader.h"
 
 namespace asdf
@@ -52,6 +53,16 @@ namespace asdf
         using colorf_ = color_<N, float, GL_FLOAT>;
 
         using color_t = colorf_<4>;
+
+
+        /// Texture Coords
+        template <typename T, GLuint GL_Type>
+        struct texture_coords_ : vertex_attrib_<2, T, GL_Type> 
+        {
+            static constexpr char* name = "TextureCoords";
+        };
+
+        using texture_coords_t = texture_coords_<float, GL_FLOAT>;
     }
 
 
@@ -63,10 +74,8 @@ namespace asdf
         size_t get_stride() const
         {
             size_t stride = 0;
-            for_each(vertex_attribs, [&stride](auto const& attrib)
+            util::for_each(vertex_attribs, [&stride](auto const& attrib)
             {
-                int asdf = 9001;
-                ++asdf;
                 stride += attrib.size_bytes();
             });
 
@@ -76,13 +85,17 @@ namespace asdf
         // assumes attribs are interlaced, and vertex data is sent as an array of structs
         void set_vertex_attribs(std::shared_ptr<shader_t >const& shader) const
         {
+            ASSERT(shader, "expecting shader to set attributes for");
+
             size_t stride = get_stride();
             size_t offset = 0;
-            for_each(vertex_attribs, [&shader, &offset, stride](auto const& attrib)
+
+            util::for_each(vertex_attribs, [&shader, &offset, stride](auto const& attrib)
             {
+                ASSERT(shader, "setting vert attribs without a shader");
                 GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, attrib.name);
                 glEnableVertexAttribArray(attrib_loc);
-                glVertexAttribPointer(attrib_loc, attrib.num_components, attrib.GL_Type, stride, offset);
+                glVertexAttribPointer(attrib_loc, attrib.num_components, attrib.GL_Type, GL_FALSE, stride, (GLvoid*)offset); //GL_FALSE is for fixed-point data value normalization
 
                 offset += attrib.size_bytes(); //next attrib will be this many bytes next
             });
