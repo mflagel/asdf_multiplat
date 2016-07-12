@@ -83,6 +83,7 @@
     <ClCompile Include="data\shader.cpp" />
     <ClCompile Include="data\texture.cpp" />
     <ClCompile Include="main\asdf_multiplat.cpp" />
+    <ClCompile Include="main\input_controller.cpp" />
     <ClCompile Include="ui\polygon.cpp" />
     <ClCompile Include="ui\text.cpp" />
     <ClCompile Include="ui\ui_base.cpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="data\shader.h" />
     <ClInclude Include="data\texture.h" />
     <ClInclude Include="main\asdf_multiplat.h" />
+    <ClInclude Include="main\input_controller.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\polygon.h" />
     <ClInclude Include="ui\text.h" />
