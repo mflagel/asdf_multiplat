@@ -11,10 +11,15 @@
 
 namespace asdf
 {
-    struct vao_t
+    struct opengl_object_t
     {
         GLuint id = UINT_MAX;
 
+        //virtual ~opengl_object_t() = 0;
+    };
+
+    struct vao_t : opengl_object_t
+    {
         vao_t()
         {
             glGenVertexArrays(1, &id);
@@ -31,25 +36,74 @@ namespace asdf
         vao_t& operator=(vao_t&&) = default;
     };
 
-    struct vbo_t
-    {
-        GLuint id = UINT_MAX;
 
-        vbo_t()
+    enum gl_buffer_targets_e : uint32_t
+    {
+          gl_array_buffer = 0
+        , gl_atomic_counter_buffer
+        , gl_copy_read_buffer
+        , gl_copy_write_buffer
+        , gl_dispatch_indirect_buffer
+        , gl_draw_indirect_buffer
+        , gl_element_array_buffer
+        , gl_pixel_pack_buffer
+        , gl_pixel_unpack_buffer
+        , gl_query_buffer
+        , gl_shader_storage_buffer
+        , gl_texture_buffer
+        , gl_transform_feedback_buffer
+        , gl_uniform_buffer
+        , gl_buffer_target_count
+    };
+
+    constexpr std::array<GLenum, gl_buffer_target_count> gl_buffer_target_enum_values
+    {
+          GL_ARRAY_BUFFER                // Vertex attributes
+        , GL_ATOMIC_COUNTER_BUFFER       // Atomic counter storage
+        , GL_COPY_READ_BUFFER            // Buffer copy source
+        , GL_COPY_WRITE_BUFFER           // Buffer copy destination
+        , GL_DISPATCH_INDIRECT_BUFFER    // Indirect compute dispatch commands
+        , GL_DRAW_INDIRECT_BUFFER        // Indirect command arguments
+        , GL_ELEMENT_ARRAY_BUFFER        // Vertex array indices
+        , GL_PIXEL_PACK_BUFFER           // Pixel read target
+        , GL_PIXEL_UNPACK_BUFFER         // Texture data source
+        , GL_QUERY_BUFFER                // Query result buffer
+        , GL_SHADER_STORAGE_BUFFER       // Read-write storage for shaders
+        , GL_TEXTURE_BUFFER              // Texture data buffer
+        , GL_TRANSFORM_FEEDBACK_BUFFER   // Transform feedback buffer
+        , GL_UNIFORM_BUFFER              // Uniform block storage
+    };
+
+    template <gl_buffer_targets_e BufferTarget>
+    struct gl_buffer_object_ : opengl_object_t
+    {
+        gl_buffer_object_()
         {
             glGenBuffers(1, &id);
         }
-        ~vbo_t()
+
+        ~gl_buffer_object_()
         {
             glDeleteBuffers(1, &id);
         }
 
-        vbo_t(const vbo_t&) = delete;
-        vbo_t& operator=(const vbo_t&) = delete;
+        gl_buffer_object_(const gl_buffer_object_&) = delete;
+        gl_buffer_object_& operator=(const gl_buffer_object_&) = delete;
 
-        vbo_t(vbo_t&&) = default;
-        vbo_t& operator=(vbo_t&&) = default;
+        gl_buffer_object_(gl_buffer_object_&&) = default;
+        gl_buffer_object_& operator=(gl_buffer_object_&&) = default;
+
+        void buffer_data(GLsizeiptr size, const GLvoid * data, GLenum usage)
+        {
+            //TODO: this buffer is bound to the given target
+            glBufferData(gl_buffer_target_enum_values[BufferTarget], size, data, usage);
+        }
     };
+
+    using vbo_t = gl_buffer_object_<gl_array_buffer>;
+    using tbo_t = gl_buffer_object_<gl_texture_buffer>;
+    using ubo_t = gl_buffer_object_<gl_uniform_buffer>;
+
 
     struct gl_renderable_t
     {
@@ -72,10 +126,18 @@ namespace asdf
 
     struct gl_state_t
     {
-        GLuint current_vao = 0;
-        GLuint current_vbo = 0;
+        bool initialized = false;
 
+        std::vector<std::string> gl_extensions;
+        GLint max_uniform_components = 0;
+
+
+        GLuint current_vao = 0;
+        GLuint current_vbo = 0; //todo: keep track of what buffer is bound to each buffer target (vertex, uniform, etc)
         GLuint current_shader = 0;
+
+
+        void init_openGL();
 
         void bind(vao_t const&);
         void bind(vbo_t const&);
@@ -87,6 +149,13 @@ namespace asdf
 
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
+
+    bool CheckShader(GLuint shader);
+    bool CheckGLError(GLuint shader/* = 0xFFFFFFFF*/);
+    bool CheckGLError();
+
+
+
 
     extern gl_state_t GL_State;
 }
