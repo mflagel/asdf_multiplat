@@ -18,7 +18,9 @@ namespace ui
 {
     struct hex_map_t
     {
-        ui_polygon_t hexagon;
+        std::shared_ptr<shader_t> shader;
+
+        rendered_polygon_<polygon_vertex_t> hexagon;
 
         data::hex_grid_t* hex_grid = nullptr;
 
