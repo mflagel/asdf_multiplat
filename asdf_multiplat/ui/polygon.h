@@ -42,7 +42,7 @@ namespace asdf
             VertexType::vertex_spec.set_vertex_attribs(shader);
 
             GL_State.unbind_vao();
-            GL_State.unbind_vbo();
+            GL_State.unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
 
             num_verts = verts.size();
 
