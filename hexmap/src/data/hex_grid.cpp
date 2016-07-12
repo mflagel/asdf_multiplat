@@ -19,8 +19,18 @@ namespace data
 
 
 
-    hex_grid_t::hex_grid_t(glm::ivec2 size)
+    hex_grid_t::hex_grid_t(glm::ivec2 _size)
+    : size(_size)
     {
+        size_t num_chunks_x = std::ceil((double)size.x / (double)chunk_width);
+        size_t num_chunks_y = std::ceil((double)size.y / (double)chunk_height);
+
+        chunks.reserve(num_chunks_x);
+
+        for(auto& chunk : chunks)
+        {
+            chunk.reserve(num_chunks_y);
+        }
     }
 }
 }

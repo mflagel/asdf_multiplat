@@ -30,8 +30,12 @@ namespace data
 
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>;
 
+    constexpr size_t chunk_width = 10;
+    constexpr size_t chunk_height = 10;
+
     struct hex_grid_t
     {
+        glm::ivec2 size;
         hex_chunks_t chunks;
 
         hex_grid_t(glm::ivec2 size);
