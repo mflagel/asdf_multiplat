@@ -25,11 +25,11 @@ namespace data
         size_t num_chunks_x = std::ceil((double)size.x / (double)chunk_width);
         size_t num_chunks_y = std::ceil((double)size.y / (double)chunk_height);
 
-        chunks.reserve(num_chunks_x);
+        chunks.resize(num_chunks_x);
 
         for(auto& chunk : chunks)
         {
-            chunk.reserve(num_chunks_y);
+            chunk.resize(num_chunks_y);
         }
     }
 }
