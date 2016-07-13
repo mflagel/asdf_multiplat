@@ -21,7 +21,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
-    : hex_grid(ivec2(100, 100))
+    : hex_grid(ivec2(data::chunk_width, data::chunk_height))
     {
     }
 
@@ -32,8 +32,8 @@ namespace hexmap
 
     void hexmap_t::init()
     {
-        ASSERT(!CheckGLError(), "GL Error before projector_fun_t::init()");
-        LOG("--- Initializing Projector Fun ---");
+        ASSERT(!CheckGLError(), "GL Error before hexmap_t::init()");
+        LOG("--- Initializing HexMap ---");
 
         app.specific = this;
         app.gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
@@ -46,7 +46,7 @@ namespace hexmap
 
         hex_map = make_unique<ui::hex_map_t>(hex_grid);
 
-        ASSERT(!CheckGLError(), "GL Error in projector_fun_t::init()");
+        ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
     }
 
     void hexmap_t::update(float dt)
