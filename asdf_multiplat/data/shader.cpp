@@ -57,6 +57,11 @@ namespace asdf {
         ASSERT(!CheckGLError(), "Error updating shader WVP uniform");
     }
 
+    GLint shader_t::uniform(std::string const& uniform_name) const
+    {
+        return uniforms.at(uniform_name);
+    }
+
     /*static*/GLuint shader_t::load_shader(const char* filepath, GLuint shader_type) 
     {
         LOG("loading shader: %s", filepath);

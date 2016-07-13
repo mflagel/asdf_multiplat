@@ -28,6 +28,8 @@ namespace asdf {
         void load_uniforms();
         void update_wvp_uniform();
 
+        GLint uniform(std::string const& uniform_name) const;
+
         static GLuint load_shader(const char* filepath, GLuint shader_type);
         static GLuint create_shader_program(const GLuint vs, const GLuint fs);
     };
