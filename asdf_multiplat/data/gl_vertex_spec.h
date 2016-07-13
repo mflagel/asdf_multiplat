@@ -94,6 +94,7 @@ namespace asdf
             {
                 ASSERT(shader, "setting vert attribs without a shader");
                 GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, attrib.name);
+                ASSERT(attrib_loc >= 0, "Error grabbing attribute location for \'%s\'", attrib.name);
                 glEnableVertexAttribArray(attrib_loc);
                 glVertexAttribPointer(attrib_loc, attrib.num_components, attrib.GL_Type, GL_FALSE, stride, (GLvoid*)offset); //GL_FALSE is for fixed-point data value normalization
 
