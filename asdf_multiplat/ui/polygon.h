@@ -36,7 +36,9 @@ namespace asdf
             GL_State.bind(vao);
 
             GL_State.bind(vbo);
-            glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(polygon_vertex_t), (void*)(verts.data()), GL_STATIC_DRAW);
+            vbo.usage = GL_STATIC_DRAW;
+
+            GL_State.buffer_data(vbo, verts.size() * sizeof(polygon_vertex_t), (void*)(verts.data()));
 
             //set_vertex_attribs(shader);  //not sure the shader should be taken as an arg
             VertexType::vertex_spec.set_vertex_attribs(shader);
