@@ -34,6 +34,8 @@ namespace asdf
         LOG("Max Uniform Components: %i", max_uniform_components);
 
         LOG("--");
+
+        ASSERT(!CheckGLError(), "Error initializing openGL");
     }
 
 
@@ -44,14 +46,6 @@ namespace asdf
         current_vao = vao.id;
     }
 
-    void gl_state_t::bind(vbo_t const& vbo)
-    {
-        LOG_IF(current_vbo == vbo.id, "vbo %i already in use", vbo);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo.id);
-        current_vbo = vbo.id;
-    }
-
     void gl_state_t::bind(std::shared_ptr<shader_t> const& shader)
     {
         //LOG_IF(current_shader == shader->shader_program_id, "shader \'%s\' already in use", shader->name.c_str());
@@ -59,22 +53,40 @@ namespace asdf
         current_shader = shader->shader_program_id;
     }
 
+    void gl_state_t::bind(gl_buffer_object_t const& buffer)
+    {
+        LOG_IF(current_buffers[buffer.target] == buffer.id, "buffer  %i already in use for target %s", buffer.id, gl_buffer_target_strings[buffer.target]);
+
+        glBindBuffer(gl_buffer_target_enum_values[buffer.target], buffer.id);
+        current_buffers[buffer.target] = buffer.id;
+        ASSERT(!CheckGLError(), "Error binding buffer");
+    }
+
     void gl_state_t::unbind_vao()
     {
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
         current_vao = 0;
     }
 
     void gl_state_t::unbind_vbo()
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        current_vbo = 0;
+        current_buffers[gl_array_buffer] = 0;
     }
 
     void gl_state_t::unbind_shader()
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        current_vbo = 0;
+        current_shader = 0;
+    }
+
+
+    void gl_state_t::buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data)
+    {
+        ASSERT(current_buffers[buffer.target] == buffer.id
+            , "need to bind %s buffer %i before sending data", gl_buffer_target_strings[buffer.target], buffer.id);  /// FIXME check the right buffer, not just VBO. Requires I write code for gl_state_t to track it
+        glBufferData(gl_buffer_target_enum_values[buffer.target], size, data, buffer.usage);
+        ASSERT(!CheckGLError(), "error sending data to buffer");
     }
 
 

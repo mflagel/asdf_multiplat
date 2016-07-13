@@ -74,43 +74,59 @@ namespace asdf
         , GL_UNIFORM_BUFFER              // Uniform block storage
     };
 
-    template <gl_buffer_targets_e BufferTarget>
-    struct gl_buffer_object_ : opengl_object_t
+    constexpr std::array<char*, gl_buffer_target_count> gl_buffer_target_strings =
     {
+          "GL_ARRAY_BUFFER"
+        , "GL_ATOMIC_COUNTER_BUFFER"
+        , "GL_COPY_READ_BUFFER"
+        , "GL_COPY_WRITE_BUFFER"
+        , "GL_DISPATCH_INDIRECT_BUFFER"
+        , "GL_DRAW_INDIRECT_BUFFER"
+        , "GL_ELEMENT_ARRAY_BUFFER"
+        , "GL_PIXEL_PACK_BUFFER"
+        , "GL_PIXEL_UNPACK_BUFFER"
+        , "GL_QUERY_BUFFER"
+        , "GL_SHADER_STORAGE_BUFFER"
+        , "GL_TEXTURE_BUFFER"
+        , "GL_TRANSFORM_FEEDBACK_BUFFER"
+        , "GL_UNIFORM_BUFFER"
+    };
+
+    struct gl_buffer_object_t : opengl_object_t
+    {
+        const gl_buffer_targets_e target;
         GLenum usage = GL_DYNAMIC_DRAW;
 
-        gl_buffer_object_()
+        gl_buffer_object_t(gl_buffer_targets_e _target)
+        : target(_target)
         {
             glGenBuffers(1, &id);
         }
 
-        ~gl_buffer_object_()
+        ~gl_buffer_object_t()
         {
             glDeleteBuffers(1, &id);
         }
 
-        gl_buffer_object_(const gl_buffer_object_&) = delete;
-        gl_buffer_object_& operator=(const gl_buffer_object_&) = delete;
+        gl_buffer_object_t(const gl_buffer_object_t&) = delete;
+        gl_buffer_object_t& operator=(const gl_buffer_object_t&) = delete;
 
-        gl_buffer_object_(gl_buffer_object_&&) = default;
-        gl_buffer_object_& operator=(gl_buffer_object_&&) = default;
-
-        void buffer_data(GLsizeiptr size, const GLvoid * data)
-        {
-            ASSERT(GL_State.current_vbo == id, "need to bind this buffer before sending data");  /// FIXME check the right buffer, not just VBO. Requires I write code for gl_state_t to track it
-            glBufferData(gl_buffer_target_enum_values[BufferTarget], size, data, usage);
-        }
-
-        void buffer_data(GLsizeiptr size, const GLvoid * data, GLenum _usage)
-        {
-            usage = _usage;
-            buffer_data(size, data);
-        }
+        gl_buffer_object_t(gl_buffer_object_t&&) = default;
+        gl_buffer_object_t& operator=(gl_buffer_object_t&&) = default;
     };
 
-    using vbo_t = gl_buffer_object_<gl_array_buffer>;
+    struct vbo_t : gl_buffer_object_t
+    { vbo_t() : gl_buffer_object_t(gl_array_buffer) {} };
+
+    struct tbo_t : gl_buffer_object_t
+    { tbo_t() : gl_buffer_object_t(gl_texture_buffer) {} };
+
+    struct ubo_t : gl_buffer_object_t
+    { ubo_t() : gl_buffer_object_t(gl_uniform_buffer) {} };
+
+    /*using vbo_t = gl_buffer_object_<gl_array_buffer>;
     using tbo_t = gl_buffer_object_<gl_texture_buffer>;
-    using ubo_t = gl_buffer_object_<gl_uniform_buffer>;
+    using ubo_t = gl_buffer_object_<gl_uniform_buffer>;*/
 
 
     struct gl_renderable_t
@@ -139,21 +155,26 @@ namespace asdf
         std::vector<std::string> gl_extensions;
         GLint max_uniform_components = 0;
 
-
         GLuint current_vao = 0;
-        GLuint current_vbo = 0; //todo: keep track of what buffer is bound to each buffer target (vertex, uniform, etc)
         GLuint current_shader = 0;
 
+        std::array<GLuint, gl_buffer_target_count> current_buffers;
+        
 
         void init_openGL();
 
         void bind(vao_t const&);
-        void bind(vbo_t const&);
         void bind(std::shared_ptr<shader_t> const& shader);
+
+        void bind(gl_buffer_object_t const&);
+
+        GLuint current_vbo() const { return current_buffers[gl_array_buffer]; }
 
         void unbind_vao();
         void unbind_vbo();
         void unbind_shader();
+
+        void buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data);
 
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
