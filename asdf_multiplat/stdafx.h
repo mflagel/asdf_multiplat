@@ -79,11 +79,11 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
     } while(0)
 
     //like assert(false, ...)
-    #define EXPLODE(message, ...) \
+    #define EXPLODE(...) \
         do \
         { \
             LOG("EXPLOSION: %s, %i", __FILE__, __LINE__); \
-            LOG(message, __VA_ARGS__);\
+            LOG(__VA_ARGS__);\
             __debugbreak(); \
         } while(0)
 #else  
