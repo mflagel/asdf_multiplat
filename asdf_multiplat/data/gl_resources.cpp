@@ -41,7 +41,7 @@ namespace asdf
 
     void gl_state_t::bind(vao_t const& vao)
     {
-        LOG_IF(current_vao == vao.id, "vao %i already in use", vao);
+        LOG_IF(current_vao == vao.id, "vao %i already in use", vao.id);
         glBindVertexArray(vao.id);
         current_vao = vao.id;
     }
