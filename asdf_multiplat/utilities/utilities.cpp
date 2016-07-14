@@ -13,6 +13,7 @@
 #include <windows.h>
 #else
 #include <sys/stat.h>
+#include <dirent.h>
 #endif
 
 // using namespace rapidjson;
@@ -116,8 +117,9 @@ namespace asdf {
          (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) > 0);
 #else
         struct stat path_stat;
-        stat(filepath.c_str(), &path_stat);
-        return S_ISDIR(path_stat);
+        if(stat(filepath.c_str(), &path_stat) == 0)
+            return S_ISDIR(path_stat.st_mode);
+        return false;
 #endif
     }
 
@@ -130,8 +132,9 @@ namespace asdf {
          !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #else
         struct stat path_stat;
-        stat(filepath.c_str(), &path_stat);
-        return S_ISREG(path_stat);
+        if(stat(filepath.c_str(), &path_stat) == 0);
+            return S_ISREG(path_stat.st_mode);
+        return false;
 #endif
     }
 
