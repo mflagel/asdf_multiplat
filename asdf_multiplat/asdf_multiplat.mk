@@ -36,6 +36,7 @@ SRCPATH		= $(PROJPATH)/$(PROJNAME)
 MAIN_SOURCES = $(SRCPATH)/main/main.cpp 		\
 			   $(SRCPATH)/stdafx.cpp 		\
 			   $(SRCPATH)/main/asdf_multiplat.cpp 		\
+			   $(SRCPATH)/main/input_controller.cpp 		\
 
 DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
@@ -46,7 +47,6 @@ UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)/spritebatch.cpp 		\
 					$(UTILITIES_SRC_PATH)/thread_pool.cpp 	\
 					$(UTILITIES_SRC_PATH)/camera.cpp 	\
 					$(UTILITIES_SRC_PATH)/utilities.cpp 	\
-					$(UTILITIES_SRC_PATH)/utilities_openGL.cpp 	\
 
 UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
 			 $(SRCPATH)/ui/ui_button.cpp \
@@ -56,7 +56,7 @@ UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
 
 SOURCES += $(MAIN_SOURCES) $(DATA_SOURCES) $(UTILITIES_SOURCES) $(UI_SOURCES)
 
-SRC_FOLDERS += data main utilities ui
+SRC_FOLDERS += data main utilities ui .
 ###############################
 
 
