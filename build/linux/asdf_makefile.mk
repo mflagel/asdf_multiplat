@@ -99,13 +99,13 @@ intro:
 	@echo Libs: $(LIBS)
 	# @echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
 	# @echo CFLAGS: $(CFLAGS)
-	@echo CPPFLAGS: $(CPPFLAGS)
-	@echo LINK_FLAGS: $(LINK_FLAGS)
+	# @echo CPPFLAGS: $(CPPFLAGS)
+	# @echo LINK_FLAGS: $(LINK_FLAGS)
 
 	# @echo Objs: $(OBJECTS)
 	# @echo Srcs: $(SOURCES)
-	# @echo Includes: $(_INCLUDES)
-	# @echo SysIncludes: $(SYSINCLUDES)
+	@echo Includes: $(_INCLUDES)
+	@echo SysIncludes: $(SYSINCLUDES)
 	@echo -e '\e[1;32m'-------------------------------- $(ENDCOLOR)
 	@echo -e $(CYAN)--------- COMPILING --------- $(ENDCOLOR)
 
