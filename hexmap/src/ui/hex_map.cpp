@@ -131,18 +131,8 @@ namespace ui
 
     void hex_map_t::render_hexagons(glm::ivec2 grid_size, GLuint draw_mode)
     {
-        for(size_t x = 0; x < grid_size.x; ++x)
-        {
-            bool even_col = x%2 == 0;
-            shader->world_matrix[3][0] = hex_width_d4 * 3 * x;
-            shader->world_matrix[3][1] = !even_col * -hex_height_d2;
-
-            shader->update_wvp_uniform();
-
-            size_t n = (size_t)(grid_size.y);
-
-            glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
-        }
+        size_t n = grid_size.x * grid_size.y;
+        glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
     }
 
 

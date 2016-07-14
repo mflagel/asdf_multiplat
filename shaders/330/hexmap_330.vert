@@ -13,12 +13,22 @@ flat out vec4 ColorOut;
 uniform mat4 WVP;
 uniform vec4 TileColors[10];
 
-//#define HEX_HEIGHT = 0.86602540378
+uniform float HEX_HEIGHT = 0.86602540378;
+uniform float HEX_HEIGHT_D4 =   0.216506350945;
+uniform float HEX_WIDTH = 1.0;
+uniform float HEX_WIDTH_D4 = 0.25;
+uniform int CHUNK_HEIGHT = 10;
 
 void main(void)
 {
+    int col_x = gl_InstanceID / CHUNK_HEIGHT;
+    int col_y = gl_InstanceID % CHUNK_HEIGHT;
+
     vec4 pos = VertexPosition;
-    pos.y += (0.86602540378) * gl_InstanceID;
+    pos.x += HEX_WIDTH_D4 * 3 * col_x;
+    pos.y += HEX_HEIGHT * col_y;
+
+    pos.y -= float(col_x % 2) * HEX_HEIGHT / 2.0;  //hexagon y offest
 
 	gl_Position = WVP * pos;
 	FragTexCoord = vec2(0.0f, 0.0f); //TexCoord;
