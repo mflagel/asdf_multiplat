@@ -7,6 +7,12 @@ namespace asdf
 {
 namespace input
 {
+    sdl2_keyboard_handler_t::sdl2_keyboard_handler_t()
+    {
+        for(auto& s : input_state)
+            s = false;
+    }
+
     void sdl2_keyboard_handler_t::on_input_changed()
     {
         direction = vec3(0.0f);

@@ -58,6 +58,8 @@ namespace input
         std::array<bool, num_direction_inputs> input_state;
         glm::vec3 direction;
 
+        sdl2_keyboard_handler_t();
+
         void on_input_changed();
 
         void on_event(SDL_Event* event);
