@@ -22,6 +22,11 @@ void main(void)
 
 	gl_Position = WVP * pos;
 	FragTexCoord = vec2(0.0f, 0.0f); //TexCoord;
-	ColorOut = VertexColor * TileColors[TileID];
+
+    vec4 tile_color = TileColors[TileID];
+    ColorOut = (VertexColor * 0.5) + (tile_color * 0.5);
+    ColorOut = (VertexColor * 0.0000000000000001) + (tile_color * 0.9);
+    ColorOut.a = 1.0;
+
     ColorOut.a = 1.0;
 }
