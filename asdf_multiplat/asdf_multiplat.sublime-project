@@ -2,20 +2,16 @@
 	"folders":
 	[
 		{
-			"follow_symlinks": true,
-			"path": "data"
+			"path": ".",
+			"file_exclude_patterns":
+			[
+				  "*.sln"
+				, "*.vcxproj"
+				, "*.sublime-workspace"
+			]
 		},
 		{
-			"follow_symlinks": true,
-			"path": "ui"
-		},
-		{
-			"follow_symlinks": true,
-			"path": "utilities"
-		},
-		{
-			"follow_symlinks": true,
-			"path": "main"
+			"path": "../build/linux"
 		},
 		{
 			"follow_symlinks": true,
