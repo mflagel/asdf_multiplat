@@ -51,7 +51,7 @@ $(error PROJNAME not defined)
 endif
 
 #Useful Paths
-PROJPATH 	:= ~/Programming/AsdfMultiplat
+PROJPATH 	:= ~/gdrive/Programming/AsdfMultiplat
 BINPATH		:= $(PROJPATH)/bin/linux
 LIBPATH		:= $(PROJPATH)/lib
 EXTPATH		:= $(PROJPATH)/ext

@@ -15,7 +15,7 @@ LIBS += sdl2 gl glu glew ftgl
 
 LINK_FLAGS += -L$(LIBPATH)
 
-ASDFDIR = /home/mathias/Programming/AsdfMultiplat/obj/asdf_multiplat/linux
+ASDFDIR = /home/mathias/gdrive/Programming/AsdfMultiplat/obj/asdf_multiplat/linux
 
 # this feels super janky
 ASDFASDF = $(ASDFDIR)/asdf_multiplat.o   \
