@@ -227,7 +227,7 @@ namespace asdf {
     void asdf_multiplat_t::init_SDL() {
         //init video subsystem
         if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-            LOG("Could not initialize SDL: %s.", SDL_GetError());
+            EXPLODE("Could not initialize SDL: %s.", SDL_GetError());
             running = false;
             return;
         }
