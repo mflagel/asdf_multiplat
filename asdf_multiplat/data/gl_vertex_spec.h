@@ -2,6 +2,7 @@
 
 #include <gl/glew.h>
 
+#include "stdafx.h"
 #include "utilities/utilities.h"
 #include "shader.h"
 
@@ -27,6 +28,7 @@ namespace asdf
         {
             static constexpr char* name = "VertexPosition";
         };
+        template <size_t N, typename T, GLuint GL_Type> constexpr char* position_<N, T, GL_Type>::name;  //apparently clang needs this to link properly
 
         template<size_t N>
         using position_f32_ = position_<N, float, GL_FLOAT>;
@@ -48,6 +50,7 @@ namespace asdf
         {
             static constexpr char* name = "VertexColor";
         };
+        template <size_t N, typename T, GLuint GL_Type> constexpr char* color_<N, T, GL_Type>::name;  //apparently clang needs this to link properly
 
         template <size_t N>
         using colorf_ = color_<N, float, GL_FLOAT>;
@@ -61,6 +64,7 @@ namespace asdf
         {
             static constexpr char* name = "TextureCoords";
         };
+        template <typename T, GLuint GL_Type> constexpr char* texture_coords_<T, GL_Type>::name;
 
         using texture_coords_t = texture_coords_<float, GL_FLOAT>;
     }
