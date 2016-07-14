@@ -21,7 +21,6 @@ ASDFDIR = /home/mathias/Programming/AsdfMultiplat/obj/asdf_multiplat/linux
 ASDFASDF = $(ASDFDIR)/asdf_multiplat.o   \
 		   $(ASDFDIR)/spritebatch.o      \
 		   $(ASDFDIR)/ui_base.o          \
-		   $(ASDFDIR)/utilities_openGL.o \
 		   $(ASDFDIR)/content_manager.o  \
 		   $(ASDFDIR)/shader.o           \
 		   $(ASDFDIR)/polygon.o        \
@@ -29,6 +28,7 @@ ASDFASDF = $(ASDFDIR)/asdf_multiplat.o   \
 		   $(ASDFDIR)/utilities.o        \
 		   $(ASDFDIR)/camera.o        \
 		   $(ASDFDIR)/texture.o        \
+		   $(ASDFDIR)/input_controller.o        \
 		   # $(ASDFDIR)/stdafx.o
 
 LINK_FLAGS += $(ASDFASDF)
