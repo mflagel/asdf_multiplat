@@ -32,7 +32,8 @@ WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-weak-vtables \
 				 -Wno-unused-parameter \
 				 -Wno-switch-enum \
-				 -Wno-missing-braces
+				 -Wno-missing-braces \
+				 -Wno-writable-strings
 
 #
 
@@ -42,7 +43,7 @@ CLANG_EXTENSIONS := -fms-extensions
 DAS_FLAGS 		 := $(WARNING_FLAGS) $(CLANG_EXTENSIONS) -g -pedantic -fmacro-backtrace-limit=20
 CFLAGS  		 := $(DAS_FLAGS) -fPIC
 # use deffered assignment for CPPFLAGS so it will include anything CFLAGS gets later
-CPPFLAGS 		  = $(CFLAGS) -fPIC -stdlib=libstdc++ -std=c++14
+CPPFLAGS 		  = $(CFLAGS) -fPIC -stdlib=libstdc++ -std=c++1z
 LINK_FLAGS 		 := $(DAS_FLAGS) -L/usr/lib
 
 ifndef PROJNAME
