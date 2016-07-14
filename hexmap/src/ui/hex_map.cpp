@@ -34,7 +34,7 @@ namespace ui
 
     //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
-    constexpr float grid_overlay_thickness = 1.0f;
+    constexpr float grid_overlay_thickness = 2.0f;
 
 
     hex_map_t::hex_map_t(data::hex_grid_t const& _hex_grid)
@@ -64,12 +64,12 @@ namespace ui
 
             GL_State.bind(hexagon.vbo);
             polygon_vertex_t::vertex_spec.set_vertex_attribs(shader);
-
+            ASSERT(!CheckGLError(), "Error setting vertex attributes");
 
             GL_State.bind(hex_gl_data);
             GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, "TileID");
             glEnableVertexAttribArray(attrib_loc); //tell the location
-            glVertexAttribPointer(attrib_loc, 1, GL_UNSIGNED_INT, false, sizeof(data::hex_tile_id_t), 0);
+            glVertexAttribIPointer(attrib_loc, 1, GL_UNSIGNED_INT, sizeof(data::hex_tile_id_t), 0);  // must use Atrib ** I ** for unsigned int to be used as a uint in glsl
             glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
 
         GL_State.unbind_vao();
