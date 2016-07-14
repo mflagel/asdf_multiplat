@@ -55,7 +55,7 @@ namespace asdf
         void render()
         {
             GL_State.bind(vao);
-            glDrawArrays(darw_mode, 0, num_verts);
+            glDrawArrays(draw_mode, 0, num_verts);
             GL_State.unbind_vao();
         }
     };
