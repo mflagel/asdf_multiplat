@@ -10,11 +10,11 @@ namespace asdf
 {
     namespace vertex_attrib
     {   
-        template <size_t N, typename T, GLuint GL_Type>
+        template <size_t N, typename T, GLuint _GL_Type>
         struct vertex_attrib_
         {
             static constexpr size_t num_components = N;
-            static constexpr GLuint GL_Type = GL_Type;
+            static constexpr GLuint GL_Type = _GL_Type;
 
             static constexpr size_t size_bytes()
             {
@@ -104,6 +104,9 @@ namespace asdf
 
                 offset += attrib.size_bytes(); //next attrib will be this many bytes next
             });
+
+            // UGH, I want to check for GL errors, but I moved the func into gl_resources.h, which I can't include here without creating an include cycle
+            // fail
         }
     };
 }
