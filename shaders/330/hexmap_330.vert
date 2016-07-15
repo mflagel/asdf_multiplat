@@ -17,6 +17,7 @@ uniform float HEX_HEIGHT = 0.86602540378;
 uniform float HEX_HEIGHT_D4 =   0.216506350945;
 uniform float HEX_WIDTH = 1.0;
 uniform float HEX_WIDTH_D4 = 0.25;
+
 uniform int CHUNK_HEIGHT = 10;
 
 void main(void)
@@ -34,8 +35,7 @@ void main(void)
 	FragTexCoord = vec2(0.0f, 0.0f); //TexCoord;
 
     vec4 tile_color = TileColors[TileID];
-    ColorOut = (VertexColor * 0.5) + (tile_color * 0.5);
-    ColorOut = (VertexColor * 0.0000000000000001) + (tile_color * 0.9);
+    ColorOut = (VertexColor * 0.000000001) + (tile_color * 0.9);
     ColorOut.a = 1.0;
 
     ColorOut.a = 1.0;
