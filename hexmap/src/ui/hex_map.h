@@ -23,7 +23,13 @@ namespace ui
     {
         hex_buffer_data_t()
         {
-            usage = GL_DYNAMIC_DRAW;
+            usage = GL_STREAM_DRAW;  //using stream since I change data every frame. Will probably optimize to setting once later
+        }
+
+        hex_buffer_data_t(data::hex_grid_chunk_t const& _chunk)
+        : hex_buffer_data_t()
+        {
+            set_data(_chunk);
         }
 
         void set_data(data::hex_grid_chunk_t const&);
@@ -32,7 +38,7 @@ namespace ui
 
     struct hex_map_t
     {
-        data::hex_grid_t const& hex_grid;
+        data::hex_grid_t& hex_grid;
 
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<polygon_vertex_t> hexagon;
@@ -41,7 +47,7 @@ namespace ui
         hex_buffer_data_t hex_gl_data;
 
         
-        hex_map_t(data::hex_grid_t const& hex_grid);
+        hex_map_t(data::hex_grid_t& hex_grid);
 
         void set_tile_colors(std::array<glm::vec4, num_tile_colors> const&);
 
