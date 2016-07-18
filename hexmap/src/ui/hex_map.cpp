@@ -106,11 +106,10 @@ namespace ui
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
 
-        // hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
-        // {
-        //     render_chunk(chunk);
-        // });
-        render_chunk(hex_grid.chunks[1][0]);
+        hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
+        {
+            render_chunk(chunk);
+        });
 
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
@@ -128,7 +127,7 @@ namespace ui
         shader->world_matrix[3][1] = chunk.position.y * chunk_height_cells;
         shader->update_wvp_uniform();
 
-        hex_gl_data.set_data(chunk); //probably more efficient to have one
+        hex_gl_data.set_data(chunk);
 
         render_hexagons(glm::ivec2(chunk.size.x, chunk.size.y), GL_TRIANGLE_FAN);
         GL_State.unbind_vao();
@@ -166,9 +165,10 @@ namespace ui
         {
             for(size_t y = 0; y < chunk.size.y; ++y)
             {
-                //cell_data[y*data::chunk_height + x] = rand() % 10;
-                //cell_data[y*chunk.size.y + x] = rand() % 10;
-                cell_data[y*chunk.size.y + x] = chunk.position.x + abs(chunk.position.y);
+                //cell_data[y*chunk.size.x + x] = rand() % 10;
+                //cell_data[y*chunk.size.x + x] = rand() % 10;
+                // cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
+                cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
             }
         }
 
