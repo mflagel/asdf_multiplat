@@ -6,6 +6,7 @@
 #include "asdf_multiplat/ui/ui_base.h"
 
 #include "data/hex_grid.h"
+#include "ui/hexagon_input.h"
 
 
 using color_t = glm::vec4;
