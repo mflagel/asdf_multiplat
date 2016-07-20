@@ -12,6 +12,12 @@ namespace asdf
 {
 namespace hexmap
 {
+
+namespace ui
+{
+    struct hex_map_t;
+}
+
 namespace input
 {
 
@@ -29,7 +35,7 @@ namespace input
         uint8_t mouse_button_states = 0;
         glm::ivec2 mouse_position;
 
-        virtual ~mouse_input_t(){}
+        virtual ~mouse_input_t() = default;
 
         bool mouse_button_state(mouse_button_e btn) const
         {
@@ -44,17 +50,18 @@ namespace input
         void on_event(SDL_Event* event);
     };
 
-
     struct hex_map_input_t
     {
+        ui::hex_map_t* hex_map;
         data::hex_grid_t& hex_grid;
         camera_t& camera;
 
-        mouse_input_t& mouse_input;
+        std::unique_ptr<mouse_input_t> mouse_input;
 
-        hex_map_input_t(data::hex_grid_t&, camera_t&);
+        hex_map_input_t(ui::hex_map_t*, camera_t&);
 
-        glm::ivec2 hex_coords_from_mouse(glm::vec2 mouse_pos);
+        glm::vec2 world_coords() const;
+        glm::ivec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
 
         bool on_event(SDL_Event* event);
     };

@@ -2,6 +2,7 @@
 #include "hexagon_input.h"
 
 #include <SDL2/SDL_mouse.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 using namespace glm;
@@ -13,32 +14,59 @@ namespace hexmap
 namespace input
 {
     
-    hex_map_input_t::hex_map_input_t(data::hex_grid_t& _hex_grid, camera_t& _camera)
-    : hex_grid(_hex_grid)
+    hex_map_input_t::hex_map_input_t(ui::hex_map_t* _hex_map, camera_t& _camera)
+    : hex_map(_hex_map)
+    , hex_grid(_hex_map->hex_grid)
     , camera(_camera)
-    , mouse_input(sdl2_mouse_input_t())
+    , mouse_input(make_unique<sdl2_mouse_input_t>())
     {
         
     }
 
-    glm::ivec2 hex_map_input_t::hex_coords_from_mouse(glm::vec2 mouse_pos)
+    glm::vec2 hex_map_input_t::world_coords() const
     {
-        EXPLODE("todo");
+        return vec2(hex_map->camera.screen_to_world_coord(vec2(mouse_input->mouse_position)));
+    }
+
+    glm::ivec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
+    {
+        auto mouse_world = world_coords();
+
+        //convert mouse world coords to a hexagon coord
+
+        //figure out what column(s) the world coord could be intersecting
+            //new column every (hex_width_d4 * 3) units
+        auto column = mouse_world.x / (hex_width_d4 * 3);
+
+        //figure out what cell(s) the world coord could be intersecting
+
+        //test each cell for intersection
+
+        //auto hex_coords = hex_coords_from_mouse(mouse_input->mouse_position);
+
         return ivec2(0,0);
     }
 
 
     bool hex_map_input_t::on_event(SDL_Event* event)
     {
-        mouse_input.on_event(event);
+        mouse_input->on_event(event);
 
-        //auto hex_coords = 
+        //TEST   (one would argue I should try unit tests
+        if(event->type == SDL_MOUSEBUTTONDOWN)
+        {
+            auto const& ms = mouse_input->mouse_position;
+            auto mw = world_coords();
+            LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
+        }
+        //---
 
         return false;
     }
 
 
 /// ----
+
     constexpr uint8_t mouse_btn_bit(mouse_button_e btn)
     {
         return ((uint8_t)(btn) + 1);
