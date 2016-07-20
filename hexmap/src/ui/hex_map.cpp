@@ -6,20 +6,15 @@
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
 
+using namespace std;
+using namespace glm;
+
 namespace asdf
 {
 namespace hexmap
 {
 namespace ui
 {
-
-    constexpr float hex_width    = 1.0f;
-    constexpr float hex_width_d2 = hex_width / 2.0f;
-    constexpr float hex_width_d4 = hex_width_d2 / 2.0f;
-
-    constexpr float hex_height    = 0.86602540378f; //sin(pi/3)
-    constexpr float hex_height_d2 = hex_height / 2.0f;
-    constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
 
     constexpr std::array<float, 18> hexagon_points =
     {
@@ -39,9 +34,14 @@ namespace ui
 
     hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
     : hex_grid(_hex_grid)
+    , test_input(this, camera)
     {
 
         shader = Content.shaders["hexmap"];
+
+        //camera_controller.position.x = 5; //5 hexes right
+        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
+
 
         polygon_t verts(6);
 
@@ -100,11 +100,25 @@ namespace ui
     }
 
 
+    void hex_map_t::update(float dt)
+    {
+        camera_controller.update(dt);
+        camera.position = camera_controller.position;
+    }
+
     void hex_map_t::render()
     {
-        //test
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
+
+        auto w = (float)app.settings.resolution_width;
+        auto h = (float)app.settings.resolution_height;
+
+        camera.viewport.size_d2 = vec2(w,h) / 2.0f;
+        camera.viewport.bottom_left = -camera.viewport.size_d2;
+
+        shader->view_matrix       = camera.view_matrix();
+        shader->projection_matrix = camera.projection_ortho();
 
         hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
         {
@@ -114,6 +128,16 @@ namespace ui
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
     }
+
+    void hex_map_t::on_event(SDL_Event* event)
+    {
+        camera_controller.on_event(event);
+        camera.position = camera_controller.position;
+
+        test_input.on_event(event);
+    }
+
+
 
     void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk)
     {

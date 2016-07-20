@@ -15,6 +15,15 @@ namespace asdf
 {
 namespace hexmap
 {
+
+    constexpr float hex_width    = 1.0f;
+    constexpr float hex_width_d2 = hex_width / 2.0f;
+    constexpr float hex_width_d4 = hex_width_d2 / 2.0f;
+
+    constexpr float hex_height    = 0.86602540378f; //sin(pi/3)
+    constexpr float hex_height_d2 = hex_height / 2.0f;
+    constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
+
 namespace ui
 {
     constexpr size_t num_tile_colors = 10;
@@ -41,6 +50,10 @@ namespace ui
     {
         data::hex_grid_t& hex_grid;
 
+        camera_t camera;
+        asdf::input::input_handler_sdl2_t camera_controller;
+        input::hex_map_input_t test_input;
+
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<polygon_vertex_t> hexagon;
 
@@ -52,7 +65,9 @@ namespace ui
 
         void set_tile_colors(std::array<glm::vec4, num_tile_colors> const&);
 
+        void update(float dt);
         void render();
+        void on_event(SDL_Event* event);
 
         void render_chunk(data::hex_grid_chunk_t const&);
         void render_grid_overlay(glm::ivec2 grid_size);
