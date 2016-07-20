@@ -1,9 +1,8 @@
 #pragma once
 
 #include "asdf_multiplat/main/asdf_multiplat.h"
-#include "asdf_multiplat/main/input_controller.h"
-#include "asdf_multiplat/data/shader.h"
 #include "asdf_multiplat/utilities/camera.h"
+#include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/utilities/utilities.h"
 
 #include "data/hex_grid.h"
@@ -11,7 +10,6 @@
 
 namespace asdf
 {
-
 namespace hexmap
 {
     struct hexmap_t : asdf_specific_t
