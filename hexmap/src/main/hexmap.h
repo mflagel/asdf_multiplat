@@ -14,9 +14,6 @@ namespace hexmap
 {
     struct hexmap_t : asdf_specific_t
     {
-        camera_t camera;
-        asdf::input::input_handler_sdl2_t camera_controller;
-
         data::hex_grid_t hex_grid;
         std::unique_ptr<ui::hex_map_t> hex_map;
 
