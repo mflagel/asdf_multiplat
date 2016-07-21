@@ -112,7 +112,7 @@ namespace ui
         ASSERT(hex_grid.chunks[0].size(), "");
 
         auto w = (float)app.settings.resolution_width;
-        auto h = (float)app.settings.resolution_height;
+        auto h = (float)app.settings.resolution_height;  ///FIXME subtract size of window title bar if necessary
 
         camera.viewport.size_d2 = vec2(w,h) / 2.0f;
         camera.viewport.bottom_left = -camera.viewport.size_d2;
