@@ -119,6 +119,12 @@ namespace input
             column -= 1 * (side < 0);
         }
 
+        //if odd column, adjust row down
+        if(column % 2 == 1)
+        {
+            row = floor((mouse_world.y + hex_height_d2) / hex_height);
+        }
+
         return ivec2(column, row);
     }
 
