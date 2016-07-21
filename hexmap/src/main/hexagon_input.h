@@ -30,6 +30,11 @@ namespace input
         , mouse_5
     };
 
+    constexpr uint8_t mouse_button_bit(mouse_button_e btn)
+    {
+        return 1 << (uint8_t)btn;
+    }
+
     struct mouse_input_t
     {
         uint8_t mouse_button_states = 0;
@@ -39,7 +44,7 @@ namespace input
 
         bool mouse_button_state(mouse_button_e btn) const
         {
-            return (mouse_button_states & (uint8_t)btn) > 0;
+            return (mouse_button_states & mouse_button_bit(btn)) > 0;
         }
 
         virtual void on_event(SDL_Event* event) = 0;
@@ -61,7 +66,7 @@ namespace input
         hex_map_input_t(ui::hex_map_t*, camera_t&);
 
         glm::vec2 world_coords() const;
-        glm::vec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
+        glm::ivec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
 
         bool on_event(SDL_Event* event);
     };

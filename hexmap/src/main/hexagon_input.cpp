@@ -23,6 +23,30 @@ namespace input
         
     }
 
+
+    bool hex_map_input_t::on_event(SDL_Event* event)
+    {
+        mouse_input->on_event(event);
+
+        //TODO: only check/do this during certain sdl events
+        if(mouse_input->mouse_button_state(mouse_left))
+        {
+            auto mw = world_coords();
+            auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
+
+            LOG("mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
+
+            if(hex_map->hex_grid.is_in_bounds(hx))
+            {
+                auto& cell = hex_map->hex_grid.cell_at(hx);
+                cell.tile_id = 5; //test value
+            }
+        }
+
+        return false;
+    }
+
+
     glm::vec2 hex_map_input_t::world_coords() const
     {
         return vec2(hex_map->camera.screen_to_world_coord(vec2(mouse_input->mouse_position)));
@@ -47,19 +71,25 @@ namespace input
         relevant edge can be determined by y position
                 
         */
-    glm::vec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
+    glm::ivec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
     {
         auto mouse_world = world_coords();
-        mouse_world += vec2(hex_width_d2, hex_height_d2); //
+        mouse_world += vec2(hex_width_d2, hex_height_d2); //adjust so that mouse world 0,0 is the bottom left of hexagon 0,0
+
+        //
+        auto const& ms = mouse_pos;
+        auto const& mw = mouse_world;
+        LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
+        //
 
         //convert mouse world coords to a hexagon coord
         float sub_column = mouse_world.x / hex_width_d4;
-        float row = mouse_world.y / hex_height;
         float sub_row = mouse_world.y / hex_height_d2;
 
         LOG("subcol: %f   subrow: %f", sub_column, sub_row);
 
         int column = glm::floor(sub_column / 3.0f);
+        int row = glm::floor(mouse_world.y / hex_height);
 
         //if column is within hex_width_d4 of the column center (ie: fraction is +- 0.25) then it's only one column
         if((int)glm::floor(sub_column) % 3 == 0) //horizontal overlap every 3 sub-columns (with a width of one sub-column)
@@ -70,43 +100,30 @@ namespace input
             //even rows slant right  '/'
             //odd rows slant left    '\'
 
-            if(even)
-            {LOG("overlap even  /");}
-            else
-            {LOG("overlap odd   \\");}
+            vec2 line;
+
+            auto angle = (even * 1.0f + PI) / 3.0f;
+            line.x = cos(angle);
+            line.y = sin(angle);
+            line *= hex_edge_length;
+
+            vec2 p0(floor(sub_column) * hex_width_d4, floor(sub_row) * hex_height_d2); //bottom point of slant
+
+            auto p1 = p0 + line;
+            auto const& p2 = mouse_world;
+            auto side = (p1.x - p0.x)*(p2.y - p0.y) - (p1.y - p0.y)*(p2.x - p0.x);  //FIXME
+            //((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x))
             
-            //column += (intersecting right hex)
+            
+            LOG("side: %f", side);
+            column -= 1 * (side < 0);
         }
 
-        return vec2(sub_column/3.0f, row);
-    }
-
-
-    bool hex_map_input_t::on_event(SDL_Event* event)
-    {
-        mouse_input->on_event(event);
-
-        //TEST   (one would argue I should try unit tests
-        if(event->type == SDL_MOUSEBUTTONDOWN)
-        {
-            auto const& ms = mouse_input->mouse_position;
-            auto mw = world_coords();
-            LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
-            auto hx = hex_coords_from_mouse(ms);
-            LOG("hex coords: {%0.2f, %0.2f}", hx.x, hx.y);
-        }
-        //---
-
-        return false;
+        return ivec2(column, row);
     }
 
 
 /// ----
-
-    constexpr uint8_t mouse_btn_bit(mouse_button_e btn)
-    {
-        return ((uint8_t)(btn) + 1);
-    }
 
     void sdl2_mouse_input_t::on_event(SDL_Event* event)
     {
@@ -114,11 +131,11 @@ namespace input
         {
             case SDL_MOUSEBUTTONDOWN:
             {
-                mouse_button_states |= mouse_btn_bit(mouse_right)  * (event->button.button == SDL_BUTTON_LEFT);
-                mouse_button_states |= mouse_btn_bit(mouse_right)  * (event->button.button == SDL_BUTTON_RIGHT);
-                mouse_button_states |= mouse_btn_bit(mouse_middle) * (event->button.button == SDL_BUTTON_MIDDLE);
-                mouse_button_states |= mouse_btn_bit(mouse_4)      * (event->button.button == SDL_BUTTON_X1);
-                mouse_button_states |= mouse_btn_bit(mouse_5)      * (event->button.button == SDL_BUTTON_X2);
+                mouse_button_states |= mouse_button_bit(mouse_left)   * (event->button.button == SDL_BUTTON_LEFT);
+                mouse_button_states |= mouse_button_bit(mouse_right)  * (event->button.button == SDL_BUTTON_RIGHT);
+                mouse_button_states |= mouse_button_bit(mouse_middle) * (event->button.button == SDL_BUTTON_MIDDLE);
+                mouse_button_states |= mouse_button_bit(mouse_4)      * (event->button.button == SDL_BUTTON_X1);
+                mouse_button_states |= mouse_button_bit(mouse_5)      * (event->button.button == SDL_BUTTON_X2);
 
                 mouse_position.x = event->button.x;
                 mouse_position.y = event->button.y;
@@ -126,11 +143,11 @@ namespace input
             }
 
             case SDL_MOUSEBUTTONUP:
-                mouse_button_states &= mouse_btn_bit(mouse_right)  * (event->button.button != SDL_BUTTON_LEFT);
-                mouse_button_states &= mouse_btn_bit(mouse_right)  * (event->button.button != SDL_BUTTON_RIGHT);
-                mouse_button_states &= mouse_btn_bit(mouse_middle) * (event->button.button != SDL_BUTTON_MIDDLE);
-                mouse_button_states &= mouse_btn_bit(mouse_4)      * (event->button.button != SDL_BUTTON_X1);
-                mouse_button_states &= mouse_btn_bit(mouse_5)      * (event->button.button != SDL_BUTTON_X2);
+                mouse_button_states &= mouse_button_bit(mouse_left)   * (event->button.button != SDL_BUTTON_LEFT);
+                mouse_button_states &= mouse_button_bit(mouse_right)  * (event->button.button != SDL_BUTTON_RIGHT);
+                mouse_button_states &= mouse_button_bit(mouse_middle) * (event->button.button != SDL_BUTTON_MIDDLE);
+                mouse_button_states &= mouse_button_bit(mouse_4)      * (event->button.button != SDL_BUTTON_X1);
+                mouse_button_states &= mouse_button_bit(mouse_5)      * (event->button.button != SDL_BUTTON_X2);
 
                 mouse_position.x = event->button.x;
                 mouse_position.y = event->button.y;
