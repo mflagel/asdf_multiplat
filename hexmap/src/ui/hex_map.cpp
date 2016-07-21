@@ -15,18 +15,6 @@ namespace hexmap
 {
 namespace ui
 {
-
-    constexpr std::array<float, 18> hexagon_points =
-    {
-           hex_width_d2,   0.0f,            0.0f   // mid right
-        ,  hex_width_d4,  -hex_height_d2,  0.0f   // bottom right
-        , -hex_width_d4,  -hex_height_d2,  0.0f   // bottom left
-        , -hex_width_d2,   0.0f,            0.0f   // middle left
-        , -hex_width_d4,   hex_height_d2,  0.0f   // top left
-        ,  hex_width_d4,   hex_height_d2,  0.0f   // top right
-    };
-
-
     //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
@@ -189,10 +177,10 @@ namespace ui
         {
             for(size_t y = 0; y < chunk.size.y; ++y)
             {
-                //cell_data[y*chunk.size.x + x] = rand() % 10;
-                //cell_data[y*chunk.size.x + x] = rand() % 10;
-                // cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
-                cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
+                //cell_data[x*chunk.size.y + y] = rand() % 10;
+                //cell_data[x*chunk.size.y + y] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
+
+                cell_data[x*chunk.size.y + y] = chunk.cells[x][y].tile_id;
             }
         }
 

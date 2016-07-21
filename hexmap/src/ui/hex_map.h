@@ -24,6 +24,18 @@ namespace hexmap
     constexpr float hex_height_d2 = hex_height / 2.0f;
     constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
 
+    constexpr float hex_edge_length = hex_width * 0.52359877559;  //width * sin(pi/6)
+
+    constexpr std::array<float, 18> hexagon_points =
+    {
+           hex_width_d2,   0.0f,            0.0f   // mid right
+        ,  hex_width_d4,  -hex_height_d2,  0.0f   // bottom right
+        , -hex_width_d4,  -hex_height_d2,  0.0f   // bottom left
+        , -hex_width_d2,   0.0f,            0.0f   // middle left
+        , -hex_width_d4,   hex_height_d2,  0.0f   // top left
+        ,  hex_width_d4,   hex_height_d2,  0.0f   // top right
+    };
+
 namespace ui
 {
     constexpr size_t num_tile_colors = 10;
