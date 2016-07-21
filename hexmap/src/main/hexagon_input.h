@@ -61,7 +61,7 @@ namespace input
         hex_map_input_t(ui::hex_map_t*, camera_t&);
 
         glm::vec2 world_coords() const;
-        glm::ivec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
+        glm::vec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
 
         bool on_event(SDL_Event* event);
     };

@@ -28,23 +28,57 @@ namespace input
         return vec2(hex_map->camera.screen_to_world_coord(vec2(mouse_input->mouse_position)));
     }
 
-    glm::ivec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
+        /*       __
+                /   
+            __ /    
+               \    
+      hex  0,0  \ __
+    world  0,0  /
+            __ /
+               \
+                \ __
+              
+        world (0,0) is the center of the (0,0)th hexagon. add hexagon halfsize to the world pos to make world 0,0 the bottom left of the hexagon
+        hex coords range from (-0.5,-0.5) to (0.5,0.5)
+
+        everything within the angled slashes could be in the left or right hex depending
+        on the y coord. the edges are at 60 degree angles (60 and 180-60)
+
+        relevant edge can be determined by y position
+                
+        */
+    glm::vec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
     {
         auto mouse_world = world_coords();
+        mouse_world += vec2(hex_width_d2, hex_height_d2); //
 
         //convert mouse world coords to a hexagon coord
+        float sub_column = mouse_world.x / hex_width_d4;
+        float row = mouse_world.y / hex_height;
+        float sub_row = mouse_world.y / hex_height_d2;
 
-        //figure out what column(s) the world coord could be intersecting
-            //new column every (hex_width_d4 * 3) units
-        auto column = mouse_world.x / (hex_width_d4 * 3);
+        LOG("subcol: %f   subrow: %f", sub_column, sub_row);
 
-        //figure out what cell(s) the world coord could be intersecting
+        int column = glm::floor(sub_column / 3.0f);
 
-        //test each cell for intersection
+        //if column is within hex_width_d4 of the column center (ie: fraction is +- 0.25) then it's only one column
+        if((int)glm::floor(sub_column) % 3 == 0) //horizontal overlap every 3 sub-columns (with a width of one sub-column)
+        {
+            //todo: handle column overlap
 
-        //auto hex_coords = hex_coords_from_mouse(mouse_input->mouse_position);
+            bool even = (int)abs(floor(sub_row)) % 2 == 0;
+            //even rows slant right  '/'
+            //odd rows slant left    '\'
 
-        return ivec2(0,0);
+            if(even)
+            {LOG("overlap even  /");}
+            else
+            {LOG("overlap odd   \\");}
+            
+            //column += (intersecting right hex)
+        }
+
+        return vec2(sub_column/3.0f, row);
     }
 
 
@@ -58,6 +92,8 @@ namespace input
             auto const& ms = mouse_input->mouse_position;
             auto mw = world_coords();
             LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
+            auto hx = hex_coords_from_mouse(ms);
+            LOG("hex coords: {%0.2f, %0.2f}", hx.x, hx.y);
         }
         //---
 
