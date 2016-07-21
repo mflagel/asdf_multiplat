@@ -6,6 +6,9 @@
 #include <SDL2/SDL_keyboard.h>
 #include <glm/glm.hpp>
 
+#include "main/mouse.h"
+#include "main/keyboard.h"
+
 namespace asdf
 {
 namespace input
@@ -29,40 +32,6 @@ namespace input
         {
             input_handler.on_event(event);
         }
-    };
-
-
-    enum direction_inputs_e
-    {
-          up
-        , down
-        , left
-        , right
-        , forward
-        , backward
-        , num_direction_inputs
-    };
-
-    constexpr std::array<SDL_Keycode, num_direction_inputs> sdl2_input_map =
-    {
-          SDLK_UP
-        , SDLK_DOWN
-        , SDLK_LEFT
-        , SDLK_RIGHT
-        , SDLK_RCTRL
-        , SDLK_RSHIFT
-    };
-
-    struct sdl2_keyboard_handler_t
-    {
-        std::array<bool, num_direction_inputs> input_state;
-        glm::vec3 direction;
-
-        sdl2_keyboard_handler_t();
-
-        void on_input_changed();
-
-        void on_event(SDL_Event* event);
     };
 
     using input_handler_sdl2_t = input_controller_<sdl2_keyboard_handler_t>;
