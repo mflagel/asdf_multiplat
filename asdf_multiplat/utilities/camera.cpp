@@ -7,50 +7,29 @@ using namespace glm;
 
 namespace asdf
 {
-    const glm::vec2 movespeed{10.0f};
-
     mat4 camera_t::view_matrix() const
     {
         return glm::lookAt(position, position + direction, vec3{0.0f, 1.0f, 0.0f});
     }
 
-    mat4 camera_t::projection_ortho(float const& halfwidth, float const& halfheight) const
+    glm::mat4 camera_t::projection_ortho() const
     {
-        return ortho<float>(-halfwidth, halfwidth,
-                        -halfheight, halfheight,
+        auto zoom = position.z * position.z;
+        return projection_ortho(viewport.size_d2 / zoom);
+    }
+
+    mat4 camera_t::projection_ortho(glm::vec2 viewport_d2) const
+    {
+        return ortho<float>(-viewport_d2.x, viewport_d2.x,
+                        -viewport_d2.y, viewport_d2.y,
                         near_plane, far_plane);
     }
 
-    void camera_t::on_event(SDL_Event* event)
+    vec3 camera_t::screen_to_world_coord(vec2 const& screen_coord) const
     {
-        if(event->type == SDL_KEYDOWN)
-        {
-            switch(event->key.keysym.sym)
-            {
-                case SDLK_LEFT:
-                {
-                    position.x -= movespeed.x;
-                    break;
-                }
-
-                case SDLK_RIGHT:
-                {
-                    position.x += movespeed.x;
-                    break;
-                }
-
-                case SDLK_UP:
-                {
-                    position.y += movespeed.y;
-                    break;
-                }
-
-                case SDLK_DOWN:
-                {
-                    position.y -= movespeed.y;
-                    break;
-                }
-            }
-        }
+        vec4 vp;
+        vp.xy = viewport.bottom_left;
+        vp.zw = viewport.size_d2 * 2.0f;
+        return unProject(vec3(screen_coord, 0.0f), view_matrix(), projection_ortho(), vp).xyz;
     }
 }

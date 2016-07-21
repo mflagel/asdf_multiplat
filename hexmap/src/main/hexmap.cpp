@@ -21,7 +21,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
-    : hex_grid(ivec2(16,16))
+    : hex_grid(ivec2(15, 16))
     {
     }
 
@@ -41,9 +41,6 @@ namespace hexmap
         auto shader = Content.create_shader("hexmap", 330);
         Content.shaders.add_resource(shader);
 
-        camera_controller.position.x = 5; //5 hexes right
-        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
-
         hex_map = make_unique<ui::hex_map_t>(hex_grid);
 
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
@@ -57,24 +54,11 @@ namespace hexmap
             LOG("**Time delta bigger than %f seconds", max_delta_time);
         }
 
-        camera_controller.update(dt);
-        camera.position = camera_controller.position;
+        hex_map->update(dt);
     }
 
     void hexmap_t::render()
     {
-        auto w = (float)app.settings.resolution_width;
-        auto h = (float)app.settings.resolution_height;
-        auto zoom = camera.position.z * camera.position.z;
-
-        auto viewport = vec2(w,h) / zoom;
-
-        auto const& shader = hex_map->shader;
-        shader->use_program();
-        shader->view_matrix       = camera.view_matrix();
-        shader->projection_matrix = camera.projection_ortho(viewport.x / 2.0f, viewport.y / 2.0f);
-        shader->update_wvp_uniform();
-
         hex_map->render();
 
         LOG_IF(CheckGLError(), "Error during hex_map_t::render()");
@@ -82,8 +66,7 @@ namespace hexmap
 
     void hexmap_t::on_event(SDL_Event* event)
     {
-        camera_controller.on_event(event);
-        camera.position = camera_controller.position;
+        hex_map->on_event(event);
     }
 
 }

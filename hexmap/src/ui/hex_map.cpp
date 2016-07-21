@@ -6,32 +6,15 @@
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
 
+using namespace std;
+using namespace glm;
+
 namespace asdf
 {
 namespace hexmap
 {
 namespace ui
 {
-
-    constexpr float hex_width    = 1.0f;
-    constexpr float hex_width_d2 = hex_width / 2.0f;
-    constexpr float hex_width_d4 = hex_width_d2 / 2.0f;
-
-    constexpr float hex_height    = 0.86602540378f; //sin(pi/3)
-    constexpr float hex_height_d2 = hex_height / 2.0f;
-    constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
-
-    constexpr std::array<float, 18> hexagon_points =
-    {
-           hex_width_d2,   0.0f,            0.0f   // mid right
-        ,  hex_width_d4,  -hex_height_d2,  0.0f   // bottom right
-        , -hex_width_d4,  -hex_height_d2,  0.0f   // bottom left
-        , -hex_width_d2,   0.0f,            0.0f   // middle left
-        , -hex_width_d4,   hex_height_d2,  0.0f   // top left
-        ,  hex_width_d4,   hex_height_d2,  0.0f   // top right
-    };
-
-
     //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
@@ -39,9 +22,14 @@ namespace ui
 
     hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
     : hex_grid(_hex_grid)
+    , test_input(this, camera)
     {
 
         shader = Content.shaders["hexmap"];
+
+        //camera_controller.position.x = 5; //5 hexes right
+        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
+
 
         polygon_t verts(6);
 
@@ -100,11 +88,25 @@ namespace ui
     }
 
 
+    void hex_map_t::update(float dt)
+    {
+        camera_controller.update(dt);
+        camera.position = camera_controller.position;
+    }
+
     void hex_map_t::render()
     {
-        //test
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
+
+        auto w = (float)app.settings.resolution_width;
+        auto h = (float)app.settings.resolution_height;  ///FIXME subtract size of window title bar if necessary
+
+        camera.viewport.size_d2 = vec2(w,h) / 2.0f;
+        camera.viewport.bottom_left = -camera.viewport.size_d2;
+
+        shader->view_matrix       = camera.view_matrix();
+        shader->projection_matrix = camera.projection_ortho();
 
         hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
         {
@@ -114,6 +116,16 @@ namespace ui
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
     }
+
+    void hex_map_t::on_event(SDL_Event* event)
+    {
+        camera_controller.on_event(event);
+        camera.position = camera_controller.position;
+
+        test_input.on_event(event);
+    }
+
+
 
     void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk)
     {
@@ -165,10 +177,10 @@ namespace ui
         {
             for(size_t y = 0; y < chunk.size.y; ++y)
             {
-                //cell_data[y*chunk.size.x + x] = rand() % 10;
-                //cell_data[y*chunk.size.x + x] = rand() % 10;
-                // cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
-                cell_data[y*chunk.size.x + x] = chunk.position.x + abs(chunk.position.y);
+                //cell_data[x*chunk.size.y + y] = rand() % 10;
+                //cell_data[x*chunk.size.y + y] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
+
+                cell_data[x*chunk.size.y + y] = chunk.cells[x][y].tile_id;
             }
         }
 
