@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "hex_grid.h"
 
 
@@ -58,6 +59,33 @@ namespace data
             if(dv_y.rem > 0)
                 chunks[x][chunks[x].size() - 1].size.y = dv_y.rem;
         }
+    }
+
+    bool hex_grid_t::is_in_bounds(ivec2 hx) const
+    {
+        return hx.x >= 0 && hx.y >= 0 && hx.x < size.x && hx.y < size.y;
+    }
+
+    hex_grid_cell_t& hex_grid_t::cell_at(ivec2 hex_coord)
+    {
+        ASSERT(is_in_bounds(hex_coord), "Asking for a cell that is out of bounds");
+
+        auto chunk_coord = chunk_coord_from_hex_coord(hex_coord);
+        hex_grid_chunk_t& chunk = chunks[chunk_coord.x][chunk_coord.y];
+
+        ivec2 local_hex_coord = hex_coord - (chunk_coord * ivec2(max_chunk_width, max_chunk_height));
+        return chunk.cell_at_local_coord(local_hex_coord);
+    }
+
+    glm::ivec2 hex_grid_t::chunk_coord_from_hex_coord(ivec2 hex_coord) const
+    {
+        return hex_coord / ivec2(max_chunk_width, max_chunk_height);  //truncates
+    }
+
+    hex_grid_chunk_t& hex_grid_t::chunk_from_hex_coord(ivec2 hex_coord)
+    {
+        auto chunk_coord = chunk_coord_from_hex_coord(hex_coord);
+        return chunks[chunk_coord.x][chunk_coord.y];
     }
 }
 }

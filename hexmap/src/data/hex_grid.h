@@ -36,6 +36,8 @@ namespace data
         hex_cells_t cells;
 
         hex_grid_chunk_t(glm::ivec2 size = glm::ivec2(max_chunk_width, max_chunk_height));
+
+        hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
     };
 
 
@@ -62,6 +64,12 @@ namespace data
         }
 
         hex_grid_t(glm::ivec2 size);
+
+        bool is_in_bounds(glm::ivec2 hex_coords) const;
+
+        hex_grid_cell_t& cell_at(glm::ivec2 hex_coord);
+        glm::ivec2 chunk_coord_from_hex_coord(glm::ivec2) const;
+        hex_grid_chunk_t& chunk_from_hex_coord(glm::ivec2);
     };
 }
 }
