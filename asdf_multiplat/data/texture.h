@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <SOIL/SOIL.h>
 
+using color_t = glm::vec4;
+
 namespace asdf {
 
     struct content_load_exception : std::exception 
@@ -18,8 +20,6 @@ namespace asdf {
 
     class texture_t 
     {
-        using color_t = glm::vec4;
-
     public:
         std::string name = "";
         GLuint texture_id = 9001;
