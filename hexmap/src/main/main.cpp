@@ -5,6 +5,7 @@
 #include <asdf_multiplat/utilities/utilities.h>
 
 #include "hexmap.h"
+#include "editor/main/editor.h"
 
 using namespace asdf;
 using namespace hexmap;
@@ -21,9 +22,13 @@ int main(int argc, char* argv[])
 
     app.init(std::move(exec_dir));
 
-    hexmap_t hexmap;
-    app.specific = &hexmap;
-    hexmap.init();
+    // hexmap_t hexmap;
+    // app.specific = &hexmap;
+    // hexmap.init();
+
+    editor::editor_t editor;
+    app.specific = &editor;
+    editor.init();
 
 	SDL_Event event;
 

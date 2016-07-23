@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\data\hex_grid.cpp" />
+    <ClCompile Include="..\src\editor\main\editor.cpp" />
+    <ClCompile Include="..\src\editor\main\input.cpp" />
     <ClCompile Include="..\src\main\hexagon_input.cpp" />
     <ClCompile Include="..\src\main\hexmap.cpp" />
     <ClCompile Include="..\src\main\main.cpp" />
@@ -29,6 +31,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\data\hex_grid.h" />
+    <ClInclude Include="..\src\editor\main\editor.h" />
+    <ClInclude Include="..\src\editor\main\input.h" />
     <ClInclude Include="..\src\main\hexagon_input.h" />
     <ClInclude Include="..\src\main\hexmap.h" />
     <ClInclude Include="..\src\main\stdafx.h" />

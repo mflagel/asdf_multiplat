@@ -25,11 +25,6 @@ namespace hexmap
     {
     }
 
-    hexmap_t::~hexmap_t()
-    {
-
-    }
-
     void hexmap_t::init()
     {
         ASSERT(!CheckGLError(), "GL Error before hexmap_t::init()");

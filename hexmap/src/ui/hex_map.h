@@ -64,7 +64,6 @@ namespace ui
 
         camera_t camera;
         asdf::input::input_handler_sdl2_t camera_controller;
-        input::hex_map_input_t test_input;
 
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<polygon_vertex_t> hexagon;

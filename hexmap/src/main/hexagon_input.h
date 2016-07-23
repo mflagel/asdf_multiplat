@@ -31,18 +31,19 @@ namespace input
 {
     struct hex_map_input_t
     {
-        ui::hex_map_t* hex_map;
+        ui::hex_map_t* hex_map;  /// FIXME  use weak or shared ptr, since hex_map_t is no longer the owner of this
         data::hex_grid_t& hex_grid;
         camera_t& camera;
 
         std::unique_ptr<asdf::input::mouse_input_t> mouse_input;
 
         hex_map_input_t(ui::hex_map_t*, camera_t&);
+        virtual ~hex_map_input_t() = default;
 
         glm::vec2 world_coords() const;
         glm::ivec2 hex_coords_from_mouse(glm::ivec2 mouse_pos);
 
-        bool on_event(SDL_Event* event);
+        virtual bool on_event(SDL_Event* event);
     };
 }
 }

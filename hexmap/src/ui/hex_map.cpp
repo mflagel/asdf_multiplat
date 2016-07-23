@@ -22,7 +22,6 @@ namespace ui
 
     hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
     : hex_grid(_hex_grid)
-    , test_input(this, camera)
     {
 
         shader = Content.shaders["hexmap"];
@@ -121,8 +120,6 @@ namespace ui
     {
         camera_controller.on_event(event);
         camera.position = camera_controller.position;
-
-        test_input.on_event(event);
     }
 
 

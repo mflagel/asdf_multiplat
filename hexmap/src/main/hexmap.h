@@ -18,14 +18,14 @@ namespace hexmap
         std::unique_ptr<ui::hex_map_t> hex_map;
 
         hexmap_t();
-        ~hexmap_t();
+        virtual ~hexmap_t() = default;
 
-        void init();
+        virtual void init();
 
-        void update(float dt);
-        void render();
+        virtual void update(float dt) override;
+        virtual void render() override;
 
-        void on_event(SDL_Event*);
+        virtual void on_event(SDL_Event*) override;
     };
 }
 }
