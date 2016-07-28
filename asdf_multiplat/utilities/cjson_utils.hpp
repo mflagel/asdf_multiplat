@@ -1,9 +1,9 @@
 #pragma once
-
+#include "stdafx.h"
 #include "cJSON/cJSON.h"
 
-CLANG_DIAGNOSTIC_PUSH
-CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros")
+CLANG_DIAGNOSTIC_PUSH;
+CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros");
 
 
 // I dont think namespace matters for macros but whatever
@@ -17,11 +17,21 @@ namespace asdf
 
     #define CJSON_GET_ENUM_INT(int_name, enum_type) int_name = static_cast<enum_type>(cJSON_GetObjectItem(root, #int_name)->valueint);
 
-    #define CJSON_GET_VALUE_ARRAY(container, valuetype)                       \
+    #define CJSON_GET_VALUE_ARRAY(container, valuetype, resize_container)     \
         {                                                                     \
             cJSON* container##_json = cJSON_GetObjectItem(root, #container);  \
             size_t len = cJSON_GetArraySize(container##_json);                \
-            ASSERT(container.size() == len, "");                              \
+                                                                              \
+            if(resize_container)                                              \
+            {                                                                 \
+                container.clear();                                            \
+                container.resize(len);                                        \
+            }                                                                 \
+            else                                                              \
+            {                                                                 \
+                ASSERT(container.size() == len, "");                          \
+            }                                                                 \
+                                                                              \
             for(size_t i = 0; i < len; ++i)                                   \
             {                                                                 \
                 cJSON* json = cJSON_GetArrayItem(container##_json, i);        \
@@ -30,9 +40,13 @@ namespace asdf
         }
     //---
 
-    #define CJSON_GET_INT_ARRAY(container)    CJSON_GET_VALUE_ARRAY(container, valueint);
-    #define CJSON_GET_DOUBLE_ARRAY(container) CJSON_GET_VALUE_ARRAY(container, valuedouble);
-    #define CJSON_GET_STR_ARRAY(container)    CJSON_GET_VALUE_ARRAY(container, valuestring);
+    #define CJSON_GET_INT_ARRAY(container)    CJSON_GET_VALUE_ARRAY(container, valueint, false);
+    #define CJSON_GET_DOUBLE_ARRAY(container) CJSON_GET_VALUE_ARRAY(container, valuedouble, false);
+    #define CJSON_GET_STR_ARRAY(container)    CJSON_GET_VALUE_ARRAY(container, valuestring, false);
+
+    #define CJSON_GET_INT_VECTOR(container)    CJSON_GET_VALUE_ARRAY(container, valueint, true);
+    #define CJSON_GET_DOUBLE_VECTOR(container) CJSON_GET_VALUE_ARRAY(container, valuedouble, true);
+    #define CJSON_GET_STR_VECTOR(container)    CJSON_GET_VALUE_ARRAY(container, valuestring, true);
 
     #define CJSON_GET_ITEM_ARRAY(container) \
         {                                                                        \
