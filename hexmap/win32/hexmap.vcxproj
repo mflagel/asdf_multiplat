@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\ext\cJSON\cJSON.c" />
     <ClCompile Include="..\src\data\hex_grid.cpp" />
     <ClCompile Include="..\src\data\texture_bank.cpp" />
     <ClCompile Include="..\src\editor\main\editor.cpp" />
