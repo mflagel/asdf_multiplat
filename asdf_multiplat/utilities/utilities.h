@@ -99,6 +99,7 @@ namespace asdf {
     bool is_file(std::string const& filepath);
 
     std::string find_folder(std::string const& name, size_t max_search_dist = 5);
+    void create_dir(std::string const& path);
 
     /************************************************************************/
     /* Random Number Generation
