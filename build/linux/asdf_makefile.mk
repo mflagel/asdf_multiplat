@@ -147,11 +147,11 @@ define BUILD_SHIT
 # Compiler -c CFlags -I Includes Sysincludes -o objectname sourcefile
 $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.c | intro
 	@echo -e $$(CYAN)$<$$(ENDCOLOR)
-	@$$(CC) -c $$(CFLAGS) -I $$(INCLUDES) $$(SYSINCLUDES) -o $$@ $$<
+	@$$(CC) -c $$(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro
 	@echo -e $(CYAN)$<$(ENDCOLOR)
-	@$(CC) -c $(CFLAGS) -I $$(INCLUDES) $$(SYSINCLUDES) -o $$@ $$<
+	@$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro
 	@echo -e $$(CYAN) $$(CPP) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
