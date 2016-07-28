@@ -1,12 +1,11 @@
 {
     "textures" : [
-        "../assets/Terrain_Tiles/mapTile_017.png",
-        "../assets/Terrain_Tiles/mapTile_022.png",
-        "../assets/Terrain_Tiles/mapTile_027.png",
-        "../assets/Terrain_Tiles/mapTile_082.png",
-        "../assets/Terrain_Tiles/mapTile_087.png",
-        "../assets/Terrain_Tiles/mapTile_171.png",
-        "../assets/Terrain_Tiles/mapTile_187.png",
-        "../assets/Terrain_Tiles/mapTile_188.png"
+        "../../../assets/Terrain_Tiles/dirt.png",
+        "../../../assets/Terrain_Tiles/grass.png",
+        "../../../assets/Terrain_Tiles/stone.png",
+        "../../../assets/Terrain_Tiles/sand.png",
+        "../../../assets/Terrain_Tiles/water.png",
+        "../../../assets/Terrain_Tiles/water2.png",
+        "../../../assets/Terrain_Tiles/ice.png"
     ]
 }
