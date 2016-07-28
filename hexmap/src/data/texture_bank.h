@@ -9,20 +9,21 @@
 #include "asdf_multiplat/data/texture.h"
 
 namespace asdf {
-namespace hexmap
+namespace hexmap {
+namespace data
 {
 
-    constexpr size_t saved_texture_dim = 256;
-    constexpr size_t max_saved_textures_1d = 5;
+    constexpr size_t saved_texture_dim = 128;
+    constexpr size_t max_saved_textures_1d = 10;
     constexpr size_t max_saved_textures = max_saved_textures_1d * max_saved_textures_1d;
     constexpr size_t hex_atlas_dim = saved_texture_dim * max_saved_textures_1d;
 
+    constexpr char imported_textures_json_file[] = "imported_textures.json";
 
 
     struct saved_texture_t
     {
         std::string filesystem_location;
-        size_t index;
     };
 
 
@@ -52,5 +53,6 @@ namespace hexmap
 
         void add_texture(std::string const& filesystem_location);
     };
+}
 }
 }

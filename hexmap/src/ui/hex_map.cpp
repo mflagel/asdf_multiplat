@@ -4,7 +4,7 @@
 #include <array>
 
 #include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/content_manager.h"
+#include "asdf_multiplat/data/content_manager.h"\
 
 using namespace std;
 using namespace glm;

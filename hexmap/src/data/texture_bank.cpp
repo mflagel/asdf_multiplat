@@ -1,7 +1,8 @@
 #include "texture_bank.h"
 
 namespace asdf {
-namespace hexmap
+namespace hexmap {
+namespace data
 {
 
     texture_bank_t::texture_bank_t()
@@ -36,5 +37,6 @@ namespace hexmap
 
         saved_textures.push_back(saved_texture_t{filepath});
     }
+}
 }
 }
