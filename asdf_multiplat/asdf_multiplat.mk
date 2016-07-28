@@ -31,12 +31,16 @@ INCLUDES   += $(SRCPATH)/data 	  \
 ###############################
 
 ########### SOURCES ###########
+EXT_SOURCES = $(EXTPATH)/cJSON/cJSON.c
+
 SRCPATH		= $(PROJPATH)/$(PROJNAME)
 
 MAIN_SOURCES = $(SRCPATH)/main/main.cpp 		\
 			   $(SRCPATH)/stdafx.cpp 		\
 			   $(SRCPATH)/main/asdf_multiplat.cpp 		\
 			   $(SRCPATH)/main/input_controller.cpp 		\
+			   $(SRCPATH)/main/keyboard.cpp 		\
+			   $(SRCPATH)/main/mouse.cpp 		\
 
 DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
@@ -54,9 +58,9 @@ UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
              $(SRCPATH)/ui/text.cpp \
              $(SRCPATH)/ui/polygon.cpp \
 
-SOURCES += $(MAIN_SOURCES) $(DATA_SOURCES) $(UTILITIES_SOURCES) $(UI_SOURCES)
+SOURCES += $(MAIN_SOURCES) $(DATA_SOURCES) $(UTILITIES_SOURCES) $(UI_SOURCES) $(EXT_SOURCES)
 
-SRC_FOLDERS += data main utilities ui .
+SRC_FOLDERS += data main utilities ui . ../ext/cJSON
 ###############################
 
 
