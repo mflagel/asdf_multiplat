@@ -1,6 +1,15 @@
+#include "stdafx.h"
 #include "texture_bank.h"
 
-namespace asdf {
+#include "asdf_multiplat/utilities/utilities.h"
+#include "asdf_multiplat/utilities/cjson_utils.hpp"
+
+using namespace std;
+
+namespace asdf
+{
+    using namespace util;
+
 namespace hexmap {
 namespace data
 {
@@ -8,6 +17,31 @@ namespace data
     texture_bank_t::texture_bank_t()
     : atlas_texture("hex texture atlas", nullptr, hex_atlas_dim, hex_atlas_dim)
     {
+        auto dir = find_folder("data");
+        ASSERT(dir.length() > 0, "Could not find data folder");
+
+        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+
+        std::string json_str = read_text_file(imported_textures_json_filepath);
+        cJSON* root = cJSON_Parse(json_str.c_str());
+        ASSERT(root, "Error loading imported textures json file");
+
+        vector<char*> textures;
+        CJSON_GET_STR_VECTOR(textures);
+
+        for(auto const& filepath : textures)
+        {
+            if(is_file(filepath))
+            {
+                add_texture(filepath);
+            }
+            else
+            {
+                LOG("Texture not found at %s", filepath);
+            }
+        }
+        
+        cJSON_Delete(root);
 
     }
 
