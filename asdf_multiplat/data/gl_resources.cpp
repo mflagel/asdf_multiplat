@@ -29,9 +29,19 @@ namespace asdf
         }
         LOG("--");
 
+        //TODO: store an enum and array of relevant gl info?
+
         GLint max_uniform_components = 0;
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_uniform_components);
         LOG("Max Uniform Components: %i", max_uniform_components);
+
+        GLint max_texture_size = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
+        LOG("Max Texture Size: %i", max_texture_size);
+
+        GLint max_texture_units = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture_units);
+        LOG("Max Texture Units: %i", max_texture_units);
 
         LOG("--");
 

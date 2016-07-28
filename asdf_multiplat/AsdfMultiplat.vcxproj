@@ -116,6 +116,7 @@
     <ClInclude Include="ui\ui_drag_control.h" />
     <ClInclude Include="ui\ui_label.h" />
     <ClInclude Include="utilities\camera.h" />
+    <ClInclude Include="utilities\cjson_utils.hpp" />
     <ClInclude Include="utilities\macro_overloading.h" />
     <ClInclude Include="utilities\spritebatch.h" />
     <ClInclude Include="utilities\str_const.h" />

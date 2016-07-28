@@ -43,6 +43,7 @@ namespace asdf
         refresh_params();
     }
 
+
     texture_t::texture_t(std::string const& _name, color_t* color_data, size_t _width, size_t _height, bool generate_mipmaps)
     : name{_name}
     , width{_width}

@@ -163,6 +163,27 @@ namespace asdf {
         }
     }
 
+    void create_dir(std::string const& path)
+    {
+        ASSERT(!is_directory(path), "Directory already exists at %s", path.c_str());
+        ASSERT(!is_file(path), "Cannot create directory, File already exists at %s", path.c_str());
+
+
+#ifdef MSVC
+        ASSERT(path.length() < 248, "Windows CreateDirectory() does not support paths longer than 248 chars. Tell a programmer to use the Unicode version");
+        bool status = CreateDirectory(path.c_str());
+
+        /*
+        if(status == ERROR_ALREADY_EXISTS)
+            todo: throw exception?
+        else if(status == ERROR_PATH_NOT_FOUND)
+            todo: throw exception?
+        */
+#else
+        EXPLODE("todo: posix version of create_dir()");
+#endif
+    }
+
 //     Document read_json_file(std::string const& filepath)
 //     {
 //         std::string json = read_text_file(filepath);
