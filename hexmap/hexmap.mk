@@ -18,17 +18,19 @@ LINK_FLAGS += -L$(LIBPATH)
 ASDFDIR = /home/mathias/gdrive/Programming/AsdfMultiplat/obj/asdf_multiplat/linux
 
 # this feels super janky
-ASDFASDF = $(ASDFDIR)/asdf_multiplat.o   \
-		   $(ASDFDIR)/spritebatch.o      \
-		   $(ASDFDIR)/ui_base.o          \
-		   $(ASDFDIR)/content_manager.o  \
-		   $(ASDFDIR)/shader.o           \
-		   $(ASDFDIR)/polygon.o        \
-		   $(ASDFDIR)/gl_resources.o        \
-		   $(ASDFDIR)/utilities.o        \
-		   $(ASDFDIR)/camera.o        \
-		   $(ASDFDIR)/texture.o        \
+ASDFASDF = $(ASDFDIR)/asdf_multiplat.o          \
+		   $(ASDFDIR)/spritebatch.o             \
+		   $(ASDFDIR)/ui_base.o                 \
+		   $(ASDFDIR)/content_manager.o         \
+		   $(ASDFDIR)/shader.o                  \
+		   $(ASDFDIR)/polygon.o                 \
+		   $(ASDFDIR)/gl_resources.o            \
+		   $(ASDFDIR)/utilities.o               \
+		   $(ASDFDIR)/camera.o                  \
+		   $(ASDFDIR)/texture.o                 \
 		   $(ASDFDIR)/input_controller.o        \
+		   $(ASDFDIR)/keyboard.o                \
+		   $(ASDFDIR)/mouse.o                   \
 		   # $(ASDFDIR)/stdafx.o
 
 LINK_FLAGS += $(ASDFASDF)
@@ -44,6 +46,7 @@ INCLUDEPATH = $(PROJPATH)/include
 
 SYSINCLUDES += $(EXTPATH)           \
 			   $(EXTPATH)/glm		\
+			   $(EXTPATH)/cJSON		\
 
 SYSINCLUDES += $(INCLUDEPATH)			\
 			   $(INCLUDEPATH)/SOIL
@@ -73,11 +76,17 @@ SOURCES = $(SRCPATH)/main/main.cpp \
 		  $(SRCPATH)/main/hexmap.cpp \
 		  $(SRCPATH)/main/hexagon_input.cpp \
           $(SRCPATH)/data/hex_grid.cpp \
+          $(SRCPATH)/data/texture_bank.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
-          $(SRCPATH)/ui/hex_tile.cpp
+          $(SRCPATH)/ui/hex_tile.cpp \
+          $(SRCPATH)/editor/main/editor.cpp \
+          $(SRCPATH)/editor/main/input.cpp
 
+EXT_SOURCES = $(EXTPATH)/cJSON/cJSON.c
 
-SRC_FOLDERS += main data ui
+SOURCES += $(EXT_SOURCES)
+
+SRC_FOLDERS += main data ui editor/main ../../ext/cJSON
 ###############################
 
 # SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
