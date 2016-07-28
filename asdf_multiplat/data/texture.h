@@ -29,6 +29,8 @@ namespace asdf {
         size_t halfheight = 0;
         int format = 0;
         //int numChannels = 0;
+        bool is_compressed = false;
+        GLint types[5];
 
     public:
         inline GLuint    get_textureID() const { return texture_id; }
@@ -39,7 +41,7 @@ namespace asdf {
     public:
         texture_t();
 
-        texture_t(std::string const& filepath);
+        texture_t(std::string const& filepath, int force_channels = SOIL_LOAD_AUTO);
         texture_t(std::string const& name, std::string const& filepath);
         texture_t(std::string const& name, const GLuint texture_index);
         //FIXME: replace {ptr, len} with array_view_<T>
@@ -48,7 +50,7 @@ namespace asdf {
         ~texture_t();
 
         void refresh_params();
-        void load_texture(std::string const& filepath);
+        void load_texture(std::string const& filepath, int force_channels = SOIL_LOAD_AUTO);
         
         void write(const color_t* color_data);
         void write(const color_t* color_data, const size_t _width, const size_t _height);
