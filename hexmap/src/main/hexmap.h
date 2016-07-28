@@ -20,7 +20,7 @@ namespace hexmap
         hexmap_t();
         virtual ~hexmap_t() = default;
 
-        virtual void init();
+        virtual void init() override;
 
         virtual void update(float dt) override;
         virtual void render() override;
