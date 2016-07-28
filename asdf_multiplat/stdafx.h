@@ -146,9 +146,10 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
 
 
 #ifdef __clang__
-#define CLANG_DIAGNOSTIC_PUSH _Pragma(clang diagnostic push);
-#define CLANG_DIAGNOSTIC_POP _Pragma(clang diagnostic pop);
-#define CLANG_DIAGNOSTIC_IGNORE(to_ignore) _Pragma(clang diagnostic ignored to_ignore);
+#define PRAGMA(x) _Pragma(#x)
+#define CLANG_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push");
+#define CLANG_DIAGNOSTIC_POP _Pragma("clang diagnostic pop");
+#define CLANG_DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(clang diagnostic ignored to_ignore);
 #else
 #define CLANG_DIAGNOSTIC_PUSH 
 #define CLANG_DIAGNOSTIC_POP
