@@ -179,12 +179,33 @@ namespace asdf
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
 
+    extern gl_state_t GL_State;
+
     bool CheckShader(GLuint shader);
     bool CheckGLError(GLuint shader/* = 0xFFFFFFFF*/);
     bool CheckGLError();
 
+    namespace gl
+    {
+        enum types_e
+        {
+              gl_none                = GL_NONE
+            , gl_signed_normalized   = GL_SIGNED_NORMALIZED
+            , gl_unsigned_normalized = GL_UNSIGNED_NORMALIZED
+            , gl_float               = GL_FLOAT
+            , gl_int                 = GL_INT
+            , gl_unsigned_int        = GL_UNSIGNED_INT
+        };
 
+        // used in glGetTexLevelParameteriv
+        enum channel_types_e
+        {
+              texture_red_type    = GL_TEXTURE_RED_TYPE
+            , texture_green_type  = GL_TEXTURE_GREEN_TYPE
+            , texture_blue_type   = GL_TEXTURE_BLUE_TYPE
+            , texture_alpha_type  = GL_TEXTURE_ALPHA_TYPE
+            , texture_depth_type  = GL_TEXTURE_DEPTH_TYPE
+        };
+    }
 
-
-    extern gl_state_t GL_State;
 }
