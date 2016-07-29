@@ -58,7 +58,11 @@ namespace asdf
         glGenTextures(1, &texture_id);
         
         write(color_data);
+
+        //TODO: store this information?
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // REQUIRED to be considered a 'complete' texture. Without this, glCopyImageSubData will fail
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
         refresh_params();
 
         if(generate_mipmaps)
