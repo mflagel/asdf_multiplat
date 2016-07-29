@@ -1,4 +1,6 @@
-sudo: false
+sudo: required
+dist: trusty
+
 language: c++
 compiler: clang
   # - clang
@@ -6,9 +8,19 @@ compiler: clang
 
 os:
     - linux
-    - windows
 
-# before_install:
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-3.8
+
+    packages:
+      - clang-3.8
+
+before_install:
+  - sudo apt-get update -qq
+  # - TODO dependancies
 
 install:
   -
