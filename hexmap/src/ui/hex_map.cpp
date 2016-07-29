@@ -95,6 +95,8 @@ namespace ui
 
     void hex_map_t::render()
     {
+        GL_State.unbind_fbo();
+
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
 
@@ -114,6 +116,9 @@ namespace ui
 
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
+
+        //TEST
+        glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
     }
 
     void hex_map_t::on_event(SDL_Event* event)

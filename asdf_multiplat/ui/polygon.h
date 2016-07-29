@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 
 namespace asdf
 {
