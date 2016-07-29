@@ -38,7 +38,7 @@ script:
 
 branches:
   only:
-    - master
+    - travis-ci
 
 notifications:
   email: false
