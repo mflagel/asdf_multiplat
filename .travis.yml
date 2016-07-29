@@ -1,6 +1,6 @@
 
-# sudo: required
-sudo: false
+sudo: required
+# sudo: false
 dist: trusty
 
 language: c++
