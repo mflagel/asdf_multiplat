@@ -20,7 +20,7 @@ addons:
 
     packages:
       - clang-3.8
-      - g++-6.0
+      - g++-6
       - libsdl2-dev
       - libglew-dev
       - libftgl-dev
