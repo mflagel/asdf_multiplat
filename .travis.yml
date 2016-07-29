@@ -35,7 +35,7 @@ env:
 # before_script:
 
 script:
-  make CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk && make CXX=$COMPILER TRAVIS=1 -f hexmap/hexmap.mk
+  make -j4 CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk && make -j4 CXX=$COMPILER TRAVIS=1 -f hexmap/hexmap.mk
 
 # after_success:
 
