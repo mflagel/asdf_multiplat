@@ -95,9 +95,12 @@ all: $(PROJNAME)
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
-	@echo $(CYAN) Compiler:$(ENDCOLOR) $(CC)  and  $(CXX)
+	@echo -e $(CYAN) Compiler:$(ENDCOLOR) $(CC)  and  $(CXX)
+	$(CC) --version
+	$(CXX) --version
 	mkdir -pv $(BINPATH)
 	mkdir -pv $(OBJPATH)
+	@echo 
 	@echo Current Working Dir:
 	pwd
 	@echo Libs: $(LIBS)
