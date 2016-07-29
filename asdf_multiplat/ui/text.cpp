@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "text.h"
 
+using namespace std;
+
 namespace asdf
 {
     void text_info_t::align(glm::vec2 parent_halfsize)

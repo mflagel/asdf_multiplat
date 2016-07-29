@@ -132,7 +132,7 @@ namespace asdf {
          !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #else
         struct stat path_stat;
-        if(stat(filepath.c_str(), &path_stat) == 0);
+        if(stat(filepath.c_str(), &path_stat) == 0)
             return S_ISREG(path_stat.st_mode);
         return false;
 #endif
@@ -219,7 +219,7 @@ namespace asdf {
         for (; cwd[new_size] != '\0'; ++new_size);
         cwd.resize(new_size);
 
-        return std::move(cwd);
+        return cwd;
     }
 
     bool CheckBounds(int x, int y, int minX, int maxX, int minY, int maxY){
