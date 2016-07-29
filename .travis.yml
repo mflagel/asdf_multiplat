@@ -1,0 +1,32 @@
+sudo: false
+language: c++
+compiler: clang
+  # - clang
+  # - gcc
+
+os:
+    - linux
+    - windows
+
+# before_install:
+
+install:
+  -
+
+# before_script:
+
+script: 
+  make -f asdf_multiplat/asdf_multiplat.mk
+  make -f hexmap/hexmap.mk
+
+# after_success:
+
+# after_failure:
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+
