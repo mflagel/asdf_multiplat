@@ -4,8 +4,8 @@
 
 namespace asdf {
 
-    class shader_t {
-    public:
+    struct shader_t
+    {
         std::string name;
         GLuint vertex_shader_id;
         GLuint fragment_shader_id;

@@ -18,9 +18,8 @@ namespace asdf {
         virtual const char* what() const noexcept;
     };
 
-    class texture_t 
+    struct texture_t 
     {
-    public:
         std::string name = "";
         GLuint texture_id = 9001;
         size_t width = 0;
@@ -30,13 +29,11 @@ namespace asdf {
         int format = 0;
         //int numChannels = 0;
 
-    public:
         inline GLuint    get_textureID() const { return texture_id; }
         inline size_t    get_width()     const { return width;      }
         inline size_t    get_height()    const { return height;     }
         inline glm::vec2 get_size()      const { return glm::vec2(width, height); }
 
-    public:
         texture_t();
 
         texture_t(std::string const& filepath);

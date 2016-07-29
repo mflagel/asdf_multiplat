@@ -21,7 +21,7 @@ namespace asdf
         LOG("OpenGL Initialized");
         LOG("--Supported OpenGL Extensions--")
 
-        gl_extensions = tokenize((char*)(glGetString(GL_EXTENSIONS)), " ");
+        gl_extensions = tokenize((char*)(glGetString(GL_EXTENSIONS)), " ");  /// FIXME: glGetString returns const GLubyte*, which probably shouldn't be casted to a regular char*
 
         for(auto const& ext : gl_extensions)
         {

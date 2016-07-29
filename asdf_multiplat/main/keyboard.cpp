@@ -38,7 +38,7 @@ namespace input
 
             for(size_t i = 0; i < num_direction_inputs; ++i)
             {
-                auto matches = key == sdl2_input_map[(direction_inputs_e)i];
+                auto matches = key == sdl2_input_map[static_cast<direction_inputs_e>(i)];
 
                 if(event->type == SDL_KEYDOWN)
                     input_state[i] |= matches; // key state becomes true if matches
