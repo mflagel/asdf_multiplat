@@ -4,7 +4,7 @@
 #include <memory>
 #include <functional>
 
-#include <SDL/SDL_events.h>
+#include <SDL2/SDL_events.h>
 #include <glm/glm.hpp>
 
 #define UI_RENDER_PARAMS glm::vec3 const& _position, glm::mat3 const& _matrix, color_t const& _color
