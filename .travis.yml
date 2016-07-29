@@ -16,8 +16,9 @@ install:
 # before_script:
 
 script: 
+  make -f asdf_multiplat/asdf_multiplat.mk clean
   make -f asdf_multiplat/asdf_multiplat.mk
-  make -f hexmap/hexmap.mk
+  # make -f hexmap/hexmap.mk
 
 # after_success:
 
@@ -30,3 +31,7 @@ branches:
 notifications:
   email: false
 
+
+env:
+  global:
+    - TRAVIS=1

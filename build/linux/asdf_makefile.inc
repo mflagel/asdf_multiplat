@@ -1,7 +1,10 @@
 #Compiler Stuff
+
+ifndef TRAVIS
 CC 	    := clang
-CPP 	:= clang++
-LINK 	:= $(CPP)
+CXX 	:= clang++
+endif
+LINK    := $(CXX)
 
 
 WARNING_FLAGS := -Wall \
@@ -51,7 +54,12 @@ $(error PROJNAME not defined)
 endif
 
 #Useful Paths
-PROJPATH 	:= ~/gdrive/Programming/AsdfMultiplat
+
+ifndef PROJPATH
+# PROJPATH 	:= ~/gdrive/Programming/AsdfMultiplat
+$(error PROJPATH must be defined);
+endif
+
 BINPATH		:= $(PROJPATH)/bin/linux
 LIBPATH		:= $(PROJPATH)/lib
 EXTPATH		:= $(PROJPATH)/ext

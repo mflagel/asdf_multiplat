@@ -6,6 +6,9 @@ PROJNAME = asdf_multiplat
 # INVOCATION = 1
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+
+PROJPATH = .
+
 include $(SELF_DIR)/../build/linux/asdf_makefile.inc
 ###############################
 
