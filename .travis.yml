@@ -17,6 +17,11 @@ addons:
 
     packages:
       # - clang-3.8
+      - libsdl2-dev
+      - libglew-dev
+      - libftgl-dev
+      - libsoil-dev
+      - libgl-dev
 
 before_install:
   # - sudo apt-get update -qq
