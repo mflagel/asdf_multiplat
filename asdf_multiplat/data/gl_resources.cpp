@@ -63,6 +63,12 @@ namespace asdf
         current_shader = shader->shader_program_id;
     }
 
+    void gl_state_t::bind(framebuffer_object_t const& fbo)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo.id);
+        current_framebuffer = fbo.id;
+    }
+
     void gl_state_t::bind(gl_buffer_object_t const& buffer)
     {
         LOG_IF(current_buffers[buffer.target] == buffer.id, "buffer  %i already in use for target %s", buffer.id, gl_buffer_target_strings[buffer.target]);
@@ -82,6 +88,12 @@ namespace asdf
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         current_buffers[gl_array_buffer] = 0;
+    }
+
+    void gl_state_t::unbind_fbo()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        current_framebuffer = 0;
     }
 
     void gl_state_t::unbind_shader()

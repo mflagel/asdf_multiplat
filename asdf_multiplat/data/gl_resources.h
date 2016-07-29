@@ -36,6 +36,25 @@ namespace asdf
         vao_t& operator=(vao_t&&) = default;
     };
 
+    struct framebuffer_object_t : opengl_object_t
+    {
+        framebuffer_object_t()
+        {
+            glGenFramebuffers(1, &id);
+        }
+
+        ~framebuffer_object_t()
+        {
+            glDeleteFramebuffers(1, &id);
+        }
+
+        framebuffer_object_t(const framebuffer_object_t&) = delete;
+        framebuffer_object_t& operator=(const framebuffer_object_t&) = delete;
+
+        framebuffer_object_t(framebuffer_object_t&&) = default;
+        framebuffer_object_t& operator=(framebuffer_object_t&&) = default;
+    };
+
 
     enum gl_buffer_targets_e : uint32_t
     {
@@ -157,6 +176,7 @@ namespace asdf
 
         GLuint current_vao = 0;
         GLuint current_shader = 0;
+        GLuint current_framebuffer = 0;
 
         std::array<GLuint, gl_buffer_target_count> current_buffers;
         
@@ -165,6 +185,7 @@ namespace asdf
 
         void bind(vao_t const&);
         void bind(std::shared_ptr<shader_t> const& shader);
+        void bind(framebuffer_object_t const&);
 
         void bind(gl_buffer_object_t const&);
 
@@ -172,6 +193,7 @@ namespace asdf
 
         void unbind_vao();
         void unbind_vbo();
+        void unbind_fbo();
         void unbind_shader();
 
         void buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data);
