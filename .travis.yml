@@ -42,9 +42,6 @@ script:
 
 # after_failure:
 
-branches:
-  only:
-    - travis-ci
 
 notifications:
   email: false
