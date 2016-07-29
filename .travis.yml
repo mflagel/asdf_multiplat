@@ -1,13 +1,15 @@
-sudo: required
+
+# sudo: required
+sudo: false
 dist: trusty
 
 language: c++
-compiler: clang-3.8
+compiler: clang
   # - clang
   # - gcc
 
-os:
-    - linux
+# os:
+#     - linux
 
 
 addons:
@@ -23,6 +25,10 @@ addons:
       - libsoil-dev
       - libgl1-mesa-dev
 
+env:
+  - COMPILER=clang++-3.8
+  - TRAVIS=1
+
 before_install:
   # - sudo apt-get update -qq
   # - TODO dependancies
@@ -33,7 +39,7 @@ install:
 # before_script:
 
 script:
-  make -f asdf_multiplat/asdf_multiplat.mk
+  make CXX=$COMPILER -f asdf_multiplat/asdf_multiplat.mk
   # make  -f hexmap/hexmap.mk
 
 # after_success:
@@ -46,10 +52,3 @@ branches:
 
 notifications:
   email: false
-
-
-env:
-  global:
-    - TRAVIS=1
-    # - clang=clang-3.8
-    # - clang++=clang
