@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp> 
 
 #include "utilities.h"
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 #include "asdf_multiplat.h"
 
 using namespace asdf::util;

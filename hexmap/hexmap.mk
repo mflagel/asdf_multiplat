@@ -24,6 +24,7 @@ ASDFASDF = $(ASDFDIR)/asdf_multiplat.o          \
 		   $(ASDFDIR)/content_manager.o         \
 		   $(ASDFDIR)/shader.o                  \
 		   $(ASDFDIR)/polygon.o                 \
+		   $(ASDFDIR)/gl_state.o                \
 		   $(ASDFDIR)/gl_resources.o            \
 		   $(ASDFDIR)/utilities.o               \
 		   $(ASDFDIR)/camera.o                  \

@@ -2,7 +2,7 @@
 #include "texture.h"
 
 #include "main/asdf_multiplat.h"
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 
 using namespace glm;
 

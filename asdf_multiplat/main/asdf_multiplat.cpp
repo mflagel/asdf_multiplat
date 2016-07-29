@@ -5,6 +5,7 @@
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/rotate_vector.hpp>
 
+#include "data/gl_state.h"
 #include "data/content_manager.h"
 #include "ui/ui_base.h"
 #include "utilities/spritebatch.h"

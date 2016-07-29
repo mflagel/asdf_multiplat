@@ -46,6 +46,7 @@ DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
 			   $(SRCPATH)/data/texture.cpp 	    \
 			   $(SRCPATH)/data/gl_resources.cpp 	    \
+			   $(SRCPATH)/data/gl_state.cpp 	    \
 
 UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)/spritebatch.cpp 		\
 					$(UTILITIES_SRC_PATH)/thread_pool.cpp 	\
