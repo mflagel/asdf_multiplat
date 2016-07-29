@@ -16,9 +16,11 @@ addons:
   apt:
     sources:
       - llvm-toolchain-precise-3.8
+      - ubuntu-toolchain-r-test
 
     packages:
       - clang-3.8
+      - g++-6.0
       - libsdl2-dev
       - libglew-dev
       - libftgl-dev
@@ -27,19 +29,13 @@ addons:
 
 env:
   - COMPILER=clang++-3.8
-  - TRAVIS=1
 
-before_install:
-  # - sudo apt-get update -qq
-  # - TODO dependancies
-
-install:
-  -
+# install:
 
 # before_script:
 
 script:
-  make CXX=$COMPILER -f asdf_multiplat/asdf_multiplat.mk
+  make CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk
   # make  -f hexmap/hexmap.mk
 
 # after_success:
