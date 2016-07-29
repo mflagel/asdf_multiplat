@@ -82,7 +82,7 @@ namespace ui
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
     {
         GL_State.bind(shader);
-        glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, (GLfloat*)colors.data());
+        glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, reinterpret_cast<const GLfloat*>(colors.data()));
         ASSERT(!CheckGLError(), "");
     }
 
@@ -98,8 +98,8 @@ namespace ui
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
 
-        auto w = (float)app.settings.resolution_width;
-        auto h = (float)app.settings.resolution_height;  ///FIXME subtract size of window title bar if necessary
+        auto w = static_cast<float>(app.settings.resolution_width);
+        auto h = static_cast<float>(app.settings.resolution_height);  ///FIXME subtract size of window title bar if necessary
 
         camera.viewport.size_d2 = vec2(w,h) / 2.0f;
         camera.viewport.bottom_left = -camera.viewport.size_d2;
@@ -182,7 +182,7 @@ namespace ui
         }
 
         //GL_State.bind(*this);
-        GL_State.buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), (GLvoid*)(cell_data.data()) );
+        GL_State.buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
 
         ASSERT(!CheckGLError(), "Error setting hexagon buffer data");
     }
