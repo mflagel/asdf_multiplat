@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 
 language: c++
-compiler: clang
+compiler: clang-3.8
   # - clang
   # - gcc
 
@@ -51,5 +51,5 @@ notifications:
 env:
   global:
     - TRAVIS=1
-    - clang=clang-3.8
-    - clang++=clang
+    # - clang=clang-3.8
+    # - clang++=clang
