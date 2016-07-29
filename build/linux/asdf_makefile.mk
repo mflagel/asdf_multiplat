@@ -95,9 +95,11 @@ all: $(PROJNAME)
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
-	@echo -e $(CYAN) Compiler:$(ENDCOLOR) $(CC)  and  $(CXX)
-	$(CC) --version
+	@echo travis-ci: $(TRAVIS)
+	@echo -e $(CYAN) Compilers:$(ENDCOLOR) cc:$(CC)   cxx:$(CXX)
+	# $(CC) --version
 	$(CXX) --version
+	@echo
 	mkdir -pv $(BINPATH)
 	mkdir -pv $(OBJPATH)
 	@echo 
@@ -120,6 +122,7 @@ rebuild: clean all
 
 $(PROJNAME): $(OBJECTS)
 	@echo -e $(YELLOW)---------- LINKING  --------- $(ENDCOLOR)
+	@echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
 	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
 
 # $(PROJNAME)_SHARED: $(OBJECTS)
