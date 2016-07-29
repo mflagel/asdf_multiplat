@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mflagel/asdf_multiplat.svg?branch=master)](https://travis-ci.org/mflagel/asdf_multiplat)
+
 # asdf_multiplat
 The personal repo of Mathias Flagel: A giant pile of somewhat multi-platform programs and libraries
 
