@@ -51,3 +51,5 @@ notifications:
 env:
   global:
     - TRAVIS=1
+    - clang=clang-3.8
+    - clang++=clang
