@@ -5,13 +5,16 @@ PROJNAME = hexmap
 # INVOCATION = 1
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+
+PROJPATH = .
+
 include $(SELF_DIR)../build/linux/asdf_makefile.inc
 
 BINPATH = $(PROJPATH)/$(PROJNAME)/bin/linux/x86
 ###############################
 
 ############ LIBS #############
-LIBS += sdl2 gl glu glew ftgl
+LIBS += sdl2 gl glew ftgl
 
 LINK_FLAGS += -L$(LIBPATH)
 

@@ -13,7 +13,7 @@ include $(SELF_DIR)/../build/linux/asdf_makefile.inc
 ###############################
 
 ############ LIBS #############
-LIBS += sdl2 gl glu glew ftgl soil
+LIBS += sdl2 gl glew ftgl soil
 
 PKG_LFLAGS += -L$(LIBPATH)
 ###############################
