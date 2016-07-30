@@ -8,6 +8,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "data/gl_state.h"
 #include "data/settings.h"
 
 namespace asdf {
@@ -28,6 +29,8 @@ namespace asdf {
 
     struct asdf_multiplat_t 
     {
+        gl_state_t gl_state;
+
         // std::shared_ptr<asdf_specific_t> specific;
         asdf_specific_t* specific{nullptr};
         SDL_Window*     main_window{nullptr};

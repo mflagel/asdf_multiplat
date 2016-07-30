@@ -38,5 +38,12 @@ namespace asdf
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
 
-    extern gl_state_t GL_State;
+    struct gl_state_proxy_t
+    {
+        gl_state_proxy_t(){}
+
+        gl_state_t* operator->();
+    };
+
+    extern gl_state_proxy_t GL_State;
 }

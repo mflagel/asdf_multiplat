@@ -66,7 +66,7 @@ namespace asdf {
     {
         LOG("loading shader: %s", filepath);
         ASSERT(util::is_file(filepath), "Shader file \"%s\" does not exist", filepath);
-        ASSERT(GL_State.initialized, "Loading a shader before openGL has been initialized");
+        ASSERT(GL_State->initialized, "Loading a shader before openGL has been initialized");
         ASSERT(!CheckGLError(), "GL Error before loading shader \'%s\'", filepath);
 
         std::string shader_str = read_text_file(filepath);

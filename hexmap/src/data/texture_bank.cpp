@@ -21,13 +21,13 @@ namespace data
         ASSERT(!CheckGLError(), "GL Error Before Initializing texture_bank_t");
 
         {
-            GL_State.bind(atlas_fbo);
+            GL_State->bind(atlas_fbo);
             glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
             GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
             glDrawBuffers(1, &draw_buffers);
 
             ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error creating texture bank framebuffer");
-            GL_State.unbind_fbo();
+            GL_State->unbind_fbo();
         }
 
         auto dir = find_folder("data");
@@ -74,7 +74,7 @@ namespace data
 
         //glBindTexture(GL_TEXTURE_2D, 0);
 
-        GL_State.bind(atlas_fbo);
+        GL_State->bind(atlas_fbo);
         //glViewport(0,0,atlas_texture.width, atlas_tetxure.height);
 
         saved_textures.push_back(saved_texture_t{filepath});

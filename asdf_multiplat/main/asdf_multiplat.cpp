@@ -49,7 +49,7 @@ namespace asdf {
         LOG("Working Dir: %s", working_directory.c_str());
 
         init_SDL();
-        GL_State.init_openGL();
+        GL_State->init_openGL();
 
         Content.init();
         spritebatch = make_shared<spritebatch_t>();

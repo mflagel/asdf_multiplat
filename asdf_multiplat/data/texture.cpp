@@ -10,7 +10,7 @@ namespace asdf
 {
     texture_t::texture_t()
     {
-        ASSERT(GL_State.initialized, "Error: Creating texture before openGL has been initialized");
+        ASSERT(GL_State->initialized, "Error: Creating texture before openGL has been initialized");
         LOG_IF(CheckGLError(), "GL Error before instantiating blank texture");
 
         

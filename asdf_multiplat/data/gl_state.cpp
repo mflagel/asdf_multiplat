@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "gl_state.h"
 
+#include "main/asdf_multiplat.h"
+
 namespace asdf
 {
-    gl_state_t GL_State;
-
+    gl_state_proxy_t GL_State;
+    
+    gl_state_t* gl_state_proxy_t::operator->()
+    {
+        return &(app.gl_state);
+    }
 
     using namespace util;
 
