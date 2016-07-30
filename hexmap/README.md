@@ -2,7 +2,7 @@
 A code library meant for storing and rendering hexagon tilemaps for use in various applications. The original inspiration for starting the project was the desire to have a user-friendly hexagon map editor to create overworld maps for tabletop roleplaying games.
 
 
-Hexmap is currently being developed on Windows and Linux (Mint/Ubuntu) with plans to support mobile platforms.
+Hexmap is currently being developed on Windows and Linux (Mint/Ubuntu) with plans to support mobile platforms for hexmap viewing (but probably not editing).
 
 
 Current Features
@@ -28,6 +28,6 @@ Undo/Redo Support
 Editor User Interface
     Need to figure out what UI library/system to use
 Splines for rivers/roads/etc
-Mobile Support
+Android/iOS Hexmap Viewer
 Better Sprite Atlas System
 Hexographer Compatability
