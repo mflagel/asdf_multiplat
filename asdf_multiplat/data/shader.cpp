@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp> 
 
 #include "utilities.h"
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 #include "asdf_multiplat.h"
 
 using namespace asdf::util;
@@ -66,7 +66,7 @@ namespace asdf {
     {
         LOG("loading shader: %s", filepath);
         ASSERT(util::is_file(filepath), "Shader file \"%s\" does not exist", filepath);
-        ASSERT(GL_State.initialized, "Loading a shader before openGL has been initialized");
+        ASSERT(GL_State->initialized, "Loading a shader before openGL has been initialized");
         ASSERT(!CheckGLError(), "GL Error before loading shader \'%s\'", filepath);
 
         std::string shader_str = read_text_file(filepath);

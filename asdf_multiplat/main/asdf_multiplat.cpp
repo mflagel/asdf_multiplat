@@ -5,6 +5,7 @@
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/rotate_vector.hpp>
 
+#include "data/gl_state.h"
 #include "data/content_manager.h"
 #include "ui/ui_base.h"
 #include "utilities/spritebatch.h"
@@ -48,7 +49,7 @@ namespace asdf {
         LOG("Working Dir: %s", working_directory.c_str());
 
         init_SDL();
-        GL_State.init_openGL();
+        GL_State->init_openGL();
 
         Content.init();
         spritebatch = make_shared<spritebatch_t>();

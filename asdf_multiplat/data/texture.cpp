@@ -2,7 +2,7 @@
 #include "texture.h"
 
 #include "main/asdf_multiplat.h"
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 
 using namespace glm;
 
@@ -10,7 +10,7 @@ namespace asdf
 {
     texture_t::texture_t()
     {
-        ASSERT(GL_State.initialized, "Error: Creating texture before openGL has been initialized");
+        ASSERT(GL_State->initialized, "Error: Creating texture before openGL has been initialized");
         LOG_IF(CheckGLError(), "GL Error before instantiating blank texture");
 
         
@@ -27,9 +27,9 @@ namespace asdf
         }
     }
 
-    texture_t::texture_t(std::string const& filepath)
+    texture_t::texture_t(std::string const& filepath, int force_channels)
     {
-        load_texture(filepath);
+        load_texture(filepath, force_channels);
     }
     texture_t::texture_t(std::string const& _name, std::string const& filepath)
     : name(_name)
@@ -59,6 +59,12 @@ namespace asdf
         
         write(color_data);
 
+        //TODO: store this information?
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  // REQUIRED to be considered a 'complete' texture. Without this, glCopyImageSubData will fail
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        refresh_params();
+
         if(generate_mipmaps)
         {
             glGenerateMipmap(GL_TEXTURE_2D);
@@ -81,6 +87,7 @@ namespace asdf
         halfheight = _height / 2.0f;
 
         write(color_data);
+        refresh_params();
     }
 
     void texture_t::write(const color_t* color_data)
@@ -102,17 +109,16 @@ namespace asdf
         ASSERT(!CheckGLError(), "Error writing to texture \"%s\" from color_t array", name.c_str());
     }
 
-    void texture_t::load_texture(std::string const& filepath)
+    void texture_t::load_texture(std::string const& filepath, int force_channels)
     {
         texture_id = SOIL_load_OGL_texture(filepath.c_str(),
-                                          SOIL_LOAD_AUTO, 
+                                          force_channels, 
                                           SOIL_CREATE_NEW_ID, 
-                                          SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+                                          /*SOIL_FLAG_MIPMAPS | */SOIL_FLAG_INVERT_Y);
         if (texture_id == 0)
         {
-            auto fuck = SOIL_last_result();
-            int asdf = 9001;
-            throw content_load_exception(filepath, SOIL_last_result());
+            auto error = SOIL_last_result();
+            throw content_load_exception(filepath, error);
         }
 
         refresh_params();
@@ -121,15 +127,27 @@ namespace asdf
     void texture_t::refresh_params()
     {
         int _width, _height;
+        GLint _compressed;
 
         glBindTexture(GL_TEXTURE_2D, texture_id);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &_width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &_height);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &_width);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &_height);
+
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &_compressed);
+
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_TYPE,   &types[0]);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_TYPE, &types[1]);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_BLUE_TYPE,  &types[2]);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_ALPHA_TYPE, &types[3]);
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_DEPTH_TYPE, &types[4]);
+        
         glBindTexture(GL_TEXTURE_2D, 0);
 
         width = glm::abs(_width);
         height = glm::abs(_height);
+        is_compressed = _compressed == 1;
     }
 
     ivec2 texture_t::texture_to_screen_space(ivec2 const& texture_pos) const

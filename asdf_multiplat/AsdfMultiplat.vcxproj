@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="data\content_manager.cpp" />
     <ClCompile Include="data\gl_resources.cpp" />
+    <ClCompile Include="data\gl_state.cpp" />
     <ClCompile Include="data\shader.cpp" />
     <ClCompile Include="data\texture.cpp" />
     <ClCompile Include="main\asdf_multiplat.cpp" />
@@ -98,7 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\content_manager.h" />
+    <ClInclude Include="data\gl_enums.h" />
     <ClInclude Include="data\gl_resources.h" />
+    <ClInclude Include="data\gl_state.h" />
     <ClInclude Include="data\gl_vertex_spec.h" />
     <ClInclude Include="data\resource_depot.h" />
     <ClInclude Include="data\settings.h" />

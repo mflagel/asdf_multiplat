@@ -1,0 +1,11 @@
+{
+    "textures" : [
+        "../../../assets/Terrain_Tiles/dirt.png",
+        "../../../assets/Terrain_Tiles/grass.png",
+        "../../../assets/Terrain_Tiles/stone.png",
+        "../../../assets/Terrain_Tiles/sand.png",
+        "../../../assets/Terrain_Tiles/water.png",
+        "../../../assets/Terrain_Tiles/water2.png",
+        "../../../assets/Terrain_Tiles/ice.png"
+    ]
+}

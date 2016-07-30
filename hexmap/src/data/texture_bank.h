@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "asdf_multiplat/data/texture.h"
+#include "asdf_multiplat/data/gl_resources.h"
 
 namespace asdf {
 namespace hexmap {
@@ -31,21 +32,21 @@ namespace data
         class to load a bunch of textures from the filesystem, resize them,
         and store them in an atlas
 
-        may use GL_TEXTURE_2D_ARRAY
-            Core in version 4.5
-            Core since version  3.0
-            EXT extension   EXT_texture_array
+        Originally was going to use load the image into its own texture and
+        then use glCopyImageSubData to transfer it onto the atlas, but there's
+        no way to resize the added texture in the process.
 
-            Might not exist in mobile, and will have to manually
-            create an atlas
+        Seems the only way to resize the original image to a desired size
+        is to load it into a texture as normal, but then render it onto a
+        framebuffer/texture at the desired size.
 
-        use glCopyImageSubData to copy data from one texture to another
-            ex: load new texture, copy+resize into bank texture
-
+        If I'm going to do that, I might as well render directly onto the
+        atlas
     */
     struct texture_bank_t
     {
         texture_t atlas_texture;
+        framebuffer_object_t atlas_fbo;
 
         std::vector<saved_texture_t> saved_textures;
 

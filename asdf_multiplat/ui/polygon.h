@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include "data/gl_resources.h"
+#include "data/gl_state.h"
 
 namespace asdf
 {
@@ -33,18 +33,18 @@ namespace asdf
         void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)
         {
             LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
-            GL_State.bind(vao);
+            GL_State->bind(vao);
 
-            GL_State.bind(vbo);
+            GL_State->bind(vbo);
             vbo.usage = GL_STATIC_DRAW;
 
-            GL_State.buffer_data( vbo, verts.size() * sizeof(polygon_vertex_t), static_cast<const void*>(verts.data()) );
+            GL_State->buffer_data( vbo, verts.size() * sizeof(polygon_vertex_t), static_cast<const void*>(verts.data()) );
 
             //set_vertex_attribs(shader);  //not sure the shader should be taken as an arg
             VertexType::vertex_spec.set_vertex_attribs(shader);
 
-            GL_State.unbind_vao();
-            GL_State.unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
+            GL_State->unbind_vao();
+            GL_State->unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
 
             num_verts = verts.size();
 
@@ -54,9 +54,9 @@ namespace asdf
 
         void render()
         {
-            GL_State.bind(vao);
+            GL_State->bind(vao);
             glDrawArrays(draw_mode, 0, num_verts);
-            GL_State.unbind_vao();
+            GL_State->unbind_vao();
         }
     };
 
