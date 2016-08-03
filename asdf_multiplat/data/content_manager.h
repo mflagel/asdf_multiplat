@@ -28,7 +28,9 @@ namespace asdf {
 
         void init();
 
-        std::shared_ptr<shader_t> content_manager_t::create_shader(std::string const& name, size_t glsl_ver);
+        std::shared_ptr<shader_t> create_shader(std::string const& name, size_t glsl_ver);
+        std::shared_ptr<shader_t> create_shader(std::string const& vs_name, std::string const& fs_name, size_t glsl_ver);
+        std::shared_ptr<shader_t> create_shader(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name, size_t glsl_ver);
 
         int AddTexturesFromFolder(const char* assetsFolder); //adds jpg, png		
         int AddShadersFromFolder(const char* assetsFolder); //adds .vert and .frag and compiles them into shader programs
