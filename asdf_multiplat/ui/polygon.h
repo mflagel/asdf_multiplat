@@ -30,15 +30,20 @@ namespace asdf
         rendered_polygon_(polygon_<VertexType> const& verts)
         {}
 
-        void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)
+        void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)        
+        {
+            set_data(verts.data(), verts.size(), shader);
+        }
+
+        void set_data(const VertexType* verts, size_t n, std::shared_ptr<shader_t> const& shader)
         {
             LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
             GL_State->bind(vao);
 
             GL_State->bind(vbo);
-            vbo.usage = GL_STATIC_DRAW;
+            // vbo.usage = GL_STATIC_DRAW;
 
-            GL_State->buffer_data(vbo, verts.size() * sizeof(polygon_vertex_t), (void*)(verts.data()));
+            GL_State->buffer_data(vbo, n * sizeof(VertexType), (void*)(verts));
 
             //set_vertex_attribs(shader);  //not sure the shader should be taken as an arg
             VertexType::vertex_spec.set_vertex_attribs(shader);
@@ -46,10 +51,10 @@ namespace asdf
             GL_State->unbind_vao();
             GL_State->unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
 
-            num_verts = verts.size();
+            num_verts = n;
 
             LOG_IF(CheckGLError(), "Error during rendered_polygon_::set_data()");
-            LOG("setup polygon vbo %i with %zu vertexes", vbo.id, verts.size());
+            LOG("setup polygon vbo %i with %zu vertexes", vbo.id, n);
         }
 
         void render()
