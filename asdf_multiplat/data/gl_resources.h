@@ -12,52 +12,46 @@
 
 namespace asdf
 {
+
     struct opengl_object_t
     {
         GLuint id = UINT_MAX;
 
+        opengl_object_t() = default;
         //virtual ~opengl_object_t() = 0;
+        virtual ~opengl_object_t() = default;
     };
 
-    struct vao_t : opengl_object_t
-    {
-        vao_t()
-        {
-            glGenVertexArrays(1, &id);
-        }
-        ~vao_t()
-        {
-            glDeleteVertexArrays(1, &id);
-        }
-
-        vao_t(const vao_t&) = delete;
-        vao_t& operator=(const vao_t&) = delete;
-
-        vao_t(vao_t&&) = default;
-        vao_t& operator=(vao_t&&) = default;
-    };
-
-    struct framebuffer_object_t : opengl_object_t
-    {
-        framebuffer_object_t()
-        {
-            glGenFramebuffers(1, &id);
-        }
-
-        ~framebuffer_object_t()
-        {
-            glDeleteFramebuffers(1, &id);
-        }
-
-        framebuffer_object_t(const framebuffer_object_t&) = delete;
-        framebuffer_object_t& operator=(const framebuffer_object_t&) = delete;
-
-        framebuffer_object_t(framebuffer_object_t&&) = default;
-        framebuffer_object_t& operator=(framebuffer_object_t&&) = default;
-    };
+    #define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+        _obj_name_(const _obj_name_&) = delete; \
+        _obj_name_& operator=(const _obj_name_&) = delete; \
+        _obj_name_(_obj_name_&&) = delete; \
+        _obj_name_& operator=(_obj_name_&&) = delete;
+    /*--------*/
 
 
-    
+    #define GL_OBJ(_obj_name_, _gen_func_, _delete_func_)   \
+        struct _obj_name_ : opengl_object_t                 \
+        {                                                   \
+            _obj_name_()                                    \
+            {                                               \
+                _gen_func_(1, &id);                         \
+            }                                               \
+                                                            \
+            ~_obj_name_()                                   \
+            {                                               \
+                _delete_func_(1, &id);                      \
+            }                                               \
+                                                            \
+            DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_)         \
+        };                                                  
+    /*--------*/
+
+    GL_OBJ(vao_t, glGenVertexArrays, glDeleteVertexArrays);
+    GL_OBJ(framebuffer_t, glGenFramebuffers, glDeleteFramebuffers);
+    GL_OBJ(render_buffer_t, glGenRenderbuffers, glDeleteRenderbuffers);
+
+        
 
     struct gl_buffer_object_t : opengl_object_t
     {
@@ -75,11 +69,7 @@ namespace asdf
             glDeleteBuffers(1, &id);
         }
 
-        gl_buffer_object_t(const gl_buffer_object_t&) = delete;
-        gl_buffer_object_t& operator=(const gl_buffer_object_t&) = delete;
-
-        gl_buffer_object_t(gl_buffer_object_t&&) = default;
-        gl_buffer_object_t& operator=(gl_buffer_object_t&&) = default;
+        DELETE_COPY_ASSIGNMENT_MOVE(gl_buffer_object_t);
     };
 
     struct vbo_t : gl_buffer_object_t
@@ -91,9 +81,6 @@ namespace asdf
     struct ubo_t : gl_buffer_object_t
     { ubo_t() : gl_buffer_object_t(gl_uniform_buffer) {} };
 
-    /*using vbo_t = gl_buffer_object_<gl_array_buffer>;
-    using tbo_t = gl_buffer_object_<gl_texture_buffer>;
-    using ubo_t = gl_buffer_object_<gl_uniform_buffer>;*/
 
 
     struct gl_renderable_t
@@ -106,11 +93,7 @@ namespace asdf
         gl_renderable_t(){}
         virtual ~gl_renderable_t(){}
 
-        gl_renderable_t(const gl_renderable_t&) = delete;
-        gl_renderable_t& operator=(const gl_renderable_t&) = delete;
-
-        gl_renderable_t(gl_renderable_t&&) = default;
-        gl_renderable_t& operator=(gl_renderable_t&&) = default;
+        DELETE_COPY_ASSIGNMENT_MOVE(gl_renderable_t);
     };
 
 
