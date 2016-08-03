@@ -18,8 +18,6 @@ int main(int argc, char* argv[])
     for (;exec_dir[new_size] != '\\' && exec_dir[new_size] != '/' && --new_size != 0;);
     exec_dir.resize(new_size);
 
-    SetCurrentDir(exec_dir.c_str());
-
     app.init(std::move(exec_dir));
 
     // hexmap_t hexmap;
