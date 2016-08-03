@@ -1,6 +1,6 @@
 #version 330 core
 
-smooth in vec2 TexCoordOut;
+smooth in vec2 FragTexCoord;
 
 layout(location = 0) out vec4 FragColor;
 
@@ -8,7 +8,7 @@ uniform sampler2D TextureMap;
 uniform vec4 Color;
  
 void main() {
-	vec4 texcol = texture2D(TextureMap, TexCoordOut);		
+	vec4 texcol = texture2D(TextureMap, FragTexCoord);
 	FragColor = texcol;
 	//FragColor = texcol * Color;
 
