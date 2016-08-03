@@ -46,7 +46,7 @@ namespace data
     struct texture_bank_t
     {
         texture_t atlas_texture;
-        framebuffer_object_t atlas_fbo;
+        framebuffer_t atlas_fbo;
 
         std::vector<saved_texture_t> saved_textures;
 
