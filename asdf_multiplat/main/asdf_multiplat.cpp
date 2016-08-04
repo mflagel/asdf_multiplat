@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "asdf_multiplat.h"
 
-//#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/rotate_vector.hpp>
 
@@ -121,7 +121,7 @@ namespace asdf {
         ASSERT(specific, "app.specific not assigned");
         specific->render();
 
-        SDL_GL_SwapWindow(main_window);
+        renderer->post_render();
     }
 
     void asdf_multiplat_t::render_debug() {
@@ -303,24 +303,13 @@ namespace asdf {
 
         gl_state.bind(framebuffer);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);
-        ASSERT(!CheckGLError(), "");
-
 
         GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
         glDrawBuffers(1, DrawBuffers);
-        ASSERT(!CheckGLError(), "");
-
-
         ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Error creating main app framebuffer");
-        ASSERT(!CheckGLError(), "");
 
 
-        
-        ASSERT(!CheckGLError(), "");
-
-
-        auto& settings = app.settings;
-        glViewport(0, 0, settings.resolution_width, settings.resolution_height);
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
         ASSERT(!CheckGLError(), "");
 
 
@@ -354,15 +343,15 @@ namespace asdf {
         GL_State->bind(framebuffer);
         //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
 
-        auto& settings = app.settings;
-        glViewport(0, 0, settings.resolution_width, settings.resolution_height);
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
 
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(gl_clear_color.r
                    , gl_clear_color.g
                    , gl_clear_color.b
                    , gl_clear_color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
 
         //GL_State->unbind_shader();
         //Content.fonts["arial"]->Render("TEST POST PLEASE IGNORE", -1, FTPoint(0, 500));
@@ -374,6 +363,27 @@ namespace asdf {
     {
         GL_State->unbind_fbo();
         GL_State->bind(screen_shader);
+        glUniform1i(screen_shader->uniform("TextureMap"), render_target.texture_id);
+        glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+
+        //doing this every frame in case I mess around with changing the matrix
+        screen_shader->projection_matrix = glm::ortho<float>(0, 1, 0, 1, -1.0f, 1.0f);
+        screen_shader->update_wvp_uniform();
+
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+
+        glClearColor(0.0f
+                   , 0.0f
+                   , 0.0f
+                   , 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
         quad.render();
+
+        ASSERT(!CheckGLError(), "Error in post_render()");
+
+        SDL_GL_SwapWindow(app.main_window);
     }
 }
