@@ -95,8 +95,6 @@ namespace ui
 
     void hex_map_t::render()
     {
-        GL_State->unbind_fbo();
-
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
 
