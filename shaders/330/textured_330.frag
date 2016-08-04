@@ -7,12 +7,21 @@ layout(location = 0) out vec4 FragColor;
 uniform sampler2D TextureMap;
 uniform vec4 Color;
  
-void main() {
+void main()
+{
 	vec4 texcol = texture2D(TextureMap, FragTexCoord);
-	FragColor = texcol;
-	//FragColor = texcol * Color;
 
-	//FragColor = vec4(0,0,0,1);
-	//FragColor.r = TexCoordOut.x;
-	//FragColor.b = TexCoordOut.y;
+    vec4 color = clamp(Color, vec4(0.0), vec4(1.0));
+    vec4 overflow = Color - vec4(1.0);
+
+    FragColor = texcol * color;
+    FragColor += overflow;
+
+
+	//FragColor = texcol;
+    //FragColor = Color;
+
+	// FragColor.r = FragTexCoord.x;
+	// FragColor.b = FragTexCoord.y;
+    // FragColor.g = 0.0;
 }
