@@ -363,7 +363,6 @@ namespace asdf {
     {
         GL_State->unbind_fbo();
         GL_State->bind(screen_shader);
-        glUniform1i(screen_shader->uniform("TextureMap"), render_target.texture_id);
         glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
 
@@ -379,6 +378,11 @@ namespace asdf {
                    , 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, render_target.texture_id); //bind the texture. Sampler is set in End()
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glDisable(GL_CULL_FACE);
 
         quad.render();
 
