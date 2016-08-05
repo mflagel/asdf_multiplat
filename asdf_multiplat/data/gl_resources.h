@@ -70,7 +70,7 @@ namespace asdf
             glGenBuffers(1, &id);
         }
 
-        ~gl_buffer_object_t()
+        virtual ~gl_buffer_object_t()
         {
             glDeleteBuffers(1, &id);
         }
