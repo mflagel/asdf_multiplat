@@ -81,8 +81,8 @@ namespace input
 
         LOG("subcol: %f   subrow: %f", sub_column, sub_row);
 
-        int column = glm::floor(sub_column / 3.0f);
-        int row = glm::floor(mouse_world.y / hex_height);
+        int column = static_cast<int>(glm::floor(sub_column / 3.0f));
+        int row    = static_cast<int>(glm::floor(mouse_world.y / hex_height));
 
         //if column is within hex_width_d4 of the column center (ie: fraction is +- 0.25) then it's only one column
         if(static_cast<int>(glm::floor(sub_column)) % 3 == 0) //horizontal overlap every 3 sub-columns (with a width of one sub-column)
@@ -115,7 +115,7 @@ namespace input
         //if odd column, adjust row down
         if(column % 2 == 1)
         {
-            row = floor((mouse_world.y + hex_height_d2) / hex_height);
+            row = static_cast<int>(glm::floor((mouse_world.y + hex_height_d2) / hex_height));
         }
 
         return ivec2(column, row);

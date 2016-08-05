@@ -25,7 +25,7 @@ namespace hexmap
     constexpr float hex_height_d2 = hex_height / 2.0f;
     constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
 
-    constexpr float hex_edge_length = hex_width * 0.52359877559;  //width * sin(pi/6)
+    constexpr float hex_edge_length = hex_width * 0.52359877559f;  //width * sin(pi/6)
 
     constexpr std::array<float, 18> hexagon_points =
     {
