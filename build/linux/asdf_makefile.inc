@@ -17,12 +17,16 @@ WARNING_FLAGS := -Wall \
 				-Wno-undef \
 				-Werror-uninitialized
 
+# Warning Flags that I think I can safely turn off
+WARNING_FLAGS += -Wno-weak-vtables
+
+
 # WARNING_FLAGS_THAT_I_SHOULDNT_TURN_OFF
 WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-invalid-token-paste \
 				 -Wno-shorten-64-to-32 \
 				 -Wno-sign-conversion \
-				 -Wno-conversion \
+				  \
 				 -Wno-float-equal \
 				 -Wno-unused-variable \
 				 -Wno-format-security \
@@ -32,15 +36,10 @@ WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-reorder \
 				 -Wno-missing-prototypes \
 				 -Wno-newline-eof \
-				 -Wno-weak-vtables \
-				 -Wno-unused-parameter \
 				 -Wno-switch-enum \
 				 -Wno-missing-braces \
 				 -Wno-writable-strings
 
-#
-
-#-Wno-weak-vtables
 
 CLANG_EXTENSIONS := -fms-extensions
 DAS_FLAGS 		 := $(WARNING_FLAGS) $(CLANG_EXTENSIONS) -g -pedantic -fmacro-backtrace-limit=20

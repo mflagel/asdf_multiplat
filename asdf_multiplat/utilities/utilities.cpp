@@ -9,6 +9,8 @@
 // #include "rapidjson/filewritestream.h"
 // #include "rapidjson/writer.h"
 
+#include "main/asdf_multiplat.h"
+
 #ifdef _MSC_VER
 #include <windows.h>
 #else
@@ -48,9 +50,8 @@ namespace asdf {
     {
         LOG("\nInterrupt Signal");
 
-        // FIXME commenting this out so that gurps_track will work
-        // Will set it up to use global app struct later
-        // app.running = false;
+        // FIXME for projects that use this file but not asdf_multiplat.cpp
+        app.running = false;
     }
 
     struct file_open_exception : std::exception 
@@ -59,7 +60,7 @@ namespace asdf {
         file_open_exception(std::string const& _filepath)
         : filepath(_filepath)
         {}
-        virtual const char* what() const noexcept
+        const char* what() const noexcept override
         {
             return ("Unable to open file: " + filepath).c_str();
         }
