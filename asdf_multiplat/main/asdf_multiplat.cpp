@@ -366,7 +366,9 @@ namespace asdf {
         glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
 
-        //doing this every frame in case I mess around with changing the matrix
+        //reset every frame in case other parts of the app use screen shader for rendering things to texture
+        screen_shader->world_matrix = mat4();
+        screen_shader->view_matrix = mat4();
         screen_shader->projection_matrix = glm::ortho<float>(0, 1, 0, 1, -1.0f, 1.0f);
         screen_shader->update_wvp_uniform();
 
@@ -380,7 +382,7 @@ namespace asdf {
 
 
         //glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, render_target.texture_id); //bind the texture. Sampler is set in End()
+        glBindTexture(GL_TEXTURE_2D, render_target.texture_id);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //glDisable(GL_CULL_FACE);
 
