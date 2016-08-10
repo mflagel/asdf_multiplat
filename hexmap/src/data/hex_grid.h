@@ -30,12 +30,12 @@ namespace data
     struct hex_grid_chunk_t
     {
         glm::ivec2 position; //in chunk units
-        glm::ivec2 size; // how much of the allocated memory is actually used
-        glm::ivec2 allocated_size; //how much memory is actually allocated
+        glm::uvec2 size; // how much of the allocated memory is actually used
+        glm::uvec2 allocated_size; //how much memory is actually allocated
 
         hex_cells_t cells;
 
-        hex_grid_chunk_t(glm::ivec2 size = glm::ivec2(max_chunk_width, max_chunk_height));
+        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(max_chunk_width, max_chunk_height));
 
         hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
     };

@@ -35,7 +35,7 @@ namespace asdf
 	    // void align() override;
 
 	    virtual void update(float dt) override;
-	    virtual void render(UI_RENDER_PARAMS);
+	    virtual void render(UI_RENDER_PARAMS) override;
 	    virtual bool on_event(SDL_Event*, glm::vec3 const& _position, glm::mat3 const& _matrix) override;
 	};
 }

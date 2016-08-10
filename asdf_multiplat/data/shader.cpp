@@ -73,7 +73,7 @@ namespace asdf {
         const char* shader_src = shader_str.c_str();
 
         GLuint shader = glCreateShader(shader_type);
-        glShaderSource(shader, 1, (const GLchar**)&shader_src, nullptr);
+        glShaderSource(shader, 1, static_cast<const GLchar**>(&shader_src), nullptr);
         glCompileShader(shader);
 
         bool shader_error = CheckGLError(shader);

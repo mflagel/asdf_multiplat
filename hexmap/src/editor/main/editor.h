@@ -16,7 +16,7 @@ namespace editor
 
         editor_t();
 
-        void init();
+        void init() override;
 
         void on_event(SDL_Event*) override;
     };

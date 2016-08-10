@@ -20,21 +20,21 @@ namespace asdf
     content_load_exception::content_load_exception(std::string const& filepath, std::string const& loadError) 
         : filepath(filepath), loadError(loadError) 
     {}
+
     const char* content_load_exception::what() const noexcept
-    { return ("Unable to load content file: " + filepath + "\nLoad Error:" + loadError + "\n").c_str(); }
+    { 
+        return ("Unable to load content file: " + filepath + "\nLoad Error:" + loadError + "\n").c_str();
+    }
 
     resource_not_found_exception::resource_not_found_exception(std::string resourceName)
         : resourceName(resourceName)
     {}
+
     const char* resource_not_found_exception::what() const 
-    { return ("Could not find resource: " + resourceName).c_str(); }
+    {
+        return ("Could not find resource: " + resourceName).c_str();
+    }
 
-#define ADD_SHADER(shader_name) \
-    std::shared_ptr<shader_t> shader_name = MAKE_SHARED_SHADER(shader_name); \
-    shaders.add_resource(#shader_name, std::move(shader_name));
-
-#define ADD_TEXTURE(texture_name_str, filepath) \
-    textures.add_resource(texture_name_str, make_shared<texture_t>(texture_name_str, TEXTURE_PATH(filepath)));
 
     content_manager_t::content_manager_t()
     {

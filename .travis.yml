@@ -1,0 +1,46 @@
+
+sudo: required
+# sudo: false
+dist: trusty
+
+language: c++
+compiler: clang
+  # - clang
+  # - gcc
+
+# os:
+#     - linux
+
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-precise-3.8
+      - ubuntu-toolchain-r-test
+
+    packages:
+      - clang-3.8
+      - g++-6
+      - libsdl2-dev
+      - libglew-dev
+      - libftgl-dev
+      - libsoil-dev
+      - libgl1-mesa-dev
+
+env:
+  - COMPILER=clang++-3.8
+
+# install:
+
+# before_script:
+
+script:
+  make -j4 CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk && make -j4 CXX=$COMPILER TRAVIS=1 -f hexmap/hexmap.mk
+
+# after_success:
+
+# after_failure:
+
+
+notifications:
+  email: false

@@ -254,12 +254,12 @@ namespace asdf {
         //bind/push the index data
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, numBatchedSprites * 6 * sizeof(short),
-                     (void*)spriteIndices, GL_STREAM_DRAW);
+                     reinterpret_cast<void*>(spriteIndices), GL_STREAM_DRAW);
 
         //bind the vbo and push the vertex data
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
         glBufferData(GL_ARRAY_BUFFER, numBatchedSprites * 4 * sizeof(sprite_vertex_t),
-                     (void*)spriteVertices, GL_STREAM_DRAW);
+                     reinterpret_cast<void*>(spriteVertices), GL_STREAM_DRAW);
 
         //enable position, texCoord, color
         glEnableVertexAttribArray(0);
@@ -269,8 +269,8 @@ namespace asdf {
         //set up vertex attrib size / types. stride is just the total size of the vertex
         GLsizei stride = sizeof(sprite_vertex_t);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)sizeof(glm::vec2)); //MUST STILL PROVIDE OFFSET
-        glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, stride, (void*)(sizeof(glm::vec2) * 2));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(sizeof(glm::vec2)) ); //MUST STILL PROVIDE OFFSET
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, stride, reinterpret_cast<void*>(sizeof(glm::vec2) * 2) );
 
         LOG_IF(CheckGLError(), "Error after setting up spritebatch vertex attributes");
 

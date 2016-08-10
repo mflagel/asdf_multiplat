@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-struct FTFont;
+class FTFont;
 
 namespace asdf {
 

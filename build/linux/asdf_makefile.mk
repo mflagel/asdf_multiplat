@@ -41,7 +41,10 @@ endif
 ifndef CC
 $(error no C compiler specified);
 endif
-ifndef CPP
+
+
+
+ifndef CXX
 $(error no c++ compiler specified);
 endif
 ifndef LINK
@@ -92,8 +95,14 @@ all: $(PROJNAME)
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
+	@echo travis-ci: $(TRAVIS)
+	@echo -e $(CYAN) Compilers:$(ENDCOLOR) cc:$(CC)   cxx:$(CXX)
+	# $(CC) --version
+	$(CXX) --version
+	@echo
 	mkdir -pv $(BINPATH)
 	mkdir -pv $(OBJPATH)
+	@echo 
 	@echo Current Working Dir:
 	pwd
 	@echo Libs: $(LIBS)
@@ -113,11 +122,12 @@ rebuild: clean all
 
 $(PROJNAME): $(OBJECTS)
 	@echo -e $(YELLOW)---------- LINKING  --------- $(ENDCOLOR)
-	@$(CPP) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
+	@echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
+	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
 
 # $(PROJNAME)_SHARED: $(OBJECTS)
 # 	@echo -e $(YELLOW)---------- LINKING SHARED LIBRARY  --------- $(ENDCOLOR)
-# 	@$(CPP) -shared -Wl,-soname,lib$(PROJNAME).so $(LINK_FLAGS) $(OBJECTS) -o $(LIBPATH)/lib$(PROJNAME).so
+# 	@$(CXX) -shared -Wl,-soname,lib$(PROJNAME).so $(LINK_FLAGS) $(OBJECTS) -o $(LIBPATH)/lib$(PROJNAME).so
 
 # $(PROJNAME)_STATIC: $(OBJECTS)
 # 	@echo $(PROJNAME) : Creating Static Lib
@@ -131,7 +141,7 @@ $(PROJNAME): $(OBJECTS)
 # 	# @echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
 # 	@echo LINK_FLAGS: $(LINK_FLAGS)
 	
-# 	@$(CPP) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)	
+# 	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)	
 
 # Clean
 clean:
@@ -146,19 +156,19 @@ define BUILD_SHIT
 
 # Compiler -c CFlags -I Includes Sysincludes -o objectname sourcefile
 $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.c | intro
-	@echo -e $$(CYAN)$<$$(ENDCOLOR)
+	@echo -e $$(CYAN) $$(CC) $<$$(ENDCOLOR)
 	@$$(CC) -c $$(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro
-	@echo -e $(CYAN)$<$(ENDCOLOR)
-	@$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
+	@echo -e $$(CYAN) $$(CC) $<$(ENDCOLOR)
+	@$$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro
-	@echo -e $$(CYAN) $$(CPP) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
-	# use $CPP to compile with $CPPFLAGS $_INCLUDES AND $_SYSINCLUDES
+	@echo -e $$(CYAN) $$(CXX) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
+	# use $(CXX) to compile with $CPPFLAGS $_INCLUDES AND $_SYSINCLUDES
 	# output an object file with a name equal to the rule's name (using $@)
 	# the file compiled is the name of the first prerequisite (using $<)
-	@$$(CPP) -c $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
+	@$$(CXX) -c $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 endef
 

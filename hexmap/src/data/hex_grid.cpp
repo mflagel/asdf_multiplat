@@ -11,7 +11,7 @@ namespace hexmap
 {
 namespace data
 {
-    hex_grid_chunk_t::hex_grid_chunk_t(glm::ivec2 _size)
+    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size)
     : size(_size)
     , allocated_size(_size)
     {

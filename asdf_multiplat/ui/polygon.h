@@ -43,7 +43,7 @@ namespace asdf
             GL_State->bind(vbo);
             // vbo.usage = GL_STATIC_DRAW;
 
-            GL_State->buffer_data(vbo, n * sizeof(VertexType), (void*)(verts));
+            GL_State->buffer_data(vbo, n * sizeof(VertexType), static_cast<const void*>(verts));
 
             //set_vertex_attribs(shader);  //not sure the shader should be taken as an arg
             VertexType::vertex_spec.set_vertex_attribs(shader);

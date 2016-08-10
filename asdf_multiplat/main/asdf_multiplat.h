@@ -16,7 +16,7 @@
 namespace asdf {
 
     struct texture_t;
-    struct spritebatch_t;
+    class spritebatch_t;
     struct ui_view_t;
 
     struct asdf_specific_t
