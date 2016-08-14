@@ -11,6 +11,8 @@ using namespace glm;
 
 namespace asdf
 {
+    using namespace util;
+    
 namespace hexmap
 {
 namespace ui
@@ -18,6 +20,8 @@ namespace ui
     //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
+
+    constexpr char imported_textures_json_filename[] = "imported_textures.json";
 
 
     hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
@@ -77,6 +81,13 @@ namespace ui
 
         set_tile_colors(colors);
         ASSERT(!CheckGLError(), "");
+
+
+        auto dir = find_folder("data");
+        ASSERT(dir.length() > 0, "Could not find data folder");
+
+        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+        texture_bank.load_from_list_file(imported_textures_json_filepath);
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -116,7 +127,12 @@ namespace ui
         render_grid_overlay(hex_grid.size);
 
         //TEST
+        // re-importing every frame so I can capture it with nvidia's gfx debugger
+        auto dir = find_folder("data");
+        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+        texture_bank.load_from_list_file(imported_textures_json_filepath);
         glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        //---
     }
 
     void hex_map_t::on_event(SDL_Event* event)
