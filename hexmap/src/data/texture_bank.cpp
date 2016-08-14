@@ -38,12 +38,13 @@ namespace data
             GL_State->unbind_fbo();
         }
 
-        auto dir = find_folder("data");
-        ASSERT(dir.length() > 0, "Could not find data folder");
 
-        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+        ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
+    }
 
-        std::string json_str = read_text_file(imported_textures_json_filepath);
+    void texture_bank_t::load_from_list_file(std::string const& filepath)
+    {
+        std::string json_str = read_text_file(filepath);
         cJSON* root = cJSON_Parse(json_str.c_str());
         ASSERT(root, "Error loading imported textures json file");
 
@@ -63,8 +64,6 @@ namespace data
         }
         
         cJSON_Delete(root);
-
-        ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
 
     void texture_bank_t::add_texture(std::string const& filepath)
