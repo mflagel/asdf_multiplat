@@ -3,8 +3,10 @@
 
 #include <array>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/content_manager.h"\
+#include "asdf_multiplat/data/content_manager.h"
 
 using namespace std;
 using namespace glm;
@@ -118,6 +120,9 @@ namespace ui
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho();
 
+        GL_State->bind(shader);
+        glUniform1i(shader->uniform("ApplyTexture"), 0);
+
         hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
         {
             render_chunk(chunk);
@@ -125,6 +130,7 @@ namespace ui
 
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
+
 
         //TEST
         // re-importing every frame so I can capture it with nvidia's gfx debugger
@@ -145,7 +151,6 @@ namespace ui
 
     void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk)
     {
-        GL_State->bind(shader);
         GL_State->bind(hexagons_vao);
 
         float chunk_width_cells = hex_width_d4 * 3 * data::max_chunk_width;
