@@ -318,18 +318,18 @@ namespace asdf {
 
         const quad_vertex_t quad_verts[] =
         {
-            quad_vertex_t{vec3(-1.0f, -1.0f, 0.0f)},
-            quad_vertex_t{vec3( 1.0f, -1.0f, 0.0f)},
-            quad_vertex_t{vec3(-1.0f,  1.0f, 0.0f)},
-            quad_vertex_t{vec3(-1.0f,  1.0f, 0.0f)},
-            quad_vertex_t{vec3( 1.0f, -1.0f, 0.0f)},
-            quad_vertex_t{vec3( 1.0f,  1.0f, 0.0f)}
+            quad_vertex_t{vec3(-0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f,  0.5f, 0.0f)}
         };
 
 
         quad.draw_mode = GL_TRIANGLES;
         quad.vbo.usage = GL_STATIC_DRAW;
-        quad.set_data(quad_verts, 6*3, screen_shader);
+        quad.set_data(quad_verts, 6, screen_shader);
 
         gl_state.unbind_vao();
         gl_state.unbind_vbo();
@@ -369,7 +369,7 @@ namespace asdf {
         //reset every frame in case other parts of the app use screen shader for rendering things to texture
         screen_shader->world_matrix = mat4();
         screen_shader->view_matrix = mat4();
-        screen_shader->projection_matrix = glm::ortho<float>(0, 1, 0, 1, -1.0f, 1.0f);
+        screen_shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
         screen_shader->update_wvp_uniform();
 
         glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
