@@ -8,6 +8,7 @@
 #include "asdf_multiplat/utilities/cjson_utils.hpp"
 
 using namespace std;
+using namespace glm;
 
 namespace asdf
 {
@@ -20,13 +21,19 @@ namespace data
     texture_bank_t::texture_bank_t()
     : atlas_texture("hex texture atlas", nullptr, hex_atlas_dim, hex_atlas_dim)
     {
+        glBindTexture(GL_TEXTURE_2D, atlas_texture.texture_id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+
         ASSERT(!CheckGLError(), "GL Error Before Initializing texture_bank_t");
 
         {
             GL_State->bind(atlas_fbo);
             glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
 
-            GLenum draw_buffers = GL_COLOR_ATTACHMENT1;
+            GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
             glDrawBuffers(1, &draw_buffers);
             ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error creating texture bank framebuffer");
 
@@ -87,9 +94,17 @@ namespace data
         auto& screen_shader = app.renderer->screen_shader;
         GL_State->bind(screen_shader);
 
-        screen_shader->world_matrix[3][0] = dest_loc_x;
-        screen_shader->world_matrix[3][1] = dest_loc_y;
-        screen_shader->world_matrix = glm::scale(screen_shader->world_matrix, glm::vec3(1000.0f, 1000.0f, 1.0f));
+        screen_shader->world_matrix = mat4();
+        //screen_shader->world_matrix = scale(screen_shader->world_matrix, vec3(saved_texture_dim, saved_texture_dim, 1.0f));
+        //screen_shader->world_matrix = translate(screen_shader->world_matrix, vec3(dest_loc_x, dest_loc_y, 0.0f
+
+        dest_loc_x += saved_texture_dim_d2;
+        //dest_loc_y += saved_texture_dim_d2;
+
+        screen_shader->world_matrix = translate(screen_shader->world_matrix, vec3(dest_loc_x, 128.0f, 0.0f));
+        screen_shader->world_matrix = scale(screen_shader->world_matrix, vec3(saved_texture_dim, saved_texture_dim, 1.0f));
+        
+
         screen_shader->projection_matrix = glm::ortho<float>(0, atlas_texture.width, 0, atlas_texture.height/*, -1.0f, 1.0f*/);
         screen_shader->update_wvp_uniform();
 
