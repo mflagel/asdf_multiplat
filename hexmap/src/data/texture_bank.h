@@ -15,6 +15,7 @@ namespace data
 {
 
     constexpr size_t saved_texture_dim = 128;
+    constexpr size_t saved_texture_dim_d2 = saved_texture_dim / 2.0f;
     constexpr size_t max_saved_textures_1d = 10;
     constexpr size_t max_saved_textures = max_saved_textures_1d * max_saved_textures_1d;
     constexpr size_t hex_atlas_dim = saved_texture_dim * max_saved_textures_1d;
