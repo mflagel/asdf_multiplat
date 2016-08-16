@@ -119,7 +119,7 @@ namespace ui
 
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho();
-
+        /*
         GL_State->bind(shader);
         glUniform1i(shader->uniform("ApplyTexture"), 0);
 
@@ -130,10 +130,16 @@ namespace ui
 
         glLineWidth(grid_overlay_thickness);
         render_grid_overlay(hex_grid.size);
+        */
 
 
         //TEST
         // re-importing every frame so I can capture it with nvidia's gfx debugger
+
+        GL_State->bind(texture_bank.atlas_fbo);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         auto dir = find_folder("data");
         auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
         texture_bank.load_from_list_file(imported_textures_json_filepath);
