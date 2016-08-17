@@ -42,6 +42,15 @@ namespace ui
     constexpr size_t num_tile_colors = 10;
 
 
+    struct  hexagon_vertex_t
+    {
+        static gl_vertex_spec_<vertex_attrib::position3_t/*, vertex_attrib::color_t*/> vertex_spec;
+
+        glm::vec3   position;
+        //glm::vec4   color;
+    };
+
+
     struct hex_buffer_data_t : vbo_t //ubo_t  switching to vbo and using glVertexAttribDivisor
     {
         hex_buffer_data_t()
@@ -67,7 +76,7 @@ namespace ui
         asdf::input::input_handler_sdl2_t camera_controller;
 
         std::shared_ptr<shader_t> shader;
-        rendered_polygon_<polygon_vertex_t> hexagon;
+        rendered_polygon_<hexagon_vertex_t> hexagon;
         data::texture_bank_t texture_bank;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
