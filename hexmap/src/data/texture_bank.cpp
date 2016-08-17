@@ -86,6 +86,9 @@ namespace data
         int dest_loc_x = (saved_textures.size() % max_saved_textures_1d) * saved_texture_dim;
         int dest_loc_y = (saved_textures.size() / max_saved_textures_1d) * saved_texture_dim;
 
+        dest_loc_x += saved_texture_dim_d2;
+        //dest_loc_y += saved_texture_dim_d2;
+
 
         GL_State->bind(atlas_fbo);
         glViewport(0,0,atlas_texture.width, atlas_texture.height);
@@ -95,20 +98,14 @@ namespace data
         GL_State->bind(screen_shader);
 
         screen_shader->world_matrix = mat4();
-        //screen_shader->world_matrix = scale(screen_shader->world_matrix, vec3(saved_texture_dim, saved_texture_dim, 1.0f));
-        //screen_shader->world_matrix = translate(screen_shader->world_matrix, vec3(dest_loc_x, dest_loc_y, 0.0f
-
-        dest_loc_x += saved_texture_dim_d2;
-        //dest_loc_y += saved_texture_dim_d2;
-
-        screen_shader->world_matrix = translate(screen_shader->world_matrix, vec3(dest_loc_x, 128.0f, 0.0f));
+        screen_shader->world_matrix = translate(screen_shader->world_matrix, vec3(static_cast<float>(dest_loc_x), static_cast<float>(dest_loc_y + 64), 0.0f));
         screen_shader->world_matrix = scale(screen_shader->world_matrix, vec3(saved_texture_dim, saved_texture_dim, 1.0f));
-        
 
         screen_shader->projection_matrix = glm::ortho<float>(0, atlas_texture.width, 0, atlas_texture.height/*, -1.0f, 1.0f*/);
         screen_shader->update_wvp_uniform();
 
-        glUniform4f(screen_shader->uniform("Color"), 1.5f, 1.0f, 1.0f, 1.0f);
+        glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
         glBindTexture(GL_TEXTURE_2D, new_texture.texture_id);
 
         app.renderer->quad.render();
