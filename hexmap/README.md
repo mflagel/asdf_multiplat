@@ -12,22 +12,26 @@ Rendering a hexagon tilemap of an arbitrary size
 Painting different colors onto hexagons
     currently hardcoded colors selected by number keys
 Camera movement and zoom
+Importing custom terrain textures
+    Reads from a user-modifiable json file
+Painting textures onto hexagons
 
 
 In Progress
 ------------
-Painting textures onto hexagons
-Importing custom terrain textures
-    Reads from a user-modifiable json file
+Importing custom object textures
+Better Sprite Atlas System
 
 
 TODO
 ------------
 Hex Grid Data Import/Export
+Colored Splines for rivers/roads/etc
+Textured Splines
 Undo/Redo Support
 Editor User Interface
     Need to figure out what UI library/system to use
-Splines for rivers/roads/etc
 Android/iOS Hexmap Viewer
-Better Sprite Atlas System
 Hexographer Compatability
+Custom Hexagon and Object Data
+    Descriptions, Encounters, City Info, etc
