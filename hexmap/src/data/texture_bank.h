@@ -10,7 +10,6 @@
 #include "asdf_multiplat/data/gl_resources.h"
 
 namespace asdf {
-namespace hexmap {
 namespace data
 {
 
@@ -18,7 +17,7 @@ namespace data
     constexpr size_t saved_texture_dim_d2 = saved_texture_dim / 2.0f;
     constexpr size_t max_saved_textures_1d = 10;
     constexpr size_t max_saved_textures = max_saved_textures_1d * max_saved_textures_1d;
-    constexpr size_t hex_atlas_dim = saved_texture_dim * max_saved_textures_1d;
+    constexpr size_t atlas_dim = saved_texture_dim * max_saved_textures_1d;
 
 
     struct saved_texture_t
@@ -31,16 +30,13 @@ namespace data
         class to load a bunch of textures from the filesystem, resize them,
         and store them in an atlas
 
-        Originally was going to use load the image into its own texture and
-        then use glCopyImageSubData to transfer it onto the atlas, but there's
-        no way to resize the added texture in the process.
+        Loads the textures and then renders them directly onto the atlas
+        texture at the desired size
 
-        Seems the only way to resize the original image to a desired size
-        is to load it into a texture as normal, but then render it onto a
-        framebuffer/texture at the desired size.
+        Starts at the bottom left, adding horizontally until the row is
+        full, then moving up a row (and so on)
 
-        If I'm going to do that, I might as well render directly onto the
-        atlas
+        Thus 0,0 is the bottom left
     */
     struct texture_bank_t
     {
@@ -54,6 +50,5 @@ namespace data
         void load_from_list_file(std::string const& filepath);
         void add_texture(std::string const& filesystem_location);
     };
-}
 }
 }

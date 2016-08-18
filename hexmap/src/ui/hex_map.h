@@ -77,7 +77,7 @@ namespace ui
 
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;
-        data::texture_bank_t texture_bank;
+        asdf::data::texture_bank_t texture_bank;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;
