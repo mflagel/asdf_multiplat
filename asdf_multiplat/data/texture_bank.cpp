@@ -3,9 +3,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/utilities/utilities.h"
-#include "asdf_multiplat/utilities/cjson_utils.hpp"
+#include "main/asdf_multiplat.h"
+#include "data/gl_state.h"
+#include "utilities/utilities.h"
+#include "utilities/cjson_utils.hpp"
 
 using namespace std;
 using namespace glm;

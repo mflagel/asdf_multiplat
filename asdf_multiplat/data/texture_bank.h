@@ -6,8 +6,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/data/texture.h"
-#include "asdf_multiplat/data/gl_resources.h"
+#include "texture.h"
+#include "gl_resources.h"
 
 namespace asdf {
 namespace data
