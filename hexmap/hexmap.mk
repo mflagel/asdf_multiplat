@@ -35,6 +35,8 @@ ASDFASDF = $(ASDFDIR)/asdf_multiplat.o          \
 		   $(ASDFDIR)/input_controller.o        \
 		   $(ASDFDIR)/keyboard.o                \
 		   $(ASDFDIR)/mouse.o                   \
+		   $(ASDFDIR)/texture_bank.o                   \
+		   $(ASDFDIR)/texture_atlas.o                   \
 		   # $(ASDFDIR)/stdafx.o
 
 LINK_FLAGS += $(ASDFASDF)
@@ -80,7 +82,6 @@ SOURCES = $(SRCPATH)/main/main.cpp \
 		  $(SRCPATH)/main/hexmap.cpp \
 		  $(SRCPATH)/main/hexagon_input.cpp \
           $(SRCPATH)/data/hex_grid.cpp \
-          $(SRCPATH)/data/texture_bank.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
           $(SRCPATH)/editor/main/editor.cpp \
