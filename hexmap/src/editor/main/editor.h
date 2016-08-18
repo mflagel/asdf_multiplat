@@ -35,6 +35,15 @@ namespace editor
         void set_tool(tool_type_e const& new_tool);
     };
 
+
+    constexpr std::array<const char*, editor_t::num_tool_types> tool_type_strings =
+    {
+          "select"
+        , "terrain_paint"
+        , "place_object"
+        , "place_spline"
+    };
+
 }
 }
 }

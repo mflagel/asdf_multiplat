@@ -32,6 +32,8 @@ namespace editor
         //todo: handle state transitions if necessary
 
         current_tool = new_tool;
+
+        LOG("current tool: %s", tool_type_strings[current_tool]);
     }
 
 }
