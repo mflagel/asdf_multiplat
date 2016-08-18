@@ -1,4 +1,7 @@
+#include "stdafx.h"
 #include "texture_atlas.h"
+
+#include "texture.h"
 
 #include "utilities/utilities.h"
 #include "utilities/cjson_utils.hpp"
@@ -27,9 +30,21 @@ namespace data
 
 
         auto meta_json = cJSON_GetObjectItem(root, "meta");
-        auto atlas_texture_filepath = cJSON_GetObjectItem(meta_json, "image")->valuestring;
+        auto atlas_texture_filename = cJSON_GetObjectItem(meta_json, "image")->valuestring;
 
-        //atlas_texture = make_shared<texture_t>(atlas_texture_filepath);
+        //atlas texture is in the same folder, so just chop off the data filename from its path and append the texture filename
+        std::string atlas_texture_filepath;
+        auto last_slash_index = filepath.find_last_of("/\\");
+        if(last_slash_index == std::string::npos)
+        {
+            atlas_texture_filepath = atlas_texture_filename ;
+        }
+        else
+        {
+            atlas_texture_filepath = filepath.substr(0, last_slash_index) + "/" + atlas_texture_filename;
+        }
+
+        atlas_texture = make_shared<texture_t>(atlas_texture_filepath);
 
 
         auto frames_json = cJSON_GetObjectItem(root, "frames"); //array of entries ('frames')
