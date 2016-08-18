@@ -4,10 +4,11 @@
 
 #include "asdf_multiplat/ui/polygon.h"
 #include "asdf_multiplat/ui/ui_base.h"
+#include "asdf_multiplat/data/texture_bank.h"
+#include "asdf_multiplat/data/texture_atlas.h"
 
 #include "main/hexagon_input.h"
 #include "data/hex_grid.h"
-#include "data/texture_bank.h"
 
 
 using color_t = glm::vec4;
@@ -77,7 +78,9 @@ namespace ui
 
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;
+
         asdf::data::texture_bank_t texture_bank;
+        std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;

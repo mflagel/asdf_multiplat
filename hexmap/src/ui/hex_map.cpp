@@ -15,6 +15,7 @@ using namespace glm;
 namespace asdf
 {
     using namespace util;
+    using namespace data;
     
 namespace hexmap
 {
@@ -97,6 +98,9 @@ namespace ui
 
         auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
         texture_bank.load_from_list_file(imported_textures_json_filepath);
+
+
+        ojects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
