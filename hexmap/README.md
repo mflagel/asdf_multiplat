@@ -5,6 +5,17 @@ A code library meant for storing and rendering hexagon tilemaps for use in vario
 Hexmap is currently being developed on Windows and Linux (Mint/Ubuntu) with plans to support mobile platforms for hexmap viewing (but probably not editing).
 
 
+
+Controls
+------------
+Movement:  Arrow Keys
+Zoom Out:  Right Shift
+Zoom In:   Right Ctrl
+
+Paint Terrain:   Left Click
+Switch Terrain:  Number Keys (1 through 0)
+
+
 Current Features
 ------------
 Rendering a hexagon tilemap of an arbitrary size
@@ -30,7 +41,7 @@ Colored Splines for rivers/roads/etc
 Textured Splines
 Undo/Redo Support
 Editor User Interface
-    Need to figure out what UI library/system to use
+    Need to figure out what UI library/system to use (probably wxWidgets)
 Android/iOS Hexmap Viewer
 Hexographer Compatability
 Custom Hexagon and Object Data
