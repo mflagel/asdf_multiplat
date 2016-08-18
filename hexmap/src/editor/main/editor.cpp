@@ -16,7 +16,7 @@ namespace editor
     {
         hexmap_t::init();
 
-        input = make_unique<input_handler_t>(hex_map.get(), hex_map->camera);
+        input = make_unique<input_handler_t>(*this);
     }
 
     void editor_t::on_event(SDL_Event* event)
@@ -24,6 +24,14 @@ namespace editor
         hexmap_t::on_event(event);
 
         input->on_event(event);
+    }
+
+
+    void editor_t::set_tool(editor_t::tool_type_e const& new_tool)
+    {
+        //todo: handle state transitions if necessary
+
+        current_tool = new_tool;
     }
 
 }
