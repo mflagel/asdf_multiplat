@@ -3,7 +3,7 @@
 layout(location = 0) in vec4 Position;
 layout(location = 1) in vec2 TexCoord;
 
-smooth out vec2 TexCoordOut;
+smooth out vec2 FragTexCoord;
 
 uniform mat4 WVP;
 

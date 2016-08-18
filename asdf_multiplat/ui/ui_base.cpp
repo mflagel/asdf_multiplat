@@ -385,7 +385,7 @@ namespace asdf
         if (size.x == 5)
             int asdf = 9001;
 
-        app.spritebatch->draw(texture, rectf_t(position_.xy, size), color_);
+        //app.spritebatch->draw(texture, rectf_t(position_.xy, size), color_); // FIXME unresolved external
 
         ui_view_t::render(_position, _matrix, _color);
     }

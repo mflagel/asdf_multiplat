@@ -83,6 +83,8 @@
     <ClCompile Include="data\gl_state.cpp" />
     <ClCompile Include="data\shader.cpp" />
     <ClCompile Include="data\texture.cpp" />
+    <ClCompile Include="data\texture_atlas.cpp" />
+    <ClCompile Include="data\texture_bank.cpp" />
     <ClCompile Include="main\asdf_multiplat.cpp" />
     <ClCompile Include="main\input_controller.cpp" />
     <ClCompile Include="main\keyboard.cpp" />
@@ -107,6 +109,8 @@
     <ClInclude Include="data\settings.h" />
     <ClInclude Include="data\shader.h" />
     <ClInclude Include="data\texture.h" />
+    <ClInclude Include="data\texture_atlas.h" />
+    <ClInclude Include="data\texture_bank.h" />
     <ClInclude Include="main\asdf_multiplat.h" />
     <ClInclude Include="main\input_controller.h" />
     <ClInclude Include="main\keyboard.h" />

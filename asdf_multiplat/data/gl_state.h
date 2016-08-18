@@ -17,12 +17,12 @@ namespace asdf
 
         std::array<GLuint, gl_buffer_target_count> current_buffers;
         
-
+        gl_state_t(){init_openGL();}
         void init_openGL();
 
         void bind(vao_t const&);
         void bind(std::shared_ptr<shader_t> const& shader);
-        void bind(framebuffer_object_t const&);
+        void bind(framebuffer_t const&);
 
         void bind(gl_buffer_object_t const&);
 

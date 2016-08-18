@@ -9,7 +9,9 @@
 #include <glm/glm.hpp>
 
 #include "data/gl_state.h"
+#include "data/texture.h"
 #include "data/settings.h"
+#include "ui/polygon.h"
 
 namespace asdf {
 
@@ -27,26 +29,47 @@ namespace asdf {
         virtual void on_event(SDL_Event*) = 0;
     };
 
-    struct asdf_multiplat_t 
+    struct asdf_renderer_t
     {
         gl_state_t gl_state;
 
+        framebuffer_t   framebuffer;
+        texture_t       render_target;
+        render_buffer_t render_depth_buffer;
+
+        std::shared_ptr<shader_t> screen_shader;
+
+        struct quad_vertex_t
+        {
+            static gl_vertex_spec_<vertex_attrib::position3_t> vertex_spec;
+            glm::vec3 position;
+        };
+        rendered_polygon_<quad_vertex_t> quad;
+
+        //color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
+        glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};
+
+        asdf_renderer_t();
+
+        void init();
+
+        void pre_render();
+        void post_render();
+    };
+
+    struct asdf_multiplat_t 
+    {
         // std::shared_ptr<asdf_specific_t> specific;
         asdf_specific_t* specific{nullptr};
         SDL_Window*     main_window{nullptr};
         SDL_GLContext   gl_context;
         SDL_Surface*    main_surface{nullptr};
-        unsigned int    prev_ticks{0};
 
+        std::unique_ptr<asdf_renderer_t> renderer;
+
+        unsigned int    prev_ticks{0};
         std::array<float, 10> frame_times;
         size_t frame_time_index = 0;
-
-        GLuint      framebuffer{9001};
-        std::shared_ptr<texture_t> render_target;
-        GLuint      render_depth_buffer{9001};
-        GLuint      quad_VBO{9001};
-        //color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
-        glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};
         
         bool running        = false;
         bool in_focus       = false;

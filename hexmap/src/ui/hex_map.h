@@ -4,10 +4,11 @@
 
 #include "asdf_multiplat/ui/polygon.h"
 #include "asdf_multiplat/ui/ui_base.h"
+#include "asdf_multiplat/data/texture_bank.h"
+#include "asdf_multiplat/data/texture_atlas.h"
 
 #include "main/hexagon_input.h"
 #include "data/hex_grid.h"
-#include "data/texture_bank.h"
 
 
 using color_t = glm::vec4;
@@ -42,6 +43,15 @@ namespace ui
     constexpr size_t num_tile_colors = 10;
 
 
+    struct  hexagon_vertex_t
+    {
+        static gl_vertex_spec_<vertex_attrib::position3_t/*, vertex_attrib::color_t*/> vertex_spec;
+
+        glm::vec3   position;
+        //glm::vec4   color;
+    };
+
+
     struct hex_buffer_data_t : vbo_t //ubo_t  switching to vbo and using glVertexAttribDivisor
     {
         hex_buffer_data_t()
@@ -67,8 +77,10 @@ namespace ui
         asdf::input::input_handler_sdl2_t camera_controller;
 
         std::shared_ptr<shader_t> shader;
-        rendered_polygon_<polygon_vertex_t> hexagon;
-        data::texture_bank_t texture_bank;
+        rendered_polygon_<hexagon_vertex_t> hexagon;
+
+        asdf::data::texture_bank_t texture_bank;
+        std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;

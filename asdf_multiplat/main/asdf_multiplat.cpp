@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "asdf_multiplat.h"
 
-//#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/rotate_vector.hpp>
 
@@ -14,23 +14,14 @@
 
 using namespace asdf::util;
 using namespace std;
+using namespace glm;
 
 namespace asdf {
 
     asdf_multiplat_t app;
 
     asdf_multiplat_t::asdf_multiplat_t()
-        : main_window(0)
-        , gl_context(0)
-        , main_surface(0)
-        , framebuffer(nullindex)
-        , render_target(nullptr)
-        , render_depth_buffer(nullindex)
-        , quad_VBO(nullindex)
-        , running(true)
-        , WINDOW_TITLE("Asdf Multiplat Application Thing")
-        , in_focus(true)
-        , spritebatch(nullptr)
+        : WINDOW_TITLE("Asdf Multiplat Application Thing")
     {
         std::set_terminate(util::terminate_handler);
         signal(SIGINT,util::interrupt_handler);
@@ -42,14 +33,20 @@ namespace asdf {
     void asdf_multiplat_t::init(std::string _exec_dir) {
         LOG("--- Initializing This Crazy Contraption ---");
 
+        running = true;
+
         exec_dir = _exec_dir;
         working_directory = get_current_working_directory();
+        SetCurrentDir(exec_dir.c_str());
 
         LOG("Exec Dir: %s", exec_dir.c_str());
         LOG("Working Dir: %s", working_directory.c_str());
 
         init_SDL();
-        GL_State->init_openGL();
+        in_focus = true;
+
+        renderer = make_unique<asdf_renderer_t>();
+        renderer->init();
 
         Content.init();
         spritebatch = make_shared<spritebatch_t>();
@@ -106,26 +103,7 @@ namespace asdf {
     }
 
     void asdf_multiplat_t::render() {
-        // Render to to frameBuffer
-        //glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
-        // glClearColor(0.5f, 0.75f, 0.9f, 1.0f); //cornflower blue makin it feel like XNA
-        // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClearColor(gl_clear_color.r
-                   , gl_clear_color.g
-                   , gl_clear_color.b
-                   , gl_clear_color.a);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, settings.resolution_width, settings.resolution_height);
-
-        
-        glDisable(GL_CULL_FACE);
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
-
-        glUseProgram(0);
-        //Content.fonts["arial"]->Render("TEST POST PLEASE IGNORE", -1, FTPoint(0, 500));
+        renderer->pre_render();
 
         {
             spritebatch->begin();
@@ -143,7 +121,7 @@ namespace asdf {
         ASSERT(specific, "app.specific not assigned");
         specific->render();
 
-        SDL_GL_SwapWindow(main_window);
+        renderer->post_render();
     }
 
     void asdf_multiplat_t::render_debug() {
@@ -305,5 +283,113 @@ namespace asdf {
         {
             LOG("Screenshot saved to: \"%s\"", file_path.c_str());
         }
+    }
+
+
+
+    gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
+
+
+    asdf_renderer_t::asdf_renderer_t()
+    : render_target("asdf main render target", nullptr, app.settings.resolution_width, app.settings.resolution_height)
+    {   
+    }
+
+    /// Putting this in an init func, since it relies on app.renderer being fully constructed for the 
+    /// GL_State proxy global to work (mostly related to creating a shader)
+    void asdf_renderer_t::init()
+    {
+        ASSERT(!CheckGLError(), "Error before asdf_renderer_t::init()");
+
+        gl_state.bind(framebuffer);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);
+
+        GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+        glDrawBuffers(1, DrawBuffers);
+        ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Error creating main app framebuffer");
+
+
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+        ASSERT(!CheckGLError(), "");
+
+
+        auto shader_path = find_folder("shaders");
+        screen_shader = Content.create_shader(shader_path, "passthrough", "textured", 330);
+
+        const quad_vertex_t quad_verts[] =
+        {
+            quad_vertex_t{vec3(-0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+            quad_vertex_t{vec3( 0.5f,  0.5f, 0.0f)}
+        };
+
+
+        quad.draw_mode = GL_TRIANGLES;
+        quad.vbo.usage = GL_STATIC_DRAW;
+        quad.set_data(quad_verts, 6, screen_shader);
+
+        gl_state.unbind_vao();
+        gl_state.unbind_vbo();
+
+        ASSERT(!CheckGLError(), "Error initializing renderer");
+    }
+
+    void asdf_renderer_t::pre_render()
+    {
+        // Render to to frameBuffer
+        GL_State->bind(framebuffer);
+        //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
+
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+
+
+        glClearColor(gl_clear_color.r
+                   , gl_clear_color.g
+                   , gl_clear_color.b
+                   , gl_clear_color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+
+        //GL_State->unbind_shader();
+        //Content.fonts["arial"]->Render("TEST POST PLEASE IGNORE", -1, FTPoint(0, 500));
+        
+        glDisable(GL_CULL_FACE); //keep this off until I want to start optimizing things, otherwise I may wonder why things aren't rendering
+    }
+
+    void asdf_renderer_t::post_render()
+    {
+        GL_State->unbind_fbo();
+        GL_State->bind(screen_shader);
+        glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+
+        //reset every frame in case other parts of the app use screen shader for rendering things to texture
+        screen_shader->world_matrix = mat4();
+        screen_shader->view_matrix = mat4();
+        screen_shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
+        screen_shader->update_wvp_uniform();
+
+        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+
+        glClearColor(0.0f
+                   , 0.0f
+                   , 0.0f
+                   , 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        //glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, render_target.texture_id);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glDisable(GL_CULL_FACE);
+
+        quad.render();
+
+        ASSERT(!CheckGLError(), "Error in post_render()");
+
+        SDL_GL_SwapWindow(app.main_window);
     }
 }

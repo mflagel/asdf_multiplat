@@ -3,7 +3,7 @@
 
 layout(location = 0) in vec4 VertexPosition;
 //layout(location = 1) in vec2 TexCoord;
-layout(location = 2) in vec4 VertexColor;
+//layout(location = 2) in vec4 VertexColor;
 layout(location = 3) in uint TileID;
 
 
@@ -22,6 +22,7 @@ uniform int CHUNK_HEIGHT = 10;
 
 void main(void)
 {
+    /// Position
     int col_x = gl_InstanceID / CHUNK_HEIGHT;
     int col_y = gl_InstanceID % CHUNK_HEIGHT;
 
@@ -32,11 +33,35 @@ void main(void)
     pos.y -= float(col_x % 2) * HEX_HEIGHT / 2.0;  //hexagon y offest
 
 	gl_Position = WVP * pos;
-	FragTexCoord = vec2(0.0f, 0.0f); //TexCoord;
 
+
+    /// UV Coords
+    uint atlas_dim   = uint(1280);
+    uint tile_dim    = uint(128);
+    uint tile_dim_d2 = uint(64);
+
+    uint num_tiles_width  = atlas_dim / tile_dim;
+    uint num_tiles_height = num_tiles_width;
+
+    uint tile_x = (TileID % num_tiles_width) * tile_dim;
+    uint tile_y = (TileID / num_tiles_width) * tile_dim;
+
+    // move x/y to the center point of the tile
+    tile_x += tile_dim_d2;
+    tile_y += tile_dim_d2;
+
+
+    // hexagon is 1 unit wide, and sin(pi/3) units tall (roughly 0.866)
+    // scale it up to the size of a tile texture
+    vec2 hex_atlas_coord = vec2(VertexPosition.x * tile_dim, VertexPosition.y * tile_dim);
+    hex_atlas_coord += vec2(float(tile_x), float(tile_y));
+
+    //convert to UV
+    FragTexCoord = hex_atlas_coord / vec2(float(atlas_dim), float(atlas_dim));
+
+
+    /// Color
     vec4 tile_color = TileColors[TileID];
-    ColorOut = (VertexColor * 0.000000001) + (tile_color * 0.9);
-    ColorOut.a = 1.0;
-
+    ColorOut = tile_color;
     ColorOut.a = 1.0;
 }

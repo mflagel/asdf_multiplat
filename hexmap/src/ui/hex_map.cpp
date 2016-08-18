@@ -3,14 +3,20 @@
 
 #include <array>
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/content_manager.h"\
+#include "asdf_multiplat/data/content_manager.h"
 
 using namespace std;
 using namespace glm;
 
 namespace asdf
 {
+    using namespace util;
+    using namespace data;
+    
 namespace hexmap
 {
 namespace ui
@@ -18,6 +24,14 @@ namespace ui
     //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
+
+    constexpr char imported_textures_json_filename[] = "imported_textures.json";
+
+
+    constexpr int apply_hexagon_textures = 1;
+
+
+    gl_vertex_spec_<vertex_attrib::position3_t/*, vertex_attrib::color_t*/> hexagon_vertex_t::vertex_spec;
 
 
     hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
@@ -30,7 +44,7 @@ namespace ui
         camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
 
 
-        polygon_t verts(6);
+        std::vector<hexagon_vertex_t> verts(6);
 
         for(size_t i = 0; i < 6; ++i)
         {
@@ -38,7 +52,7 @@ namespace ui
             verts[i].position.y = hexagon_points[i*3 + 1];
             verts[i].position.z = hexagon_points[i*3 + 2];
 
-            verts[i].color = grid_color;
+            //verts[i].color = grid_color;
         }
 
         hexagon.set_data(verts, shader);
@@ -48,7 +62,7 @@ namespace ui
         GL_State->bind(hexagons_vao);
 
             GL_State->bind(hexagon.vbo);
-            polygon_vertex_t::vertex_spec.set_vertex_attribs(shader);
+            hexagon_vertex_t::vertex_spec.set_vertex_attribs(shader);
             ASSERT(!CheckGLError(), "Error setting vertex attributes");
 
             GL_State->bind(hex_gl_data);
@@ -77,6 +91,16 @@ namespace ui
 
         set_tile_colors(colors);
         ASSERT(!CheckGLError(), "");
+
+
+        auto dir = find_folder("data");
+        ASSERT(dir.length() > 0, "Could not find data folder");
+
+        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+        texture_bank.load_from_list_file(imported_textures_json_filepath);
+
+
+        ojects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -95,8 +119,6 @@ namespace ui
 
     void hex_map_t::render()
     {
-        GL_State->unbind_fbo();
-
         ASSERT(hex_grid.chunks.size(), "");
         ASSERT(hex_grid.chunks[0].size(), "");
 
@@ -108,17 +130,33 @@ namespace ui
 
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho();
+        
+        GL_State->bind(shader);
+        glUniform1i(shader->uniform("ApplyTexture"), apply_hexagon_textures);
 
         hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
         {
             render_chunk(chunk);
         });
 
-        glLineWidth(grid_overlay_thickness);
+        
+        glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
         render_grid_overlay(hex_grid.size);
+        
+
 
         //TEST
-        glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        // re-importing every frame so I can capture it with nvidia's gfx debugger
+        // GL_State->bind(texture_bank.atlas_fbo);
+        // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // auto dir = find_folder("data");
+        // auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
+        // texture_bank.saved_textures.clear(); //reset so I'm not infinitely piling stuff on
+        // texture_bank.load_from_list_file(imported_textures_json_filepath);
+        // glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        //---
     }
 
     void hex_map_t::on_event(SDL_Event* event)
@@ -131,8 +169,9 @@ namespace ui
 
     void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk)
     {
-        GL_State->bind(shader);
         GL_State->bind(hexagons_vao);
+
+        hex_gl_data.set_data(chunk);
 
         float chunk_width_cells = hex_width_d4 * 3 * data::max_chunk_width;
         float chunk_height_cells = hex_height * data::max_chunk_height;
@@ -141,7 +180,9 @@ namespace ui
         shader->world_matrix[3][1] = chunk.position.y * chunk_height_cells;
         shader->update_wvp_uniform();
 
-        hex_gl_data.set_data(chunk);
+        glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+        glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
 
         render_hexagons(glm::ivec2(chunk.size.x, chunk.size.y), GL_TRIANGLE_FAN);
         GL_State->unbind_vao();
@@ -152,9 +193,13 @@ namespace ui
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
 
+        glLineWidth(grid_overlay_thickness);
+
         shader->world_matrix[3][0] = 0.0f;
         shader->world_matrix[3][1] = 0.0f;
         shader->update_wvp_uniform();
+
+        glUniform4fv( shader->uniform("Color"), 1, glm::value_ptr(grid_color) );
 
         render_hexagons(grid_size, hexagon.draw_mode);
         GL_State->unbind_vao();

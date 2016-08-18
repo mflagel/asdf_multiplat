@@ -9,7 +9,7 @@ namespace asdf
     
     gl_state_t* gl_state_proxy_t::operator->()
     {
-        return &(app.gl_state);
+        return &(app.renderer->gl_state);
     }
 
     using namespace util;
@@ -69,7 +69,7 @@ namespace asdf
         current_shader = shader->shader_program_id;
     }
 
-    void gl_state_t::bind(framebuffer_object_t const& fbo)
+    void gl_state_t::bind(framebuffer_t const& fbo)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, fbo.id);
         current_framebuffer = fbo.id;

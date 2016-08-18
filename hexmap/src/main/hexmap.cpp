@@ -31,7 +31,7 @@ namespace hexmap
         LOG("--- Initializing HexMap ---");
 
         app.specific = this;
-        app.gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
+        app.renderer->gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
 
         auto shader = Content.create_shader("hexmap", 330);
         Content.shaders.add_resource(shader);
