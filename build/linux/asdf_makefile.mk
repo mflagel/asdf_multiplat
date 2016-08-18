@@ -123,6 +123,7 @@ rebuild: clean all
 $(PROJNAME): $(OBJECTS)
 	@echo -e $(YELLOW)---------- LINKING  --------- $(ENDCOLOR)
 	@echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
+	@echo -e $(YELLOW)------------------- $(ENDCOLOR)
 	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
 
 # $(PROJNAME)_SHARED: $(OBJECTS)
