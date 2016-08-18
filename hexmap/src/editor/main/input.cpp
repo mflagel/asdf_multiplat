@@ -20,32 +20,54 @@ namespace editor
     {
     }
 
+    //TODO: move this into an asdf_multiplat header
+    constexpr bool is_sdl_mouse_event(SDL_Event* event)
+    {
+        return event->type == SDL_MOUSEMOTION
+            || event->type == SDL_MOUSEBUTTONDOWN
+            || event->type == SDL_MOUSEBUTTONUP
+            || event->type == SDL_MOUSEWHEEL
+            ;
+    }
+
+    constexpr bool is_sdl_keyboard_event(SDL_Event* event)
+    {
+        return event->type == SDL_KEYDOWN
+            || event->type == SDL_KEYUP
+            || event->type == SDL_TEXTEDITING
+            || event->type == SDL_TEXTINPUT
+            || event->type == SDL_KEYMAPCHANGED
+            ;
+    }
+    //--
+
+
     bool input_handler_t::on_event(SDL_Event* event)
     {
         input::hex_map_input_t::on_event(event);
 
-        //TODO: only check/do this during certain sdl events
-        if(mouse_input->mouse_button_state(mouse_left))
+
+        if(is_sdl_mouse_event(event))
         {
-            auto mw = world_coords();
-            auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
-
-            LOG("mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
-
-            if(hex_map->hex_grid.is_in_bounds(hx))
+            if(mouse_input->mouse_button_state(mouse_left))
             {
-                auto& cell = hex_map->hex_grid.cell_at(hx);
-                cell.tile_id = current_tile_id;
-                return true;
+                auto mw = world_coords();
+                auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
+
+                LOG("mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
+
+                if(hex_map->hex_grid.is_in_bounds(hx))
+                {
+                    auto& cell = hex_map->hex_grid.cell_at(hx);
+                    cell.tile_id = current_tile_id;
+                    return true;
+                }
             }
         }
-
-        switch(event->type)
+        else if(is_sdl_keyboard_event(event))
         {
-            case SDL_KEYDOWN:
-                on_key_down(event->key.keysym.sym);
-                break;
-        }
+            on_key_down(event->key.keysym.sym);
+        }        
 
         return false;
     }
