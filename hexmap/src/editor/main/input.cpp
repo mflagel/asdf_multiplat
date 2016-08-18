@@ -86,13 +86,13 @@ namespace editor
             case sdl2_input_map[set_tool_select]:
                 editor.set_tool(editor_t::select);
                 break;
-            case set_tool_terrain_paint:
+            case sdl2_input_map[set_tool_terrain_paint]:
                 editor.set_tool(editor_t::terrain_paint);
                 break;
-            case set_tool_place_object:
+            case sdl2_input_map[set_tool_place_object]:
                 editor.set_tool(editor_t::place_object);
                 break;
-            case set_tool_place_spline:
+            case sdl2_input_map[set_tool_place_spline]:
                 editor.set_tool(editor_t::place_spline);
                 break;
 
