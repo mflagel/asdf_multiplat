@@ -181,15 +181,15 @@ namespace asdf {
                 break;
 
             case SDL_MOUSEMOTION:
-                event->motion.x -= settings.resolution_width  / 2.0f;
-                event->motion.y = settings.resolution_height / 2.0f - event->motion.y;
+                event->motion.x -= settings.resolution_width  / 2;
+                event->motion.y = settings.resolution_height / 2 - event->motion.y;
                 //LOG("x: %i,   y: %i", event->motion.x, event->motion.y);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                event->button.x -= settings.resolution_width / 2.0f;
-                event->motion.y = settings.resolution_height / 2.0f - event->motion.y;
+                event->button.x -= settings.resolution_width / 2;
+                event->motion.y = settings.resolution_height / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEWHEEL:

@@ -83,8 +83,8 @@ namespace asdf
     {
         width = _width;
         height = _height;
-        halfwidth = _width / 2.0f;
-        halfheight = _height / 2.0f;
+        halfwidth = _width / 2;
+        halfheight = _height / 2;
 
         write(color_data);
         refresh_params();

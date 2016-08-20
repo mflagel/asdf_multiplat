@@ -15,6 +15,7 @@ WARNING_FLAGS := -Wall \
 				-Wno-shadow \
 				-Wno-comment \
 				-Wno-undef \
+				-Wno-extra-semi \
 				-Werror-uninitialized
 
 # Warning Flags that I think I can safely turn off

@@ -27,8 +27,8 @@ namespace asdf
     {
         rendered_polygon_()
         {}
-        rendered_polygon_(polygon_<VertexType> const& verts)
-        {}
+        // rendered_polygon_(polygon_<VertexType> const& verts)
+        // {}
 
         void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)        
         {

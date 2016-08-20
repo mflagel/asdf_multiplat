@@ -19,9 +19,9 @@ namespace input
         , mouse_5
     };
 
-    constexpr uint8_t mouse_button_bit(mouse_button_e btn)
+    constexpr uint32_t mouse_button_bit(mouse_button_e btn)
     {
-        return 1 << static_cast<uint8_t>(btn);
+        return 1u << static_cast<uint8_t>(btn);
     }
 
     struct mouse_input_t
