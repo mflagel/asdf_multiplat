@@ -35,8 +35,8 @@ ASDFASDF = $(ASDFDIR)/asdf_multiplat.o          \
 		   $(ASDFDIR)/input_controller.o        \
 		   $(ASDFDIR)/keyboard.o                \
 		   $(ASDFDIR)/mouse.o                   \
-		   $(ASDFDIR)/texture_bank.o                   \
-		   $(ASDFDIR)/texture_atlas.o                   \
+		   $(ASDFDIR)/texture_bank.o            \
+		   $(ASDFDIR)/texture_atlas.o           \
 		   # $(ASDFDIR)/stdafx.o
 
 LINK_FLAGS += $(ASDFASDF)
