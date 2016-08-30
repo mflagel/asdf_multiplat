@@ -11,7 +11,7 @@ PROJPATH = .
 include $(SELF_DIR)/../build/linux/asdf_makefile.inc
 
 SO_NAME = libasdfm.so
-BIN_OUT = $(BINPATH)/$(SO_NAME)
+BIN_OUT = $(LIBPATH)/$(SO_NAME)
 ###############################
 
 ############ LIBS #############
