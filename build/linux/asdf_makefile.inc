@@ -27,7 +27,6 @@ WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-invalid-token-paste \
 				 -Wno-shorten-64-to-32 \
 				 -Wno-sign-conversion \
-				  \
 				 -Wno-float-equal \
 				 -Wno-unused-variable \
 				 -Wno-format-security \
@@ -39,15 +38,16 @@ WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-newline-eof \
 				 -Wno-switch-enum \
 				 -Wno-missing-braces \
-				 -Wno-writable-strings
+				 -Wno-writable-strings \
+				 -Wno-comment
 
 
 CLANG_EXTENSIONS := -fms-extensions
 DAS_FLAGS 		 := $(WARNING_FLAGS) $(CLANG_EXTENSIONS) -g -pedantic -fmacro-backtrace-limit=20
-CFLAGS  		 := $(DAS_FLAGS) -fPIC
+CFLAGS  		 := $(DAS_FLAGS)
 # use deffered assignment for CPPFLAGS so it will include anything CFLAGS gets later
-CPPFLAGS 		  = $(CFLAGS) -fPIC -stdlib=libstdc++ -std=c++1z
-LINK_FLAGS 		 := $(DAS_FLAGS) -L/usr/lib
+CPPFLAGS 		  = $(CFLAGS) -stdlib=libstdc++ -std=c++1z
+LINK_FLAGS       := -L/usr/lib
 
 ifndef PROJNAME
 $(error PROJNAME not defined)
@@ -61,7 +61,7 @@ $(error PROJPATH must be defined);
 endif
 
 BINPATH		:= $(PROJPATH)/bin/linux
-LIBPATH		:= $(PROJPATH)/lib
+LIBPATH		:= $(PROJPATH)/lib/linux
 EXTPATH		:= $(PROJPATH)/ext
 OBJPATH		:= $(PROJPATH)/obj/$(PROJNAME)/linux
 

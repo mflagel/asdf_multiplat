@@ -6,17 +6,19 @@ PROJNAME = asdf_multiplat
 # INVOCATION = 1
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
-
 PROJPATH = .
 
 include $(SELF_DIR)/../build/linux/asdf_makefile.inc
+
+SO_NAME = libasdfm.so
+BIN_OUT = $(BINPATH)/$(SO_NAME)
 ###############################
 
 ############ LIBS #############
 LIBS += sdl2 gl glew ftgl
 
-PKG_CFLAGS := -Iusr/include/SOIL
-PKG_LFLAGS += -L$(LIBPATH) -lSOIL
+CFLAGS += -Iusr/include/SOIL
+LINK_FLAGS += -L$(LIBPATH) -lSOIL
 ###############################
 
 ########## INCLUDES ###########

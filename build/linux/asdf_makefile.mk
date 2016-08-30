@@ -51,17 +51,33 @@ ifndef LINK
 $(error no Linker specified);
 endif
 
-# ifdef EXECUTABLE
-# $(error Use BIN_OUT instead of EXECUTABLE)
-# endif
-# ifndef BIN_OUT
-# $(no output filename specified)
-# endif
-# ifeq ($(suffix $(BIN_OUT)),.so)
-# CFLAGS += -fpic
-# LINK_FLAGS += -shared -Wl
-# $(info Compiling $(BIN_OUT) as shared object)
-# endif
+
+
+
+
+ifndef BIN_OUT
+BIN_OUT = $(BINPATH)/$(PROJNAME)
+$(info No output filename specified, using $(BINPATH)/$(PROJNAME))
+endif
+
+
+ifndef TARGET_TYPE
+
+ifeq ($(suffix $(BIN_OUT)),.so)
+CFLAGS += -fpic -g
+LINK_FLAGS += -shared -Wl,-soname,$(SO_NAME) -lc
+TARGET_TYPE=shared
+$(info Compiling $(BIN_OUT) as shared object)
+else ifeq ($(suffix $(BIN_OUT)),.a)
+TARGET_TYPE=static
+$(info Compiling $(BIN_OUT) as static library)
+else
+TARGET_TYPE=executable
+endif
+
+endif
+
+
 
 ifeq ($(INVOCATION),1)
 CFLAGS += -v
@@ -82,20 +98,13 @@ $(info Requiring clean to finish before before objects are compiled)
 $(OBJECTS): clean
 endif
 
+
 all: $(PROJNAME)
 	@echo -e '\e[1;32m'----- $(PROJNAME) End ------- $(ENDCOLOR)
 
-# shared: intro $(PROJNAME)_SHARED
-# 	@echo -e '\e[1;32m'----- $(PROJNAME) SHARED End ------- $(ENDCOLOR)
-# dynamic: shared
-
-# static: intro $(PROJNAME)_STATIC
-# 	@echo -e '\e[1;32m'----- $(PROJNAME) STATIC End ------- $(ENDCOLOR)
-# archive: static
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
-	@echo travis-ci: $(TRAVIS)
 	@echo -e $(CYAN) Compilers:$(ENDCOLOR) cc:$(CC)   cxx:$(CXX)
 	# $(CC) --version
 	$(CXX) --version
@@ -105,46 +114,43 @@ intro:
 	@echo 
 	@echo Current Working Dir:
 	pwd
+	printf "\n"
 	@echo Libs: $(LIBS)
-	# @echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
-	# @echo CFLAGS: $(CFLAGS)
-	# @echo CPPFLAGS: $(CPPFLAGS)
+	@echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
+	printf "\n"
+	@echo CFLAGS: $(CFLAGS)
+	printf "\n"
+	@echo CPPFLAGS: $(CPPFLAGS)
+	printf "\n"
 	# @echo LINK_FLAGS: $(LINK_FLAGS)
 
 	# @echo Objs: $(OBJECTS)
 	# @echo Srcs: $(SOURCES)
-	@echo Includes: $(_INCLUDES)
-	@echo SysIncludes: $(SYSINCLUDES)
+	# @echo Includes: $(_INCLUDES)
+	# @echo SysIncludes: $(SYSINCLUDES)
 	@echo -e '\e[1;32m'-------------------------------- $(ENDCOLOR)
 	@echo -e $(CYAN)--------- COMPILING --------- $(ENDCOLOR)
 
+
 rebuild: clean all
 
+
 $(PROJNAME): $(OBJECTS)
-	@echo -e $(YELLOW)---------- LINKING  --------- $(ENDCOLOR)
-	@echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
+	@echo -e $(YELLOW)---------- LINKING $(TARGET_TYPE)  --------- $(ENDCOLOR)
+
+	# For whatever reason putting slashes to force everything on one line
+	# is the only way for this to not fail
+	if [ "$(TARGET_TYPE)" = 'static' ]; then                 \
+		echo "Archiving Target $(BIN_OUT)";                  \
+		ar rcsv $(BIN_OUT) $(OBJECTS) ;                      \
+	else                                                     \
+		echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);  \
+		$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);       \
+	fi
+
 	@echo -e $(YELLOW)------------------- $(ENDCOLOR)
-	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)
 
-# $(PROJNAME)_SHARED: $(OBJECTS)
-# 	@echo -e $(YELLOW)---------- LINKING SHARED LIBRARY  --------- $(ENDCOLOR)
-# 	@$(CXX) -shared -Wl,-soname,lib$(PROJNAME).so $(LINK_FLAGS) $(OBJECTS) -o $(LIBPATH)/lib$(PROJNAME).so
 
-# $(PROJNAME)_STATIC: $(OBJECTS)
-# 	@echo $(PROJNAME) : Creating Static Lib
-# 	ar -cr lib$(PROJNAME).a $(OBJECTS)
-# 	@mv lib$(PROJNAME).a $(LIBPATH)/lib$(PROJNAME).a
-
-# link:
-# 	@echo -e $(YELLOW)---------- LINKING  --------- $(ENDCOLOR)
-# 	@echo OBJPATH: $(OBJPATH)
-# 	# @echo Libs: $(LIBS)
-# 	# @echo Lib Flags: $(PKG_CFLAGS) $(PKG_LFLAGS)
-# 	@echo LINK_FLAGS: $(LINK_FLAGS)
-	
-# 	@$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BINPATH)/$(PROJNAME)	
-
-# Clean
 clean:
 	@echo $(PROJNAME) : Nuking obj folder
 	@-\rm $(OBJPATH)/*

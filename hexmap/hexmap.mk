@@ -16,35 +16,7 @@ BINPATH = $(PROJPATH)/$(PROJNAME)/bin/linux/x86
 ############ LIBS #############
 LIBS += sdl2 gl glew ftgl
 
-LINK_FLAGS += -L$(LIBPATH)
-
-ASDFDIR = $(PROJPATH)/obj/asdf_multiplat/linux
-
-# this feels super janky
-ASDFASDF = $(ASDFDIR)/asdf_multiplat.o          \
-		   $(ASDFDIR)/spritebatch.o             \
-		   $(ASDFDIR)/ui_base.o                 \
-		   $(ASDFDIR)/content_manager.o         \
-		   $(ASDFDIR)/shader.o                  \
-		   $(ASDFDIR)/polygon.o                 \
-		   $(ASDFDIR)/gl_state.o                \
-		   $(ASDFDIR)/gl_resources.o            \
-		   $(ASDFDIR)/utilities.o               \
-		   $(ASDFDIR)/camera.o                  \
-		   $(ASDFDIR)/texture.o                 \
-		   $(ASDFDIR)/input_controller.o        \
-		   $(ASDFDIR)/keyboard.o                \
-		   $(ASDFDIR)/mouse.o                   \
-		   $(ASDFDIR)/texture_bank.o            \
-		   $(ASDFDIR)/texture_atlas.o           \
-		   # $(ASDFDIR)/stdafx.o
-
-LINK_FLAGS += $(ASDFASDF)
-
-# --- WTF ---
-# attempt to open ~/Programming/AsdfMultiplat/lib/libasdf.so failed
-PKG_LFLAGS += -L$(LIBPATH) \
-		      -lSOIL
+LINK_FLAGS += -L$(LIBPATH) -rpath $(LIBPATH) -lasdfm -lSOIL
 ###############################
 
 ########## INCLUDES ###########
