@@ -87,7 +87,7 @@ endif
 
 ifeq ($(DEBUG),1)
 $(warning Todo - Implement DEBUG)
-CFLAGS += -DDEBUG
+CFLAGS += -DDEBUG -g
 endif
 
 
