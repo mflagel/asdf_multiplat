@@ -57,13 +57,14 @@ SOURCES = $(SRCPATH)/main/main.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
           $(SRCPATH)/editor/main/editor.cpp \
-          $(SRCPATH)/editor/main/input.cpp
+          $(SRCPATH)/editor/main/input.cpp \
+          $(SRCPATH)/editor/command_actions/command_actions.cpp
 
 EXT_SOURCES = $(EXTPATH)/cJSON/cJSON.c
 
 SOURCES += $(EXT_SOURCES)
 
-SRC_FOLDERS += main data ui editor/main ../../ext/cJSON
+SRC_FOLDERS += main data ui editor/main editor/command_actions ../../ext/cJSON
 ###############################
 
 # SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
