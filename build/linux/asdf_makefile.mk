@@ -145,6 +145,7 @@ $(PROJNAME): $(OBJECTS)
 		ar rcsv $(BIN_OUT) $(OBJECTS) ;                      \
 	else                                                     \
 		echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);  \
+		printf "\nErrors:\n";                \
 		$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);       \
 	fi
 
