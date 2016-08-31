@@ -55,8 +55,6 @@ namespace editor
         }
     }
 
-
-
     void resize_grid_action_t::execute()
     {
         
@@ -66,7 +64,6 @@ namespace editor
     {
 
     }
-
 }
 }
 }
