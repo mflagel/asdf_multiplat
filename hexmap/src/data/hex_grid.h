@@ -42,6 +42,18 @@ namespace data
 
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>;
 
+    enum resize_x_direction_e
+    {
+          resize_leftwards
+        , resize_rightwards
+    };
+
+    enum resize_y_direction_e
+    {
+          resize_upwards
+        , resize_downwards
+    };
+
     struct hex_grid_t
     {
         glm::ivec2 size;
@@ -60,18 +72,6 @@ namespace data
                     f(chunks[x][y]);
                 }
             }
-        }
-
-        enum resize_x_direction_e
-        {
-              resize_leftwards
-            , resize_rightwards
-        }
-
-        enum resize_y_direction_e
-        {
-              resize_upwards
-            , resize_downwards
         }
 
         hex_grid_t(glm::ivec2 size);

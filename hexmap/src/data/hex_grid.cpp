@@ -66,18 +66,19 @@ namespace data
     /// Resize by allocating an entirely new hex-grid and copying the data over
     void resize_by_copy(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e)
     {
-        
+        //TODO: create new array of chunks with new size and copy data
+        // sounds expensive as hell
     }
 
     void hex_grid_t::resize(glm::ivec2 new_size, resize_x_direction_e xdir, resize_y_direction_e ydir)
     {
         if(new_size.x > size.x && new_size.y > size.y)  //grow both
         {
-            grow(new_size - old_size, xdir, ydir);
+            grow(new_size - size, xdir, ydir);
         }
         else if(new_size.x < size.x && new_size.y < size.y)  //shrink both
         {
-            shrink(new_size - old_size, xdir, ydir);
+            shrink(new_size - size, xdir, ydir);
         }
         else if(new_size.x > size.x && new_size.y < size.y)  //shrink y, grow x
         {
@@ -112,6 +113,7 @@ namespace data
     }
 
 
+/*
     // WIP
     void add_columns(size_t num_cols, resize_x_direction_e dir)
     {
@@ -171,6 +173,7 @@ namespace data
         //if no chunks exist, create a column to start
         
     }
+    */
 
 
     bool hex_grid_t::is_in_bounds(ivec2 hx) const
