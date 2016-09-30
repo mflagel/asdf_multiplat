@@ -1,0 +1,4 @@
+#ifndef ASDF_QT_RENDERER_H
+#define ASDF_QT_RENDERER_H
+
+#endif // ASDF_QT_RENDERER_H
