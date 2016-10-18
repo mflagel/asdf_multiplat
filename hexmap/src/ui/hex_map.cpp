@@ -173,8 +173,8 @@ namespace ui
 
         hex_gl_data.set_data(chunk);
 
-        float chunk_width_cells = hex_width_d4 * 3 * data::max_chunk_width;
-        float chunk_height_cells = hex_height * data::max_chunk_height;
+        float chunk_width_cells = hex_width_d4 * 3 * chunk.allocated_size.x;
+        float chunk_height_cells = hex_height * chunk.allocated_size.y;
 
         shader->world_matrix[3][0] = chunk.position.x * chunk_width_cells;
         shader->world_matrix[3][1] = chunk.position.y * chunk_height_cells;
@@ -218,7 +218,8 @@ namespace ui
 
     void hex_buffer_data_t::set_data(data::hex_grid_chunk_t const& chunk)
     {
-        std::array<data::hex_tile_id_t, data::max_chunk_width * data::max_chunk_height> cell_data;
+        //std::array<data::hex_tile_id_t, data::max_chunk_width * data::max_chunk_height> cell_data;
+        std::vector<data::hex_tile_id_t> cell_data(chunk.size.x * chunk.size.y);
 
         for(size_t x = 0; x < chunk.size.x; ++x)
         {
