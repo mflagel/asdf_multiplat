@@ -20,7 +20,7 @@ namespace editor
             , place_spline
             , num_tool_types
         };
-        
+
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;

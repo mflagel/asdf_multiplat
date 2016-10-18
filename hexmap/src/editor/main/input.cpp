@@ -132,53 +132,69 @@ namespace editor
                 default: return;
             }
         }
-
-
-        switch(key)
+        else if ((keysm.mod & KMOD_ALT) > 0)
         {
-            case SDLK_1: current_tile_id = 1; break;
-            case SDLK_2: current_tile_id = 2; break;
-            case SDLK_3: current_tile_id = 3; break;
-            case SDLK_4: current_tile_id = 4; break;
-            case SDLK_5: current_tile_id = 5; break;
-            case SDLK_6: current_tile_id = 6; break;
-            case SDLK_7: current_tile_id = 7; break;
-            case SDLK_8: current_tile_id = 8; break;
-            case SDLK_9: current_tile_id = 9; break;
-            case SDLK_0: current_tile_id = 0; break;
+            switch(key)
+            {
+                case SDLK_1: editor.set_tool(editor_t::select);            break;
+                case SDLK_2: editor.set_tool(editor_t::terrain_paint);     break;
+                case SDLK_3: editor.set_tool(editor_t::place_object);      break;
+                case SDLK_4: editor.set_tool(editor_t::place_spline);      break;
+            }
 
-            case SDLK_KP_1: current_object_id = 1; break;
-            case SDLK_KP_2: current_object_id = 2; break;
-            case SDLK_KP_3: current_object_id = 3; break;
-            case SDLK_KP_4: current_object_id = 4; break;
-            case SDLK_KP_5: current_object_id = 5; break;
-            case SDLK_KP_6: current_object_id = 6; break;
-            case SDLK_KP_7: current_object_id = 7; break;
-            case SDLK_KP_8: current_object_id = 8; break;
-            case SDLK_KP_9: current_object_id = 9; break;
-            case SDLK_KP_0: current_object_id = 0; break;
+            LOG("current tool: %s", tool_type_strings[editor.current_tool]);
+        }
+        else
+        {
+            switch(key)
+            {
+                case SDLK_1: current_tile_id = 1; break;
+                case SDLK_2: current_tile_id = 2; break;
+                case SDLK_3: current_tile_id = 3; break;
+                case SDLK_4: current_tile_id = 4; break;
+                case SDLK_5: current_tile_id = 5; break;
+                case SDLK_6: current_tile_id = 6; break;
+                case SDLK_7: current_tile_id = 7; break;
+                case SDLK_8: current_tile_id = 8; break;
+                case SDLK_9: current_tile_id = 9; break;
+                case SDLK_0: current_tile_id = 0; break;
 
-            case SDLK_KP_PERIOD: current_object_id = -1; break;
+                case SDLK_KP_1: current_object_id = 1; break;
+                case SDLK_KP_2: current_object_id = 2; break;
+                case SDLK_KP_3: current_object_id = 3; break;
+                case SDLK_KP_4: current_object_id = 4; break;
+                case SDLK_KP_5: current_object_id = 5; break;
+                case SDLK_KP_6: current_object_id = 6; break;
+                case SDLK_KP_7: current_object_id = 7; break;
+                case SDLK_KP_8: current_object_id = 8; break;
+                case SDLK_KP_9: current_object_id = 9; break;
+                case SDLK_KP_0: current_object_id = 0; break;
+
+                case SDLK_KP_PERIOD: current_object_id = -1; break;
 
 
-            case sdl2_input_map[cancel_action]:
-                //TODO
-                break;
+                case sdl2_input_map[cancel_action]:
+                    //TODO
+                    break;
 
-            case sdl2_input_map[set_tool_select]:
-                editor.set_tool(editor_t::select);
-                break;
-            case sdl2_input_map[set_tool_terrain_paint]:
-                editor.set_tool(editor_t::terrain_paint);
-                break;
-            case sdl2_input_map[set_tool_place_object]:
-                editor.set_tool(editor_t::place_object);
-                break;
-            case sdl2_input_map[set_tool_place_spline]:
-                editor.set_tool(editor_t::place_spline);
-                break;
+                case sdl2_input_map[set_tool_select]:
+                    editor.set_tool(editor_t::select);
+                    break;
+                case sdl2_input_map[set_tool_terrain_paint]:
+                    editor.set_tool(editor_t::terrain_paint);
+                    break;
+                case sdl2_input_map[set_tool_place_object]:
+                    editor.set_tool(editor_t::place_object);
+                    break;
+                case sdl2_input_map[set_tool_place_spline]:
+                    editor.set_tool(editor_t::place_spline);
+                    break;
 
-            default: return;
+                default: return;
+            }
+
+            LOG("current tile_id: %d", current_tile_id);
+            LOG("current object_id: %d", current_object_id);
         }
     }
 
