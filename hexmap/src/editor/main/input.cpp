@@ -49,31 +49,91 @@ namespace editor
 
         if(is_sdl_mouse_event(event))
         {
-            if(mouse_input->mouse_button_state(mouse_left))
-            {
-                auto mw = world_coords();
-                auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
-
-                LOG("mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
-
-                if(hex_map->hex_grid.is_in_bounds(hx))
-                {
-                    auto& cell = hex_map->hex_grid.cell_at(hx);
-                    cell.tile_id = current_tile_id;
-                    return true;
-                }
-            }
+            return on_mouse_event(event);
         }
         else if(is_sdl_keyboard_event(event))
         {
-            on_key_down(event->key.keysym.sym);
+            if(event->key.type == SDL_KEYDOWN)
+                on_key_down(event->key.keysym);
+            // else
+            //     on_key_up(event->key.keysym);
         }        
 
         return false;
     }
 
-    void input_handler_t::on_key_down(SDL_Keycode key)
+    bool input_handler_t::on_mouse_event(SDL_Event* event)
     {
+        auto mw = world_coords();
+        auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
+
+        //LOG_IF(mouse_input->mouse_button_state(mouse_left)
+        //    , "mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
+
+        switch(editor.current_tool)
+        {
+            case editor_t::select:
+            {
+                //todo
+
+                break;
+            }
+
+            case editor_t::terrain_paint:
+            {
+                if(mouse_input->mouse_button_state(mouse_left))
+                {
+                    editor.paint_at_coord(hx);
+                }
+                else if(mouse_input->mouse_button_state(mouse_right))
+                {
+                }
+
+                break;
+            }
+
+            case editor_t::place_object:
+            {
+                break;
+            }
+
+            case editor_t::place_spline:
+            {
+                break;
+            }
+        }
+
+
+        return false;
+    }
+
+    void input_handler_t::on_key_down(SDL_Keysym keysm)
+    {
+        auto& key = keysm.sym;
+
+        //bool mod_ctrl_only = keysm.mod == KMOD_LCTRL || keysm.mod == KMOD_RCTRL;
+        bool mod_ctrl_only = (keysm.mod & KMOD_CTRL) > 0;
+
+        //modifier key combos first
+        if(mod_ctrl_only)
+        {
+            switch(key)
+            {
+                //save on ctrl+s
+                case SDLK_s:
+                    editor.save_action();
+                    return;
+
+                //load on ctrl+o
+                case SDLK_o:
+                    editor.load_action();
+                    return;
+
+                default: return;
+            }
+        }
+
+
         switch(key)
         {
             case SDLK_1: current_tile_id = 1; break;
@@ -118,10 +178,8 @@ namespace editor
                 editor.set_tool(editor_t::place_spline);
                 break;
 
-
+            default: return;
         }
-
-        //LOG("%i", key);
     }
 
 }
