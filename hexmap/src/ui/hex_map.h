@@ -9,6 +9,7 @@
 
 #include "main/hexagon_input.h"
 #include "data/hex_grid.h"
+#include "data/map_objects.h"
 
 
 using color_t = glm::vec4;
@@ -71,7 +72,7 @@ namespace ui
 
     struct hex_map_t
     {
-        data::hex_grid_t& hex_grid;
+        data::hex_map_t& map_data;
 
         camera_t camera;
         asdf::input::input_handler_sdl2_t camera_controller;
@@ -86,7 +87,7 @@ namespace ui
         hex_buffer_data_t hex_gl_data;
 
         
-        hex_map_t(data::hex_grid_t& hex_grid);
+        hex_map_t(data::hex_map_t& _map_data);
 
         void set_tile_colors(std::array<glm::vec4, num_tile_colors> const&);
 
@@ -97,6 +98,7 @@ namespace ui
         void render_chunk(data::hex_grid_chunk_t const&);
         void render_grid_overlay(glm::ivec2 grid_size);
         void render_hexagons(glm::ivec2 grid_size, GLuint draw_mode);
+        void render_map_objects();
     };
 }
 }

@@ -24,7 +24,7 @@ namespace input
     
     hex_map_input_t::hex_map_input_t(ui::hex_map_t* _hex_map, camera_t& _camera)
     : hex_map(_hex_map)
-    , hex_grid(_hex_map->hex_grid)
+    , hex_grid(_hex_map->map_data.hex_grid)
     , camera(_camera)
     , mouse_input(make_unique<sdl2_mouse_input_t>())
     {

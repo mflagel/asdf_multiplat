@@ -34,8 +34,8 @@ namespace ui
     gl_vertex_spec_<vertex_attrib::position3_t/*, vertex_attrib::color_t*/> hexagon_vertex_t::vertex_spec;
 
 
-    hex_map_t::hex_map_t(data::hex_grid_t& _hex_grid)
-    : hex_grid(_hex_grid)
+    hex_map_t::hex_map_t(data::hex_map_t& _map_data)
+    : map_data(_map_data)
     {
 
         shader = Content.shaders["hexmap"];
@@ -119,8 +119,8 @@ namespace ui
 
     void hex_map_t::render()
     {
-        ASSERT(hex_grid.chunks.size(), "");
-        ASSERT(hex_grid.chunks[0].size(), "");
+        ASSERT(map_data.hex_grid.chunks.size(), "");
+        ASSERT(map_data.hex_grid.chunks[0].size(), "");
 
         auto w = static_cast<float>(app.settings.resolution_width);
         auto h = static_cast<float>(app.settings.resolution_height);  ///FIXME subtract size of window title bar if necessary
@@ -134,14 +134,14 @@ namespace ui
         GL_State->bind(shader);
         glUniform1i(shader->uniform("ApplyTexture"), apply_hexagon_textures);
 
-        hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
+        map_data.hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
         {
             render_chunk(chunk);
         });
 
         
         glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
-        render_grid_overlay(hex_grid.size);
+        render_grid_overlay(map_data.hex_grid.size);
         
 
 

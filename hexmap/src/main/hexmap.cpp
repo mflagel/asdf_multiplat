@@ -21,7 +21,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
-    : hex_grid(ivec2(15, 16))
+    : map_data(ivec2(15, 16))
     {
     }
 
@@ -36,7 +36,7 @@ namespace hexmap
         auto shader = Content.create_shader("hexmap", 330);
         Content.shaders.add_resource(shader);
 
-        hex_map = make_unique<ui::hex_map_t>(hex_grid);
+        rendered_map = make_unique<ui::hex_map_t>(map_data);
 
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
     }
@@ -49,19 +49,19 @@ namespace hexmap
             LOG("**Time delta bigger than %f seconds", max_delta_time);
         }
 
-        hex_map->update(dt);
+        rendered_map->update(dt);
     }
 
     void hexmap_t::render()
     {
-        hex_map->render();
+        rendered_map->render();
 
         LOG_IF(CheckGLError(), "Error during hex_map_t::render()");
     }
 
     void hexmap_t::on_event(SDL_Event* event)
     {
-        hex_map->on_event(event);
+        rendered_map->on_event(event);
     }
 
 }

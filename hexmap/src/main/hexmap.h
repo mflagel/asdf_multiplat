@@ -5,7 +5,7 @@
 #include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/utilities/utilities.h"
 
-#include "data/hex_grid.h"
+#include "data/hex_map.h"
 #include "ui/hex_map.h"
 
 namespace asdf
@@ -14,8 +14,8 @@ namespace hexmap
 {
     struct hexmap_t : asdf_specific_t
     {
-        data::hex_grid_t hex_grid;
-        std::unique_ptr<ui::hex_map_t> hex_map;
+        data::hex_map_t map_data;
+        std::unique_ptr<ui::hex_map_t> rendered_map;
 
         hexmap_t();
         virtual ~hexmap_t() = default;
