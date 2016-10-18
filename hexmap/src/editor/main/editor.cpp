@@ -22,11 +22,13 @@ namespace editor
     void editor_t::save_action()
     {
         hex_grid.save_to_file("test_save.hxm");
+        LOG("map saved");
     }
 
     void editor_t::load_action()
     {
         hex_grid.load_from_file("test_save.hxm");
+        LOG("map loaded");
     }
 
     void editor_t::on_event(SDL_Event* event)
