@@ -45,13 +45,13 @@ namespace input
         return vec2(hex_map->camera.screen_to_world_coord(vec2(mouse_input->mouse_position)));
     }
 
-        /*       __
-                /   
-            __ /    
-               \    
+        /*        __
+        \  0,1  /   
+         \ ___ /  1,1
+         /     \    
       hex  0,0  \ __
     world  0,0  /
-            __ /
+         \ ___ /  1,0
                \
                 \ __
               
@@ -72,14 +72,14 @@ namespace input
         //
         auto const& ms = mouse_pos;
         auto const& mw = mouse_world;
-        LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
+        //LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
         //
 
         //convert mouse world coords to a hexagon coord
         float sub_column = mouse_world.x / hex_width_d4;
         float sub_row = mouse_world.y / hex_height_d2;
 
-        LOG("subcol: %f   subrow: %f", sub_column, sub_row);
+        //LOG("subcol: %f   subrow: %f", sub_column, sub_row);
 
         int column = static_cast<int>(glm::floor(sub_column / 3.0f));
         int row    = static_cast<int>(glm::floor(mouse_world.y / hex_height));
@@ -108,7 +108,7 @@ namespace input
             //((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x))
             
             
-            LOG("side: %f", side);
+            //LOG("side: %f", side);
             column -= 1 * (side < 0);
         }
 
