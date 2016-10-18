@@ -19,6 +19,7 @@ namespace editor
         , set_tool_terrain_paint
         , set_tool_place_object
         , set_tool_place_spline
+
         , num_actions
     };
 
@@ -42,7 +43,8 @@ namespace editor
 
         bool on_event(SDL_Event* event) override;
 
-        void on_key_down(SDL_Keycode key);
+        bool on_mouse_event(SDL_Event* event);
+        void on_key_down(SDL_Keysym key);
     };
 }
 }
