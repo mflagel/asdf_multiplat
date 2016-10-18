@@ -92,12 +92,18 @@ namespace editor
                 break;
             }
 
-            case editor_t::place_object:
+            case editor_t::place_objects:
             {
+                if(event->type == SDL_MOUSEBUTTONDOWN)
+                {
+                    //todo: handle snapping to hex regions
+
+                    editor.place_object(mw);
+                }
                 break;
             }
 
-            case editor_t::place_spline:
+            case editor_t::place_splines:
             {
                 break;
             }
@@ -138,11 +144,9 @@ namespace editor
             {
                 case SDLK_1: editor.set_tool(editor_t::select);            break;
                 case SDLK_2: editor.set_tool(editor_t::terrain_paint);     break;
-                case SDLK_3: editor.set_tool(editor_t::place_object);      break;
-                case SDLK_4: editor.set_tool(editor_t::place_spline);      break;
+                case SDLK_3: editor.set_tool(editor_t::place_objects);      break;
+                case SDLK_4: editor.set_tool(editor_t::place_splines);      break;
             }
-
-            LOG("current tool: %s", tool_type_strings[editor.current_tool]);
         }
         else
         {
@@ -184,10 +188,10 @@ namespace editor
                     editor.set_tool(editor_t::terrain_paint);
                     break;
                 case sdl2_input_map[set_tool_place_object]:
-                    editor.set_tool(editor_t::place_object);
+                    editor.set_tool(editor_t::place_objects);
                     break;
                 case sdl2_input_map[set_tool_place_spline]:
-                    editor.set_tool(editor_t::place_spline);
+                    editor.set_tool(editor_t::place_splines);
                     break;
 
                 default: return;

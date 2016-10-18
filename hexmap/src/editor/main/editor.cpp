@@ -59,6 +59,11 @@ namespace editor
         }
     }
 
+    void editor_t::place_object(glm::vec2 position)
+    {
+        
+    }
+
 }
 }
 }
