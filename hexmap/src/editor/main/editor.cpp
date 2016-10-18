@@ -19,6 +19,16 @@ namespace editor
         input = make_unique<input_handler_t>(*this);
     }
 
+    void editor_t::save_action()
+    {
+        hex_grid.save_to_file("test_save.hxm");
+    }
+
+    void editor_t::load_action()
+    {
+        hex_grid.load_from_file("test_save.hxm");
+    }
+
     void editor_t::on_event(SDL_Event* event)
     {
         hexmap_t::on_event(event);
@@ -34,6 +44,17 @@ namespace editor
         current_tool = new_tool;
 
         LOG("current tool: %s", tool_type_strings[current_tool]);
+    }
+
+
+    bool editor_t::paint_at_coord(glm::ivec2 coord)
+    {
+        if(hex_map->hex_grid.is_in_bounds(coord))
+        {
+            auto& cell = hex_map->hex_grid.cell_at(coord);
+            cell.tile_id = input->current_tile_id;
+            return true;
+        }
     }
 
 }

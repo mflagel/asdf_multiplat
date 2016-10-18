@@ -21,18 +21,21 @@ namespace editor
             , num_tool_types
         };
         
-        tool_type_e current_tool = select;
+        tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
 
         editor_t();
-
         void init() override;
+
+        void save_action();
+        void load_action();
 
         void on_event(SDL_Event*) override;
 
-
         void set_tool(tool_type_e const& new_tool);
+        
+        bool paint_at_coord(glm::ivec2 coord);
     };
 
 
