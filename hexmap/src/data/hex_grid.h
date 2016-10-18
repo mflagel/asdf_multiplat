@@ -11,8 +11,8 @@ namespace hexmap
 {
 namespace data
 {
-    constexpr size_t max_chunk_width  = 10;
-    constexpr size_t max_chunk_height = 10;
+    constexpr size_t new_chunk_width  = 10;
+    constexpr size_t new_chunk_height = 10;
 
 
     struct hex_grid_chunk_t;
@@ -21,11 +21,11 @@ namespace data
 
     struct hex_grid_cell_t
     {
-        hex_tile_id_t tile_id = 0;
+        hex_tile_id_t tile_id = 1; //temp setting as 1 to for saving/loading
     };
 
     
-    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>;
+    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>; //row of columns
 
     struct hex_grid_chunk_t
     {
@@ -35,21 +35,23 @@ namespace data
 
         hex_cells_t cells;
 
-        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(max_chunk_width, max_chunk_height));
+        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(new_chunk_width, new_chunk_height));
 
         hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
     };
 
 
-    using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>;
+    using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>; // row of columns
 
     struct hex_grid_t
     {
-        glm::ivec2 size;
+        glm::ivec2 size;  //I cant remember why this is an ivec instead of a uvec
         hex_chunks_t chunks;
 
         size_t num_chunks() const { return size.x * size.y; }
 
+        /// WARNING: Messing with this function will affect saving/loading
+        ///          Chunks may not load the same order they were saved
         template<typename F>
         void for_each_chunk(F f)
         {
@@ -57,19 +59,40 @@ namespace data
             {
                 for(size_t y = 0; y < chunks[x].size(); ++y)
                 {
-                    chunks[x][y].position = glm::ivec2(x,y);
+                    chunks[x][y].position = glm::ivec2(x,y);  //.. this might not be the best place for this
                     f(chunks[x][y]);
                 }
             }
         }
 
         hex_grid_t(glm::ivec2 size);
+        hex_grid_t(std::string const& filepath);
+
+        void init(glm::ivec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height));
+
+        void save_to_file(std::string const& filepath);
+        void load_from_file(std::string const& filepath);
 
         bool is_in_bounds(glm::ivec2 hex_coords) const;
 
+        glm::uvec2 chunk_size() const;
         hex_grid_cell_t& cell_at(glm::ivec2 hex_coord);
         glm::ivec2 chunk_coord_from_hex_coord(glm::ivec2) const;
         hex_grid_chunk_t& chunk_from_hex_coord(glm::ivec2);
+
+
+        // cJSON* to_JSON() const;
+        // void from_JSON(cJSON*);
+    };
+
+
+
+    struct hxm_header_t
+    {
+        size_t version = size_t(-1);
+
+        glm::ivec2 map_size;
+        glm::uvec2 chunk_size;
     };
 }
 }
