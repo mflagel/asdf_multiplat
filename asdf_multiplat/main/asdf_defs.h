@@ -10,6 +10,8 @@
 #define LOG(msg, ...) do{printf(msg, ##__VA_ARGS__); printf("\n");} while(0);
 #define LOG_IF(condition, msg, ...) do{ if(condition){LOG(msg, ##__VA_ARGS__);} }while(0);
 
+#define WARN_IF(condition, msg, ...) LOG_IF(condition, msg, ##__VA_ARGS__)
+
 
 
 // Color Stuff
