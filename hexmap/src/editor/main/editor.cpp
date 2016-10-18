@@ -21,13 +21,13 @@ namespace editor
 
     void editor_t::save_action()
     {
-        hex_grid.save_to_file("test_save.hxm");
+        map_data.save_to_file("test_save.hxm");
         LOG("map saved");
     }
 
     void editor_t::load_action()
     {
-        hex_grid.load_from_file("test_save.hxm");
+        map_data.load_from_file("test_save.hxm");
         LOG("map loaded");
     }
 
@@ -51,17 +51,18 @@ namespace editor
 
     bool editor_t::paint_at_coord(glm::ivec2 coord)
     {
-        if(hex_map->hex_grid.is_in_bounds(coord))
+        if(map_data.hex_grid.is_in_bounds(coord))
         {
-            auto& cell = hex_map->hex_grid.cell_at(coord);
-            cell.tile_id = input->current_tile_id;
+            auto& cell = map_data.hex_grid.cell_at(coord);
+            cell.tile_id = current_tile_id;
             return true;
         }
     }
 
     void editor_t::place_object(glm::vec2 position)
     {
-        
+        data::map_object_t obj{current_object_id, position};
+        map_data.objects.push_back(std::move(obj));
     }
 
 }

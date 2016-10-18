@@ -15,7 +15,7 @@ namespace editor
 {
 
     input_handler_t::input_handler_t(editor_t& _editor)
-    : input::hex_map_input_t(_editor.hex_map.get(), _editor.hex_map->camera)
+    : input::hex_map_input_t(_editor.rendered_map.get(), _editor.rendered_map->camera)
     , editor(_editor)
     {
     }
@@ -150,6 +150,9 @@ namespace editor
         }
         else
         {
+            auto& current_tile_id   = editor.current_tile_id;
+            auto& current_object_id = editor.current_object_id;
+
             switch(key)
             {
                 case SDLK_1: current_tile_id = 1; break;

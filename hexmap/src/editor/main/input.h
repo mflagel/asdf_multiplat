@@ -36,9 +36,6 @@ namespace editor
     {
         editor_t& editor;
 
-        int current_tile_id = 0;
-        int current_object_id = 0;
-
         input_handler_t(editor_t& editor);
 
         bool on_event(SDL_Event* event) override;

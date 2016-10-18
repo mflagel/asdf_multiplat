@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <glm/glm.h">
+#include <glm/glm.hpp>
 
 #include "asdf_multiplat/main/asdf_defs.h"
 
@@ -14,18 +14,12 @@ namespace data
     {
         uint64_t id;
 
-        glm::vec3 position;
+        glm::vec2 position;
     };
 
     struct spline_t
     {
 
-    };
-
-    struct map_objects_t
-    {
-        std::vector<map_object_t> objects;
-        std::vector<spline_t> splines;
     };
 }
 }

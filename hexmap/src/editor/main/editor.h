@@ -34,8 +34,15 @@ namespace editor
             , num_tool_types
         };
 
-        tool_type_e current_tool = terrain_paint;
+        //terrain
+        int current_tile_id = 0;
+
+        //objects
+        int current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
+
+
+        tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
 

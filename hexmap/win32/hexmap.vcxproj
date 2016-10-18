@@ -21,6 +21,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\ext\cJSON\cJSON.c" />
     <ClCompile Include="..\src\data\hex_grid.cpp" />
+    <ClCompile Include="..\src\data\hex_map.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)data_%(Filename)</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\src\editor\main\editor.cpp" />
     <ClCompile Include="..\src\editor\main\input.cpp" />
     <ClCompile Include="..\src\main\hexagon_input.cpp" />
@@ -32,6 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\data\hex_grid.h" />
+    <ClInclude Include="..\src\data\hex_map.h" />
+    <ClInclude Include="..\src\data\map_objects.h" />
     <ClInclude Include="..\src\editor\main\editor.h" />
     <ClInclude Include="..\src\editor\main\input.h" />
     <ClInclude Include="..\src\main\hexagon_input.h" />
