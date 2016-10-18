@@ -10,18 +10,32 @@ namespace hexmap {
 namespace editor
 {
 
+    enum hex_region_e
+    {
+          hex_no_region
+        , hex_top_left
+        , hex_top_right
+        , hex_left
+        , hex_right
+        , hex_bottom_left
+        , hex_bottom_right
+        , hex_center
+        , num_hex_regions
+    };
+
     struct editor_t : hexmap_t
     {
         enum tool_type_e
         {
               select = 0
             , terrain_paint
-            , place_object
-            , place_spline
+            , place_objects
+            , place_splines
             , num_tool_types
         };
 
         tool_type_e current_tool = terrain_paint;
+        hex_region_e current_snap_point = hex_no_region;
 
         std::unique_ptr<input_handler_t> input;
 
@@ -36,6 +50,7 @@ namespace editor
         void set_tool(tool_type_e const& new_tool);
         
         bool paint_at_coord(glm::ivec2 coord);
+        void place_object(glm::vec2 position);
     };
 
 
