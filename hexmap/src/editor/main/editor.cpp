@@ -10,6 +10,7 @@ namespace editor
 
     editor_t::editor_t()
     : hexmap_t()
+    , action_stack(*this)
     {}
 
     void editor_t::init()
@@ -49,7 +50,12 @@ namespace editor
     }
 
 
-    bool editor_t::paint_at_coord(glm::ivec2 coord)
+    void editor_t::paint_terrain_start()
+    {
+        painted_terrain_coords.clear();
+    }
+
+    bool editor_t::paint_terrain_at_coord(glm::ivec2 coord)
     {
         if(map_data.hex_grid.is_in_bounds(coord))
         {
@@ -57,6 +63,18 @@ namespace editor
             cell.tile_id = current_tile_id;
             return true;
         }
+    }
+
+    void editor_t::paint_terrain_end()
+    {
+        action_stack.push(make_unique<paint_tiles_action_t>
+            ( map_data.hex_grid
+            , std::move(painted_terrain_coords)
+            , current_tile_id
+            )
+        );
+
+        painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
     }
 
     void editor_t::place_object(glm::vec2 position)

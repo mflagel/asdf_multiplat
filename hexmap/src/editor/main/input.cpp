@@ -83,7 +83,7 @@ namespace editor
             {
                 if(mouse_input->mouse_button_state(mouse_left))
                 {
-                    editor.paint_at_coord(hx);
+                    editor.paint_terrain_at_coord(hx);
                 }
                 else if(mouse_input->mouse_button_state(mouse_right))
                 {
