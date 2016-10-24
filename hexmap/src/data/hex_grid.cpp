@@ -178,14 +178,14 @@ namespace data
     {
         ASSERT(grow_amount.x >=0 && grow_amount.y >= 0, "");
 
-        if(grow_amount.x > 0)
-        {
-            add_columns(grow_amount.x, xdir);
-        }
-        if(grow_amount.y > 0)
-        {
-            add_rows(grow_amount.y, ydir);
-        }
+        // if(grow_amount.x > 0)
+        // {
+        //     add_columns(grow_amount.x, xdir);
+        // }
+        // if(grow_amount.y > 0)
+        // {
+        //     add_rows(grow_amount.y, ydir);
+        // }
     }
 
     void hex_grid_t::shrink(glm::ivec2 shrink_amount, resize_x_direction_e, resize_y_direction_e)
