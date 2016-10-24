@@ -63,6 +63,7 @@ namespace editor
     paint_tiles_action_t::paint_tiles_action_t(data::hex_grid_t& grid, tile_coord_dict_t tiles, uint32_t new_id)
     : hex_grid(grid)
     , painted_tiles(tiles)
+    , new_tile_id(new_id)
     {
     }
 
