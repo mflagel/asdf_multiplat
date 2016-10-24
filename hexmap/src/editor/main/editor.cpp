@@ -32,6 +32,29 @@ namespace editor
         LOG("map loaded");
     }
 
+    bool editor_t::undo()
+    {
+        if(action_stack.can_undo())
+        {
+            action_stack.undo();
+            return true;
+        }
+
+        return false;
+    }
+
+    bool editor_t::redo()
+    {
+        if(action_stack.can_redo())
+        {
+            action_stack.redo();
+            return true;
+        }
+
+        return false;
+    }
+
+
     void editor_t::on_event(SDL_Event* event)
     {
         hexmap_t::on_event(event);
@@ -55,14 +78,19 @@ namespace editor
         painted_terrain_coords.clear();
     }
 
+    /// If the coord is inside the map, track the old tile_id of that cell
+    /// and then paint it with the editor's current_tile_id
     bool editor_t::paint_terrain_at_coord(glm::ivec2 coord)
     {
         if(map_data.hex_grid.is_in_bounds(coord))
         {
             auto& cell = map_data.hex_grid.cell_at(coord);
+            painted_terrain_coords.insert({coord, cell.tile_id});
             cell.tile_id = current_tile_id;
             return true;
         }
+
+        return false;
     }
 
     void editor_t::paint_terrain_end()

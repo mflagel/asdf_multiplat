@@ -57,6 +57,9 @@ namespace editor
         void save_action();
         void load_action();
 
+        bool undo();
+        bool redo();
+
         void on_event(SDL_Event*) override;
 
         void set_tool(tool_type_e const& new_tool);

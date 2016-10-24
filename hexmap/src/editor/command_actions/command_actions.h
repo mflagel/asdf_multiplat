@@ -43,8 +43,15 @@ namespace editor
     {
         editor_t& editor;
         std::vector<std::unique_ptr<editor_action_t>> actions;
+        std::vector<std::unique_ptr<editor_action_t>> undone_actions;
 
         action_stack_t(editor_t&);
+
+        void undo();
+        void redo();
+
+        bool can_undo() const;
+        bool can_redo() const;
 
         void push(std::unique_ptr<editor_action_t>&&);
         void push_and_execute(std::unique_ptr<editor_action_t>&&);
@@ -73,17 +80,17 @@ namespace editor
         void unexecute() override;
     };
 
-    struct resize_grid_action_t : editor_action_t
-    {
-        data::hex_grid_t& hex_grid;
-        glm::ivec2 prev_size;
-        glm::ivec2 new_size;
+    // struct resize_grid_action_t : editor_action_t
+    // {
+    //     data::hex_grid_t& hex_grid;
+    //     glm::ivec2 prev_size;
+    //     glm::ivec2 new_size;
 
-        //std::vector<__something__> chopped_data; 
+    //     //std::vector<__something__> chopped_data; 
 
-        void execute() override;
-        void unexecute() override;
-    };
+    //     void execute() override;
+    //     void unexecute() override;
+    // };
 
 }
 }
