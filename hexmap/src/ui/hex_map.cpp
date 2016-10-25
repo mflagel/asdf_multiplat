@@ -27,6 +27,8 @@ namespace ui
 
     constexpr char imported_textures_json_filename[] = "imported_textures.json";
 
+    constexpr float px_per_unit = 128.0f;
+    constexpr float units_per_px = 1.0f / px_per_unit;
 
     constexpr int apply_hexagon_textures = 1;
 
@@ -39,6 +41,7 @@ namespace ui
     {
 
         shader = Content.shaders["hexmap"];
+        spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
         //camera_controller.position.x = 5; //5 hexes right
         camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
@@ -144,6 +147,8 @@ namespace ui
         render_grid_overlay(map_data.hex_grid.size);
         
 
+        render_map_objects();
+
 
         //TEST
         // re-importing every frame so I can capture it with nvidia's gfx debugger
@@ -214,6 +219,24 @@ namespace ui
         glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
     }
 
+    void hex_map_t::render_map_objects()
+    {
+        spritebatch.begin(shader->view_matrix, shader->projection_matrix);
+
+        for(auto& obj : map_data.objects)
+        {
+            ASSERT(obj.id < ojects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
+            auto const& atlas_entry = ojects_atlas->atlas_entries[obj.id];
+
+            // rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
+            // spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, obj.scale, obj.rotation);
+
+            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, obj.color, glm::vec2(units_per_px));
+        }
+
+        spritebatch.end();
+    }
+
 
 
     void hex_buffer_data_t::set_data(data::hex_grid_chunk_t const& chunk)
@@ -232,7 +255,7 @@ namespace ui
             }
         }
 
-        //GL_State->bind(*this);
+        GL_State->bind(*this);
         GL_State->buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
 
         ASSERT(!CheckGLError(), "Error setting hexagon buffer data");

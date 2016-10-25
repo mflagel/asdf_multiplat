@@ -6,6 +6,7 @@
 #include "asdf_multiplat/ui/ui_base.h"
 #include "asdf_multiplat/data/texture_bank.h"
 #include "asdf_multiplat/data/texture_atlas.h"
+#include "asdf_multiplat/utilities/spritebatch.h"
 
 #include "main/hexagon_input.h"
 #include "data/hex_grid.h"
@@ -31,10 +32,10 @@ namespace hexmap
 
     constexpr std::array<float, 18> hexagon_points =
     {
-           hex_width_d2,   0.0f,            0.0f   // mid right
+           hex_width_d2,   0.0f,           0.0f   // mid right
         ,  hex_width_d4,  -hex_height_d2,  0.0f   // bottom right
         , -hex_width_d4,  -hex_height_d2,  0.0f   // bottom left
-        , -hex_width_d2,   0.0f,            0.0f   // middle left
+        , -hex_width_d2,   0.0f,           0.0f   // middle left
         , -hex_width_d4,   hex_height_d2,  0.0f   // top left
         ,  hex_width_d4,   hex_height_d2,  0.0f   // top right
     };
@@ -85,6 +86,7 @@ namespace ui
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;
+        spritebatch_t spritebatch; //used to render map objects
 
         
         hex_map_t(data::hex_map_t& _map_data);
