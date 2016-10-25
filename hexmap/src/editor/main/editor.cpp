@@ -61,7 +61,7 @@ namespace editor
 
     void editor_t::place_object(glm::vec2 position)
     {
-        data::map_object_t obj{current_object_id, position};
+        data::map_object_t obj{current_object_id, position, glm::vec4(1), glm::vec2(1,1), 0.0f};
         map_data.objects.push_back(std::move(obj));
     }
 

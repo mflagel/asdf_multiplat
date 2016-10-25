@@ -35,10 +35,10 @@ namespace editor
         };
 
         //terrain
-        int current_tile_id = 0;
+        uint64_t current_tile_id = 0;
 
         //objects
-        int current_object_id = 0;
+        uint64_t current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
 
 
