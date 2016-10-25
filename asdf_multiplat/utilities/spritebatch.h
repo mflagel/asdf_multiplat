@@ -40,12 +40,12 @@ namespace asdf {
     struct sprite_t {
         std::shared_ptr<texture_t> texture;
         glm::vec2   position;
-        rectf_t     src_rect;
+        rect_t     src_rect;
         color_t     color;
         glm::vec2   scale;
         float       rotation;
 
-        sprite_t(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rectf_t const& src_rect, color_t color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0)
+        sprite_t(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0)
             : texture(texture), position(position), src_rect(src_rect), color(color), scale(scale), rotation(rotation) 
         {}
     };
@@ -103,7 +103,7 @@ namespace asdf {
         //void draw(sprite_t const& sprite);
         void draw(std::shared_ptr<texture_t> const& texture, rectf_t dest_rect, color_t const& color = glm::vec4(1.0f), float rotation = 0);
         void draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, color_t const& color = color_t(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0);
-        void draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rectf_t const& src_rect, color_t const& color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0);
+        void draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t const& color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0);
 
         void draw_text(std::string const& text, FTFont* font, size_t face_size, glm::vec2 const& position, color_t color = color_t(1.0f), float rotation = 0);
 

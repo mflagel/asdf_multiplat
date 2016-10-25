@@ -45,8 +45,8 @@ namespace asdf {
         ASSERT(!CheckGLError(), "GL Error before spritebatch_t::begin()");
 
         has_begun = true;
-        spritebatch_shader->view_matrix = std::move(view_matrix);
-        spritebatch_shader->projection_matrix = std::move(projection_matrix);
+        spritebatch_shader->view_matrix = view_matrix;
+        spritebatch_shader->projection_matrix = projection_matrix;
     }
 
 
@@ -61,10 +61,10 @@ namespace asdf {
     }
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
-        rectf_t rect(0, 0, texture->get_width(), texture->get_width());
+        rect_t rect(0, 0, texture->get_width(), texture->get_height());
         draw(texture, position, rect, color, scale, rotation);
     }
-    void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rectf_t const& src_rect, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
+    void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
         // LOG_IF(scale.x == 0 && scale.y == 0, "Drawing a sprite with no scale");
 
@@ -140,6 +140,8 @@ namespace asdf {
         batched_text.clear();
 
         has_begun = false;
+
+        ASSERT(!CheckGLError(), "GL Error in spritebatch_t::end()");
     }
 
 
@@ -171,11 +173,11 @@ namespace asdf {
             float spritehwidth = hwidth * sprite.scale[0];
             float spritehheight = hheight * sprite.scale[1];
 
-
-            float minX = sprite.src_rect.x / texture->get_width();
-            float minY = sprite.src_rect.y / texture->get_height();
-            float maxX = (sprite.src_rect.x + sprite.src_rect.width) / texture->get_width();
-            float maxY = (sprite.src_rect.y + sprite.src_rect.height) / texture->get_height();
+            ///FIXME precision
+            float minX = sprite.src_rect.x / double(texture->get_width());
+            float minY = sprite.src_rect.y / double(texture->get_height());
+            float maxX = (sprite.src_rect.x + sprite.src_rect.width) / double(texture->get_width());
+            float maxY = (sprite.src_rect.y + sprite.src_rect.height) / double(texture->get_height());
 
 
             /*  0 _________ 1
