@@ -57,7 +57,7 @@ namespace asdf
 
     void gl_state_t::bind(vao_t const& vao)
     {
-        LOG_IF(current_vao == vao.id, "vao %i already in use", vao.id);
+        //LOG_IF(current_vao == vao.id, "vao %i already in use", vao.id);
         glBindVertexArray(vao.id);
         current_vao = vao.id;
     }
@@ -77,7 +77,7 @@ namespace asdf
 
     void gl_state_t::bind(gl_buffer_object_t const& buffer)
     {
-        LOG_IF(current_buffers[buffer.target] == buffer.id, "buffer  %i already in use for target %s", buffer.id, gl_buffer_target_strings[buffer.target]);
+        //LOG_IF(current_buffers[buffer.target] == buffer.id, "buffer  %i already in use for target %s", buffer.id, gl_buffer_target_strings[buffer.target]);
 
         glBindBuffer(gl_buffer_target_enum_values[buffer.target], buffer.id);
         current_buffers[buffer.target] = buffer.id;
