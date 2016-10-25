@@ -15,6 +15,9 @@ namespace data
         uint64_t id;
 
         glm::vec2 position;
+        color_t color;// = glm::vec4(1.0f);
+        glm::vec2 scale;// = glm::vec2(1, 1);
+        float rotation;// = 0.0f;
     };
 
     struct spline_t
