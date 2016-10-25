@@ -151,11 +151,8 @@ namespace asdf {
     /* 
     /* Todo: Refactor this function and trim it down
     /************************************************************************/
-    void spritebatch_t::render_batch(shared_ptr<texture_t> const& texture) {        
-
-        const float hwidth = texture->get_width() / 2.0f;
-        const float hheight = texture->get_height() / 2.0f;
-
+    void spritebatch_t::render_batch(shared_ptr<texture_t> const& texture) 
+    {
         size_t numBatchedSprites = 0;
 
         sprite_vertex_t spriteVertices[9001];
@@ -170,6 +167,8 @@ namespace asdf {
             right = rotate(right, -sprite.rotation);
             
             size_t vertNum = numBatchedSprites * 4;
+            float hwidth = sprite.src_rect.width  / 2.0f;
+            float hheight = sprite.src_rect.height / 2.0f;
             float spritehwidth = hwidth * sprite.scale[0];
             float spritehheight = hheight * sprite.scale[1];
 
