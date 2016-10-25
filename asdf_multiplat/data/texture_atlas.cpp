@@ -59,6 +59,8 @@ namespace data
                         , uvec2(cJSON_GetObjectItem(frame_json, "x")->valueint, cJSON_GetObjectItem(frame_json, "y")->valueint)
                         , uvec2(cJSON_GetObjectItem(frame_json, "w")->valueint, cJSON_GetObjectItem(frame_json, "h")->valueint)
                         };
+
+            atlas_entries.push_back(std::move(entry));
         }
         
         cJSON_Delete(root);
