@@ -228,10 +228,8 @@ namespace ui
             ASSERT(obj.id < ojects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
             auto const& atlas_entry = ojects_atlas->atlas_entries[obj.id];
 
-            // rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
-            // spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, obj.scale, obj.rotation);
-
-            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, obj.color, glm::vec2(units_per_px));
+            rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
+            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, obj.scale * glm::vec2(units_per_px), obj.rotation);
         }
 
         spritebatch.end();
