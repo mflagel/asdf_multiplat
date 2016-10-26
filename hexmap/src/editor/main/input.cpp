@@ -36,7 +36,7 @@ namespace editor
             || event->type == SDL_KEYUP
             || event->type == SDL_TEXTEDITING
             || event->type == SDL_TEXTINPUT
-            || event->type == SDL_KEYMAPCHANGED
+            // || event->type == SDL_KEYMAPCHANGED  /// Does not compile on travis (it might be using an old version of SDL? docs say this requires SDL 2.0.4)
             ;
     }
     //--
