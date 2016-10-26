@@ -15,6 +15,8 @@ namespace data
         uint64_t id;
 
         glm::vec2 position;
+        glm::vec2 size_d2;
+
         color_t color;// = glm::vec4(1.0f);
         glm::vec2 scale;// = glm::vec2(1, 1);
         float rotation;// = 0.0f;
