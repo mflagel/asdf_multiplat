@@ -67,7 +67,27 @@ namespace editor
 
     void editor_t::set_tool(editor_t::tool_type_e const& new_tool)
     {
-        //todo: handle state transitions if necessary
+        switch(current_tool)
+        {
+            case select:
+            {
+                deselect_object();
+                break;
+            }
+            case terrain_paint:
+            {
+                paint_terrain_end();
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+        };
 
         current_tool = new_tool;
 
@@ -112,14 +132,17 @@ namespace editor
 
     void editor_t::paint_terrain_end()
     {
-        action_stack.push(make_unique<paint_tiles_action_t>
-            ( map_data.hex_grid
-            , std::move(painted_terrain_coords)
-            , current_tile_id
-            )
-        );
+        if(!painted_terrain_coords.empty())
+        {
+            action_stack.push(make_unique<paint_tiles_action_t>
+                ( map_data.hex_grid
+                , std::move(painted_terrain_coords)
+                , current_tile_id
+                )
+            );
 
-        painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+            painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+        }
     }
 
 
