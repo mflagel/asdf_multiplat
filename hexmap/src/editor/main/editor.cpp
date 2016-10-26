@@ -79,12 +79,12 @@ namespace editor
     void editor_t::select_object(size_t object_index)
     {
         selected_object_index = object_index;
+        LOG("selected object: %zu", selected_object_index);
     }
 
     size_t editor_t::select_object_at(glm::vec2 position)
     {
         select_object(map_data.object_index_at(position));
-        LOG("selected object: %zu", selected_object_index);
         return selected_object_index;
     }
 
@@ -134,6 +134,33 @@ namespace editor
         data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
         action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+    }
+
+
+
+    void editor_t::cancel_action()
+    {
+        switch(current_tool)
+        {
+            case select:
+            {
+                deselect_object();
+                break;
+            }
+            case terrain_paint:
+            {
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+            default: break;
+        };
     }
 
 }

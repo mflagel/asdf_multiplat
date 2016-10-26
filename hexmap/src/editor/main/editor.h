@@ -65,6 +65,8 @@ namespace editor
         void set_tool(tool_type_e const& new_tool);
         
         void select_object(size_t object_index);
+        void deselect_object() { select_object(size_t(-1)); }
+
         size_t select_object_at(glm::vec2 position);
         bool is_object_selected() const { return selected_object_index != size_t(-1); }
 
@@ -73,6 +75,8 @@ namespace editor
         void paint_terrain_end();
 
         void place_object(glm::vec2 position);
+
+        void cancel_action();
     };
 
 

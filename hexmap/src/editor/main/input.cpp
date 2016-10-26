@@ -201,7 +201,7 @@ namespace editor
 
 
                 case sdl2_input_map[cancel_action]:
-                    //TODO
+                    editor.cancel_action();
                     break;
 
                 case sdl2_input_map[set_tool_select]:
