@@ -27,9 +27,6 @@ namespace ui
 
     constexpr char imported_textures_json_filename[] = "imported_textures.json";
 
-    constexpr float px_per_unit = 128.0f;
-    constexpr float units_per_px = 1.0f / px_per_unit;
-
     constexpr int apply_hexagon_textures = 1;
 
 

@@ -30,6 +30,9 @@ namespace hexmap
 
     constexpr float hex_edge_length = hex_width * 0.52359877559f;  //width * sin(pi/6)
 
+    constexpr float px_per_unit = 128.0f;
+    constexpr float units_per_px = 1.0f / px_per_unit;
+
     constexpr std::array<float, 18> hexagon_points =
     {
            hex_width_d2,   0.0f,           0.0f   // mid right
