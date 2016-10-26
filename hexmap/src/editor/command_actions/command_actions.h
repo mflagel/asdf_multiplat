@@ -6,8 +6,7 @@
 
 #include <glm/glm.hpp>
 
-#include "data/hex_grid.h"
-//#include "editor/main/editor.h"
+#include "data/hex_map.h"
 
 
 // http://stackoverflow.com/a/17885727
@@ -75,6 +74,17 @@ namespace editor
         uint32_t new_tile_id = 0;
 
         paint_tiles_action_t(data::hex_grid_t&, tile_coord_dict_t painted_tiles, uint32_t new_tile_id);
+
+        void execute() override;
+        void unexecute() override;
+    };
+
+    struct add_map_object_action_t : editor_action_t
+    {
+        data::hex_map_t& map_data;
+        data::map_object_t obj;
+
+        add_map_object_action_t(data::hex_map_t&, data::map_object_t);
 
         void execute() override;
         void unexecute() override;
