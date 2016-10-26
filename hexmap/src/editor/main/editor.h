@@ -40,6 +40,7 @@ namespace editor
         //objects
         uint64_t current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
+        size_t selected_object_index = -1;
 
 
         tool_type_e current_tool = terrain_paint;
@@ -57,6 +58,11 @@ namespace editor
         void set_tool(tool_type_e const& new_tool);
         
         bool paint_at_coord(glm::ivec2 coord);
+
+        void select_object(size_t object_index);
+        size_t select_object_at(glm::vec2 position);
+        bool is_object_selected() const { return selected_object_index != size_t(-1); }
+
         void place_object(glm::vec2 position);
     };
 

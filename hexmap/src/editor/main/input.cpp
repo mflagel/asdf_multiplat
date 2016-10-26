@@ -64,8 +64,8 @@ namespace editor
 
     bool input_handler_t::on_mouse_event(SDL_Event* event)
     {
-        auto mw = world_coords();
-        auto hx = hex_coords_from_mouse(mouse_input->mouse_position);
+        auto mw = world_coords(mouse_input->mouse_position);
+        auto hx = world_to_hex_coord(mw);
 
         //LOG_IF(mouse_input->mouse_button_state(mouse_left)
         //    , "mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
@@ -74,7 +74,8 @@ namespace editor
         {
             case editor_t::select:
             {
-                //todo
+                if(event->type == SDL_MOUSEBUTTONDOWN)
+                    editor.select_object_at(mw);
 
                 break;
             }
