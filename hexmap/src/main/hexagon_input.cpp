@@ -40,9 +40,9 @@ namespace input
     }
 
 
-    glm::vec2 hex_map_input_t::world_coords() const
+    glm::vec2 hex_map_input_t::world_coords(glm::ivec2 const& screen_coord) const
     {
-        return vec2(hex_map->camera.screen_to_world_coord(vec2(mouse_input->mouse_position)));
+        return vec2(hex_map->camera.screen_to_world_coord(vec2(screen_coord)));
     }
 
         /*        __
@@ -64,61 +64,9 @@ namespace input
         relevant edge can be determined by y position
                 
         */
-    glm::ivec2 hex_map_input_t::hex_coords_from_mouse(glm::ivec2 mouse_pos)
+    glm::ivec2 hex_map_input_t::hex_coords_from_mouse() const
     {
-        auto mouse_world = world_coords();
-        mouse_world += vec2(hex_width_d2, hex_height_d2); //adjust so that mouse world 0,0 is the bottom left of hexagon 0,0
-
-        //
-        auto const& ms = mouse_pos;
-        auto const& mw = mouse_world;
-        //LOG("mouse_screen: {%i, %i}   mouse_world: {%0.2f, %0.2f}", ms.x, ms.y, mw.x, mw.y);
-        //
-
-        //convert mouse world coords to a hexagon coord
-        float sub_column = mouse_world.x / hex_width_d4;
-        float sub_row = mouse_world.y / hex_height_d2;
-
-        //LOG("subcol: %f   subrow: %f", sub_column, sub_row);
-
-        int column = static_cast<int>(glm::floor(sub_column / 3.0f));
-        int row    = static_cast<int>(glm::floor(mouse_world.y / hex_height));
-
-        //if column is within hex_width_d4 of the column center (ie: fraction is +- 0.25) then it's only one column
-        if(static_cast<int>(glm::floor(sub_column)) % 3 == 0) //horizontal overlap every 3 sub-columns (with a width of one sub-column)
-        {
-            //todo: handle column overlap
-
-            bool even = static_cast<int>(std::abs(floor(sub_row))) % 2 == 0;
-            //even rows slant right  '/'
-            //odd rows slant left    '\'
-
-            vec2 line;
-
-            auto angle = (even * 1.0f + PI) / 3.0f;
-            line.x = cos(angle);
-            line.y = sin(angle);
-            line *= hex_edge_length;
-
-            vec2 p0(floor(sub_column) * hex_width_d4, floor(sub_row) * hex_height_d2); //bottom point of slant
-
-            auto p1 = p0 + line;
-            auto const& p2 = mouse_world;
-            auto side = (p1.x - p0.x)*(p2.y - p0.y) - (p1.y - p0.y)*(p2.x - p0.x);  //FIXME
-            //((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x))
-            
-            
-            //LOG("side: %f", side);
-            column -= 1 * (side < 0);
-        }
-
-        //if odd column, adjust row down
-        if(column % 2 == 1)
-        {
-            row = static_cast<int>(glm::floor((mouse_world.y + hex_height_d2) / hex_height));
-        }
-
-        return ivec2(column, row);
+        return world_to_hex_coord(world_coords(mouse_input->mouse_position));
     }
 }
 }

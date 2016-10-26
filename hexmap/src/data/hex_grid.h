@@ -9,6 +9,9 @@ namespace asdf
 {
 namespace hexmap
 {
+
+    glm::ivec2 world_to_hex_coord(glm::vec2 world_pos);
+
 namespace data
 {
     constexpr size_t new_chunk_width  = 10;
@@ -77,15 +80,10 @@ namespace data
 
         glm::uvec2 chunk_size() const;
         hex_grid_cell_t& cell_at(glm::ivec2 hex_coord);
+        hex_grid_cell_t& cell_at(glm::vec2 world_pos);
         glm::ivec2 chunk_coord_from_hex_coord(glm::ivec2) const;
         hex_grid_chunk_t& chunk_from_hex_coord(glm::ivec2);
-
-
-        // cJSON* to_JSON() const;
-        // void from_JSON(cJSON*);
     };
-
-
 
     struct hxm_header_t
     {
