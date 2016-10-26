@@ -43,8 +43,19 @@ namespace data
         hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
     };
 
-
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>; // row of columns
+
+    enum resize_x_direction_e
+    {
+          resize_leftwards
+        , resize_rightwards
+    };
+
+    enum resize_y_direction_e
+    {
+          resize_upwards
+        , resize_downwards
+    };
 
     struct hex_grid_t
     {
@@ -76,6 +87,15 @@ namespace data
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
 
+        void resize_by_copy(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e);
+
+        void resize(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e);
+        void grow(glm::ivec2 grow_amount, resize_x_direction_e, resize_y_direction_e);
+        void shrink(glm::ivec2 shrink_amount, resize_x_direction_e, resize_y_direction_e);
+
+        void add_columns(size_t num_cols, resize_x_direction_e = resize_rightwards);
+        void add_rows(size_t num_rows, resize_y_direction_e = resize_upwards);
+
         bool is_in_bounds(glm::ivec2 hex_coords) const;
 
         glm::uvec2 chunk_size() const;
@@ -84,6 +104,8 @@ namespace data
         glm::ivec2 chunk_coord_from_hex_coord(glm::ivec2) const;
         hex_grid_chunk_t& chunk_from_hex_coord(glm::ivec2);
     };
+
+
 
     struct hxm_header_t
     {

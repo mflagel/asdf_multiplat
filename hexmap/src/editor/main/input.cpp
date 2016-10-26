@@ -82,12 +82,23 @@ namespace editor
 
             case editor_t::terrain_paint:
             {
-                if(mouse_input->mouse_button_state(mouse_left))
+                if(event->type == SDL_MOUSEBUTTONDOWN)
                 {
-                    editor.paint_at_coord(hx);
+                    editor.paint_terrain_start();
                 }
-                else if(mouse_input->mouse_button_state(mouse_right))
+                else if(event->type == SDL_MOUSEBUTTONUP)
                 {
+                    editor.paint_terrain_end();
+                }
+                else
+                {
+                    if(mouse_input->mouse_button_state(mouse_left))
+                    {
+                        editor.paint_terrain_at_coord(hx);
+                    }
+                    else if(mouse_input->mouse_button_state(mouse_right))
+                    {
+                    }
                 }
 
                 break;
@@ -134,6 +145,14 @@ namespace editor
                 //load on ctrl+o
                 case SDLK_o:
                     editor.load_action();
+                    return;
+
+                case SDLK_z:
+                    editor.undo();
+                    return;
+
+                case SDLK_y:
+                    editor.redo();
                     return;
 
                 default: return;
