@@ -20,6 +20,8 @@ namespace data
         hex_map_t(glm::ivec2 grid_size);
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
+
+        size_t object_index_at(glm::vec2 world_pos);
     };
 }
 }

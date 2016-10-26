@@ -26,6 +26,27 @@ namespace data
         hex_grid.load_from_file(filepath);
     }
 
+
+    size_t hex_map_t::object_index_at(glm::vec2 world_pos)
+    {
+        size_t obj_index = 0;
+        for(auto const& obj : objects)
+        {
+            auto ub = obj.position + obj.size_d2;
+            auto lb = obj.position - obj.size_d2;
+
+            if(world_pos.x >= lb.x && world_pos.x <= ub.x &&
+               world_pos.y >= lb.y && world_pos.x <= ub.y)
+            {
+                return obj_index;
+            }
+
+            ++obj_index;
+        }
+
+        return -1;
+    }
+
 }
 }
 }
