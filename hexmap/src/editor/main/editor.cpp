@@ -1,5 +1,6 @@
 #include "editor.h"
 
+#include "asdf_multiplat/data/content_manager.h"
 
 
 using namespace std;
@@ -9,6 +10,8 @@ namespace asdf {
 namespace hexmap {
 namespace editor
 {
+
+    const color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
 
     editor_t::editor_t()
     : hexmap_t()
@@ -20,6 +23,30 @@ namespace editor
         hexmap_t::init();
 
         input = make_unique<input_handler_t>(*this);
+    }
+
+    void editor_t::render()
+    {
+        hexmap_t::render();
+
+        if(is_object_selected())
+        {
+            //TODO: draw selection overlay
+            auto const& sel_obj = map_data.objects[selected_object_index];
+
+            auto& spritebatch = rendered_map->spritebatch;
+            auto const& shader = rendered_map->shader;
+            spritebatch.begin(shader->view_matrix, shader->projection_matrix);
+
+            auto const& pixel_texture = Content.textures["pixel"];
+            vec2 tex_size_world = vec2(pixel_texture->width, pixel_texture->height) / glm::vec2(px_per_unit);
+            vec2 desired_size_world = sel_obj.size_d2 * 2.0f * sel_obj.scale;
+            vec2 scale = tex_size_world / desired_size_world;
+
+            spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, scale, sel_obj.rotation);
+
+            spritebatch.end();
+        }
     }
 
     void editor_t::save_action()

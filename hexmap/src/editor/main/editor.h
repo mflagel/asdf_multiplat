@@ -54,6 +54,8 @@ namespace editor
         editor_t();
         void init() override;
 
+        void render() override;
+
         void save_action();
         void load_action();
 
@@ -73,6 +75,7 @@ namespace editor
         void paint_terrain_end();
 
         void place_object(glm::vec2 position);
+        void delete_object(size_t object_index);
     };
 
 
