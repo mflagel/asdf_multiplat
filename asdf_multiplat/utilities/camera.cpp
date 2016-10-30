@@ -14,8 +14,7 @@ namespace asdf
 
     glm::mat4 camera_t::projection_ortho() const
     {
-        auto zoom = position.z * position.z;
-        return projection_ortho(viewport.size_d2 / zoom);
+        return projection_ortho(viewport.size_d2 / zoom());
     }
 
     mat4 camera_t::projection_ortho(glm::vec2 viewport_d2) const

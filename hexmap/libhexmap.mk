@@ -51,13 +51,19 @@ INCLUDES   += $(SRCPATH)          \
 ########### SOURCES ###########
 SRCPATH		= $(PROJPATH)/$(PROJNAME)/src
 
-SOURCES = $(SRCPATH)/main/stdafx.cpp \
+SOURCES = $(SRCPATH)/main/main.cpp \
+		  $(SRCPATH)/main/stdafx.cpp \
+		  $(SRCPATH)/main/hexmap.cpp \
+		  $(SRCPATH)/main/hexagon_input.cpp \
           $(SRCPATH)/data/hex_grid.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
+          $(SRCPATH)/editor/main/editor.cpp \
+          $(SRCPATH)/editor/main/input.cpp \
+          $(SRCPATH)/editor/command_actions/command_actions.cpp \
 		  $(EXTPATH)/cJSON/cJSON.c
 
-SRC_FOLDERS += main data ui ../../ext/cJSON
+SRC_FOLDERS += main data ui editor/main editor/command_actions ../../ext/cJSON 
 ###############################
 
 # SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))

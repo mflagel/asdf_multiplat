@@ -19,6 +19,8 @@ namespace asdf
         float near_plane = -1000;
         float  far_plane =  1000;
 
+        float zoom() const { return position.z * position.z; }
+
         glm::mat4 view_matrix() const;
         glm::mat4 projection_ortho() const;
         glm::mat4 projection_ortho(glm::vec2 viewport_d2) const;

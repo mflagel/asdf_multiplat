@@ -122,12 +122,6 @@ namespace ui
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
 
-        auto w = static_cast<float>(app.settings.resolution_width);
-        auto h = static_cast<float>(app.settings.resolution_height);  ///FIXME subtract size of window title bar if necessary
-
-        camera.viewport.size_d2 = vec2(w,h) / 2.0f;
-        camera.viewport.bottom_left = -camera.viewport.size_d2;
-
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho();
         
