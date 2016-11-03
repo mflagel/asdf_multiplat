@@ -60,6 +60,7 @@ namespace editor
     }
 
 
+    /// Paint Tiles
     paint_tiles_action_t::paint_tiles_action_t(data::hex_grid_t& grid, tile_coord_dict_t tiles, uint32_t new_id)
     : hex_grid(grid)
     , painted_tiles(tiles)
@@ -86,6 +87,27 @@ namespace editor
         }
     }
 
+
+    /// Add Map Object
+    add_map_object_action_t::add_map_object_action_t(data::hex_map_t& _map_data, data::map_object_t _obj)
+    : map_data(_map_data)
+    , obj(_obj)
+    {
+    }
+
+    void add_map_object_action_t::execute()
+    {
+        map_data.objects.push_back(std::move(obj));
+    }
+
+    void add_map_object_action_t::unexecute()
+    {
+        obj = std::move(map_data.objects.back());
+        map_data.objects.pop_back();
+    }
+
+
+    /// Resize Grid
     // void resize_grid_action_t::execute()
     // {
         

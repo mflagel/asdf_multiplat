@@ -94,7 +94,27 @@ namespace editor
 
     void editor_t::set_tool(editor_t::tool_type_e const& new_tool)
     {
-        //todo: handle state transitions if necessary
+        switch(current_tool)
+        {
+            case select:
+            {
+                deselect_object();
+                break;
+            }
+            case terrain_paint:
+            {
+                paint_terrain_end();
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+        };
 
         current_tool = new_tool;
 
@@ -106,12 +126,12 @@ namespace editor
     void editor_t::select_object(size_t object_index)
     {
         selected_object_index = object_index;
+        LOG("selected object: %zu", selected_object_index);
     }
 
     size_t editor_t::select_object_at(glm::vec2 position)
     {
         select_object(map_data.object_index_at(position));
-        LOG("selected object: %zu", selected_object_index);
         return selected_object_index;
     }
 
@@ -139,14 +159,17 @@ namespace editor
 
     void editor_t::paint_terrain_end()
     {
-        action_stack.push(make_unique<paint_tiles_action_t>
-            ( map_data.hex_grid
-            , std::move(painted_terrain_coords)
-            , current_tile_id
-            )
-        );
+        if(!painted_terrain_coords.empty())
+        {
+            action_stack.push(make_unique<paint_tiles_action_t>
+                ( map_data.hex_grid
+                , std::move(painted_terrain_coords)
+                , current_tile_id
+                )
+            );
 
-        painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+            painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+        }
     }
 
 
@@ -159,7 +182,35 @@ namespace editor
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
 
         data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
-        map_data.objects.push_back(std::move(obj));
+
+        action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+    }
+
+
+
+    void editor_t::cancel_action()
+    {
+        switch(current_tool)
+        {
+            case select:
+            {
+                deselect_object();
+                break;
+            }
+            case terrain_paint:
+            {
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+            default: break;
+        };
     }
 
 }
