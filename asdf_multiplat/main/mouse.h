@@ -10,6 +10,8 @@ namespace asdf
 {
 namespace input
 {
+    constexpr int drag_threshold_px = 10;
+
     enum mouse_button_e : uint8_t
     {
           mouse_left = 0
@@ -28,6 +30,7 @@ namespace input
     {
         uint8_t mouse_button_states = 0;
         glm::ivec2 mouse_position;
+        glm::ivec2 mouse_down_pos;
 
         virtual ~mouse_input_t() = default;
 
@@ -35,6 +38,9 @@ namespace input
         {
             return (mouse_button_states & mouse_button_bit(btn)) > 0;
         }
+        
+        bool is_dragging(mouse_button_e btn = mouse_left) const;
+        glm::ivec2 drag_delta() const;
 
         virtual void on_event(SDL_Event* event) = 0;
     };
