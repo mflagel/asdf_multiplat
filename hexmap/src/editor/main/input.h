@@ -36,6 +36,8 @@ namespace editor
     {
         editor_t& editor;
 
+        bool dragging_object = false;
+
         input_handler_t(editor_t& editor);
 
         bool on_event(SDL_Event* event) override;
