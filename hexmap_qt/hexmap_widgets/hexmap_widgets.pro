@@ -41,6 +41,8 @@ INCLUDEPATH += $$PWD/../../
 INCLUDEPATH += $$PWD/../../ext
 INCLUDEPATH += $$PWD/../../include
 
+INCLUDEPATH += $$PWD/../../hexmap/src
+
 
 # libasdfm
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
