@@ -45,7 +45,6 @@ namespace editor
         hex_region_e current_snap_point = hex_no_region;
         size_t selected_object_index = -1;
 
-
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
@@ -66,6 +65,9 @@ namespace editor
 
         void set_tool(tool_type_e const& new_tool);
         
+        data::map_object_t& selected_object() { return map_data.objects[selected_object_index]; }
+        data::map_object_t const& selected_object() const { return map_data.objects[selected_object_index]; }
+
         void select_object(size_t object_index);
         void deselect_object() { select_object(size_t(-1)); }
 

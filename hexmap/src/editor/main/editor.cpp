@@ -32,7 +32,7 @@ namespace editor
         if(is_object_selected())
         {
             //TODO: draw selection overlay
-            auto const& sel_obj = map_data.objects[selected_object_index];
+            auto const& sel_obj = selected_object();
 
             auto& spritebatch = rendered_map->spritebatch;
             auto const& shader = rendered_map->shader;
