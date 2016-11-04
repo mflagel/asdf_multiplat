@@ -55,6 +55,7 @@ namespace asdf
         LOG_IF(shader_path.length() > 0, "Could not find shader folder");
 
         //textures
+        load_texture("pixel", "pixel.bmp");
         //ADD_TEXTURE("debug", "debug_purple.png");
         //ADD_TEXTURE("pixel", "pixel.bmp");
         //ADD_TEXTURE("particle_test", "particle_test_texture.png");
@@ -80,7 +81,13 @@ namespace asdf
         LOG("Content Initialized");
     }
 
+    void content_manager_t::load_texture(std::string const& name, std::string const& relative_path)
+    {
+        auto tex_path = string(asset_path + "/" + relative_path);
 
+        auto tex = make_shared<texture_t>(name, tex_path);
+        textures.add_resource(tex);
+    }
 
     shared_ptr<shader_t> content_manager_t::create_shader(string const& name, size_t glsl_ver)
     {

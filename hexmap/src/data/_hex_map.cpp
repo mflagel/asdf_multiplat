@@ -36,7 +36,7 @@ namespace data
             auto lb = obj.position - obj.size_d2;
 
             if(world_pos.x >= lb.x && world_pos.x <= ub.x &&
-               world_pos.y >= lb.y && world_pos.x <= ub.y)
+               world_pos.y >= lb.y && world_pos.y <= ub.y)
             {
                 return obj_index;
             }
