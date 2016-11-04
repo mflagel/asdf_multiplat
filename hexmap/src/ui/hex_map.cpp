@@ -226,7 +226,9 @@ namespace ui
             auto const& atlas_entry = ojects_atlas->atlas_entries[obj.id];
 
             rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
-            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, obj.scale * glm::vec2(units_per_px), obj.rotation);
+            auto sprite_scale = obj.scale * glm::vec2(units_per_px);
+
+            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
         }
 
         spritebatch.end();

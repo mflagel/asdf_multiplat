@@ -70,12 +70,33 @@ namespace editor
         //LOG_IF(mouse_input->mouse_button_state(mouse_left)
         //    , "mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
 
+
+        if(event->type == SDL_MOUSEBUTTONUP)
+        {
+            dragging_object = false;
+        }
+
+
         switch(editor.current_tool)
         {
             case editor_t::select:
             {
                 if(event->type == SDL_MOUSEBUTTONDOWN)
+                {
                     editor.select_object_at(mw);
+                    dragging_object = true;
+                }
+                else if(event->type == SDL_MOUSEMOTION)
+                {
+                    if(dragging_object)
+                    {
+                        //editor.selected_object().position = mw;
+                    }
+                }
+                else if(event->type == SDL_MOUSEBUTTONUP)
+                {
+                    //editor.action_stack.push(std::make_unique<move_map_object_t>());
+                }
 
                 break;
             }
@@ -201,7 +222,7 @@ namespace editor
 
 
                 case sdl2_input_map[cancel_action]:
-                    //TODO
+                    editor.cancel_action();
                     break;
 
                 case sdl2_input_map[set_tool_select]:

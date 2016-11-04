@@ -1,5 +1,8 @@
 #include "editor.h"
 
+#include <limits>
+
+#include "asdf_multiplat/data/content_manager.h"
 
 
 using namespace std;
@@ -10,9 +13,12 @@ namespace hexmap {
 namespace editor
 {
 
+    const color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
+
     editor_t::editor_t()
     : hexmap_t()
     , action_stack(*this)
+    , object_selection(*this)
     {}
 
     void editor_t::init()
@@ -20,6 +26,29 @@ namespace editor
         hexmap_t::init();
 
         input = make_unique<input_handler_t>(*this);
+    }
+
+    void editor_t::render()
+    {
+        hexmap_t::render();
+
+        for(auto const& sel_obj_ind : object_selection.object_indices)
+        {
+            auto const& sel_obj = map_data.objects[sel_obj_ind];
+
+            auto& spritebatch = rendered_map->spritebatch;
+            auto const& shader = rendered_map->shader;
+            spritebatch.begin(shader->view_matrix, shader->projection_matrix);
+
+            auto const& pixel_texture = Content.textures["pixel"];
+            auto const& obj_size_px = rendered_map->ojects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
+            auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
+
+            spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
+
+            spritebatch.end();
+        }
     }
 
     void editor_t::save_action()
@@ -67,7 +96,27 @@ namespace editor
 
     void editor_t::set_tool(editor_t::tool_type_e const& new_tool)
     {
-        //todo: handle state transitions if necessary
+        switch(current_tool)
+        {
+            case select:
+            {
+                object_selection.clear_selection();
+                break;
+            }
+            case terrain_paint:
+            {
+                paint_terrain_end();
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+        };
 
         current_tool = new_tool;
 
@@ -76,16 +125,36 @@ namespace editor
 
 
     /// Selection
-    void editor_t::select_object(size_t object_index)
+    bool editor_t::select_object(size_t object_index)
     {
-        selected_object_index = object_index;
+        ASSERT(object_index != size_t(-1), "");
+        LOG("selected object: %zu", object_index);
+        return object_selection.add_object_index(object_index);
     }
 
-    size_t editor_t::select_object_at(glm::vec2 position)
+    bool editor_t::deselect_object(size_t object_index)
     {
-        select_object(map_data.object_index_at(position));
-        LOG("selected object: %zu", selected_object_index);
-        return selected_object_index;
+        ASSERT(object_index != size_t(-1), "");
+        LOG("deselected object: %zu", object_index);
+        return object_selection.remove_object_index(object_index);
+    }
+
+    bool editor_t::select_object_at(glm::vec2 position)
+    {
+        size_t ind = map_data.object_index_at(position);
+
+        if(ind != size_t(-1))
+        {
+            select_object(ind);
+            return true;
+        }
+
+        return false;
+    }
+
+    bool editor_t::is_object_selected(size_t obj_index) const
+    {
+        return object_selection.object_indices.count(obj_index);
     }
 
 
@@ -112,14 +181,17 @@ namespace editor
 
     void editor_t::paint_terrain_end()
     {
-        action_stack.push(make_unique<paint_tiles_action_t>
-            ( map_data.hex_grid
-            , std::move(painted_terrain_coords)
-            , current_tile_id
-            )
-        );
+        if(!painted_terrain_coords.empty())
+        {
+            action_stack.push(make_unique<paint_tiles_action_t>
+                ( map_data.hex_grid
+                , std::move(painted_terrain_coords)
+                , current_tile_id
+                )
+            );
 
-        painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+            painted_terrain_coords.clear(); //pretty sure its empty anyway due to std::move
+        }
     }
 
 
@@ -132,7 +204,83 @@ namespace editor
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
 
         data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
-        map_data.objects.push_back(std::move(obj));
+
+        action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+    }
+
+
+
+    void editor_t::cancel_action()
+    {
+        switch(current_tool)
+        {
+            case select:
+            {
+                object_selection.clear_selection();
+                break;
+            }
+            case terrain_paint:
+            {
+                break;
+            }
+            case place_objects:
+            {
+                break;
+            }
+            case place_splines:
+            {
+                break;
+            }
+            default: break;
+        };
+    }
+
+    object_selection_t::object_selection_t(editor_t& _e)
+    : editor(_e)
+    {
+    }
+
+    bool object_selection_t::add_object_index(size_t obj_ind)
+    {
+        auto x = object_indices.insert(obj_ind);
+        recalc_bounds();
+
+        //second value of pair returned by insert is a bool that is true
+        //if the insertion took place
+        return x.second;
+    }
+
+    bool object_selection_t::remove_object_index(size_t obj_ind)
+    {
+        // not 100% sure if it erases the object at this position, or with this key
+        // I think it's with the key
+        auto n = object_indices.erase(obj_ind);
+        recalc_bounds();
+
+        return n > 0;
+    }
+
+    void object_selection_t::clear_selection()
+    {
+        object_indices.clear();
+        recalc_bounds();
+    }
+
+    void object_selection_t::recalc_bounds()
+    {
+        upper_bound = vec2(numeric_limits<float>::min());
+        lower_bound = vec2(numeric_limits<float>::max());
+
+        for(auto const& obj_ind : object_indices)
+        {
+            auto const& obj = editor.map_data.objects[obj_ind];
+
+            upper_bound.x = std::max(upper_bound.x, obj.position.x + obj.size_d2.x);
+            upper_bound.y = std::max(upper_bound.y, obj.position.y + obj.size_d2.y);
+
+            lower_bound.x = std::min(lower_bound.x, obj.position.x - obj.size_d2.x);
+            lower_bound.y = std::min(lower_bound.y, obj.position.y - obj.size_d2.y);
+        }
     }
 
 }
