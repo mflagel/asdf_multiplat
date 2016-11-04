@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "main/asdf_multiplat.h"
+#include "data/content_manager.h"
 #include "data/gl_state.h"
 #include "utilities/utilities.h"
 #include "utilities/cjson_utils.hpp"
@@ -58,15 +59,17 @@ namespace data
         vector<char*> textures;
         CJSON_GET_STR_VECTOR(textures);
 
-        for(auto const& filepath : textures)
+        for(auto const& tex_filepath : textures)
         {
             if(is_file(filepath))
             {
-                add_texture(filepath);
+                string asset_tex_path = Content.asset_path + "/" + tex_filepath;
+
+                add_texture(asset_tex_path);
             }
             else
             {
-                LOG("Texture not found at %s", filepath);
+                LOG("Texture not found: %s", tex_filepath);
             }
         }
         
