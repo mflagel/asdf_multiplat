@@ -18,12 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // http://stackoverflow.com/a/33074982
-    QGLFormat glFormat;
-    glFormat.setVersion(3, 2);
-    glFormat.setProfile(QGLFormat::CoreProfile);
-    QGLFormat::setDefaultFormat(glFormat);
-
     ui->setupUi(this);
 
     // give hexmap widget a pointer to this, so it can set up scrollbar ranges after initializeGL is called
@@ -90,11 +84,27 @@ void MainWindow::set_scrollbar_stuff()
 
 void MainWindow::scrollbar_changed()
 {
-    LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
+    //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
 
     glm::vec2 p(ui->hexmap_hscroll->value(), -ui->hexmap_vscroll->value());
     p += base_camera_offset;
 
     ui->hexmap_widget->camera_pos(p);
     ui->hexmap_widget->update();
+}
+
+
+void MainWindow::mouseMoveEvent(QMouseEvent* event)
+{
+
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* event)
+{
+
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent* event)
+{
+
 }

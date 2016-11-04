@@ -46,8 +46,9 @@ void hexmap_widget_t::paintGL()
 {
     glDisable(GL_DEPTH_TEST);
 
-    auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
+    //auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
     //color_t gl_clear_color(1,1,1,1);
+    color_t gl_clear_color(0,0,1,1);
     glClearColor(gl_clear_color.r
                        , gl_clear_color.g
                        , gl_clear_color.b

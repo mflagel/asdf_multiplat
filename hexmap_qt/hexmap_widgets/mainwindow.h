@@ -22,6 +22,11 @@ public:
 public slots:
     void scrollbar_changed();
 
+protected:
+    void mouseMoveEvent(QMouseEvent *) override;
+    void mousePressEvent(QMouseEvent *) override;
+    void mouseReleaseEvent(QMouseEvent *) override;
+
 private:
     Ui::MainWindow *ui;
 
