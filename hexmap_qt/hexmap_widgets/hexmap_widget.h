@@ -22,7 +22,7 @@ public:
     MainWindow* main_window = nullptr;
 
 protected:
-    asdf::hexmap::data::hex_grid_t hex_grid;
+    asdf::hexmap::data::hex_map_t data_map;
     std::unique_ptr<asdf::hexmap::ui::hex_map_t> hex_map;
 
     void initializeGL() override;

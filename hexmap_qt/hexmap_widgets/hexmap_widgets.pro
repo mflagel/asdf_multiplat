@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets opengl
 
 CONFIG += c++14 console
 
-QMAKE_CXXFLAGS += -fms-extensions
-QMAKE_CXXFLAGS_WARN_OFF += -Wno-missing-braces -Wno-writable-strings
+QMAKE_CXXFLAGS += -fms-extensions -Wno-missing-braces -Wno-writable-strings
+#QMAKE_CXXFLAGS_WARN_OFF += -Wno-missing-braces -Wno-writable-strings
 
 
 TARGET = hexmap_widgets
@@ -60,4 +60,4 @@ DEPENDPATH += $$PWD/../../hexmap/src
 
 # apparently this is required
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += glew
+unix: PKGCONFIG += glew ftgl sdl2

@@ -12,7 +12,7 @@ using namespace glm;
 
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
-, hex_grid(ivec2(15, 16))
+, data_map(ivec2(15, 16))
 {
 
 }
@@ -28,7 +28,7 @@ void hexmap_widget_t::initializeGL()
     auto shader = asdf::Content.create_shader("hexmap", 330);
     asdf::Content.shaders.add_resource(shader);
 
-    hex_map = make_unique<asdf::hexmap::ui::hex_map_t>(hex_grid);
+    hex_map = make_unique<asdf::hexmap::ui::hex_map_t>(data_map);
 
     hex_map->camera.position.z = 10;
 }
@@ -67,7 +67,7 @@ void hexmap_widget_t::paintGL()
 
 glm::ivec2 hexmap_widget_t::map_size() const
 {
-    return hex_grid.size;
+    return data_map.hex_grid.size;
 }
 
 glm::vec2 hexmap_widget_t::camera_pos() const

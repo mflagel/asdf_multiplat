@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 //#include <QQuickView>
+#include <QGLFormat>
 
 #include <memory>
 
@@ -17,6 +18,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // http://stackoverflow.com/a/33074982
+    QGLFormat glFormat;
+    glFormat.setVersion(3, 2);
+    glFormat.setProfile(QGLFormat::CoreProfile);
+    QGLFormat::setDefaultFormat(glFormat);
+
     ui->setupUi(this);
 
     // give hexmap widget a pointer to this, so it can set up scrollbar ranges after initializeGL is called

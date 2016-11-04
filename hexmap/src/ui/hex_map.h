@@ -12,6 +12,10 @@
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
 
+//for whatever reason Qt requires this. libhexmap.mk does not somehow
+#include "asdf_multiplat/main/input_controller.h"
+#include "asdf_multiplat/utilities/camera.h"
+#include "data/hex_map.h"
 
 using color_t = glm::vec4;
 
@@ -78,7 +82,7 @@ namespace ui
     {
         data::hex_map_t& map_data;
 
-        camera_t camera;
+        asdf::camera_t camera;
         asdf::input::input_handler_sdl2_t camera_controller;
 
         std::shared_ptr<shader_t> shader;
