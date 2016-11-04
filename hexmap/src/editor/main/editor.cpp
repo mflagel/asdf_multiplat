@@ -1,5 +1,7 @@
 #include "editor.h"
 
+#include <limits>
+
 #include "asdf_multiplat/data/content_manager.h"
 
 
@@ -16,6 +18,7 @@ namespace editor
     editor_t::editor_t()
     : hexmap_t()
     , action_stack(*this)
+    , object_selection(*this)
     {}
 
     void editor_t::init()
@@ -29,10 +32,9 @@ namespace editor
     {
         hexmap_t::render();
 
-        if(is_object_selected())
+        for(auto const& sel_obj_ind : object_selection.object_indices)
         {
-            //TODO: draw selection overlay
-            auto const& sel_obj = selected_object();
+            auto const& sel_obj = map_data.objects[sel_obj_ind];
 
             auto& spritebatch = rendered_map->spritebatch;
             auto const& shader = rendered_map->shader;
@@ -98,7 +100,7 @@ namespace editor
         {
             case select:
             {
-                deselect_object();
+                object_selection.clear_selection();
                 break;
             }
             case terrain_paint:
@@ -123,16 +125,36 @@ namespace editor
 
 
     /// Selection
-    void editor_t::select_object(size_t object_index)
+    bool editor_t::select_object(size_t object_index)
     {
-        selected_object_index = object_index;
-        LOG("selected object: %zu", selected_object_index);
+        ASSERT(object_index != size_t(-1), "");
+        LOG("selected object: %zu", object_index);
+        return object_selection.add_object_index(object_index);
     }
 
-    size_t editor_t::select_object_at(glm::vec2 position)
+    bool editor_t::deselect_object(size_t object_index)
     {
-        select_object(map_data.object_index_at(position));
-        return selected_object_index;
+        ASSERT(object_index != size_t(-1), "");
+        LOG("deselected object: %zu", object_index);
+        return object_selection.remove_object_index(object_index);
+    }
+
+    bool editor_t::select_object_at(glm::vec2 position)
+    {
+        size_t ind = map_data.object_index_at(position);
+
+        if(ind != size_t(-1))
+        {
+            select_object(ind);
+            return true;
+        }
+
+        return false;
+    }
+
+    bool editor_t::is_object_selected(size_t obj_index) const
+    {
+        return object_selection.object_indices.count(obj_index);
     }
 
 
@@ -194,7 +216,7 @@ namespace editor
         {
             case select:
             {
-                deselect_object();
+                object_selection.clear_selection();
                 break;
             }
             case terrain_paint:
@@ -211,6 +233,54 @@ namespace editor
             }
             default: break;
         };
+    }
+
+    object_selection_t::object_selection_t(editor_t& _e)
+    : editor(_e)
+    {
+    }
+
+    bool object_selection_t::add_object_index(size_t obj_ind)
+    {
+        auto x = object_indices.insert(obj_ind);
+        recalc_bounds();
+
+        //second value of pair returned by insert is a bool that is true
+        //if the insertion took place
+        return x.second;
+    }
+
+    bool object_selection_t::remove_object_index(size_t obj_ind)
+    {
+        // not 100% sure if it erases the object at this position, or with this key
+        // I think it's with the key
+        auto n = object_indices.erase(obj_ind);
+        recalc_bounds();
+
+        return n > 0;
+    }
+
+    void object_selection_t::clear_selection()
+    {
+        object_indices.clear();
+        recalc_bounds();
+    }
+
+    void object_selection_t::recalc_bounds()
+    {
+        upper_bound = vec2(numeric_limits<float>::min());
+        lower_bound = vec2(numeric_limits<float>::max());
+
+        for(auto const& obj_ind : object_indices)
+        {
+            auto const& obj = editor.map_data.objects[obj_ind];
+
+            upper_bound.x = std::max(upper_bound.x, obj.position.x + obj.size_d2.x);
+            upper_bound.y = std::max(upper_bound.y, obj.position.y + obj.size_d2.y);
+
+            lower_bound.x = std::min(lower_bound.x, obj.position.x - obj.size_d2.x);
+            lower_bound.y = std::min(lower_bound.y, obj.position.y - obj.size_d2.y);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_set>
 
 #include "main/hexmap.h"
 #include "editor/main/input.h"
@@ -25,6 +26,24 @@ namespace editor
         , num_hex_regions
     };
 
+    struct object_selection_t
+    {
+        glm::vec2 upper_bound;
+        glm::vec2 lower_bound;
+
+        editor_t& editor;
+        std::unordered_set<size_t> object_indices;
+
+        object_selection_t(editor_t&);
+
+        bool add_object_index(size_t);
+        bool remove_object_index(size_t);
+        void clear_selection();
+        bool is_empty() const { return object_indices.empty(); }
+
+        void recalc_bounds();
+    };
+
     struct editor_t : hexmap_t
     {
         enum tool_type_e
@@ -43,7 +62,7 @@ namespace editor
         //objects
         uint64_t current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
-        size_t selected_object_index = -1;
+        object_selection_t object_selection;
 
         tool_type_e current_tool = terrain_paint;
 
@@ -64,15 +83,12 @@ namespace editor
         void on_event(SDL_Event*) override;
 
         void set_tool(tool_type_e const& new_tool);
-        
-        data::map_object_t& selected_object() { return map_data.objects[selected_object_index]; }
-        data::map_object_t const& selected_object() const { return map_data.objects[selected_object_index]; }
 
-        void select_object(size_t object_index);
-        void deselect_object() { select_object(size_t(-1)); }
+        bool select_object(size_t object_index);
+        bool deselect_object(size_t object_index);
 
-        size_t select_object_at(glm::vec2 position);
-        bool is_object_selected() const { return selected_object_index != size_t(-1); }
+        bool select_object_at(glm::vec2 position);
+        bool is_object_selected(size_t obj_index) const;
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

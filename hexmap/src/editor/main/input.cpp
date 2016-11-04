@@ -90,7 +90,7 @@ namespace editor
                 {
                     if(dragging_object)
                     {
-                        editor.selected_object().position = mw;
+                        //editor.selected_object().position = mw;
                     }
                 }
                 else if(event->type == SDL_MOUSEBUTTONUP)
