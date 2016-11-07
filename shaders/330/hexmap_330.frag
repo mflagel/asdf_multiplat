@@ -11,8 +11,10 @@ uniform sampler2D TextureMap;
 uniform bool ApplyTexture;
  
 void main() {
-	FragColor = ColorOut;
 
+    FragColor = ColorOut;
+
+    //TODO: use a different frag shader for cases where no texture is needed
     if(ApplyTexture)
     {
         vec4 texcol = texture2D(TextureMap, FragTexCoord);
