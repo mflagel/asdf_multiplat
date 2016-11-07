@@ -12,8 +12,9 @@
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
 
-//for whatever reason Qt requires this. libhexmap.mk does not somehow
+//for whatever reason Qt requires this, but libhexmap.mk does not somehow
 #include "asdf_multiplat/main/input_controller.h"
+#include "asdf_multiplat/ui/polygon.h"
 #include "asdf_multiplat/utilities/camera.h"
 #include "data/hex_map.h"
 
