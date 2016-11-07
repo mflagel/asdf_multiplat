@@ -46,9 +46,7 @@ void hexmap_widget_t::paintGL()
 {
     glDisable(GL_DEPTH_TEST);
 
-    //auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
-    //color_t gl_clear_color(1,1,1,1);
-    color_t gl_clear_color(0,0,1,1);
+    auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
     glClearColor(gl_clear_color.r
                        , gl_clear_color.g
                        , gl_clear_color.b
@@ -57,7 +55,7 @@ void hexmap_widget_t::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glDisable(GL_CULL_FACE);
 
