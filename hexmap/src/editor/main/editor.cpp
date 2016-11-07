@@ -157,6 +157,11 @@ namespace editor
         return object_selection.remove_object_index(object_index);
     }
 
+    void editor_t::deselect_all()
+    {
+        object_selection.clear_selection();
+    }
+
     bool editor_t::select_object_at(glm::vec2 position)
     {
         size_t ind = map_data.object_index_at(position);
@@ -234,7 +239,7 @@ namespace editor
         {
             case select:
             {
-                object_selection.clear_selection();
+                deselect_all();
                 break;
             }
             case terrain_paint:

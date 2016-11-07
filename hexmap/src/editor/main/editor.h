@@ -86,6 +86,7 @@ namespace editor
 
         bool select_object(size_t object_index);
         bool deselect_object(size_t object_index);
+        void deselect_all();
 
         bool select_object_at(glm::vec2 position);
         bool is_object_selected(size_t obj_index) const;
