@@ -32,10 +32,14 @@ namespace editor
         {
             case editor_t::select:
             {
-                if(editor.select_object_at(mw))
-                    return true;
+                bool obj_was_selected = editor.select_object_at(mw);
+                
+                if(!obj_was_selected)
+                {
+                    editor.deselect_all();
+                }
 
-                break;
+                return true;
             }
 
             case editor_t::terrain_paint:
@@ -116,6 +120,8 @@ namespace editor
                     editor.paint_terrain_at_coord(hx);
                     return true;
                 }
+
+                break;
             }
 
             case editor_t::place_objects:
