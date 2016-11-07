@@ -26,6 +26,7 @@ namespace editor
         hexmap_t::init();
 
         input = make_unique<input_handler_t>(*this);
+        app.mouse_input.thing = input.get();
     }
 
     void editor_t::render()
@@ -85,12 +86,9 @@ namespace editor
         return false;
     }
 
-
-    void editor_t::on_event(SDL_Event* event)
+    void editor_t::on_event(SDL_Event*)
     {
-        hexmap_t::on_event(event);
-
-        input->on_event(event);
+        //I think I may remove this
     }
 
 

@@ -11,8 +11,6 @@
 
 namespace asdf
 {
-namespace input
-{
     template <typename T>
     struct input_controller_
     {
@@ -35,5 +33,4 @@ namespace input
     };
 
     using input_handler_sdl2_t = input_controller_<sdl2_keyboard_handler_t>;
-}
 }

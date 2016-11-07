@@ -5,18 +5,15 @@
 
 #include "editor.h"
 
-namespace asdf
-{
-    using namespace input;
+using namespace std;
+using namespace glm;
 
-namespace hexmap 
-{
+namespace asdf {
+namespace hexmap {
 namespace editor
 {
-
     input_handler_t::input_handler_t(editor_t& _editor)
-    : input::hex_map_input_t(_editor.rendered_map.get(), _editor.rendered_map->camera)
-    , editor(_editor)
+    : editor(_editor)
     {
     }
 
@@ -41,7 +38,13 @@ namespace editor
     }
     //--
 
+    glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
+    {
+        return vec2(editor.rendered_map->camera.screen_to_world_coord(vec2(screen_coords)));
+    }
 
+
+/*
     bool input_handler_t::on_event(SDL_Event* event)
     {
         input::hex_map_input_t::on_event(event);
@@ -60,79 +63,66 @@ namespace editor
         }        
 
         return false;
-    }
+    }*/
 
-    bool input_handler_t::on_mouse_event(SDL_Event* event)
+    bool input_handler_t::on_mouse_down(mouse_button_event_t& event)
     {
-        auto mw = world_coords(mouse_input->mouse_position);
+        auto mw = world_coords(event.mouse_state.mouse_position);
         auto hx = world_to_hex_coord(mw);
-
-        //LOG_IF(mouse_input->mouse_button_state(mouse_left)
-        //    , "mw: %.2f, %.2f   hx: %i, %i", mw.x, mw.y, hx.x, hx.y);
-
-
-        if(event->type == SDL_MOUSEBUTTONUP)
-        {
-            dragging_object = false;
-        }
-
 
         switch(editor.current_tool)
         {
             case editor_t::select:
             {
-                if(event->type == SDL_MOUSEBUTTONDOWN)
-                {
-                    editor.select_object_at(mw);
-                    dragging_object = true;
-                }
-                else if(event->type == SDL_MOUSEMOTION)
-                {
-                    if(dragging_object)
-                    {
-                        //editor.selected_object().position = mw;
-                    }
-                }
-                else if(event->type == SDL_MOUSEBUTTONUP)
-                {
-                    //editor.action_stack.push(std::make_unique<move_map_object_t>());
-                }
+                if(editor.select_object_at(mw))
+                    return true;
+            }
 
+            case editor_t::terrain_paint:
+            {
+                editor.paint_terrain_start();
+                editor.paint_terrain_at_coord(hx);
+                return true;
+            }
+
+            case editor_t::place_objects:
+            {
+                editor.place_object(mw);
+                return true;
+            }
+
+            case editor_t::place_splines:
+            {
+                break;
+            }
+
+            case editor_t::num_tool_types: break;
+        }
+
+        return false;
+    }
+
+    bool input_handler_t::on_mouse_up(mouse_button_event_t& event)
+    {
+        auto mw = world_coords(event.mouse_state.mouse_position);
+        auto hx = world_to_hex_coord(mw);
+
+        switch(editor.current_tool)
+        {
+            case editor_t::select:
+            {
                 break;
             }
 
             case editor_t::terrain_paint:
             {
-                if(event->type == SDL_MOUSEBUTTONDOWN)
-                {
-                    editor.paint_terrain_start();
-                }
-                else if(event->type == SDL_MOUSEBUTTONUP)
-                {
-                    editor.paint_terrain_end();
-                }
-                else
-                {
-                    if(mouse_input->mouse_button_state(mouse_left))
-                    {
-                        editor.paint_terrain_at_coord(hx);
-                    }
-                    else if(mouse_input->mouse_button_state(mouse_right))
-                    {
-                    }
-                }
-
-                break;
+                editor.paint_terrain_at_coord(hx);
+                editor.paint_terrain_end();
+                return true;
             }
 
             case editor_t::place_objects:
             {
-                if(event->type == SDL_MOUSEBUTTONDOWN)
-                {
-                    //todo: handle snapping to hex regions
-
-                    editor.place_object(mw);
-                }
                 break;
             }
 
@@ -140,8 +130,52 @@ namespace editor
             {
                 break;
             }
+
+            case editor_t::num_tool_types: break;
         }
 
+        return false;
+    }
+
+    bool input_handler_t::on_mouse_move(mouse_motion_event_t& event)
+    {
+        auto mw = world_coords(event.mouse_state.mouse_position);
+        auto hx = world_to_hex_coord(mw);
+
+        switch(editor.current_tool)
+        {
+            case editor_t::select:
+            {
+                break;
+            }
+
+            case editor_t::terrain_paint:
+            {
+                if(event.mouse_state.mouse_button_state(mouse_left))
+                {
+                    editor.paint_terrain_at_coord(hx);
+                    return true;
+                }
+            }
+
+            case editor_t::place_objects:
+            {
+                break;
+            }
+
+            case editor_t::place_splines:
+            {
+                break;
+            }
+
+            case editor_t::num_tool_types: break;
+        }
+
+        return false;
+    }
+
+    bool input_handler_t::on_mouse_wheel(mouse_wheel_event_t& event)
+    {
 
         return false;
     }
