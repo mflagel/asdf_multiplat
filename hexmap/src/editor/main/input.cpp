@@ -16,34 +16,12 @@ namespace editor
     : editor(_editor)
     {
     }
-    
+
 
     glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
     {
         return vec2(editor.rendered_map->camera.screen_to_world_coord(vec2(screen_coords)));
     }
-
-
-/*
-    bool input_handler_t::on_event(SDL_Event* event)
-    {
-        input::hex_map_input_t::on_event(event);
-
-
-        if(is_sdl_mouse_event(event))
-        {
-            return on_mouse_event(event);
-        }
-        else if(is_sdl_keyboard_event(event))
-        {
-            if(event->key.type == SDL_KEYDOWN)
-                on_key_down(event->key.keysym);
-            // else
-            //     on_key_up(event->key.keysym);
-        }        
-
-        return false;
-    }*/
 
     bool input_handler_t::on_mouse_down(mouse_button_event_t& event)
     {
@@ -56,6 +34,8 @@ namespace editor
             {
                 if(editor.select_object_at(mw))
                     return true;
+
+                break;
             }
 
             case editor_t::terrain_paint:
