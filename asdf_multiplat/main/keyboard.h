@@ -9,8 +9,6 @@
 
 namespace asdf
 {
-namespace input
-{
     enum direction_inputs_e
     {
           up
@@ -43,5 +41,4 @@ namespace input
 
         void on_event(SDL_Event* event);
     };
-}
 }
