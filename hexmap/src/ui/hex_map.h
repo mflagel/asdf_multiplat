@@ -2,13 +2,13 @@
 
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/ui/polygon.h"
+
+#include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/ui/ui_base.h"
 #include "asdf_multiplat/data/texture_bank.h"
 #include "asdf_multiplat/data/texture_atlas.h"
 #include "asdf_multiplat/utilities/spritebatch.h"
 
-#include "main/hexagon_input.h"
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
 
@@ -83,7 +83,7 @@ namespace ui
         data::hex_map_t& map_data;
 
         asdf::camera_t camera;
-        asdf::input::input_handler_sdl2_t camera_controller;
+        asdf::input_handler_sdl2_t camera_controller;
 
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;

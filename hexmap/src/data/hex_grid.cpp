@@ -302,6 +302,26 @@ namespace data
 }
 
 
+
+    /*        __
+    \  0,1  /   
+     \ ___ /  1,1
+     /     \    
+  hex  0,0  \ __
+world  0,0  /
+     \ ___ /  1,0
+           \
+            \ __
+          
+    world (0,0) is the center of the (0,0)th hexagon. add hexagon halfsize to the world pos to make world 0,0 the bottom left of the hexagon
+    hex coords range from (-0.5,-0.5) to (0.5,0.5)
+
+    everything within the angled slashes could be in the left or right hex depending
+    on the y coord. the edges are at 60 degree angles (60 and 180-60)
+
+    relevant edge can be determined by y position
+            
+    */
     glm::ivec2 world_to_hex_coord(glm::vec2 world_pos)
     {
         //adjust so that world 0,0 is the bottom left of hexagon 0,0

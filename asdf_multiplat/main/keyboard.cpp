@@ -5,8 +5,6 @@ using namespace glm;
 
 namespace asdf
 {
-namespace input
-{
     sdl2_keyboard_handler_t::sdl2_keyboard_handler_t()
     {
         for(auto& s : input_state)
@@ -50,5 +48,4 @@ namespace input
             on_input_changed();
         }
     }
-}
 }

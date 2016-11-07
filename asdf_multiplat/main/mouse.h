@@ -8,17 +8,17 @@
 
 namespace asdf
 {
-namespace input
-{
     constexpr int drag_threshold_px = 10;
 
-    enum mouse_button_e : uint8_t
+    enum mouse_button_e : uint32_t
     {
-          mouse_left = 0
+          mouse_no_button = 0
+        , mouse_left
         , mouse_right
         , mouse_middle
         , mouse_4
         , mouse_5
+        , num_mouse_buttons
     };
 
     constexpr uint32_t mouse_button_bit(mouse_button_e btn)
@@ -26,13 +26,47 @@ namespace input
         return 1u << static_cast<uint8_t>(btn);
     }
 
+    struct mouse_input_t;
+
+    struct mouse_motion_event_t
+    {
+        mouse_input_t& mouse_state;
+    };
+
+    struct mouse_button_event_t
+    {
+        mouse_input_t& mouse_state;
+        mouse_button_e button;
+        bool double_clicked;
+    };
+
+    struct mouse_wheel_event_t
+    {
+        mouse_input_t& mouse_state;
+        int delta;
+    };
+
+
+    struct thing_that_gets_events_t
+    {
+        virtual ~thing_that_gets_events_t() = default;
+
+        virtual bool on_mouse_down(mouse_button_event_t&) = 0;
+        virtual bool on_mouse_up(mouse_button_event_t&) = 0;
+        virtual bool on_mouse_move(mouse_motion_event_t&) = 0;
+        virtual bool on_mouse_wheel(mouse_wheel_event_t&) = 0;
+    };
+
+
     struct mouse_input_t
     {
-        uint8_t mouse_button_states = 0;
+        uint32_t mouse_button_states = 0;
         glm::ivec2 mouse_position;
         glm::ivec2 mouse_down_pos;
 
-        virtual ~mouse_input_t() = default;
+        thing_that_gets_events_t* thing;
+
+        ~mouse_input_t() = default;
 
         bool mouse_button_state(mouse_button_e btn) const
         {
@@ -41,13 +75,25 @@ namespace input
         
         bool is_dragging(mouse_button_e btn = mouse_left) const;
         glm::ivec2 drag_delta() const;
-
-        virtual void on_event(SDL_Event* event) = 0;
     };
 
     struct sdl2_mouse_input_t : mouse_input_t
     {
-        void on_event(SDL_Event* event);
+        void on_event(SDL_Event*);
     };
-}
+
+
+    constexpr bool is_sdl_mouse_event(SDL_Event* event)
+    {
+        return event->type == SDL_MOUSEMOTION
+            || event->type == SDL_MOUSEBUTTONDOWN
+            || event->type == SDL_MOUSEBUTTONUP
+            || event->type == SDL_MOUSEWHEEL
+            ;
+    }
+
+
+    mouse_button_event_t mouse_event_from_sdl(mouse_input_t&, SDL_MouseButtonEvent const&);
+    mouse_motion_event_t mouse_event_from_sdl(mouse_input_t&, SDL_MouseMotionEvent const&);
+    mouse_wheel_event_t  mouse_event_from_sdl(mouse_input_t&, SDL_MouseWheelEvent const&);
 }

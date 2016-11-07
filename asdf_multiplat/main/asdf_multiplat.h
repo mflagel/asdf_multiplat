@@ -8,6 +8,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "main/mouse.h"
 #include "data/gl_state.h"
 #include "data/texture.h"
 #include "data/settings.h"
@@ -81,9 +82,10 @@ namespace asdf {
         bool render_debug_views = false;
 
         settings_t settings;
-        // mouse_state_t mouse_state;
         std::shared_ptr<spritebatch_t> spritebatch{nullptr};
         std::shared_ptr<ui_view_t>  main_view{nullptr};
+
+        sdl2_mouse_input_t mouse_input;
 
     
         asdf_multiplat_t();

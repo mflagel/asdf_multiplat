@@ -15,6 +15,20 @@ namespace editor
 
     const color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
 
+
+    //TODO: move this into an asdf_multiplat header
+    constexpr bool is_sdl_keyboard_event(SDL_Event* event)
+    {
+        return event->type == SDL_KEYDOWN
+            || event->type == SDL_KEYUP
+            || event->type == SDL_TEXTEDITING
+            || event->type == SDL_TEXTINPUT
+            // || event->type == SDL_KEYMAPCHANGED  /// Does not compile on travis (it might be using an old version of SDL? docs say this requires SDL 2.0.4)
+            ;
+    }
+    //--
+
+
     editor_t::editor_t()
     : hexmap_t()
     , action_stack(*this)
@@ -26,6 +40,7 @@ namespace editor
         hexmap_t::init();
 
         input = make_unique<input_handler_t>(*this);
+        app.mouse_input.thing = input.get();
     }
 
     void editor_t::render()
@@ -85,12 +100,15 @@ namespace editor
         return false;
     }
 
-
     void editor_t::on_event(SDL_Event* event)
     {
-        hexmap_t::on_event(event);
-
-        input->on_event(event);
+        // I eventually want to remove this in place of my own keyboard
+        // abstraction so I can get rid of handling sdl events here
+        if(is_sdl_keyboard_event(event))
+        {
+            if(event->key.type == SDL_KEYDOWN)
+                input->on_key_down(event->key.keysym);
+        }    
     }
 
 
@@ -137,6 +155,11 @@ namespace editor
         ASSERT(object_index != size_t(-1), "");
         LOG("deselected object: %zu", object_index);
         return object_selection.remove_object_index(object_index);
+    }
+
+    void editor_t::deselect_all()
+    {
+        object_selection.clear_selection();
     }
 
     bool editor_t::select_object_at(glm::vec2 position)
@@ -216,7 +239,7 @@ namespace editor
         {
             case select:
             {
-                object_selection.clear_selection();
+                deselect_all();
                 break;
             }
             case terrain_paint:

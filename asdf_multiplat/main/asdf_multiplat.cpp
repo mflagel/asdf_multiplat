@@ -176,14 +176,12 @@ namespace asdf {
                 else if (event->key.keysym.sym == SDLK_F12)
                 {
                     save_screenshot("screenshot_test.bmp");
-                    save_screenshot("screenshot_test__");
                 }
                 break;
 
             case SDL_MOUSEMOTION:
                 event->motion.x -= settings.resolution_width  / 2;
                 event->motion.y = settings.resolution_height / 2 - event->motion.y;
-                //LOG("x: %i,   y: %i", event->motion.x, event->motion.y);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -199,6 +197,8 @@ namespace asdf {
                 break;
         }
 
+
+        mouse_input.on_event(event);
         specific->on_event(event);
         main_view->on_event(event, glm::vec3(), glm::mat3());
     }

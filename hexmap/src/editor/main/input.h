@@ -3,8 +3,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 
-#include "main/hexagon_input.h"
-
 namespace asdf {
 namespace hexmap {
 namespace editor
@@ -32,17 +30,19 @@ namespace editor
         , SDLK_s // place_spline
     };
 
-    struct input_handler_t : input::hex_map_input_t
+    struct input_handler_t : thing_that_gets_events_t
     {
         editor_t& editor;
 
-        bool dragging_object = false;
-
         input_handler_t(editor_t& editor);
 
-        bool on_event(SDL_Event* event) override;
+        glm::vec2 world_coords(glm::ivec2 screen_coords);
 
-        bool on_mouse_event(SDL_Event* event);
+        bool on_mouse_down(mouse_button_event_t&) override;
+        bool on_mouse_up(mouse_button_event_t&) override;
+        bool on_mouse_move(mouse_motion_event_t&) override;
+        bool on_mouse_wheel(mouse_wheel_event_t&) override;
+
         void on_key_down(SDL_Keysym key);
     };
 }
