@@ -16,27 +16,7 @@ namespace editor
     : editor(_editor)
     {
     }
-
-    //TODO: move this into an asdf_multiplat header
-    constexpr bool is_sdl_mouse_event(SDL_Event* event)
-    {
-        return event->type == SDL_MOUSEMOTION
-            || event->type == SDL_MOUSEBUTTONDOWN
-            || event->type == SDL_MOUSEBUTTONUP
-            || event->type == SDL_MOUSEWHEEL
-            ;
-    }
-
-    constexpr bool is_sdl_keyboard_event(SDL_Event* event)
-    {
-        return event->type == SDL_KEYDOWN
-            || event->type == SDL_KEYUP
-            || event->type == SDL_TEXTEDITING
-            || event->type == SDL_TEXTINPUT
-            // || event->type == SDL_KEYMAPCHANGED  /// Does not compile on travis (it might be using an old version of SDL? docs say this requires SDL 2.0.4)
-            ;
-    }
-    //--
+    
 
     glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
     {
