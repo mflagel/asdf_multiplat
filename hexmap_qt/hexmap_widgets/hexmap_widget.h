@@ -37,6 +37,8 @@ protected:
     void mouseMoveEvent(QMouseEvent*) override;
     void wheelEvent(QWheelEvent*) override;
 
+    void keyPressEvent(QKeyEvent *event) override;
+
     glm::ivec2 adjusted_screen_coords(int x, int y) const; //not 100% happy with this name
 };
 

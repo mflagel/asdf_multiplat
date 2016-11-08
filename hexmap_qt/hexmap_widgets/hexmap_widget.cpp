@@ -16,7 +16,8 @@ hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
 , data_map(editor.map_data)
 {
-
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
 }
 
 void hexmap_widget_t::initializeGL()
@@ -154,9 +155,32 @@ void hexmap_widget_t::wheelEvent(QWheelEvent*)
 
 }
 
+
+void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
+{
+    SDL_Keysym sdl_key_event; //being lazy and reusing sdl event for now
+    sdl_key_event.sym = event->nativeVirtualKey(); //supposedly virtual keys are a standard
+
+    sdl_key_event.mod = 0;
+    sdl_key_event.mod |= KMOD_SHIFT * (event->modifiers() & Qt::ShiftModifier) > 0;
+    sdl_key_event.mod |= KMOD_CTRL  * (event->modifiers() & Qt::ControlModifier) > 0;
+    sdl_key_event.mod |= KMOD_ALT   * (event->modifiers() & Qt::AltModifier) > 0;
+    sdl_key_event.mod |= KMOD_GUI   * (event->modifiers() & Qt::MetaModifier) > 0;
+
+    editor.input->on_key_down(sdl_key_event);
+
+    /// TODO only call this when editor does not handle key
+    QWidget::keyPressEvent(event);
+}
+
+
+
 // QT mouse coords have 0,0 at the top-left of the widget
 // adjust such that 0,0 is the center
 glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
 {
     return glm::ivec2(x - width()/2, height()/2 - y);
 }
+
+
+
