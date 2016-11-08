@@ -28,8 +28,6 @@ protected:
     asdf::hexmap::ui::hex_map_t* hex_map;
     asdf::hexmap::data::hex_map_t& data_map;
 
-    asdf::mouse_input_t mouse_input;
-
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
@@ -38,6 +36,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent*) override;
     void mouseMoveEvent(QMouseEvent*) override;
     void wheelEvent(QWheelEvent*) override;
+
+    glm::ivec2 adjusted_screen_coords(int x, int y) const; //not 100% happy with this name
 };
 
 #endif // HEXMAP_WIDGET_T_H

@@ -1,5 +1,7 @@
 #include "hexmap_widget.h"
 
+#include <QMouseEvent>
+
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
 
@@ -81,28 +83,80 @@ void hexmap_widget_t::camera_pos(glm::vec2 p)
 }
 
 
+// there may be a better solution than a switch statement
+asdf::mouse_button_e asdf_button_from_qt(Qt::MouseButton button)
+{
+    switch(button)
+    {
+        case Qt::NoButton:
+            return asdf::mouse_no_button;
+        case Qt::LeftButton:
+            return asdf::mouse_left;
+        case Qt::RightButton:
+            return asdf::mouse_right;
+        case Qt::MiddleButton:
+            return asdf::mouse_middle;
+        case Qt::ExtraButton1:
+            return asdf::mouse_4;
+        case Qt::ExtraButton2:
+            return asdf::mouse_5;
+
+        default:
+            return asdf::mouse_no_button;
+    }
+}
+
+
 void hexmap_widget_t::mousePressEvent(QMouseEvent* event)
 {
-    mouse_button_event_t asdf_event {
+    auto& mouse = asdf::app.mouse_state;
+
+    asdf::mouse_button_event_t asdf_event {
       mouse
-    , event->buttons
-    , (event->flags & Qt::MouseEventCreatedDoubleClick) > 0
+    , asdf_button_from_qt(event->button())
+    , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
-    editor.input->on_mouse_down(asdf_event);
+    LOG("x,y: %i, %i", event->x(), event->y());
+
+    mouse.mouse_down(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+    update();
 }
 
 void hexmap_widget_t::mouseReleaseEvent(QMouseEvent* event)
 {
+    auto& mouse = asdf::app.mouse_state;
 
+    asdf::mouse_button_event_t asdf_event {
+      mouse
+    , asdf_button_from_qt(event->button())
+    , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
+    };
+
+    mouse.mouse_up(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+    update();
 }
 
 void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
 {
+    auto& mouse = asdf::app.mouse_state;
 
+    asdf::mouse_motion_event_t asdf_event {
+        mouse
+    };
+
+    mouse.mouse_move(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+    update(); //lazy
 }
 
 void hexmap_widget_t::wheelEvent(QWheelEvent*)
 {
 
+}
+
+// QT mouse coords have 0,0 at the top-left of the widget
+// adjust such that 0,0 is the center
+glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
+{
+    return glm::ivec2(x - width()/2, height()/2 - y);
 }
