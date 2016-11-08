@@ -68,6 +68,11 @@ namespace asdf
 
         ~mouse_input_t() = default;
 
+        void mouse_down(mouse_button_event_t&, glm::ivec2 mouse_pos);
+        void mouse_up(mouse_button_event_t&, glm::ivec2 mouse_pos);
+        void mouse_move(mouse_motion_event_t&, glm::ivec2 mouse_pos);
+        void mouse_wheel(mouse_wheel_event_t&);
+
         bool mouse_button_state(mouse_button_e btn) const
         {
             return (mouse_button_states & mouse_button_bit(btn)) > 0;

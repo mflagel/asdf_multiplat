@@ -3,10 +3,11 @@
 	[
 		{
 			"path": ".",
-			"folder_exclude_patterns":["bin"]
+			"folder_exclude_patterns":["bin","obj"]
 		},
 		{
-			"path": "../asdf_multiplat"
+			"path": "../asdf_multiplat",
+			"folder_exclude_patterns":["bin","obj"]
 		},
 		{
 			"path": "../shaders"
