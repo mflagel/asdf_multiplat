@@ -61,10 +61,9 @@ namespace data
 
         for(auto const& tex_filepath : textures)
         {
+            string asset_tex_path = Content.asset_path + "/" + tex_filepath;
             if(is_file(filepath))
             {
-                string asset_tex_path = Content.asset_path + "/" + tex_filepath;
-
                 add_texture(asset_tex_path);
             }
             else
