@@ -13,6 +13,8 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    friend class hexmap_widget_t;
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

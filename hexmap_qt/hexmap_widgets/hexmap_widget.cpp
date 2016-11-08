@@ -6,6 +6,7 @@
 #include <asdf_multiplat/data/content_manager.h>
 
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 /// https://doc-snapshots.qt.io/qt5-dev/qopenglwidget.html
 
@@ -150,14 +151,27 @@ void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
     update(); //lazy
 }
 
-void hexmap_widget_t::wheelEvent(QWheelEvent*)
+void hexmap_widget_t::wheelEvent(QWheelEvent* event)
 {
-
+    if(keyboard_mods == Qt::NoModifier)
+    {
+        main_window->ui->hexmap_vscroll->event(event);
+    }
+    else if(keyboard_mods == Qt::ShiftModifier)
+    {
+        main_window->ui->hexmap_hscroll->event(event);
+    }
+    else if(keyboard_mods == Qt::ControlModifier)
+    {
+        //TODO: zoom in/out
+    }
 }
 
 
 void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
 {
+    keyboard_mods = event->modifiers();
+
     SDL_Keysym sdl_key_event; //being lazy and reusing sdl event for now
     sdl_key_event.sym = event->nativeVirtualKey(); //supposedly virtual keys are a standard
 
@@ -171,6 +185,11 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
 
     /// TODO only call this when editor does not handle key
     QWidget::keyPressEvent(event);
+}
+
+void hexmap_widget_t::keyReleaseEvent(QKeyEvent *event)
+{
+    keyboard_mods = event->modifiers();
 }
 
 

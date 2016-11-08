@@ -28,6 +28,8 @@ protected:
     asdf::hexmap::ui::hex_map_t* hex_map;
     asdf::hexmap::data::hex_map_t& data_map;
 
+    Qt::KeyboardModifiers keyboard_mods;
+
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
@@ -38,6 +40,7 @@ protected:
     void wheelEvent(QWheelEvent*) override;
 
     void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 
     glm::ivec2 adjusted_screen_coords(int x, int y) const; //not 100% happy with this name
 };

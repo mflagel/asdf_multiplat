@@ -9,10 +9,15 @@
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
 
-//constexpr int scroll_sub_ticks = 10;
-
 using namespace std;
 using namespace glm;
+
+
+namespace
+{
+    constexpr int scroll_sub_ticks = 10;
+}
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,23 +67,27 @@ void MainWindow::set_scrollbar_stuff()
     auto const& map_size = hxm_wgt->map_size(); //array size
     vec2 map_size_units = vec2(map_size) * hex_size; //total map width in units. Width is not equal to array width because hexagons overlap, and hexagons aren't one unit tall
     map_size_units.x -= (map_size.x - 1) * asdf::hexmap::hex_width_d4; //handle horizontal overlap
+    map_size_units.y += asdf::hexmap::hex_height_d2; //add room for the offset
 
     //get size of a hex in pixels. hex_width and hex_height constexpr constants exist in ui/hex_map.h
     vec2 hx_size_px = hex_size * hxm_wgt->camera_zoom();
     vec2 map_size_px = map_size_units * hx_size_px;
 
-    base_camera_offset = glm::vec2(map_size_units) / 4.0f;
+    base_camera_offset = glm::vec2();
+    base_camera_offset.x = width()/2 / asdf::hexmap::px_per_unit;
+    base_camera_offset.y = map_size_units.y - (height()/2 / asdf::hexmap::px_per_unit);
     hxm_wgt->camera_pos(base_camera_offset);
 
     auto* h_scr = ui->hexmap_hscroll;
     h_scr->setMinimum(0);
-    h_scr->setMaximum(map_size_units.x);
-    h_scr->setPageStep(map_size_px.x / width());
+    h_scr->setMaximum(map_size_units.x * scroll_sub_ticks);
+    h_scr->setPageStep(map_size_px.x / width() * scroll_sub_ticks);
+    //h_scr->setPageStep(1);
 
     auto* v_scr = ui->hexmap_hscroll;
     v_scr->setMinimum(0);
-    v_scr->setMaximum(map_size_units.y);
-    v_scr->setPageStep(map_size_px.y / height());
+    v_scr->setMaximum(map_size_units.y * scroll_sub_ticks);
+    v_scr->setPageStep(map_size_px.y / height() * scroll_sub_ticks);
 }
 
 
@@ -87,6 +96,7 @@ void MainWindow::scrollbar_changed()
     //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
 
     glm::vec2 p(ui->hexmap_hscroll->value(), -ui->hexmap_vscroll->value());
+    p /= scroll_sub_ticks;
     p += base_camera_offset;
 
     ui->hexmap_widget->camera_pos(p);
