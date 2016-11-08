@@ -5,6 +5,7 @@
 //#include <glm/gtx/transform.hpp>
 //#include <glm/gtx/rotate_vector.hpp>
 
+#include "main/input_sdl.h"
 #include "data/gl_state.h"
 #include "data/content_manager.h"
 #include "ui/ui_base.h"
@@ -198,7 +199,7 @@ namespace asdf {
         }
 
 
-        mouse_input.on_event(event);
+        process_sdl_mouse_events(mouse_state, event);
         specific->on_event(event);
         main_view->on_event(event, glm::vec3(), glm::mat3());
     }
