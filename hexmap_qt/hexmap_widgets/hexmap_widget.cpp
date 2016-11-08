@@ -12,7 +12,7 @@ using namespace glm;
 
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
-, data_map(ivec2(15, 16))
+, data_map(editor.map_data)
 {
 
 }
@@ -28,7 +28,8 @@ void hexmap_widget_t::initializeGL()
     auto shader = asdf::Content.create_shader("hexmap", 330);
     asdf::Content.shaders.add_resource(shader);
 
-    hex_map = make_unique<asdf::hexmap::ui::hex_map_t>(data_map);
+    editor.init();
+    hex_map = editor.rendered_map.get();
 
     hex_map->camera.position.z = 10;
 }
@@ -59,8 +60,7 @@ void hexmap_widget_t::paintGL()
 
     glDisable(GL_CULL_FACE);
 
-    hex_map->render();
-
+    editor.render();
 }
 
 
@@ -76,7 +76,33 @@ glm::vec2 hexmap_widget_t::camera_pos() const
 
 void hexmap_widget_t::camera_pos(glm::vec2 p)
 {
-    ASSERT(hex_map, "can't set camera info when the hex_map containing the camera doesnt exist yet");
     hex_map->camera.position.x = p.x;
     hex_map->camera.position.y = p.y;
+}
+
+
+void hexmap_widget_t::mousePressEvent(QMouseEvent* event)
+{
+    mouse_button_event_t asdf_event {
+      mouse
+    , event->buttons
+    , (event->flags & Qt::MouseEventCreatedDoubleClick) > 0
+    };
+
+    editor.input->on_mouse_down(asdf_event);
+}
+
+void hexmap_widget_t::mouseReleaseEvent(QMouseEvent* event)
+{
+
+}
+
+void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
+{
+
+}
+
+void hexmap_widget_t::wheelEvent(QWheelEvent*)
+{
+
 }
