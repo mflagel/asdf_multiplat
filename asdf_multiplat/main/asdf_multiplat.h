@@ -85,7 +85,7 @@ namespace asdf {
         std::shared_ptr<spritebatch_t> spritebatch{nullptr};
         std::shared_ptr<ui_view_t>  main_view{nullptr};
 
-        sdl2_mouse_input_t mouse_input;
+        mouse_input_t mouse_state;
 
     
         asdf_multiplat_t();

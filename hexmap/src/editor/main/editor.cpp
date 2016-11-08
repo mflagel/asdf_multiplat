@@ -40,7 +40,7 @@ namespace editor
         hexmap_t::init();
 
         input = make_unique<input_handler_t>(*this);
-        app.mouse_input.thing = input.get();
+        app.mouse_state.thing = input.get();
     }
 
     void editor_t::render()

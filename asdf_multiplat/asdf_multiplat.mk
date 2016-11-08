@@ -47,6 +47,7 @@ MAIN_SOURCES = $(SRCPATH)/main/main.cpp 		\
 			   $(SRCPATH)/main/input_controller.cpp 		\
 			   $(SRCPATH)/main/keyboard.cpp 		\
 			   $(SRCPATH)/main/mouse.cpp 		\
+			   $(SRCPATH)/main/input_sdl.cpp 		\
 
 DATA_SOURCES = $(SRCPATH)/data/shader.cpp 	    \
 			   $(SRCPATH)/data/content_manager.cpp 	    \
