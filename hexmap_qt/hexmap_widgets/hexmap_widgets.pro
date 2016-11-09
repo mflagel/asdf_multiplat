@@ -18,11 +18,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     hexmap_widget.cpp \
-    layers_widget.cpp
+    layers_widget.cpp \
+    tools_panel.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
-    layers_widget.h
+    layers_widget.h \
+    tools_panel.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
