@@ -13,6 +13,11 @@
 using namespace std;
 using namespace glm;
 
+namespace
+{
+    constexpr float zoom_per_scroll_tick = 0.1f;
+}
+
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
 , data_map(editor.map_data)
@@ -163,7 +168,9 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     }
     else if(keyboard_mods == Qt::ControlModifier)
     {
-        //TODO: zoom in/out
+        float num_steps = event->angleDelta().y() / 15.0f;
+        hex_map->camera.position.z += num_steps * zoom_per_scroll_tick;
+        update();
     }
 }
 
