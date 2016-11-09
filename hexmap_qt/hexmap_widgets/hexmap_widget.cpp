@@ -170,6 +170,7 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     {
         float num_steps = event->angleDelta().y() / 15.0f;
         hex_map->camera.position.z += num_steps * zoom_per_scroll_tick;
+        main_window->set_scrollbar_stuff();
         update();
     }
 }

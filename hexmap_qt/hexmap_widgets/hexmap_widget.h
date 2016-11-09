@@ -23,10 +23,13 @@ public:
 
     MainWindow* main_window = nullptr;
 
-protected:
-    asdf::hexmap::editor::editor_t editor;
+    //encapsulation is obnoxious
     asdf::hexmap::ui::hex_map_t* hex_map;
     asdf::hexmap::data::hex_map_t& data_map;
+
+protected:
+    asdf::hexmap::editor::editor_t editor;
+
 
     Qt::KeyboardModifiers keyboard_mods;
 
