@@ -57,10 +57,15 @@ namespace asdf
             LOG("setup polygon vbo %i with %zu vertexes", vbo.id, n);
         }
 
-        void render()
+        void render() const
+        {
+            render(draw_mode);
+        }
+
+        void render(GLuint _draw_mode) const
         {
             GL_State->bind(vao);
-            glDrawArrays(draw_mode, 0, num_verts);
+            glDrawArrays(_draw_mode, 0, num_verts);
             GL_State->unbind_vao();
         }
     };
