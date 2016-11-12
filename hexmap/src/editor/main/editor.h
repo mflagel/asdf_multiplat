@@ -74,6 +74,8 @@ namespace editor
 
         void render() override;
 
+        void render_selection();
+
         void save_action();
         void load_action();
 

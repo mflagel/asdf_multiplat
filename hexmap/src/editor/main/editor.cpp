@@ -2,6 +2,8 @@
 
 #include <limits>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "asdf_multiplat/data/content_manager.h"
 
 
@@ -47,6 +49,12 @@ namespace editor
     {
         hexmap_t::render();
 
+        render_selection();
+    }
+
+    void editor_t::render_selection()
+    {
+        //draw transparent white boxes over selected objects
         for(auto const& sel_obj_ind : object_selection.object_indices)
         {
             auto const& sel_obj = map_data.objects[sel_obj_ind];
@@ -63,6 +71,23 @@ namespace editor
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
 
             spritebatch.end();
+        }
+
+        //render selection box
+        if(object_selection.object_indices.size() > 0)
+        {
+            auto const& quad = app.renderer->quad; //no sense making a new one
+
+            auto& shader = rendered_map->shader;
+
+            glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
+            glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
+
+            shader->world_matrix = glm::mat4();
+            shader->world_matrix *= glm::scale(glm::mat4(), vec3(bbox_size, 0.0f));
+            shader->world_matrix *= glm::translate(glm::mat4(), vec3(trans, 0.0f));
+
+            quad.render(GL_LINE_LOOP);
         }
     }
 
