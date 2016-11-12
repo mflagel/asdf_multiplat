@@ -5,8 +5,8 @@
 /build/win32/glew32.dll
 /build/win32/ipch/asdfmultiplat-dda67d59/*.ipch
 
-/obj/
-/bin/
+obj
+bin
 /*/bin
 /lib/linux/libasdfm.so
 /lib/linux/libhexmap.so
@@ -35,6 +35,8 @@ files_linux
 todo
 /include/SDL
 
+ext/glm/doc
+
 
 #hexmap qt symlinks; don't commit for cross-platform reasons
 /hexmap_qt/assets
@@ -44,3 +46,14 @@ todo
 #hexmap build stuff
 /hexmap/obj
 /hexmap_qt/build-hexmap_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/
+
+
+#windows
+.vs/
+/build/win32/
+*.vcxproj.filters
+*.vcxproj.user
+*.opendb
+*.VC.db
+Thumbs.db
+ipch
