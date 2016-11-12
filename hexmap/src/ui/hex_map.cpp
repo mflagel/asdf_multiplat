@@ -122,6 +122,7 @@ namespace ui
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
 
+        shader->world_matrix = glm::mat4();
         shader->view_matrix       = camera.view_matrix();
         shader->projection_matrix = camera.projection_ortho();
         
