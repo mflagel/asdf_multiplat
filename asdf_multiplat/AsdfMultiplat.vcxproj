@@ -87,6 +87,7 @@
     <ClCompile Include="data\texture_bank.cpp" />
     <ClCompile Include="main\asdf_multiplat.cpp" />
     <ClCompile Include="main\input_controller.cpp" />
+    <ClCompile Include="main\input_sdl.cpp" />
     <ClCompile Include="main\keyboard.cpp" />
     <ClCompile Include="main\mouse.cpp" />
     <ClCompile Include="ui\polygon.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="data\texture_bank.h" />
     <ClInclude Include="main\asdf_multiplat.h" />
     <ClInclude Include="main\input_controller.h" />
+    <ClInclude Include="main\input_sdl.h" />
     <ClInclude Include="main\keyboard.h" />
     <ClInclude Include="main\mouse.h" />
     <ClInclude Include="stdafx.h" />
