@@ -2,6 +2,7 @@
 #include "input.h"
 
 #include "asdf_multiplat/main/mouse.h"
+#include "asdf_multiplat/main/input_sdl.h"
 
 #include "editor.h"
 
@@ -189,8 +190,15 @@ namespace editor
     {
         auto& key = keysm.sym;
 
-        modifier_keys = keysm.mod;
-        modifier_keys &= KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_GUI; //we only care about these flags
+        modifier_keys = modifier_keys_from_sdl2_event(keysm, true);
+
+        LOG("Key Mods: %s %s %s %s"
+            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        );
+
 
         //bool mod_ctrl_only = keysm.mod == KMOD_LCTRL || keysm.mod == KMOD_RCTRL;
         bool mod_ctrl_only = (keysm.mod & KMOD_CTRL) > 0;
@@ -290,8 +298,14 @@ namespace editor
 
     void input_handler_t::on_key_up(SDL_Keysym keysm)
     {
-        modifier_keys = keysm.mod;
-        modifier_keys &= KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_GUI; //we only care about these flags
+        modifier_keys = modifier_keys_from_sdl2_event(keysm, false);
+
+        LOG("Key Mods: %s %s %s %s"
+            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        );
     }
 
 }

@@ -106,9 +106,9 @@ namespace editor
         // abstraction so I can get rid of handling sdl events here
         if(is_sdl_keyboard_event(event))
         {
-            if(event->key.type == SDL_KEYDOWN)
+            if(event->key.type == SDL_KEYDOWN && event->key.repeat == 0)
                 input->on_key_down(event->key.keysym);
-            else if(event->key.type == SDL_KEYUP)
+            else if(event->key.type == SDL_KEYUP && event->key.repeat == 0)
                 input->on_key_up(event->key.keysym);
         }    
     }
