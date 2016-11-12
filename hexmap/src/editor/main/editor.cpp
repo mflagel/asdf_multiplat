@@ -108,6 +108,8 @@ namespace editor
         {
             if(event->key.type == SDL_KEYDOWN)
                 input->on_key_down(event->key.keysym);
+            else if(event->key.type == SDL_KEYUP)
+                input->on_key_up(event->key.keysym);
         }    
     }
 
@@ -146,14 +148,14 @@ namespace editor
     bool editor_t::select_object(size_t object_index)
     {
         ASSERT(object_index != size_t(-1), "");
-        LOG("selected object: %zu", object_index);
+        LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
         return object_selection.add_object_index(object_index);
     }
 
     bool editor_t::deselect_object(size_t object_index)
     {
         ASSERT(object_index != size_t(-1), "");
-        LOG("deselected object: %zu", object_index);
+        LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
         return object_selection.remove_object_index(object_index);
     }
 

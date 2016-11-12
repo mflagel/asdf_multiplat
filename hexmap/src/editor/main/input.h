@@ -34,6 +34,8 @@ namespace editor
     {
         editor_t& editor;
 
+        uint32_t modifier_keys = 0;
+
         input_handler_t(editor_t& editor);
 
         glm::vec2 world_coords(glm::ivec2 screen_coords);
@@ -43,7 +45,10 @@ namespace editor
         bool on_mouse_move(mouse_motion_event_t&) override;
         bool on_mouse_wheel(mouse_wheel_event_t&) override;
 
-        void on_key_down(SDL_Keysym key);
+        void on_key_down(SDL_Keysym keysm);
+        void on_key_up(SDL_Keysym keysm);
+
+        bool handle_click_selection(mouse_button_event_t&, glm::vec2 const& mw);
     };
 }
 }
