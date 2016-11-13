@@ -19,16 +19,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     hexmap_widget.cpp \
     layers_widget.cpp \
-    tools_panel.cpp
+    tools_panel.cpp \
+    pallet_widget.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
     layers_widget.h \
-    tools_panel.h
+    tools_panel.h \
+    pallet_widget.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
-    layers_widget.ui
+    layers_widget.ui \
+    pallet_widget.ui
 
 
 # hexmap shaders
