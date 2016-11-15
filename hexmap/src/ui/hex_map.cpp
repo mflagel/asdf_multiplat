@@ -8,6 +8,7 @@
 
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
+#include "asdf_multiplat/utilities/cjson_utils.hpp"
 
 using namespace std;
 using namespace glm;
@@ -25,7 +26,7 @@ namespace ui
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
 
-    constexpr char imported_textures_json_filename[] = "imported_textures.json";
+    constexpr char terrain_types_json_filename[] = "terrain_types.json";
 
     constexpr int apply_hexagon_textures = 1;
 
@@ -96,8 +97,8 @@ namespace ui
         auto dir = find_folder("data");
         ASSERT(dir.length() > 0, "Could not find data folder");
 
-        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
-        texture_bank.load_from_list_file(imported_textures_json_filepath);
+        auto terrain_types_json_filepath = dir + "/" + string(terrain_types_json_filename);
+        terrain_bank.load_from_file(terrain_types_json_filepath);
 
 
         ojects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
@@ -178,7 +179,7 @@ namespace ui
 
         glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
-        glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
 
         render_hexagons(glm::ivec2(chunk.size.x, chunk.size.y), GL_TRIANGLE_FAN);
         GL_State->unbind_vao();
@@ -250,6 +251,30 @@ namespace ui
         GL_State->buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
 
         ASSERT(!CheckGLError(), "Error setting hexagon buffer data");
+    }
+
+    void terrain_bank_t::load_from_file(std::string const& filepath)
+    {
+        std::string json_str = read_text_file(filepath);
+        cJSON* root = cJSON_Parse(json_str.c_str());
+        ASSERT(root, "Error loading imported textures json file");
+
+        vector<json_entry_t> terrain;
+        CJSON_GET_ITEM_VECTOR(terrain);
+
+        std::vector<const char*> filepaths;
+        for(auto const& t : terrain)
+            filepaths.push_back(t.asset.c_str());
+
+        add_textures(filepaths);
+
+        cJSON_Delete(root);
+    }
+
+    void terrain_bank_t::json_entry_t::from_JSON(cJSON* root)
+    {
+        CJSON_GET_STR(name);
+        CJSON_GET_STR(asset);
     }
 }
 }

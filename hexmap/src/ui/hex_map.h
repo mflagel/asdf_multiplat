@@ -20,6 +20,8 @@
 
 using color_t = glm::vec4;
 
+struct cJSON;
+
 namespace asdf
 {
 namespace hexmap
@@ -78,6 +80,25 @@ namespace ui
         void set_data(data::hex_grid_chunk_t const&);
     };
 
+    struct terrain_bank_t : asdf::data::texture_bank_t
+    {
+        struct entry_t
+        {
+            std::string name;
+            size_t bank_index;
+        };
+
+        struct json_entry_t
+        {
+            std::string name;
+            std::string asset;
+
+            void from_JSON(cJSON*);
+        };
+
+        void load_from_file(std::string const& filepath);
+    };
+
 
     struct hex_map_t
     {
@@ -89,7 +110,7 @@ namespace ui
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;
 
-        asdf::data::texture_bank_t texture_bank;
+        terrain_bank_t terrain_bank;
         std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
