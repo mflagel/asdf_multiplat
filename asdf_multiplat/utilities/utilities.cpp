@@ -50,6 +50,8 @@ namespace asdf {
     {
         LOG("\nInterrupt Signal");
 
+        ASDF_UNUSED(x);
+
         // FIXME for projects that use this file but not asdf_multiplat.cpp
         app.running = false;
     }

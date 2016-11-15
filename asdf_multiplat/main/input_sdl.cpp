@@ -54,6 +54,8 @@ namespace asdf
 
     mouse_motion_event_t mouse_event_from_sdl(mouse_input_t& mouse, SDL_MouseMotionEvent const& event)
     {
+        ASDF_UNUSED(event);
+
         return mouse_motion_event_t{ mouse };
     }
 

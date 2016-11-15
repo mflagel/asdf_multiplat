@@ -40,7 +40,7 @@ namespace asdf {
     struct sprite_t {
         std::shared_ptr<texture_t> texture;
         glm::vec2   position;
-        rect_t     src_rect;
+        rect_t      src_rect;
         color_t     color;
         glm::vec2   scale;
         float       rotation;

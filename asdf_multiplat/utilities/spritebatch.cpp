@@ -153,10 +153,10 @@ namespace asdf {
     /************************************************************************/
     void spritebatch_t::render_batch(shared_ptr<texture_t> const& texture) 
     {
-        size_t numBatchedSprites = 0;
+        uint16_t numBatchedSprites = 0;
 
         sprite_vertex_t spriteVertices[9001];
-        unsigned short spriteIndices[9001];
+        uint16_t spriteIndices[9001];
 
         //todo: refactor this
         for (sprite_t const& sprite : sprite_map[texture]) {
@@ -166,17 +166,24 @@ namespace asdf {
             up = rotate(up, -sprite.rotation);
             right = rotate(right, -sprite.rotation);
             
-            size_t vertNum = numBatchedSprites * 4;
-            float hwidth = sprite.src_rect.width  / 2.0f;
-            float hheight = sprite.src_rect.height / 2.0f;
+            rectf_t src_rect_f(
+                  static_cast<float>(sprite.src_rect.x)
+                , static_cast<float>(sprite.src_rect.y)
+                , static_cast<float>(sprite.src_rect.width)
+                , static_cast<float>(sprite.src_rect.height)
+                );
+
+            uint16_t vertNum = numBatchedSprites * 4;
+            float hwidth = src_rect_f.width  / 2.0f;
+            float hheight = src_rect_f.height / 2.0f;
             float spritehwidth = hwidth * sprite.scale[0];
             float spritehheight = hheight * sprite.scale[1];
 
             ///FIXME precision
-            float minX = sprite.src_rect.x / double(texture->get_width());
-            float minY = sprite.src_rect.y / double(texture->get_height());
-            float maxX = (sprite.src_rect.x + sprite.src_rect.width) / double(texture->get_width());
-            float maxY = (sprite.src_rect.y + sprite.src_rect.height) / double(texture->get_height());
+            float minX = src_rect_f.x / static_cast<float>(texture->get_width());
+            float minY = src_rect_f.y / static_cast<float>(texture->get_height());
+            float maxX = static_cast<float>(sprite.src_rect.x + sprite.src_rect.width) / static_cast<float>(texture->get_width());
+            float maxY = static_cast<float>(sprite.src_rect.y + sprite.src_rect.height) / static_cast<float>(texture->get_height());
 
 
             /*  0 _________ 1
