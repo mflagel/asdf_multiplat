@@ -49,6 +49,7 @@ namespace data
 
         void load_from_list_file(std::string const& filepath);
         void add_texture(std::string const& filesystem_location);
+        void add_textures(std::vector<const char*> const& filepaths);
     };
 }
 }
