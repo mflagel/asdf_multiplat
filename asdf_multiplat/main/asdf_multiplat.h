@@ -18,7 +18,7 @@ namespace asdf {
 
     struct texture_t;
     class spritebatch_t;
-    struct ui_view_t;
+    //struct ui_view_t;
 
     struct asdf_specific_t
     {
@@ -83,7 +83,7 @@ namespace asdf {
 
         settings_t settings;
         std::shared_ptr<spritebatch_t> spritebatch{nullptr};
-        std::shared_ptr<ui_view_t>  main_view{nullptr};
+        //std::shared_ptr<ui_view_t>  main_view{nullptr};
 
         mouse_input_t mouse_state;
 

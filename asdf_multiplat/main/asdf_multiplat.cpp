@@ -8,7 +8,7 @@
 #include "main/input_sdl.h"
 #include "data/gl_state.h"
 #include "data/content_manager.h"
-#include "ui/ui_base.h"
+//#include "ui/ui_base.h"
 #include "utilities/spritebatch.h"
 #include "utilities/utilities.h"
 
@@ -53,7 +53,7 @@ namespace asdf {
         spritebatch = make_shared<spritebatch_t>();
         spritebatch->spritebatch_shader = Content.shaders["spritebatch"];
 
-        main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
+        //main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
     }
 
     asdf_multiplat_t::~asdf_multiplat_t() {
@@ -83,7 +83,7 @@ namespace asdf {
         ASSERT(specific, "app.specific not assigned");
         specific->update(timeElapsed);
 
-        main_view->update(timeElapsed);
+        //main_view->update(timeElapsed);
 
         //mouse_state.update();
         //keyboardState->Update();
@@ -107,11 +107,11 @@ namespace asdf {
         renderer->pre_render();
 
         {
-            spritebatch->begin();
-            ASSERT(!CheckGLError(), "gl error after begin");
-            main_view->render(glm::vec3(0, 0, 0), glm::mat3(), color_t(1.0f));
-            ASSERT(!CheckGLError(), "GL error after main_view->render() ");
-            spritebatch->end();
+            // spritebatch->begin();
+            // ASSERT(!CheckGLError(), "gl error after begin");
+            // main_view->render(glm::vec3(0, 0, 0), glm::mat3(), color_t(1.0f));
+            // ASSERT(!CheckGLError(), "GL error after main_view->render() ");
+            // spritebatch->end();
         }
 
         glUseProgram(0);
@@ -158,7 +158,7 @@ namespace asdf {
         //glVertex2f(-0.5f, -0.5f);
         //glEnd();
 
-        main_view->render_debug();
+        //main_view->render_debug();
 
         glUseProgram(0);
     }
@@ -201,7 +201,7 @@ namespace asdf {
 
         process_sdl_mouse_events(mouse_state, event);
         specific->on_event(event);
-        main_view->on_event(event, glm::vec3(), glm::mat3());
+        //main_view->on_event(event, glm::vec3(), glm::mat3());
     }
 
     void asdf_multiplat_t::init_SDL() {
