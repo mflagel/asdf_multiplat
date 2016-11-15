@@ -108,7 +108,9 @@ namespace editor
         {
             if(event->key.type == SDL_KEYDOWN)
                 input->on_key_down(event->key.keysym);
-        }    
+        }
+
+        rendered_map->on_event(event); //for camera controller
     }
 
 
@@ -134,6 +136,8 @@ namespace editor
             {
                 break;
             }
+
+            case num_tool_types: break;
         };
 
         current_tool = new_tool;

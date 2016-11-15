@@ -55,7 +55,7 @@ namespace data
             {
                 size_t num_r = SDL_RWread(io, column.data(), sizeof(hex_grid_cell_t), column.size());
                 ASSERT(num_r == column.size(), "");
-                LOG("read %d cells", num_r);
+                LOG("read %zu cells", num_r);
             }
         });
 
@@ -82,7 +82,7 @@ namespace data
         header.chunk_size = chunk_size();
         header.map_size = size;
 
-        size_t num_written = SDL_RWwrite(io, (void*)&header, sizeof(hxm_header_t), 1);
+        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(&header), sizeof(hxm_header_t), 1);
 
         if(num_written != 1)
         {
@@ -92,12 +92,12 @@ namespace data
 
         for_each_chunk([&](hex_grid_chunk_t const& chunk)
         {
-            SDL_RWwrite(io, (void*)&chunk.size, sizeof(glm::uvec2), 1);
+            SDL_RWwrite(io, reinterpret_cast<const void*>(&chunk.size), sizeof(glm::uvec2), 1);
             for(auto column : chunk.cells)
             {
                 size_t num_w = SDL_RWwrite(io, column.data(), sizeof(hex_grid_cell_t), column.size());
                 ASSERT(num_w == column.size(), "chunk save error");
-                LOG("wrote %d cells", num_w);
+                LOG("wrote %zu cells", num_w);
             }
         });
         
@@ -114,8 +114,8 @@ namespace data
 
     void hex_grid_t::init(glm::ivec2 _size, glm::uvec2 chunk_size)
     {
-        auto dv_x = div(size.x, chunk_size.x);
-        auto dv_y = div(size.y, chunk_size.y);
+        auto dv_x = div(_size.x, chunk_size.x);
+        auto dv_y = div(_size.y, chunk_size.y);
 
         size_t num_chunks_x = dv_x.quot + (dv_x.rem > 0);
         size_t num_chunks_y = dv_y.quot + (dv_y.rem > 0);

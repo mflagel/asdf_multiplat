@@ -142,6 +142,7 @@ namespace editor
 
     bool input_handler_t::on_mouse_wheel(mouse_wheel_event_t& event)
     {
+        ASDF_UNUSED(event);
 
         return false;
     }
@@ -241,8 +242,8 @@ namespace editor
                 default: return;
             }
 
-            LOG("current tile_id: %d", current_tile_id);
-            LOG("current object_id: %d", current_object_id);
+            LOG("current tile_id: %ld", current_tile_id);
+            LOG("current object_id: %ld", current_object_id);
         }
     }
 
