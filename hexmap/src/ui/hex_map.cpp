@@ -8,7 +8,6 @@
 
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
-#include "asdf_multiplat/utilities/cjson_utils.hpp"
 
 using namespace std;
 using namespace glm;
@@ -251,30 +250,6 @@ namespace ui
         GL_State->buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
 
         ASSERT(!CheckGLError(), "Error setting hexagon buffer data");
-    }
-
-    void terrain_bank_t::load_from_file(std::string const& filepath)
-    {
-        std::string json_str = read_text_file(filepath);
-        cJSON* root = cJSON_Parse(json_str.c_str());
-        ASSERT(root, "Error loading imported textures json file");
-
-        vector<json_entry_t> terrain;
-        CJSON_GET_ITEM_VECTOR(terrain);
-
-        std::vector<const char*> filepaths;
-        for(auto const& t : terrain)
-            filepaths.push_back(t.asset.c_str());
-
-        add_textures(filepaths);
-
-        cJSON_Delete(root);
-    }
-
-    void terrain_bank_t::json_entry_t::from_JSON(cJSON* root)
-    {
-        CJSON_GET_STR(name);
-        CJSON_GET_STR(asset);
     }
 }
 }

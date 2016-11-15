@@ -5,12 +5,12 @@
 
 #include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/ui/ui_base.h"
-#include "asdf_multiplat/data/texture_bank.h"
 #include "asdf_multiplat/data/texture_atlas.h"
 #include "asdf_multiplat/utilities/spritebatch.h"
 
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
+#include "data/terrain_bank.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
 #include "asdf_multiplat/main/input_controller.h"
@@ -80,26 +80,6 @@ namespace ui
         void set_data(data::hex_grid_chunk_t const&);
     };
 
-    struct terrain_bank_t : asdf::data::texture_bank_t
-    {
-        struct entry_t
-        {
-            std::string name;
-            size_t bank_index;
-        };
-
-        struct json_entry_t
-        {
-            std::string name;
-            std::string asset;
-
-            void from_JSON(cJSON*);
-        };
-
-        void load_from_file(std::string const& filepath);
-    };
-
-
     struct hex_map_t
     {
         data::hex_map_t& map_data;
@@ -110,7 +90,7 @@ namespace ui
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;
 
-        terrain_bank_t terrain_bank;
+        data::terrain_bank_t terrain_bank;
         std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
