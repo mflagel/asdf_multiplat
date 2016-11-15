@@ -3,6 +3,8 @@
 #define PI 3.14159265359f
 #define nullindex 4294967295
 
+#define ASDF_UNUSED(x) (void)x
+
 #define ENDOF(container) container[container.size() - 1]
 
 
