@@ -62,11 +62,12 @@ UTILITIES_SOURCES = $(UTILITIES_SRC_PATH)/spritebatch.cpp 		\
 					$(UTILITIES_SRC_PATH)/camera.cpp 	\
 					$(UTILITIES_SRC_PATH)/utilities.cpp 	\
 
-UI_SOURCES = $(SRCPATH)/ui/ui_base.cpp \
-			 $(SRCPATH)/ui/ui_button.cpp \
-             $(SRCPATH)/ui/ui_label.cpp \
-             $(SRCPATH)/ui/text.cpp \
-             $(SRCPATH)/ui/polygon.cpp \
+UI_SOURCES = $(SRCPATH)/ui/polygon.cpp 
+
+# $(SRCPATH)/ui/ui_base.cpp \
+# $(SRCPATH)/ui/ui_button.cpp \
+# $(SRCPATH)/ui/ui_label.cpp \
+# $(SRCPATH)/ui/text.cpp \
 
 SOURCES += $(MAIN_SOURCES) $(DATA_SOURCES) $(UTILITIES_SOURCES) $(UI_SOURCES) $(EXT_SOURCES)
 
