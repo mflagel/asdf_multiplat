@@ -20,6 +20,9 @@ namespace data
             void from_JSON(cJSON*);
         };
 
+
+        std::vector<std::string> asset_names;
+
         void load_from_file(std::string const& filepath);
     };
 }

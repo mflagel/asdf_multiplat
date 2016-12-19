@@ -22,7 +22,10 @@ namespace data
 
         std::vector<const char*> filepaths;
         for(auto const& t : terrain)
+        {
+            asset_names.push_back(t.name.c_str());
             filepaths.push_back(t.asset.c_str());
+        }
 
         add_textures(filepaths);
 
