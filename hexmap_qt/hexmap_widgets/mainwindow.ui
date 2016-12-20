@@ -83,18 +83,7 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="right_dock_contents">
-    <widget class="palette_widget" name="widget" native="true">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>50</y>
-       <width>120</width>
-       <height>80</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
+   <widget class="QWidget" name="right_dock_contents"/>
   </widget>
   <widget class="QDockWidget" name="left_dock">
    <property name="floating">
@@ -200,12 +189,6 @@
    <class>tools_panel_t</class>
    <extends>QWidget</extends>
    <header>tools_panel.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>palette_widget</class>
-   <extends>QWidget</extends>
-   <header location="global">palette_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

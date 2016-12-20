@@ -3,6 +3,7 @@
 
 //#include <QQuickView>
 #include <QGLFormat>
+#include <QListView>
 
 #include <memory>
 
@@ -10,6 +11,8 @@
 #include <asdf_multiplat/data/content_manager.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "palette_widget.h"
 
 using namespace std;
 using namespace glm;
@@ -47,6 +50,17 @@ MainWindow::MainWindow(QWidget *parent) :
 //    container->setFocusPolicy(Qt::TabFocus);
 //    view->setSource(QUrl("main.qml"));
 //    ui->verticalLayout->addWidget(container);
+
+    auto* palette_widget = new palette_widget_t(this);
+
+    palette_widget->setMinimumSize(200, 300);
+
+    connect(ui->hexmap_widget, &hexmap_widget_t::hex_map_initialized,
+               palette_widget, &palette_widget_t::hex_map_initialized);
+    connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
+                    ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
+
+    ui->right_dock->layout()->addWidget(palette_widget);
 
 
 }
