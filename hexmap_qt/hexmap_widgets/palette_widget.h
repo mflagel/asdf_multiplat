@@ -4,36 +4,87 @@
 #include <vector>
 
 #include <QWidget>
+#include <QAbstractListModel>
+#include <QAbstractItemDelegate>
+
+class QListView;
 
 //namespace asdf::data
-namespace asdf{ namespace data
-{
-    struct texture_bank_t;
+namespace asdf{ namespace hexmap {
+    namespace data
+    {
+        struct terrain_bank_t;
+    }
+    namespace editor
+    {
+        struct editor_t;
+    }
 }}
 
 namespace Ui {
 class palette_widget;
 }
 
-class palette_entry_t : public QWidget
-{
-    Q_OBJECT
-};
 
-class palette_widget : public QWidget
+class palette_item_model_t : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit palette_widget(QWidget *parent = 0);
-    ~palette_widget();
+    palette_item_model_t(asdf::hexmap::data::terrain_bank_t const&, QObject* parent = 0);
 
-    void build_from_texture_bank(asdf::data::texture_bank_t const&);
+    //QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    //QModelIndex parent(const QModelIndex &child) const;
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+    void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
+
+
+    struct entry_t
+    {
+        QString name;
+        QImage thumbnail;
+    };
+
+    QVector<entry_t> entries;
+
+    //asdf::hexmap::data::terrain_bank_t const& terrain;
+};
+
+class palette_delegate_t : QAbstractItemDelegate
+{
+    Q_OBJECT
+
+public:
+
+    explicit palette_delegate_t(QObject* parent = nullptr);
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+};
+
+class palette_widget_t : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit palette_widget_t(QWidget *parent = 0);
+    ~palette_widget_t();
+
+    void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
+
+public slots:
+    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+
+
+public:
+    QListView* list_view = nullptr;
 
 private:
-    Ui::palette_widget *ui;
+    //void pressed(const QModelIndex&)
 
-    std::vector<palette_entry_t> entries;
+    Ui::palette_widget *ui;
 };
 
 #endif // PALLET_WIDGET_H
