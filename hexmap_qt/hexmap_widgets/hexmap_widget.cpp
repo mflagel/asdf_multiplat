@@ -41,6 +41,8 @@ void hexmap_widget_t::initializeGL()
     hex_map = editor.rendered_map.get();
 
     hex_map->camera.position.z = 10;
+
+    hex_map_initialized(editor);
 }
 
 void hexmap_widget_t::resizeGL(int w, int h)
@@ -210,4 +212,9 @@ glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
 }
 
 
+void hexmap_widget_t::set_palette_item(QModelIndex const& index)
+{
+    //todo: get palette type (tile vs object)
 
+    editor.current_tile_id = index.row();
+}

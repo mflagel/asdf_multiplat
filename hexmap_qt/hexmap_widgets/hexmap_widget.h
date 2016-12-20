@@ -11,6 +11,8 @@ class MainWindow;
 
 class hexmap_widget_t : public QOpenGLWidget
 {
+    Q_OBJECT
+
 public:
     hexmap_widget_t(QWidget* parent);
 
@@ -46,6 +48,12 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
     glm::ivec2 adjusted_screen_coords(int x, int y) const; //not 100% happy with this name
+
+signals:
+    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+
+public slots:
+    void set_palette_item(QModelIndex const&);
 };
 
 #endif // HEXMAP_WIDGET_T_H
