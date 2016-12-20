@@ -79,7 +79,7 @@ public slots:
 
 
 public:
-    QListView* list_view = nullptr;
+    QListView* list_view = nullptr; //store this publicly so other things can connect the signals it sends out
 
 private:
     //void pressed(const QModelIndex&)
