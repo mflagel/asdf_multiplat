@@ -18,6 +18,8 @@ public:
 
 private:
     Ui::tools_panel *ui;
+
+    friend class MainWindow;
 };
 
 #endif // TOOLS_PANEL_H
