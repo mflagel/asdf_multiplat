@@ -100,7 +100,7 @@ namespace ui
         terrain_bank.load_from_file(terrain_types_json_filepath);
 
 
-        ojects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
+        objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -216,13 +216,13 @@ namespace ui
 
         for(auto& obj : map_data.objects)
         {
-            ASSERT(obj.id < ojects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
-            auto const& atlas_entry = ojects_atlas->atlas_entries[obj.id];
+            ASSERT(obj.id < objects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
+            auto const& atlas_entry = objects_atlas->atlas_entries[obj.id];
 
             rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
             auto sprite_scale = obj.scale * glm::vec2(units_per_px);
 
-            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
+            spritebatch.draw(objects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
         }
 
         spritebatch.end();

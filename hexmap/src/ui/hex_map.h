@@ -91,7 +91,7 @@ namespace ui
         rendered_polygon_<hexagon_vertex_t> hexagon;
 
         data::terrain_bank_t terrain_bank;
-        std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
+        std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;
