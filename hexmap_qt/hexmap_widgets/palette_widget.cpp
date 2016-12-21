@@ -23,13 +23,22 @@ palette_widget_t::~palette_widget_t()
 
 void palette_widget_t::build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const& terrain)
 {
-    auto* model = new palette_item_model_t(terrain, this);
+    auto* model = new palette_item_model_t(this);
+    model->build_from_terrain_bank(terrain);
+    ui->listView->setModel(model);
+}
+
+void palette_widget_t::build_from_atlas(asdf::data::texture_atlas_t const& atlas)
+{
+    auto* model = new palette_item_model_t(this);
+    model->build_from_atlas(atlas);
     ui->listView->setModel(model);
 }
 
 void palette_widget_t::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
 {
-    build_from_terrain_bank(editor.rendered_map->terrain_bank);
+    //build_from_terrain_bank(editor.rendered_map->terrain_bank);
+    build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 }
 
 
@@ -65,16 +74,14 @@ QSize palette_delegate_t::sizeHint(const QStyleOptionViewItem &option, const QMo
 
 
 
-palette_item_model_t::palette_item_model_t(asdf::hexmap::data::terrain_bank_t const& terrain, QObject *parent)
+palette_item_model_t::palette_item_model_t(QObject *parent)
 : QAbstractListModel(parent)
 {
-    build_from_terrain_bank(terrain);
 }
 
 void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const& terrain)
 {
     entries.clear();
-
     entries.reserve(terrain.saved_textures.size());
 
     for(size_t i = 0; i < terrain.saved_textures.size(); ++i)
@@ -82,6 +89,31 @@ void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_b
         palette_item_model_t::entry_t entry {
               terrain.asset_names[i].c_str()
             , QImage(terrain.saved_textures[i].filesystem_location.c_str())
+        };
+
+        entries.append(std::move(entry));
+    }
+}
+
+void palette_item_model_t::build_from_atlas(asdf::data::texture_atlas_t const& atlas)
+{
+    entries.clear();
+    entries.reserve(atlas.atlas_entries.size());
+
+    // Create thumbnails by loading the atlas' texture into a QImage and copying out each atlas entry
+    // It might be more efficient to render each entry onto new QImages from the atlas texture, since its already loaded
+    // however it might be more effort than necessary
+    QImage atlas_image( QString(atlas.texture_filepath.c_str()) );
+
+    for(auto const& ae : atlas.atlas_entries)
+    {
+        auto top_left  = QPoint(ae.top_left_px.x, ae.top_left_px.y);
+        auto size      = QSize(ae.size_px.x, ae.size_px.x);
+        QRect rect(top_left, size);
+
+        palette_item_model_t::entry_t entry {
+              ae.filename.c_str() //TODO give names to atlas entries
+            , atlas_image.copy(rect)
         };
 
         entries.append(std::move(entry));

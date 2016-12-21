@@ -10,16 +10,22 @@
 class QListView;
 
 //namespace asdf::data
-namespace asdf{ namespace hexmap {
+namespace asdf{
     namespace data
     {
-        struct terrain_bank_t;
+        struct texture_atlas_t;
     }
-    namespace editor
-    {
-        struct editor_t;
+    namespace hexmap {
+        namespace data
+        {
+            struct terrain_bank_t;
+        }
+        namespace editor
+        {
+            struct editor_t;
+        }
     }
-}}
+}
 
 namespace Ui {
 class palette_widget;
@@ -31,7 +37,7 @@ class palette_item_model_t : public QAbstractListModel
     Q_OBJECT
 
 public:
-    palette_item_model_t(asdf::hexmap::data::terrain_bank_t const&, QObject* parent = 0);
+    palette_item_model_t(QObject* parent = 0);
 
     //QModelIndex index(int row, int column, const QModelIndex &parent) const;
     //QModelIndex parent(const QModelIndex &child) const;
@@ -39,6 +45,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
+    void build_from_atlas(asdf::data::texture_atlas_t const& atlas);
 
 
     struct entry_t
@@ -48,8 +55,6 @@ public:
     };
 
     QVector<entry_t> entries;
-
-    //asdf::hexmap::data::terrain_bank_t const& terrain;
 };
 
 class palette_delegate_t : QAbstractItemDelegate
@@ -73,6 +78,7 @@ public:
     ~palette_widget_t();
 
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
+    void build_from_atlas(asdf::data::texture_atlas_t const& atlas);
 
 public slots:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
