@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include "ui_tools_panel.h"
+
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
 
@@ -33,23 +35,21 @@ MainWindow::MainWindow(QWidget *parent) :
     // give hexmap widget a pointer to this, so it can set up scrollbar ranges after initializeGL is called
     // can't do it now because we need the hex_map to be created, which requires an openGL context that hasnt
     // been initialized yet
+    // EDIT: This may be solvable with the hex_map_initialized signal
     ui->hexmap_widget->main_window = this;
-
 
     connect(ui->hexmap_hscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
     connect(ui->hexmap_vscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
 
-    //auto tools_panel = new ToolsPa
-    //ui->left_column->addWidget();
 
-    // http://www.ics.com/blog/combining-qt-widgets-and-qml-qwidgetcreatewindowcontainer
-//    QQuickView *view = new QQuickView();
-//    QWidget *container = QWidget::createWindowContainer(view, this);
-//    container->setMinimumSize(200, 200);
-//    container->setMaximumSize(200, 200);
-//    container->setFocusPolicy(Qt::TabFocus);
-//    view->setSource(QUrl("main.qml"));
-//    ui->verticalLayout->addWidget(container);
+    using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
+    auto* tools_ui = ui->tools_panel->ui;
+    auto pressed = &QToolButton::pressed;
+
+    connect(tools_ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
+    connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
+    connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
+
 
     auto* palette_widget = new palette_widget_t(this);
 
