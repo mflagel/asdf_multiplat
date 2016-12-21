@@ -191,7 +191,12 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
     sdl_key_event.mod |= KMOD_ALT   * (event->modifiers() & Qt::AltModifier) > 0;
     sdl_key_event.mod |= KMOD_GUI   * (event->modifiers() & Qt::MetaModifier) > 0;
 
+    auto prev_tool = editor.current_tool;
+
     editor.input->on_key_down(sdl_key_event);
+
+    if(prev_tool != editor.current_tool)
+        emit editor_tool_changed(editor.current_tool);
 
     /// TODO only call this when editor does not handle key
     QWidget::keyPressEvent(event);
@@ -211,6 +216,11 @@ glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
     return glm::ivec2(x - width()/2, height()/2 - y);
 }
 
+void hexmap_widget_t::set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool)
+{
+    editor.set_tool(new_tool);
+    emit editor_tool_changed(new_tool);
+}
 
 void hexmap_widget_t::set_palette_item(QModelIndex const& index)
 {

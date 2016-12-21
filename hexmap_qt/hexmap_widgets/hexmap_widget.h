@@ -51,8 +51,10 @@ protected:
 
 signals:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+    void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
 
 public slots:
+    void set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
     void set_palette_item(QModelIndex const&);
 };
 
