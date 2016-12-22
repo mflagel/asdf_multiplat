@@ -18,6 +18,8 @@ namespace
     constexpr float zoom_per_scroll_tick = 0.1f;
 }
 
+using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
+
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
 , data_map(editor.map_data)
@@ -216,7 +218,7 @@ glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
     return glm::ivec2(x - width()/2, height()/2 - y);
 }
 
-void hexmap_widget_t::set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool)
+void hexmap_widget_t::set_editor_tool(tool_type_e new_tool)
 {
     editor.set_tool(new_tool);
     emit editor_tool_changed(new_tool);
@@ -224,7 +226,16 @@ void hexmap_widget_t::set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_
 
 void hexmap_widget_t::set_palette_item(QModelIndex const& index)
 {
-    //todo: get palette type (tile vs object)
+    switch(editor.current_tool)
+    {
+        case tool_type_e::terrain_paint:
+            editor.current_tile_id = index.row();
+            break;
+        case tool_type_e::place_objects:
+            editor.current_object_id = index.row();
+            break;
 
-    editor.current_tile_id = index.row();
+    default:
+        break;
+    }
 }
