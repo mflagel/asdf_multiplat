@@ -25,6 +25,8 @@ namespace
     constexpr int scroll_sub_ticks = 10;
 }
 
+using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -41,26 +43,33 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->hexmap_hscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
     connect(ui->hexmap_vscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
 
-
-    using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
-    auto* tools_ui = ui->tools_panel->ui;
-    auto pressed = &QToolButton::pressed;
-
-    connect(tools_ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
-    connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
-    connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
-
-
-    auto* palette_widget = new palette_widget_t(this);
-
-    palette_widget->setMinimumSize(200, 300);
-
     connect(ui->hexmap_widget, &hexmap_widget_t::hex_map_initialized,
-               palette_widget, &palette_widget_t::hex_map_initialized);
-    connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
-                    ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
+                        this, &MainWindow::hex_map_initialized);
+    connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
+                         this, &MainWindow::editor_tool_changed);
 
-    ui->right_dock->layout()->addWidget(palette_widget);
+    {
+        auto* tools_ui = ui->tools_panel->ui;
+        auto pressed = &QToolButton::pressed;
+
+        connect(tools_ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
+        connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
+        connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
+    }
+
+    {
+        palette_widget = new palette_widget_t(this);
+
+        palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
+        //palette_widget->setMinimumSize(200, 300);
+        palette_widget->updateGeometry();
+
+        connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
+                        ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
+
+
+        ui->right_dock->setWidget(palette_widget);
+    }
 
 
 }
@@ -164,4 +173,33 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
 
+}
+
+
+void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
+{
+    terrain_palette_model = new palette_item_model_t();
+    objects_palette_model = new palette_item_model_t();
+
+    terrain_palette_model->build_from_terrain_bank(editor.rendered_map->terrain_bank);
+    objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
+
+    editor_tool_changed(editor.current_tool);
+}
+
+void MainWindow::editor_tool_changed(tool_type_e new_tool)
+{
+    switch(new_tool)
+    {
+        case tool_type_e::terrain_paint:
+            palette_widget->list_view->setModel(terrain_palette_model);
+            break;
+        case tool_type_e::place_objects:
+            palette_widget->list_view->setModel(objects_palette_model);
+            break;
+
+    default:
+        palette_widget->list_view->setModel(nullptr);
+        break;
+    }
 }
