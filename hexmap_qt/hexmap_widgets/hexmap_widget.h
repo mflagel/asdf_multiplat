@@ -23,6 +23,8 @@ public:
 
     float camera_zoom() const { return hex_map->camera.zoom(); }
 
+    bool is_hex_map_initialized() const { return hex_map != nullptr; }
+
     MainWindow* main_window = nullptr;
 
     //encapsulation is obnoxious
