@@ -80,9 +80,6 @@ public:
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
     void build_from_atlas(asdf::data::texture_atlas_t const& atlas);
 
-public slots:
-    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
-
 
 public:
     QListView* list_view = nullptr; //store this publicly so other things can connect the signals it sends out

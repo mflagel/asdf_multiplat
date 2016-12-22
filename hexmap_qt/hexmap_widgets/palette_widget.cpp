@@ -35,12 +35,6 @@ void palette_widget_t::build_from_atlas(asdf::data::texture_atlas_t const& atlas
     ui->listView->setModel(model);
 }
 
-void palette_widget_t::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
-{
-    //build_from_terrain_bank(editor.rendered_map->terrain_bank);
-    build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
-}
-
 
 palette_delegate_t::palette_delegate_t(QObject* parent)
 : QAbstractItemDelegate(parent)
