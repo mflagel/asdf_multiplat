@@ -56,7 +56,7 @@ namespace editor
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = rendered_map->ojects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto const& obj_size_px = rendered_map->objects_atlas->atlas_entries[sel_obj.id].size_px;
             auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
             auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
 
@@ -221,7 +221,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = rendered_map->ojects_atlas->atlas_entries;
+        auto const& atlas_entries = rendered_map->objects_atlas->atlas_entries;
         ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
