@@ -241,8 +241,8 @@ namespace editor
                 default: return;
             }
 
-            LOG("current tile_id: %d", current_tile_id);
-            LOG("current object_id: %d", current_object_id);
+            LOG("current tile_id: %ld", current_tile_id);
+            LOG("current object_id: %ld", current_object_id);
         }
     }
 
