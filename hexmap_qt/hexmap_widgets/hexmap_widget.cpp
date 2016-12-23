@@ -77,7 +77,7 @@ void hexmap_widget_t::paintGL()
 }
 
 
-glm::ivec2 hexmap_widget_t::map_size() const
+glm::uvec2 hexmap_widget_t::map_size() const
 {
     return data_map.hex_grid.size;
 }

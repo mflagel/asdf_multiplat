@@ -16,7 +16,7 @@ class hexmap_widget_t : public QOpenGLWidget
 public:
     hexmap_widget_t(QWidget* parent);
 
-    glm::ivec2 map_size() const;
+    glm::uvec2 map_size() const;
 
     glm::vec2 camera_pos() const;
     void camera_pos(glm::vec2);
@@ -31,10 +31,9 @@ public:
     asdf::hexmap::ui::hex_map_t* hex_map;
     asdf::hexmap::data::hex_map_t& data_map;
 
-protected:
     asdf::hexmap::editor::editor_t editor;
 
-
+protected:
     Qt::KeyboardModifiers keyboard_mods;
 
     void initializeGL() override;
