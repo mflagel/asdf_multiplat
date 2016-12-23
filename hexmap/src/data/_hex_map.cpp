@@ -8,7 +8,7 @@ namespace hexmap
 {
 namespace data
 {
-    hex_map_t::hex_map_t(glm::ivec2 grid_size)
+    hex_map_t::hex_map_t(glm::uvec2 grid_size)
     : hex_grid(grid_size)
     {
     }
