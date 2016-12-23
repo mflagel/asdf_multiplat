@@ -107,8 +107,8 @@ namespace ui
         void on_event(SDL_Event* event);
 
         void render_chunk(data::hex_grid_chunk_t const&);
-        void render_grid_overlay(glm::ivec2 grid_size);
-        void render_hexagons(glm::ivec2 grid_size, GLuint draw_mode);
+        void render_grid_overlay(glm::uvec2 grid_size);
+        void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode);
         void render_map_objects();
     };
 }

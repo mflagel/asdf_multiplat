@@ -180,11 +180,11 @@ namespace ui
 
         glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
 
-        render_hexagons(glm::ivec2(chunk.size.x, chunk.size.y), GL_TRIANGLE_FAN);
+        render_hexagons(chunk.size, GL_TRIANGLE_FAN);
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_grid_overlay(glm::ivec2 grid_size)
+    void hex_map_t::render_grid_overlay(glm::uvec2 grid_size)
     {
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
@@ -201,7 +201,7 @@ namespace ui
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_hexagons(glm::ivec2 grid_size, GLuint draw_mode)
+    void hex_map_t::render_hexagons(glm::uvec2 grid_size, GLuint draw_mode)
     {
         auto loc = shader->uniform("CHUNK_HEIGHT");
         glUniform1i(loc, grid_size.y);

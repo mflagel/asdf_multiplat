@@ -21,7 +21,7 @@ namespace hexmap
     constexpr float max_delta_time = 1.0f; // cap dt in hex_map_t::update()
 
     hexmap_t::hexmap_t()
-    : map_data(ivec2(15, 16))
+    : map_data(uvec2(15, 16))
     {
     }
 
