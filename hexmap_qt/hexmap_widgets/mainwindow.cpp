@@ -7,14 +7,15 @@
 
 #include <memory>
 
-#include "ui_tools_panel.h"
-
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "palette_widget.h"
+#include "ui_tools_panel.h"
+#include "dialogs/new_map_dialog.h"
+#include "ui_new_map_dialog.h"
 
 using namespace std;
 using namespace glm;
@@ -33,6 +34,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+
+    {
+        connect(ui->actionNew,     &QAction::triggered, this, &MainWindow::new_map);
+        connect(ui->actionOpen,    &QAction::triggered, this, &MainWindow::open_map);
+        connect(ui->actionSave,    &QAction::triggered, this, &MainWindow::save_map);
+        connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::save_map_as);
+    }
+
 
     // give hexmap widget a pointer to this, so it can set up scrollbar ranges after initializeGL is called
     // can't do it now because we need the hex_map to be created, which requires an openGL context that hasnt
@@ -158,6 +168,32 @@ void MainWindow::scrollbar_changed()
     ui->hexmap_widget->camera_pos(p);
     ui->hexmap_widget->update();
 }
+
+void MainWindow::new_map()
+{
+    new_map_dialog_t nm(this);
+
+    nm.exec(); //supposedly this blocks until the modal dialog is dismissed
+
+    if(!nm.Accepted)
+        return;
+
+    //TODO: prompt to save any unsaved changes in the current map
+    ui->hexmap_widget->editor.new_map_action(glm::uvec2(nm.ui->spb_width->value(), nm.ui->spb_height->value()));
+}
+
+void MainWindow::open_map()
+{
+}
+
+void MainWindow::save_map()
+{
+}
+
+void MainWindow::save_map_as()
+{
+}
+
 
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)

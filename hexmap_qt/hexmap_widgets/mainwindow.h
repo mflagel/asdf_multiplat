@@ -29,6 +29,11 @@ public:
 public slots:
     void scrollbar_changed();
 
+    void new_map();
+    void open_map();
+    void save_map();
+    void save_map_as();
+
 protected:
     void mouseMoveEvent(QMouseEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
