@@ -66,6 +66,11 @@ namespace editor
         }
     }
 
+    void editor_t::new_map_action(glm::uvec2 const& size)
+    {
+        map_data = data::hex_map_t(size);
+    }
+
     void editor_t::save_action()
     {
         map_data.save_to_file("test_save.hxm");
