@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::new_map_dialog_t *ui;
+
+    friend class MainWindow;
 };
 
 #endif // NEW_MAP_DIALOG_H
