@@ -52,8 +52,7 @@ void hexmap_widget_t::resizeGL(int w, int h)
     hex_map->camera.viewport.size_d2 = vec2(w,h) / 2.0f;
     hex_map->camera.viewport.bottom_left = -1.0f * hex_map->camera.viewport.size_d2;
 
-    ASSERT(main_window, "main_window ptr expected");
-    main_window->set_scrollbar_stuff();
+    emit camera_changed(hex_map->camera);
 }
 
 void hexmap_widget_t::paintGL()
@@ -87,10 +86,13 @@ glm::vec2 hexmap_widget_t::camera_pos() const
     return vec2(hex_map->camera.position.x, hex_map->camera.position.y);
 }
 
-void hexmap_widget_t::camera_pos(glm::vec2 p)
+void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
 {
     hex_map->camera.position.x = p.x;
     hex_map->camera.position.y = p.y;
+
+    if(emit_signal)
+        emit camera_changed(hex_map->camera);
 }
 
 
@@ -164,7 +166,7 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
 {
     if(keyboard_mods == Qt::NoModifier)
     {
-        main_window->ui->hexmap_vscroll->event(event);
+        main_window->ui->hexmap_vscroll->event(event); ///FIXME can this be solved without holding onto main_window?
     }
     else if(keyboard_mods == Qt::ShiftModifier)
     {
@@ -174,8 +176,8 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     {
         float num_steps = event->angleDelta().y() / 15.0f;
         hex_map->camera.position.z += num_steps * zoom_per_scroll_tick;
-        main_window->set_scrollbar_stuff();
         update();
+        emit camera_changed(hex_map->camera);
     }
 }
 

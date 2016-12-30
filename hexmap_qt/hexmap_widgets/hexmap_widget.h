@@ -19,7 +19,7 @@ public:
     glm::uvec2 map_size() const;
 
     glm::vec2 camera_pos() const;
-    void camera_pos(glm::vec2);
+    void camera_pos(glm::vec2 const&, bool emit_signal = true);
 
     float camera_zoom() const { return hex_map->camera.zoom(); }
 
@@ -53,6 +53,7 @@ protected:
 signals:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
+    void camera_changed(asdf::camera_t const&);
 
 public slots:
     void set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
