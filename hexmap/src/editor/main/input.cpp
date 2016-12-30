@@ -2,6 +2,7 @@
 #include "input.h"
 
 #include "asdf_multiplat/main/mouse.h"
+#include "asdf_multiplat/main/input_sdl.h"
 
 #include "editor.h"
 
@@ -32,14 +33,9 @@ namespace editor
         {
             case editor_t::select:
             {
-                bool obj_was_selected = editor.select_object_at(mw);
-                
-                if(!obj_was_selected)
-                {
-                    editor.deselect_all();
-                }
+                //todo: start select box dragging
 
-                return true;
+                break;
             }
 
             case editor_t::terrain_paint:
@@ -66,6 +62,44 @@ namespace editor
         return false;
     }
 
+    bool input_handler_t::handle_click_selection(mouse_button_event_t& event, vec2 const& mw)
+    {
+        size_t obj_ind = editor.map_data.object_index_at(mw);
+
+        if(obj_ind != size_t(-1))
+        {
+            switch(modifier_keys)
+            {
+                case KMOD_LSHIFT: [[fallthrough]]
+                case KMOD_RSHIFT:
+                    editor.select_object(obj_ind);
+                    break;
+
+                case KMOD_LALT: [[fallthrough]]
+                case KMOD_RALT:
+                    editor.deselect_object(obj_ind);
+                    break;
+
+                case 0:
+                    editor.deselect_all();
+                    editor.select_object(obj_ind);
+                    break;
+
+                default:
+                    return false;
+            };
+
+            return true;
+        }
+        else if(modifier_keys == 0)
+        {
+            editor.deselect_all();
+            return true;
+        }
+
+        return false;
+    }
+
     bool input_handler_t::on_mouse_up(mouse_button_event_t& event)
     {
         auto mw = world_coords(event.mouse_state.mouse_position);
@@ -75,6 +109,12 @@ namespace editor
         {
             case editor_t::select:
             {
+                if(!event.mouse_state.is_dragging())
+                {
+                    if(handle_click_selection(event, mw))
+                        return true;
+                }
+
                 break;
             }
 
@@ -150,6 +190,16 @@ namespace editor
     void input_handler_t::on_key_down(SDL_Keysym keysm)
     {
         auto& key = keysm.sym;
+
+        modifier_keys = modifier_keys_from_sdl2_event(keysm, true);
+
+        LOG("Key Mods: %s %s %s %s"
+            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        );
+
 
         //bool mod_ctrl_only = keysm.mod == KMOD_LCTRL || keysm.mod == KMOD_RCTRL;
         bool mod_ctrl_only = (keysm.mod & KMOD_CTRL) > 0;
@@ -245,6 +295,18 @@ namespace editor
             LOG("current tile_id: %ld", current_tile_id);
             LOG("current object_id: %ld", current_object_id);
         }
+    }
+
+    void input_handler_t::on_key_up(SDL_Keysym keysm)
+    {
+        modifier_keys = modifier_keys_from_sdl2_event(keysm, false);
+
+        LOG("Key Mods: %s %s %s %s"
+            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        );
     }
 
 }

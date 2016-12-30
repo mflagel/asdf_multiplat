@@ -2,6 +2,8 @@
 
 #include <limits>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "asdf_multiplat/data/content_manager.h"
 
 
@@ -46,6 +48,12 @@ namespace editor
     {
         hexmap_t::render();
 
+        render_selection();
+    }
+
+    void editor_t::render_selection()
+    {
+        //draw transparent white boxes over selected objects
         for(auto const& sel_obj_ind : object_selection.object_indices)
         {
             auto const& sel_obj = map_data.objects[sel_obj_ind];
@@ -62,6 +70,23 @@ namespace editor
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
 
             spritebatch.end();
+        }
+
+        //render selection box
+        if(object_selection.object_indices.size() > 0)
+        {
+            auto const& quad = app.renderer->quad; //no sense making a new one
+
+            auto& shader = rendered_map->shader;
+
+            glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
+            glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
+
+            shader->world_matrix = glm::mat4();
+            shader->world_matrix *= glm::scale(glm::mat4(), vec3(bbox_size, 0.0f));
+            shader->world_matrix *= glm::translate(glm::mat4(), vec3(trans, 0.0f));
+
+            quad.render(GL_LINE_LOOP);
         }
     }
 
@@ -114,8 +139,14 @@ namespace editor
         // abstraction so I can get rid of handling sdl events here
         if(is_sdl_keyboard_event(event))
         {
-            if(event->key.type == SDL_KEYDOWN)
+            if(event->key.type == SDL_KEYDOWN && event->key.repeat == 0)
+            {
                 input->on_key_down(event->key.keysym);
+            }
+            else if(event->key.type == SDL_KEYUP && event->key.repeat == 0)
+            {
+                input->on_key_up(event->key.keysym);
+            }
         }
 
         rendered_map->on_event(event); //for camera controller
@@ -158,14 +189,14 @@ namespace editor
     bool editor_t::select_object(size_t object_index)
     {
         ASSERT(object_index != size_t(-1), "");
-        LOG("selected object: %zu", object_index);
+        LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
         return object_selection.add_object_index(object_index);
     }
 
     bool editor_t::deselect_object(size_t object_index)
     {
         ASSERT(object_index != size_t(-1), "");
-        LOG("deselected object: %zu", object_index);
+        LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
         return object_selection.remove_object_index(object_index);
     }
 

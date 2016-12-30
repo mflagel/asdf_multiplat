@@ -73,6 +73,9 @@ namespace editor
         void init() override;
 
         void render() override;
+        void render_selection();
+
+        void on_event(SDL_Event*) override;
 
         void new_map_action(glm::uvec2 const& size);
         void save_action();
@@ -80,8 +83,6 @@ namespace editor
 
         bool undo();
         bool redo();
-
-        void on_event(SDL_Event*) override;
 
         void set_tool(tool_type_e const& new_tool);
 
