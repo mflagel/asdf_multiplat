@@ -4,6 +4,8 @@
 #include <map>
 #include <memory>
 
+//#include "asdf_multiplat/data/gl_resources.h"
+
 class FTFont;
 
 namespace asdf {
@@ -84,8 +86,8 @@ namespace asdf {
         std::shared_ptr<shader_t> spritebatch_shader = nullptr;
 
     private:        
-        GLuint vertex_buffer = 0;
-        GLuint index_buffer = 0;
+        uint vertex_buffer = 0;
+        uint index_buffer = 0;
         bool has_begun = false;
 
         //might be faster to store it all in one big vector and then sort it afterwards

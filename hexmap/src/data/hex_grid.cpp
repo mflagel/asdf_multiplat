@@ -106,16 +106,16 @@ namespace data
     }
 
 
-    hex_grid_t::hex_grid_t(glm::ivec2 _size)
+    hex_grid_t::hex_grid_t(glm::uvec2 _size)
     : size(_size)
     {
         init(size);
     }
 
-    void hex_grid_t::init(glm::ivec2 _size, glm::uvec2 chunk_size)
+    void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size)
     {
-        auto dv_x = div(_size.x, chunk_size.x);
-        auto dv_y = div(_size.y, chunk_size.y);
+        auto dv_x = div(long(size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
+        auto dv_y = div(long(size.y), chunk_size.y); //
 
         size_t num_chunks_x = dv_x.quot + (dv_x.rem > 0);
         size_t num_chunks_y = dv_y.quot + (dv_y.rem > 0);
@@ -151,43 +151,56 @@ namespace data
         // sounds expensive as hell
     }
 
-    void hex_grid_t::resize(glm::ivec2 new_size, resize_x_direction_e xdir, resize_y_direction_e ydir)
+    void hex_grid_t::resize(glm::uvec2 new_size, resize_x_direction_e xdir, resize_y_direction_e ydir)
     {
-        if(new_size.x > size.x && new_size.y > size.y)  //grow both
+        using lvec2 = glm::detail::tvec2<int64_t>;
+
+        lvec2 l_size(size.x, size.y);
+        lvec2 l_newsize(new_size.x, new_size.y);
+
+        lvec2 diff = l_newsize - l_size;
+        bool grow_x = diff.x > 0;
+        bool grow_y = diff.y > 0;
+        bool shrink_x = diff.x < 0;
+        bool shrink_y = diff.y < 0;
+
+        // if(grow_x && grow_y)  //grow both
+        // {
+        //     grow(new_size - size, xdir, ydir);
+        // }
+        // else if(shrink_x && shrink_y)  //shrink both
+        // {
+        //     shrink(new_size - size, xdir, ydir);
+        // }
+
+        //shrink before grow to minimize data storage needed to undo such an action
+        if(shrink_x)
         {
-            grow(new_size - size, xdir, ydir);
+            shrink( uvec2(abs(diff.x), 0), xdir, ydir );
         }
-        else if(new_size.x < size.x && new_size.y < size.y)  //shrink both
+        if(shrink_y)
         {
-            shrink(new_size - size, xdir, ydir);
+            shrink( uvec2(0, abs(diff.y)), xdir, ydir );
         }
-        else if(new_size.x > size.x && new_size.y < size.y)  //shrink y, grow x
+        if(grow_x)
         {
-            shrink(ivec2(size.x, size.y - new_size.y), xdir, ydir);   //shrink before grow to minimize data storage needed to undo such an action
-            grow(ivec2(new_size.x - size.x, size.y), xdir, ydir);
+            grow( uvec2(diff.x, 0), xdir, ydir );
         }
-        else if(new_size.x < size.x && new_size.y > size.y)  //shrink x, grow y
+        if(grow_y)
         {
-            shrink(ivec2(size.x - new_size.x, size.y), xdir, ydir);
-            grow(ivec2(size.x, new_size.y - size.y), xdir, ydir);
+            grow( uvec2(0, diff.y), xdir, ydir );
         }
     }
 
-    void hex_grid_t::grow(glm::ivec2 grow_amount, resize_x_direction_e xdir, resize_y_direction_e ydir)
+    void hex_grid_t::grow(glm::uvec2 grow_amount, resize_x_direction_e xdir, resize_y_direction_e ydir)
     {
         ASSERT(grow_amount.x >=0 && grow_amount.y >= 0, "");
 
-        // if(grow_amount.x > 0)
-        // {
         //     add_columns(grow_amount.x, xdir);
-        // }
-        // if(grow_amount.y > 0)
-        // {
         //     add_rows(grow_amount.y, ydir);
-        // }
     }
 
-    void hex_grid_t::shrink(glm::ivec2 shrink_amount, resize_x_direction_e, resize_y_direction_e)
+    void hex_grid_t::shrink(glm::uvec2 shrink_amount, resize_x_direction_e, resize_y_direction_e)
     {
         ASSERT(shrink_amount.x >=0 && shrink_amount.y >= 0, "");
         EXPLODE("todo: hex_grid_t::shrink()");
@@ -257,6 +270,7 @@ namespace data
     */
 
 
+    //FIXME handle cases where columns or rows have been added below 0,0
     bool hex_grid_t::is_in_bounds(ivec2 hx) const
     {
         return hx.x >= 0 && hx.y >= 0 && hx.x < size.x && hx.y < size.y;

@@ -12,9 +12,8 @@ namespace asdf {
 namespace hexmap {
 namespace editor
 {
-
-    const color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
-
+    const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
+    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
 
     //TODO: move this into an asdf_multiplat header
     constexpr bool is_sdl_keyboard_event(SDL_Event* event)
@@ -56,7 +55,7 @@ namespace editor
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = rendered_map->ojects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto const& obj_size_px = rendered_map->objects_atlas->atlas_entries[sel_obj.id].size_px;
             auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
             auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
 
@@ -64,6 +63,15 @@ namespace editor
 
             spritebatch.end();
         }
+    }
+
+    void editor_t::new_map_action(glm::uvec2 const& size)
+    {
+        map_data = data::hex_map_t(size);
+
+        //reset camera
+        rendered_map->camera_controller.position = default_camera_position;
+        rendered_map->update(0.0f);
     }
 
     void editor_t::save_action()
@@ -225,7 +233,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = rendered_map->ojects_atlas->atlas_entries;
+        auto const& atlas_entries = rendered_map->objects_atlas->atlas_entries;
         ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;

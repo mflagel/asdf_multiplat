@@ -74,6 +74,7 @@ namespace editor
 
         void render() override;
 
+        void new_map_action(glm::uvec2 const& size);
         void save_action();
         void load_action();
 

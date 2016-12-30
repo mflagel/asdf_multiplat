@@ -54,6 +54,7 @@ SOURCES = $(SRCPATH)/main/main.cpp \
 		  $(SRCPATH)/main/hexmap.cpp \
           $(SRCPATH)/data/hex_grid.cpp \
           $(SRCPATH)/data/_hex_map.cpp \
+          $(SRCPATH)/data/terrain_bank.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
           $(SRCPATH)/editor/main/editor.cpp \

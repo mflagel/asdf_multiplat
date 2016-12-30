@@ -31,6 +31,7 @@ namespace data
 
         std::vector<entry_t> atlas_entries;
 
+        std::string texture_filepath;
         std::shared_ptr<texture_t> atlas_texture;
 
         texture_atlas_t(std::string const& json_filepath);

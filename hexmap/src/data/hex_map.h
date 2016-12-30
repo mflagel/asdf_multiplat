@@ -17,7 +17,7 @@ namespace data
         std::vector<map_object_t> objects;
         std::vector<spline_t> splines;
         
-        hex_map_t(glm::ivec2 grid_size);
+        hex_map_t(glm::uvec2 grid_size);
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
 

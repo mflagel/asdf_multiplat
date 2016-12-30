@@ -59,7 +59,7 @@ namespace data
 
     struct hex_grid_t
     {
-        glm::ivec2 size;  //I cant remember why this is an ivec instead of a uvec
+        glm::uvec2 size;
         hex_chunks_t chunks;
 
         size_t num_chunks() const { return size.x * size.y; }
@@ -79,19 +79,19 @@ namespace data
             }
         }
 
-        hex_grid_t(glm::ivec2 size);
+        hex_grid_t(glm::uvec2 size);
         hex_grid_t(std::string const& filepath);
 
-        void init(glm::ivec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height));
+        void init(glm::uvec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height));
 
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
 
         void resize_by_copy(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e);
 
-        void resize(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e);
-        void grow(glm::ivec2 grow_amount, resize_x_direction_e, resize_y_direction_e);
-        void shrink(glm::ivec2 shrink_amount, resize_x_direction_e, resize_y_direction_e);
+        void resize(glm::uvec2 new_size, resize_x_direction_e, resize_y_direction_e);
+        void grow(glm::uvec2 grow_amount, resize_x_direction_e, resize_y_direction_e);
+        void shrink(glm::uvec2 shrink_amount, resize_x_direction_e, resize_y_direction_e);
 
         void add_columns(size_t num_cols, resize_x_direction_e = resize_rightwards);
         void add_rows(size_t num_rows, resize_y_direction_e = resize_upwards);
@@ -111,7 +111,7 @@ namespace data
     {
         size_t version = size_t(-1);
 
-        glm::ivec2 map_size;
+        glm::uvec2 map_size;
         glm::uvec2 chunk_size;
     };
 }

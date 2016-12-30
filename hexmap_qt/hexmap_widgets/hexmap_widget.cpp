@@ -18,6 +18,8 @@ namespace
     constexpr float zoom_per_scroll_tick = 0.1f;
 }
 
+using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
+
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
 , data_map(editor.map_data)
@@ -41,6 +43,8 @@ void hexmap_widget_t::initializeGL()
     hex_map = editor.rendered_map.get();
 
     hex_map->camera.position.z = 10;
+
+    hex_map_initialized(editor);
 }
 
 void hexmap_widget_t::resizeGL(int w, int h)
@@ -48,8 +52,7 @@ void hexmap_widget_t::resizeGL(int w, int h)
     hex_map->camera.viewport.size_d2 = vec2(w,h) / 2.0f;
     hex_map->camera.viewport.bottom_left = -1.0f * hex_map->camera.viewport.size_d2;
 
-    ASSERT(main_window, "main_window ptr expected");
-    main_window->set_scrollbar_stuff();
+    emit camera_changed(hex_map->camera);
 }
 
 void hexmap_widget_t::paintGL()
@@ -73,7 +76,7 @@ void hexmap_widget_t::paintGL()
 }
 
 
-glm::ivec2 hexmap_widget_t::map_size() const
+glm::uvec2 hexmap_widget_t::map_size() const
 {
     return data_map.hex_grid.size;
 }
@@ -83,10 +86,13 @@ glm::vec2 hexmap_widget_t::camera_pos() const
     return vec2(hex_map->camera.position.x, hex_map->camera.position.y);
 }
 
-void hexmap_widget_t::camera_pos(glm::vec2 p)
+void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
 {
     hex_map->camera.position.x = p.x;
     hex_map->camera.position.y = p.y;
+
+    if(emit_signal)
+        emit camera_changed(hex_map->camera);
 }
 
 
@@ -160,7 +166,7 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
 {
     if(keyboard_mods == Qt::NoModifier)
     {
-        main_window->ui->hexmap_vscroll->event(event);
+        main_window->ui->hexmap_vscroll->event(event); ///FIXME can this be solved without holding onto main_window?
     }
     else if(keyboard_mods == Qt::ShiftModifier)
     {
@@ -170,8 +176,8 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     {
         float num_steps = event->angleDelta().y() / 15.0f;
         hex_map->camera.position.z += num_steps * zoom_per_scroll_tick;
-        main_window->set_scrollbar_stuff();
         update();
+        emit camera_changed(hex_map->camera);
     }
 }
 
@@ -189,7 +195,12 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
     sdl_key_event.mod |= KMOD_ALT   * (event->modifiers() & Qt::AltModifier) > 0;
     sdl_key_event.mod |= KMOD_GUI   * (event->modifiers() & Qt::MetaModifier) > 0;
 
+    auto prev_tool = editor.current_tool;
+
     editor.input->on_key_down(sdl_key_event);
+
+    if(prev_tool != editor.current_tool)
+        emit editor_tool_changed(editor.current_tool);
 
     /// TODO only call this when editor does not handle key
     QWidget::keyPressEvent(event);
@@ -209,5 +220,24 @@ glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
     return glm::ivec2(x - width()/2, height()/2 - y);
 }
 
+void hexmap_widget_t::set_editor_tool(tool_type_e new_tool)
+{
+    editor.set_tool(new_tool);
+    emit editor_tool_changed(new_tool);
+}
 
+void hexmap_widget_t::set_palette_item(QModelIndex const& index)
+{
+    switch(editor.current_tool)
+    {
+        case tool_type_e::terrain_paint:
+            editor.current_tile_id = index.row();
+            break;
+        case tool_type_e::place_objects:
+            editor.current_object_id = index.row();
+            break;
 
+    default:
+        break;
+    }
+}

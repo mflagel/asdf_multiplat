@@ -25,7 +25,7 @@ namespace ui
     const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
 
-    constexpr char imported_textures_json_filename[] = "imported_textures.json";
+    constexpr char terrain_types_json_filename[] = "terrain_types.json";
 
     constexpr int apply_hexagon_textures = 1;
 
@@ -39,10 +39,6 @@ namespace ui
 
         shader = Content.shaders["hexmap"];
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
-
-        //camera_controller.position.x = 5; //5 hexes right
-        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
-
 
         std::vector<hexagon_vertex_t> verts(6);
 
@@ -96,11 +92,11 @@ namespace ui
         auto dir = find_folder("data");
         ASSERT(dir.length() > 0, "Could not find data folder");
 
-        auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
-        texture_bank.load_from_list_file(imported_textures_json_filepath);
+        auto terrain_types_json_filepath = dir + "/" + string(terrain_types_json_filename);
+        terrain_bank.load_from_file(terrain_types_json_filepath);
 
 
-        ojects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
+        objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -178,13 +174,13 @@ namespace ui
 
         glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
-        glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
 
-        render_hexagons(glm::ivec2(chunk.size.x, chunk.size.y), GL_TRIANGLE_FAN);
+        render_hexagons(chunk.size, GL_TRIANGLE_FAN);
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_grid_overlay(glm::ivec2 grid_size)
+    void hex_map_t::render_grid_overlay(glm::uvec2 grid_size)
     {
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
@@ -201,7 +197,7 @@ namespace ui
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_hexagons(glm::ivec2 grid_size, GLuint draw_mode)
+    void hex_map_t::render_hexagons(glm::uvec2 grid_size, GLuint draw_mode)
     {
         auto loc = shader->uniform("CHUNK_HEIGHT");
         glUniform1i(loc, grid_size.y);
@@ -216,13 +212,13 @@ namespace ui
 
         for(auto& obj : map_data.objects)
         {
-            ASSERT(obj.id < ojects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
-            auto const& atlas_entry = ojects_atlas->atlas_entries[obj.id];
+            ASSERT(obj.id < objects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
+            auto const& atlas_entry = objects_atlas->atlas_entries[obj.id];
 
             rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
             auto sprite_scale = obj.scale * glm::vec2(units_per_px);
 
-            spritebatch.draw(ojects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
+            spritebatch.draw(objects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
         }
 
         spritebatch.end();

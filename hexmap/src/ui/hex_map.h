@@ -5,12 +5,12 @@
 
 #include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/ui/ui_base.h"
-#include "asdf_multiplat/data/texture_bank.h"
 #include "asdf_multiplat/data/texture_atlas.h"
 #include "asdf_multiplat/utilities/spritebatch.h"
 
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
+#include "data/terrain_bank.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
 #include "asdf_multiplat/main/input_controller.h"
@@ -19,6 +19,8 @@
 #include "data/hex_map.h"
 
 using color_t = glm::vec4;
+
+struct cJSON;
 
 namespace asdf
 {
@@ -78,7 +80,6 @@ namespace ui
         void set_data(data::hex_grid_chunk_t const&);
     };
 
-
     struct hex_map_t
     {
         data::hex_map_t& map_data;
@@ -89,8 +90,8 @@ namespace ui
         std::shared_ptr<shader_t> shader;
         rendered_polygon_<hexagon_vertex_t> hexagon;
 
-        asdf::data::texture_bank_t texture_bank;
-        std::unique_ptr<asdf::data::texture_atlas_t> ojects_atlas;
+        data::terrain_bank_t terrain_bank;
+        std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;
@@ -106,8 +107,8 @@ namespace ui
         void on_event(SDL_Event* event);
 
         void render_chunk(data::hex_grid_chunk_t const&);
-        void render_grid_overlay(glm::ivec2 grid_size);
-        void render_hexagons(glm::ivec2 grid_size, GLuint draw_mode);
+        void render_grid_overlay(glm::uvec2 grid_size);
+        void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode);
         void render_map_objects();
     };
 }

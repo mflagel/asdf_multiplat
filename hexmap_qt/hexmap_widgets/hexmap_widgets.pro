@@ -19,16 +19,22 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     hexmap_widget.cpp \
     layers_widget.cpp \
-    tools_panel.cpp
+    tools_panel.cpp \
+    palette_widget.cpp \
+    dialogs/new_map_dialog.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
     layers_widget.h \
-    tools_panel.h
+    tools_panel.h \
+    palette_widget.h \
+    dialogs/new_map_dialog.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
-    layers_widget.ui
+    layers_widget.ui \
+    palette_widget.ui \
+    dialogs/new_map_dialog.ui
 
 
 # hexmap shaders

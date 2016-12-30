@@ -56,21 +56,10 @@ namespace data
         cJSON* root = cJSON_Parse(json_str.c_str());
         ASSERT(root, "Error loading imported textures json file");
 
-        vector<char*> textures;
+        vector<const char*> textures;
         CJSON_GET_STR_VECTOR(textures);
 
-        for(auto const& tex_filepath : textures)
-        {
-            string asset_tex_path = Content.asset_path + "/" + tex_filepath;
-            if(is_file(filepath))
-            {
-                add_texture(asset_tex_path);
-            }
-            else
-            {
-                LOG("Texture not found: %s", tex_filepath);
-            }
-        }
+        add_textures(textures);
         
         cJSON_Delete(root);
     }
@@ -121,5 +110,22 @@ namespace data
 
         ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", filepath.c_str());
     }
+
+    void texture_bank_t::add_textures(std::vector<const char*> const& filepaths)
+    {
+        for(auto const& tex_filepath : filepaths)
+        {
+            string asset_tex_path = Content.asset_path + "/" + tex_filepath;
+            if(is_file(asset_tex_path))
+            {
+                add_texture(asset_tex_path);
+            }
+            else
+            {
+                LOG("Texture not found: %s", tex_filepath);
+            }
+        }
+    }
+
 }
 }
