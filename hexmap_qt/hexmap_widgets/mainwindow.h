@@ -24,7 +24,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void set_scrollbar_stuff();
+    void set_scrollbar_stuff(asdf::camera_t const&);
 
 public slots:
     void scrollbar_changed();

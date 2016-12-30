@@ -53,10 +53,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->hexmap_hscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
     connect(ui->hexmap_vscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
 
-    connect(ui->hexmap_widget, &hexmap_widget_t::hex_map_initialized,
-                        this, &MainWindow::hex_map_initialized);
-    connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
-                         this, &MainWindow::editor_tool_changed);
+    {
+        connect(ui->hexmap_widget, &hexmap_widget_t::hex_map_initialized,
+                            this, &MainWindow::hex_map_initialized);
+        connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
+                             this, &MainWindow::editor_tool_changed);
+        connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
+                             this, &MainWindow::set_scrollbar_stuff);
+    }
 
     {
         auto* tools_ui = ui->tools_panel->ui;
@@ -104,7 +108,7 @@ MainWindow::~MainWindow()
 
 /// TODO: refactor this such that most of the math is done in the hexmap widget
 ///       and the widget then calls this function with scrollbar ranges as params
-void MainWindow::set_scrollbar_stuff()
+void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
 {
     hexmap_widget_t* hxm_wgt = ui->hexmap_widget;
 
@@ -116,13 +120,14 @@ void MainWindow::set_scrollbar_stuff()
     map_size_units.y += asdf::hexmap::hex_height_d2; //add room for the offset
 
     //get size of a hex in pixels. hex_width and hex_height constexpr constants exist in ui/hex_map.h
-    vec2 hx_size_px = hex_size * hxm_wgt->camera_zoom();
+    vec2 hx_size_px = hex_size * camera.zoom();
     vec2 map_size_px = map_size_units * hx_size_px;
 
     base_camera_offset = glm::vec2();
     base_camera_offset.x = width()/2 / asdf::hexmap::px_per_unit;
     base_camera_offset.y = map_size_units.y - (height()/2 / asdf::hexmap::px_per_unit);
-    hxm_wgt->camera_pos(base_camera_offset);
+
+    hxm_wgt->camera_pos(base_camera_offset, false);
 
     //range is equal to how many units fit on the screen minus total map size in units
 
@@ -165,7 +170,7 @@ void MainWindow::scrollbar_changed()
     p /= scroll_sub_ticks;
     p += base_camera_offset;
 
-    ui->hexmap_widget->camera_pos(p);
+    ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
 }
 
