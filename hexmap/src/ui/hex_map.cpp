@@ -40,10 +40,6 @@ namespace ui
         shader = Content.shaders["hexmap"];
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
-        //camera_controller.position.x = 5; //5 hexes right
-        camera_controller.position.z = 10.0; // zoom is camera.position.z ^ 2
-
-
         std::vector<hexagon_vertex_t> verts(6);
 
         for(size_t i = 0; i < 6; ++i)

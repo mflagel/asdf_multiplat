@@ -12,9 +12,8 @@ namespace asdf {
 namespace hexmap {
 namespace editor
 {
-
-    const color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
-
+    const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
+    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
 
     //TODO: move this into an asdf_multiplat header
     constexpr bool is_sdl_keyboard_event(SDL_Event* event)
@@ -69,6 +68,10 @@ namespace editor
     void editor_t::new_map_action(glm::uvec2 const& size)
     {
         map_data = data::hex_map_t(size);
+
+        //reset camera
+        rendered_map->camera_controller.position = default_camera_position;
+        rendered_map->update(0.0f);
     }
 
     void editor_t::save_action()
