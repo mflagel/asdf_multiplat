@@ -4,6 +4,7 @@
 
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
+#include "data/spline.h"
 
 namespace asdf
 {
