@@ -60,6 +60,7 @@ SOURCES = $(SRCPATH)/main/main.cpp \
           $(SRCPATH)/data/terrain_bank.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
+          $(SRCPATH)/ui/spline_renderer.cpp \
           $(SRCPATH)/editor/main/editor.cpp \
           $(SRCPATH)/editor/main/input.cpp \
           $(SRCPATH)/editor/command_actions/command_actions.cpp \
