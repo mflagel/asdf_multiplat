@@ -46,7 +46,6 @@ namespace data
         splines.clear();
         node_indices.clear();
     }
-
 }
 }
 }

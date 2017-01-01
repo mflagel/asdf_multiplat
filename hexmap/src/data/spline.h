@@ -25,8 +25,10 @@ namespace data
         enum interpolation_e
         {
             linear
-          , bspline
           , bezier
+          // , cubic_bspline
+          // , catmull_rom
+          // , hermite
         };
 
         std::vector<line_node_t> nodes;

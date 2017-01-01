@@ -21,11 +21,6 @@ namespace data
         glm::vec2 scale;// = glm::vec2(1, 1);
         float rotation;// = 0.0f;
     };
-
-    struct spline_t
-    {
-
-    };
 }
 }
 }
