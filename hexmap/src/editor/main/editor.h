@@ -64,6 +64,13 @@ namespace editor
         hex_region_e current_snap_point = hex_no_region;
         object_selection_t object_selection;
 
+        //spline
+        data::line_node_t new_node_style;
+        data::spline_t* wip_spline = nullptr; //the last node will follow the mouse
+        data::line_node_t* wip_spline_node = nullptr;
+        data::spline_selection_t spline_selection;
+
+        ///
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
@@ -99,6 +106,13 @@ namespace editor
 
         void place_object(glm::vec2 position);
         void delete_object(size_t object_index);
+
+        void spline_click(glm::vec2 position);
+        void start_spline(data::line_node_t start);
+        void add_node_to_wip_spline(data::line_node_t node);
+        void finish_spline(bool spline_loops = false);
+        void cancel_spline();
+        bool is_placing_spline() const { return wip_spline != nullptr; }
 
         void cancel_action();
     };

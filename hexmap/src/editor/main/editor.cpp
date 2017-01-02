@@ -202,7 +202,8 @@ namespace editor
 
     void editor_t::deselect_all()
     {
-        object_selection.clear_selection();
+        object_selection.clear_selection(); ///FIXME rename to be consistent?
+        spline_selection.deselect_all();
     }
 
     bool editor_t::select_object_at(glm::vec2 position)
@@ -274,6 +275,69 @@ namespace editor
         action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
+    void editor_t::delete_object(size_t object_index)
+    {
+        auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
+        action_stack.push_and_execute(std::move(cmd));
+    }
+
+
+    void editor_t::spline_click(glm::vec2 position)
+    {
+        auto node = new_node_style;
+        node.position = position;
+
+        if(!is_placing_spline())
+        {
+            start_spline(node);
+        }
+        else
+        {
+            add_node_to_wip_spline(node);
+        }
+    }
+
+    void editor_t::start_spline(data::line_node_t start)
+    {
+        data::spline_t spline;
+        spline.nodes.push_back(start);
+        spline.nodes.push_back(std::move(start)); //push a copy of start node to move under the mouse
+
+        map_data.splines.push_back(std::move(spline));
+        wip_spline = &(map_data.splines.back());
+        wip_spline_node = &(wip_spline->nodes.back());
+    }
+
+    void editor_t::add_node_to_wip_spline(data::line_node_t node)
+    {
+        ASSERT(wip_spline, "cannot add a spline node when not currently constructing one");
+
+        *wip_spline_node = node;
+        wip_spline->nodes.push_back(node);
+        wip_spline_node = &(wip_spline->nodes.back());
+    }
+
+    void editor_t::finish_spline(bool spline_loops)
+    {
+        ASSERT(wip_spline, "finishing a spline that hasnt even started");
+
+        //todo: handle closed loops
+
+        auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
+        action_stack.push_and_execute(std::move(cmd));
+
+        wip_spline = nullptr;
+        wip_spline_node = nullptr;
+    }
+
+    void editor_t::cancel_spline()
+    {
+        map_data.splines.pop_back();
+
+        wip_spline = nullptr;
+        wip_spline_node = nullptr;
+    }
+
 
 
     void editor_t::cancel_action()
@@ -295,6 +359,7 @@ namespace editor
             }
             case place_splines:
             {
+                cancel_spline();
                 break;
             }
             default: break;
