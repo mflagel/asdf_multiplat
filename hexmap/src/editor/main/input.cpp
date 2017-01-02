@@ -53,6 +53,15 @@ namespace editor
 
             case editor_t::place_splines:
             {
+                if(event.button == mouse_left)
+                {
+                    editor.spline_click(mw);
+                }
+                else if(event.button == mouse_right)
+                {
+                    editor.cancel_action();
+                }
+                
                 break;
             }
 
