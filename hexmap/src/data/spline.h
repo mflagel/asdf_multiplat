@@ -20,7 +20,7 @@ namespace data
 
     using control_node_t = glm::vec2;
 
-    struct spline_t// : map_object_t
+    struct spline_t
     {
         enum interpolation_e
         {
