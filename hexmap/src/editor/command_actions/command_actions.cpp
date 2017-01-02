@@ -143,17 +143,23 @@ namespace editor
     }
 
 
+    ///Add Spline
+    add_spline_action_t::add_spline_action_t(data::hex_map_t& _map_data, data::spline_t _spline)
+    : map_data(_map_data)
+    , spline(_spline)
+    {
+    }
 
-    /// Resize Grid
-    // void resize_grid_action_t::execute()
-    // {
-        
-    // }
-    
-    // void resize_grid_action_t::unexecute()
-    // {
+    void add_spline_action_t::execute()
+    {
+        map_data.splines.push_back(spline);
+    }
 
-    // }
+    void add_spline_action_t::unexecute()
+    {
+        //ASSERT(map_data.splines.back() == spline, "undoing a spline-add assumes the spline was added to the back of the list");
+        map_data.splines.pop_back();
+    }
 }
 }
 }

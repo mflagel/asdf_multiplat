@@ -118,7 +118,10 @@ namespace editor
         data::hex_map_t& map_data;
         data::spline_t spline;
 
-        add_spline_action_t();
+        add_spline_action_t(data::hex_map_t&, data::spline_t);
+
+        void execute() override;
+        void unexecute() override;
     };
 
     // struct resize_grid_action_t : editor_action_t
