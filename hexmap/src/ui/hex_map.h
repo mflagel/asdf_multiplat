@@ -8,15 +8,14 @@
 #include "asdf_multiplat/data/texture_atlas.h"
 #include "asdf_multiplat/utilities/spritebatch.h"
 
-#include "data/hex_grid.h"
-#include "data/map_objects.h"
+#include "data/hex_map.h"
 #include "data/terrain_bank.h"
+#include "ui/spline_renderer.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
 #include "asdf_multiplat/main/input_controller.h"
 #include "asdf_multiplat/ui/polygon.h"
 #include "asdf_multiplat/utilities/camera.h"
-#include "data/hex_map.h"
 
 using color_t = glm::vec4;
 
@@ -92,6 +91,7 @@ namespace ui
 
         data::terrain_bank_t terrain_bank;
         std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
+        spline_renderer_t spline_renderer;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
         hex_buffer_data_t hex_gl_data;
@@ -110,6 +110,7 @@ namespace ui
         void render_grid_overlay(glm::uvec2 grid_size);
         void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode);
         void render_map_objects();
+        void render_splines();
     };
 }
 }

@@ -36,8 +36,7 @@ namespace ui
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
     {
-
-        shader = Content.shaders["hexmap"];
+        shader = Content.create_shader("hexmap", 330);
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
         std::vector<hexagon_vertex_t> verts(6);
@@ -94,9 +93,12 @@ namespace ui
 
         auto terrain_types_json_filepath = dir + "/" + string(terrain_types_json_filename);
         terrain_bank.load_from_file(terrain_types_json_filepath);
-
+        
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
+
+        
+        spline_renderer.shader = Content.create_shader("spline", "passthrough", 330);
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -223,6 +225,19 @@ namespace ui
         }
 
         spritebatch.end();
+    }
+
+    void hex_map_t::render_splines()
+    {
+        ASSERT(spline_renderer.shader, "spline shader required to render splines");
+
+        auto& sr_s = spline_renderer.shader;
+        sr_s->view_matrix       = shader->view_matrix;
+        sr_s->projection_matrix = shader->projection_matrix;
+
+        spline_renderer.begin();
+        spline_renderer.batch(map_data.splines);
+        spline_renderer.end();
     }
 
 

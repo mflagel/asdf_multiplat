@@ -33,9 +33,6 @@ namespace hexmap
         app.specific = this;
         app.renderer->gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
 
-        auto shader = Content.create_shader("hexmap", 330);
-        Content.shaders.add_resource(shader);
-
         rendered_map = make_unique<ui::hex_map_t>(map_data);
 
         auto w = static_cast<float>(app.settings.resolution_width);
