@@ -90,15 +90,35 @@ namespace editor
         void unexecute() override;
     };
 
-    struct modify_map_object_t : editor_action_t
+    struct modify_map_object_action_t : editor_action_t
     {
         data::map_object_t& obj;
         data::map_object_t old_state;
 
-        modify_map_object_t(data::map_object_t&, data::map_object_t old_state);
+        modify_map_object_action_t(data::map_object_t&, data::map_object_t old_state);
 
         void execute() override;
         void unexecute() override;
+    };
+
+    struct delete_map_object_action_t : editor_action_t
+    {
+        data::hex_map_t& map_data;
+        data::map_object_t old_object;
+        size_t old_index;
+
+        delete_map_object_action_t(data::hex_map_t&, size_t old_index);
+
+        void execute() override;
+        void unexecute() override;
+    };
+
+    struct add_spline_action_t : editor_action_t
+    {
+        data::hex_map_t& map_data;
+        data::spline_t spline;
+
+        add_spline_action_t();
     };
 
     // struct resize_grid_action_t : editor_action_t

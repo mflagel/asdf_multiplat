@@ -106,6 +106,43 @@ namespace editor
         map_data.objects.pop_back();
     }
 
+    /// Modify Map Object
+    modify_map_object_action_t::modify_map_object_action_t(data::map_object_t& _obj, data::map_object_t _old_state)
+    : obj(_obj)
+    , old_state(_old_state)
+    {
+    }
+
+    void modify_map_object_action_t::execute()
+    {
+        EXPLODE("todo");
+    }
+
+    void modify_map_object_action_t::unexecute()
+    {
+        EXPLODE("todo");
+    }
+
+
+    /// Delete Map Object
+    delete_map_object_action_t::delete_map_object_action_t(data::hex_map_t& _map_data, size_t _old_index)
+    : map_data(_map_data)
+    , old_object(_map_data.objects[_old_index])
+    , old_index(_old_index)
+    {
+    }
+
+    void delete_map_object_action_t::execute()
+    {
+        map_data.objects.erase(map_data.objects.begin() + old_index);
+    }
+
+    void delete_map_object_action_t::unexecute()
+    {
+        map_data.objects.insert(map_data.objects.begin() + old_index, old_object);
+    }
+
+
 
     /// Resize Grid
     // void resize_grid_action_t::execute()
