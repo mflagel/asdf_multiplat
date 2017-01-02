@@ -202,12 +202,12 @@ namespace editor
 
         modifier_keys = modifier_keys_from_sdl2_event(keysm, true);
 
-        LOG("Key Mods: %s %s %s %s"
-            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
-            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
-            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
-            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
-        );
+        // LOG("Key Mods: %s %s %s %s"
+        //     , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+        //     , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+        //     , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+        //     , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        // );
 
 
         //bool mod_ctrl_only = keysm.mod == KMOD_LCTRL || keysm.mod == KMOD_RCTRL;
@@ -310,12 +310,12 @@ namespace editor
     {
         modifier_keys = modifier_keys_from_sdl2_event(keysm, false);
 
-        LOG("Key Mods: %s %s %s %s"
-            , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
-            , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
-            , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
-            , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
-        );
+        // LOG("Key Mods: %s %s %s %s"
+        //     , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+        //     , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+        //     , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+        //     , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+        // );
     }
 
 }
