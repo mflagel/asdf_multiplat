@@ -17,7 +17,7 @@ namespace ui
 {
     struct spline_vertex_t
     {
-        static gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> veretx_spec;
+        static gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> vertex_spec;
 
         glm::vec3 position;
         color_t color;
@@ -25,8 +25,8 @@ namespace ui
 
     struct spline_renderer_t
     {
-        std::unique_ptr<shader_t> shader;
-        rendered_polygon_<spline_vertex_t> rendered_data;
+        std::shared_ptr<shader_t> shader;
+        rendered_polygon_<spline_vertex_t> spline_polygon;
 
         std::vector<data::spline_t const*> spline_batch;
 

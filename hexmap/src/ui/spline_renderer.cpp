@@ -13,34 +13,26 @@ namespace hexmap
 
 namespace ui
 {
-    gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> spline_vertex_t::veretx_spec;
-
-    line_node_t interpolate_linear(line_node_t const& start, line_node_t const& end, float t)
+    namespace
     {
-        line_node_t node;
-        node.position  = glm::lerp(start.position,  end.position,  t);
-        node.thickness = glm::lerp(start.thickness, end.thickness, t);
-        node.color     = glm::lerp(start.color,     end.color,     t);
-
-        return node;
+        constexpr size_t default_subdivs_per_spline_segment = 10;
     }
 
-    line_node_t interpolate_bezier(line_node_t const& start, control_node_t const& cn_start, control_node_t const& cn_end, line_node_t const& end, float percentage)
-    {
-        line_node_t node;
-        node.position = bezier(start.position, cn_start, cn_end, end.position, percentage);
+    /// vertex spec allocation / definition
+    gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> spline_vertex_t::vertex_spec;
 
-        //TODO: do something non-linear for interpolating non-position attributes?
-        node.thickness = glm::lerp(start.thickness, end.thickness, percentage);
-        node.color = glm::lerp(start.color, end.color, percentage);
-
-        return node;
-    }
+    /// Helper Func Declarations
+    line_node_t interpolated_node(spline_t const& spline, size_t spline_node_ind, float t);
+    std::vector<line_node_t> line_from_interpolated_spline(spline_t const& spline, size_t subdivisions_per_segment);
+    line_node_t interpolate_linear(line_node_t const& start, line_node_t const& end, float t);
+    line_node_t interpolate_bezier(line_node_t const& start, control_node_t const& cn_start, control_node_t const& cn_end, line_node_t const& end, float t);
 
 
-
+    /// Member Func Definitions
     void spline_renderer_t::begin()
     {
+        ASSERT(shader, "cannot render splines without a shader");
+
         spline_batch.clear();
     }
 
@@ -59,6 +51,56 @@ namespace ui
         }
     }
 
+    void spline_renderer_t::end()
+    {
+        if(spline_batch.empty())
+        {
+            return;
+        }
+
+        ASSERT(shader, "cannot render splines without a shader");
+
+        polygon_<spline_vertex_t> verts;
+
+        std::vector<std::vector<line_node_t>> constructed_lines;
+        constructed_lines.reserve(spline_batch.size());
+
+        //reticulate splines
+        for(auto const* spline : spline_batch)
+        {
+            ASSERT(spline, "null spline in batch");
+            constructed_lines.push_back( line_from_interpolated_spline(*spline, default_subdivs_per_spline_segment) );
+        }
+
+        //pre-loop to get size info
+        size_t num_verts = 0;
+        for(auto const& polyline : constructed_lines)
+        {
+            //not doing thickness yet, so only one vertex per polyline node
+            num_verts += polyline.size();
+        }
+        verts.resize(num_verts);
+
+
+        size_t vert_ind = 0;
+        for(auto const& polyline : constructed_lines)
+        {
+            for(auto const& line_vert : polyline)
+            {
+                verts[vert_ind].position = glm::vec3(line_vert.position, 0.0f);
+                verts[vert_ind].color    = line_vert.color;
+
+                ++vert_ind;
+            }
+        }
+
+        ASSERT(vert_ind + 1 == num_verts, "Unexpected unset vertices in polyline");
+        spline_polygon.set_data(verts, shader);
+        spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
+    }
+
+
+    /// Helper Func Definitions
     line_node_t interpolated_node(spline_t const& spline, size_t spline_node_ind, float t)
     {
         ASSERT(spline.nodes.size() > spline_node_ind, "out of bounds");
@@ -87,7 +129,8 @@ namespace ui
         return spline.nodes[spline_node_ind];
     }
 
-    std::vector<line_node_t> line_from_interpolated_spline(spline_t const& spline, size_t subdivisions_per_segment = 10)
+
+    std::vector<line_node_t> line_from_interpolated_spline(spline_t const& spline, size_t subdivisions_per_segment)
     {
         std::vector<line_node_t> constructed_line;
 
@@ -120,15 +163,26 @@ namespace ui
         return constructed_line;
     }
 
-    void spline_renderer_t::end()
+    line_node_t interpolate_linear(line_node_t const& start, line_node_t const& end, float t)
     {
-        polygon_<spline_vertex_t> verts;
+        line_node_t node;
+        node.position  = glm::lerp(start.position,  end.position,  t);
+        node.thickness = glm::lerp(start.thickness, end.thickness, t);
+        node.color     = glm::lerp(start.color,     end.color,     t);
 
-        //reticulate splines
-        for(auto const* spline : spline_batch)
-        {
+        return node;
+    }
 
-        }
+    line_node_t interpolate_bezier(line_node_t const& start, control_node_t const& cn_start, control_node_t const& cn_end, line_node_t const& end, float t)
+    {
+        line_node_t node;
+        node.position = bezier(start.position, cn_start, cn_end, end.position, t);
+
+        //TODO: do something non-linear for interpolating non-position attributes?
+        node.thickness = glm::lerp(start.thickness, end.thickness, t);
+        node.color = glm::lerp(start.color, end.color, t);
+
+        return node;
     }
 }
 }
