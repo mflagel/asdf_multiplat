@@ -299,6 +299,8 @@ namespace editor
 
     void editor_t::start_spline(data::line_node_t start)
     {
+        LOG("starting spline at (%f,%f)", start.position.x, start.position.y);
+
         data::spline_t spline;
         spline.nodes.push_back(start);
         spline.nodes.push_back(std::move(start)); //push a copy of start node to move under the mouse
@@ -311,6 +313,7 @@ namespace editor
     void editor_t::add_node_to_wip_spline(data::line_node_t node)
     {
         ASSERT(wip_spline, "cannot add a spline node when not currently constructing one");
+        LOG("adding spline node to (%f,%f)", node.position.x, node.position.y);
 
         *wip_spline_node = node;
         wip_spline->nodes.push_back(node);
