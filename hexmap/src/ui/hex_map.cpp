@@ -98,7 +98,7 @@ namespace ui
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
         
-        spline_renderer.shader = Content.create_shader("spline", "passthrough", 330);
+        spline_renderer.shader = Content.create_shader("spline", "colored", 330);
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -138,6 +138,8 @@ namespace ui
         
 
         render_map_objects();
+
+        render_splines();
 
 
         //TEST
@@ -238,6 +240,10 @@ namespace ui
         spline_renderer.begin();
         spline_renderer.batch(map_data.splines);
         spline_renderer.end();
+
+
+        //TODO: draw nodes and control nodes on selected splines
+        //      especially the WIP spline if there is one
     }
 
 
