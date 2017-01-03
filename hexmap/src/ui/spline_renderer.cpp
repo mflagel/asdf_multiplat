@@ -5,6 +5,7 @@
 #include <glm/gtx/compatibility.hpp> //for lerp
 
 #include "asdf_multiplat/utilities/utilities.h"
+#include "asdf_multiplat/data/gl_state.h"
 
 namespace asdf {
 namespace hexmap
@@ -69,8 +70,20 @@ namespace ui
         for(auto const* spline : spline_batch)
         {
             ASSERT(spline, "null spline in batch");
-            constructed_lines.push_back( line_from_interpolated_spline(*spline, default_subdivs_per_spline_segment) );
+            if(spline->size() > 1)
+            {
+                constructed_lines.push_back( line_from_interpolated_spline(*spline, default_subdivs_per_spline_segment) );
+            }
+            
         }
+
+        constructed_lines.shrink_to_fit();
+
+        if(constructed_lines.empty())
+        {
+            return;
+        }
+
 
         //pre-loop to get size info
         size_t num_verts = 0;
@@ -94,7 +107,10 @@ namespace ui
             }
         }
 
-        ASSERT(vert_ind + 1 == num_verts, "Unexpected unset vertices in polyline");
+        ASSERT(vert_ind == num_verts, "Unexpected unset vertices in polyline");
+
+        LOG("binding shader %s", shader->name.c_str());
+        GL_State->bind(shader);
         spline_polygon.set_data(verts, shader);
         spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
     }
@@ -135,7 +151,7 @@ namespace ui
         std::vector<line_node_t> constructed_line;
 
         if(spline.size() == 0 || spline.spline_type == spline_t::linear)
-            return constructed_line;
+            return spline.nodes;
 
         //space for the original nodes plus subdivisions
         constructed_line.reserve(spline.size() + subdivisions_per_segment * spline.size() - 1);
