@@ -53,7 +53,7 @@ namespace asdf
             num_verts = n;
 
             LOG_IF(CheckGLError(), "Error during rendered_polygon_::set_data()");
-            LOG("setup polygon vbo %i with %zu vertexes", vbo.id, n);
+            //LOG("setup polygon vbo %i with %zu vertexes", vbo.id, n);
         }
 
         void render() const
