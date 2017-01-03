@@ -111,7 +111,12 @@ namespace asdf
         auto vshd_path = string(ver_path + "/" + vs_name + "_" + ver_str + ".vert");   // .../shaders/330/shadername_330
         auto fshd_path = string(ver_path + "/" + fs_name + "_" + ver_str + ".frag");
 
-        auto shader = make_shared<shader_t>("", vshd_path, fshd_path);
+        string name(vs_name);
+
+        if(vs_name != fs_name)
+            name += string("+" + fs_name);
+
+        auto shader = make_shared<shader_t>(std::move(name), vshd_path, fshd_path);
 
         return shader;
     }
