@@ -38,14 +38,13 @@ namespace asdf
         void set_data(const VertexType* verts, size_t n, std::shared_ptr<shader_t> const& shader)
         {
             LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
+
             GL_State->bind(vao);
 
             GL_State->bind(vbo);
             // vbo.usage = GL_STATIC_DRAW;
-
             GL_State->buffer_data(vbo, n * sizeof(VertexType), static_cast<const void*>(verts));
 
-            //set_vertex_attribs(shader);  //not sure the shader should be taken as an arg
             VertexType::vertex_spec.set_vertex_attribs(shader);
 
             GL_State->unbind_vao();
