@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "gl_resources.h"
+#include "gl_state.h"
 
 namespace asdf
 {
@@ -49,4 +50,9 @@ namespace asdf
     }
 
     bool CheckGLError(){ return CheckGLError(0xFFFFFFFF); }
+
+    bool check_attrib_error()
+    {
+        return CheckGLError();
+    }
 }

@@ -70,6 +70,10 @@ namespace asdf
     }
 
 
+    //defined in gl_resources.cpp so I can access CheckGLError()
+    bool check_attrib_error();
+
+
     template <typename... Attributes>
     struct gl_vertex_spec_
     {
@@ -89,24 +93,21 @@ namespace asdf
         // assumes attribs are interlaced, and vertex data is sent as an array of structs
         void set_vertex_attribs(std::shared_ptr<shader_t >const& shader) const
         {
-            ASSERT(shader, "expecting shader to set attributes for");
+            ASSERT(shader, "setting vert attribs without a shader");
 
             size_t stride = get_stride();
             size_t offset = 0;
 
             util::for_each(vertex_attribs, [&shader, &offset, stride](auto const& attrib)
             {
-                ASSERT(shader, "setting vert attribs without a shader");
                 GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, attrib.name);
+                ASSERT(!check_attrib_error(), "gl_error in glGetAttribLocation");
                 ASSERT(attrib_loc >= 0, "Error grabbing attribute location for \'%s\'", attrib.name);
                 glEnableVertexAttribArray(attrib_loc);
                 glVertexAttribPointer(attrib_loc, attrib.num_components, attrib.GL_Type, GL_FALSE, stride, reinterpret_cast<GLvoid*>(offset)); //GL_FALSE is for fixed-point data value normalization
 
                 offset += attrib.size_bytes(); //next attrib will be this many bytes next
             });
-
-            // UGH, I want to check for GL errors, but I moved the func into gl_resources.h, which I can't include here without creating an include cycle
-            // fail
         }
     };
 }
