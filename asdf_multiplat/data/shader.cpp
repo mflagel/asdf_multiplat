@@ -22,7 +22,7 @@ namespace asdf {
         , fragment_shader_id(load_shader(fshader_filepath, GL_FRAGMENT_SHADER))
         , shader_program_id(create_shader_program(vertex_shader_id, fragment_shader_id))
     {
-        load_uniforms();
+        load_uniforms_and_attributes();
         ASSERT(!CheckGLError(), "Error creating shader \'%s\'", name.c_str());
     }
 
@@ -32,19 +32,38 @@ namespace asdf {
         glDeleteShader(fragment_shader_id);
     }
 
-    void shader_t::load_uniforms() {
+    void shader_t::load_uniforms_and_attributes() {
         int total = -1;
-        glGetProgramiv(shader_program_id, GL_ACTIVE_UNIFORMS, &total);
-        for (int i = 0; i<total; ++i) {
-            int name_len = -1, num = -1;
-            GLenum type = GL_ZERO;
-            char uniformName[100];
-            glGetActiveUniform(shader_program_id, GLuint(i), sizeof(uniformName)-1,
-                               &name_len, &num, &type, uniformName);
-            uniformName[name_len] = 0;
-            GLuint location = glGetUniformLocation(shader_program_id, uniformName);
+        char name_buffer[100];
+        int name_len = -1, num = -1;
+        GLenum type = GL_ZERO;
 
-            uniforms[uniformName] = location;
+
+        glGetProgramiv(shader_program_id, GL_ACTIVE_UNIFORMS, &total);
+
+        for (int i = 0; i<total; ++i)
+        {
+            glGetActiveUniform(shader_program_id, GLuint(i), sizeof(name_buffer)-1
+                , &name_len, &num, &type, name_buffer);
+
+            name_buffer[name_len] = 0;
+            GLuint location = glGetUniformLocation(shader_program_id, name_buffer);
+
+            uniforms[name_buffer] = location;
+        }
+
+        total = name_len = num = -1;
+        glGetProgramiv(shader_program_id, GL_ACTIVE_ATTRIBUTES, &total);
+
+        for (int i = 0; i < total; i++)
+        {
+            glGetActiveAttrib(shader_program_id, (GLuint)i, sizeof(name_buffer)-1
+                , &name_len, &num, &type, name_buffer);
+
+            name_buffer[name_len] = 0;
+            GLuint location = glGetAttribLocation(shader_program_id, name_buffer);
+
+            attributes[name_buffer] = location;
         }
     }
 
@@ -129,5 +148,4 @@ namespace asdf {
 
         return shader_program;
     }
-
 }

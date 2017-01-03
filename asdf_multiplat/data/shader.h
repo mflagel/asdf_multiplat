@@ -12,6 +12,7 @@ namespace asdf {
         GLuint shader_program_id;
 
         std::unordered_map<std::string, GLint> uniforms;
+        std::unordered_map<std::string, GLint> attributes;
 
         glm::mat4 world_matrix;
         glm::mat4 view_matrix;
@@ -25,7 +26,7 @@ namespace asdf {
         shader_t& operator=(const shader_t& rhs) = delete;
 
         inline void use_program() { glUseProgram(shader_program_id); }  //TODO: deprecate in favour of GL_State::bind_shader
-        void load_uniforms();
+        void load_uniforms_and_attributes();
         void update_wvp_uniform();
 
         GLint uniform(std::string const& uniform_name) const;
