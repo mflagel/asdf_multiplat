@@ -100,9 +100,11 @@ namespace asdf
 
             util::for_each(vertex_attribs, [&shader, &offset, stride](auto const& attrib)
             {
-                GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, attrib.name);
-                ASSERT(!check_attrib_error(), "gl_error in glGetAttribLocation");
-                ASSERT(attrib_loc >= 0, "Error grabbing attribute location for \'%s\'", attrib.name);
+                ASSERT(shader->attributes.count(attrib.name) == 1
+                    , "attribute %s not found in shader %s (%d)"
+                    , attrib.name, shader->name.c_str(), shader->shader_program_id);
+
+                auto attrib_loc = shader->attributes[attrib.name];
                 glEnableVertexAttribArray(attrib_loc);
                 glVertexAttribPointer(attrib_loc, attrib.num_components, attrib.GL_Type, GL_FALSE, stride, reinterpret_cast<GLvoid*>(offset)); //GL_FALSE is for fixed-point data value normalization
 
