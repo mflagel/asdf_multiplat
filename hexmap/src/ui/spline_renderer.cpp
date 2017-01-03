@@ -52,6 +52,7 @@ namespace ui
         }
     }
 
+    ///FIXME optimize to not reticulate every single frame
     void spline_renderer_t::end()
     {
         if(spline_batch.empty())
@@ -61,12 +62,10 @@ namespace ui
 
         ASSERT(shader, "cannot render splines without a shader");
 
-        polygon_<spline_vertex_t> verts;
-
+        /// reticulate splines
         std::vector<std::vector<line_node_t>> constructed_lines;
         constructed_lines.reserve(spline_batch.size());
 
-        //reticulate splines
         for(auto const* spline : spline_batch)
         {
             ASSERT(spline, "null spline in batch");
@@ -92,8 +91,10 @@ namespace ui
             //not doing thickness yet, so only one vertex per polyline node
             num_verts += polyline.size();
         }
-        verts.resize(num_verts);
 
+        /// set up renderable vertices
+        polygon_<spline_vertex_t> verts;
+        verts.resize(num_verts);
 
         size_t vert_ind = 0;
         for(auto const& polyline : constructed_lines)
@@ -109,8 +110,10 @@ namespace ui
 
         ASSERT(vert_ind == num_verts, "Unexpected unset vertices in polyline");
 
-        LOG("binding shader %s", shader->name.c_str());
+        /// Render
         GL_State->bind(shader);
+        shader->update_wvp_uniform();
+
         spline_polygon.set_data(verts, shader);
         spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
     }
