@@ -330,7 +330,8 @@ namespace asdf {
 
         quad.draw_mode = GL_TRIANGLES;
         quad.vbo.usage = GL_STATIC_DRAW;
-        quad.set_data(quad_verts, 6, screen_shader);
+        quad.initialize(screen_shader);
+        quad.set_data(quad_verts, 6);
 
         gl_state.unbind_vao();
         gl_state.unbind_vbo();

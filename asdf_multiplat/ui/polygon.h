@@ -25,35 +25,43 @@ namespace asdf
     template <typename VertexType>
     struct rendered_polygon_ : gl_renderable_t
     {
-        rendered_polygon_()
-        {}
-        // rendered_polygon_(polygon_<VertexType> const& verts)
-        // {}
+        bool initialized = false;
 
-        void set_data(polygon_<VertexType> const& verts, std::shared_ptr<shader_t> const& shader)        
+        rendered_polygon_()
         {
-            set_data(verts.data(), verts.size(), shader);
         }
 
-        void set_data(const VertexType* verts, size_t n, std::shared_ptr<shader_t> const& shader)
+        void initialize(std::shared_ptr<shader_t> const& shader)
         {
-            LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
+            LOG_IF(initialized, "WARNING: double-initializing polygon");
 
             GL_State->bind(vao);
 
             GL_State->bind(vbo);
-            // vbo.usage = GL_STATIC_DRAW;
-            GL_State->buffer_data(vbo, n * sizeof(VertexType), static_cast<const void*>(verts));
-
             VertexType::vertex_spec.set_vertex_attribs(shader);
 
             GL_State->unbind_vao();
             GL_State->unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
 
+            initialized = true;
+        }
+
+        void set_data(polygon_<VertexType> const& verts)
+        {
+            set_data(verts.data(), verts.size());
+        }
+
+        void set_data(const VertexType* verts, size_t n)
+        {
+            LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
+
+            GL_State->bind(vbo);
+            GL_State->buffer_data(vbo, n * sizeof(VertexType), static_cast<const void*>(verts));
+            GL_State->unbind_vbo();  //unbind vbo after vao so that the vao knows to use the vbo
+
             num_verts = n;
 
             LOG_IF(CheckGLError(), "Error during rendered_polygon_::set_data()");
-            //LOG("setup polygon vbo %i with %zu vertexes", vbo.id, n);
         }
 
         void render() const
@@ -63,6 +71,8 @@ namespace asdf
 
         void render(GLuint _draw_mode) const
         {
+            ASSERT(initialized, "Rendering polygon before vao is set up with initialize()");
+
             GL_State->bind(vao);
             glDrawArrays(_draw_mode, 0, num_verts);
             GL_State->unbind_vao();
