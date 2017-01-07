@@ -3,6 +3,7 @@ PROJNAME = hexmap
 # BIN_OUT = $(BINPATH)/$(PROJNAME)
 
 # INVOCATION = 1
+DEBUG = 1
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
 
