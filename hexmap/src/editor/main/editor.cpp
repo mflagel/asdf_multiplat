@@ -17,6 +17,8 @@ namespace editor
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
     const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
 
+    constexpr float snap_dist_threshold = 0.1f; //in units
+
     //TODO: move this into an asdf_multiplat header
     constexpr bool is_sdl_keyboard_event(SDL_Event* event)
     {
@@ -299,7 +301,22 @@ namespace editor
         }
         else
         {
-            add_node_to_wip_spline(node);
+            auto dist = glm::length(position - wip_spline->nodes[0].position);
+            if(dist <= snap_dist_threshold)
+            {                
+                if(wip_spline->nodes.size() > 1)
+                {
+                    finish_spline(true);
+                }
+                else
+                {
+                    cancel_spline(); // if clicking on the one and only node, just cancel
+                }
+            }
+            else
+            {
+                add_node_to_wip_spline(node);
+            }
         }
     }
 
@@ -330,7 +347,7 @@ namespace editor
     {
         ASSERT(wip_spline, "finishing a spline that hasnt even started");
 
-        //todo: handle closed loops
+        LOG("finished a%s spline", spline_loops ? " looping" : "");
 
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
         action_stack.push_and_execute(std::move(cmd));

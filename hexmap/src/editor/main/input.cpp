@@ -59,7 +59,7 @@ namespace editor
                 }
                 else if(event.button == mouse_right)
                 {
-                    editor.cancel_action();
+                    editor.finish_spline();
                 }
                 
                 break;
