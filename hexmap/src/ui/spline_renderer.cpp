@@ -143,8 +143,6 @@ namespace ui
             return;
         }
 
-        //rebuild_all(); //why does nothing display if I remove this???
-
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
