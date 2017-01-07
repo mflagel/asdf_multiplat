@@ -146,7 +146,7 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
+        spline_polygon.render(GL_LINE_STRIP); //will change this to GL_TRIANGLES later when I implement thickness
     }
 
 
