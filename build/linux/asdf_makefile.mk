@@ -64,7 +64,7 @@ endif
 ifndef TARGET_TYPE
 
 ifeq ($(suffix $(BIN_OUT)),.so)
-CFLAGS += -fpic -g
+CFLAGS += -fpic
 LINK_FLAGS += -shared -Wl,-soname,$(SO_NAME) -lc
 TARGET_TYPE=shared
 $(info Compiling $(BIN_OUT) as shared object)
@@ -85,10 +85,16 @@ LINK_FLAGS += -v
 $(info Diplaying link invocation)
 endif
 
-ifeq ($(DEBUG),1)
-$(warning Todo - Implement DEBUG)
-CFLAGS += -DDEBUG -g
+
+ifeq ($(DEBUG),1)  				 # if debug is defined in the makefile
+ifneq ($(MAKECMDGOALS), debug)   # but not the target passed when calling make
+ifneq ($(MAKECMDGOALS), release) # and release is not the make target
+CPPFLAGS += -DDEBUG -g  		 # add debug flags
+CFLAGS += -DDEBUG -g    		 #
 endif
+endif
+endif
+
 
 
 # if rebuild is the target,  prevent all from initiating
@@ -101,6 +107,15 @@ endif
 
 all: $(PROJNAME)
 	@echo -e '\e[1;32m'----- $(PROJNAME) End ------- $(ENDCOLOR)
+
+debug: CPPFLAGS += -DDEBUG -g
+debug: CFLAGS   += -DDEBUG -g
+debug: all
+
+#release: CPPFLAGS += TODO release flags
+#release:   CFLAGS += TODO release flags
+#release: all
+
 
 
 intro:
