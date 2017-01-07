@@ -59,7 +59,10 @@ namespace editor
                 }
                 else if(event.button == mouse_right)
                 {
-                    editor.finish_spline();
+                    if(editor.is_placing_spline())
+                    {
+                        editor.finish_spline();
+                    }
                 }
                 
                 break;

@@ -303,15 +303,8 @@ namespace editor
         {
             auto dist = glm::length(position - wip_spline->nodes[0].position);
             if(dist <= snap_dist_threshold)
-            {                
-                if(wip_spline->nodes.size() > 1)
-                {
-                    finish_spline(true);
-                }
-                else
-                {
-                    cancel_spline(); // if clicking on the one and only node, just cancel
-                }
+            {
+                finish_spline(true);
             }
             else
             {
@@ -347,10 +340,16 @@ namespace editor
     {
         ASSERT(wip_spline, "finishing a spline that hasnt even started");
 
+        if(wip_spline->nodes.size() < 2)
+        {
+            cancel_spline(); // if clicking on the one and only node, just cancel
+            return;
+        }
+
         LOG("finished a%s spline", spline_loops ? " looping" : "");
 
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
-        action_stack.push_and_execute(std::move(cmd));
+        action_stack.push(std::move(cmd));
 
         wip_spline = nullptr;
         wip_spline_node = nullptr;

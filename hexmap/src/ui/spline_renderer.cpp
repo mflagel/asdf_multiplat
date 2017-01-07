@@ -146,6 +146,10 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
+
+        //TODO: render with glMultiDrawArrays
+        //      so that I can draw seperated lines
+
         spline_polygon.render(GL_LINE_STRIP); //will change this to GL_TRIANGLES later when I implement thickness
     }
 
