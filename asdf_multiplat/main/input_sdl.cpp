@@ -42,12 +42,11 @@ namespace asdf
         }
     }
 
-
     mouse_button_event_t mouse_event_from_sdl(mouse_input_t& mouse, SDL_MouseButtonEvent const& event)
     {
         return mouse_button_event_t {
               mouse
-            , mouse_button_e(uint32_t(event.button))
+            , mouse_button_from_sdl_btn(event.button)
             , event.clicks > 1
             };
     }
