@@ -50,7 +50,8 @@ namespace ui
             //verts[i].color = grid_color;
         }
 
-        hexagon.set_data(verts, shader);
+        hexagon.initialize(shader);
+        hexagon.set_data(verts);
         hexagon.draw_mode = GL_LINE_LOOP;
         
         ASSERT(!CheckGLError(), "");
@@ -98,7 +99,7 @@ namespace ui
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
         
-        spline_renderer.shader = Content.create_shader("spline", "colored", 330);
+        spline_renderer.init(Content.create_shader("spline", "colored", 330));
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -237,7 +238,7 @@ namespace ui
         sr_s->view_matrix       = shader->view_matrix;
         sr_s->projection_matrix = shader->projection_matrix;
 
-        spline_renderer.begin();
+        spline_renderer.spline_batch.clear(); //temp
         spline_renderer.batch(map_data.splines);
         spline_renderer.end();
 
