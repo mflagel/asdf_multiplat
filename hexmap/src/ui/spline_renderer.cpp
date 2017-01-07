@@ -36,45 +36,38 @@ namespace ui
         spline_polygon.initialize(shader);
     }
 
-    void spline_renderer_t::batch(spline_t const& spline)
-    {
-        spline_batch.push_back(&spline);
-    }
+    // void spline_renderer_t::batch(spline_t const& spline)
+    // {
+    //     spline_batch.push_back(&spline);
+    // }
 
-    void spline_renderer_t::batch(std::vector<spline_t> const& splines)
-    {
-        spline_batch.reserve(spline_batch.size() + splines.size());
+    // void spline_renderer_t::batch(std::vector<spline_t> const& splines)
+    // {
+    //     spline_batch.reserve(spline_batch.size() + splines.size());
 
-        for(size_t i = 0; i < splines.size(); ++i)
-        {
-            spline_batch.push_back(&(splines[i]));
-        }
-    }
+    //     for(size_t i = 0; i < splines.size(); ++i)
+    //     {
+    //         spline_batch.push_back(&(splines[i]));
+    //     }
+    // }
 
-    void reticulated_splines()
+    void spline_renderer_t::rebuild_all()
     {
-    }
-
-    ///FIXME optimize to not reticulate every single frame
-    void spline_renderer_t::end()
-    {
-        if(spline_batch.empty())
-        {
+        if(!spline_list || (spline_list && spline_list->empty()))
             return;
-        }
 
-        ASSERT(shader, "cannot render splines without a shader");
+        reticulated_splines.clear();
 
         /// reticulate splines
-        std::vector<std::vector<line_node_t>> constructed_lines;
-        constructed_lines.reserve(spline_batch.size());
+        auto& constructed_lines = reticulated_splines;             // I am lazy and aliasing the variable name
+        //std::vector<std::vector<line_node_t>> constructed_lines; // instead of find/replace
+        constructed_lines.reserve(spline_list->size());
 
-        for(auto const* spline : spline_batch)
+        for(auto const& spline : *spline_list)
         {
-            ASSERT(spline, "null spline in batch");
-            if(spline->size() > 1)
+            if(spline.size() > 1) //ignore splines with less than two points (and thus no segments)
             {
-                constructed_lines.push_back( line_from_interpolated_spline(*spline, default_subdivs_per_spline_segment) );
+                constructed_lines.push_back( line_from_interpolated_spline(spline, default_subdivs_per_spline_segment) );
             }
             
         }
@@ -96,7 +89,8 @@ namespace ui
         }
 
         /// set up renderable vertices
-        polygon_<spline_vertex_t> verts;
+        //polygon_<spline_vertex_t> verts;  /// temp removed
+
         verts.resize(num_verts);
 
         size_t vert_ind = 0;
@@ -113,11 +107,48 @@ namespace ui
 
         ASSERT(vert_ind == num_verts, "Unexpected unset vertices in polyline");
 
-        /// Render
+        spline_polygon.set_data(verts);
+    }
+
+    void spline_renderer_t::render()
+    {
+        ASSERT(shader, "cannot render splines without a shader");
+
+        if(!spline_list)
+        {
+            return;
+        }
+        else if(spline_list->size() != spline_node_count_cache.size())
+        {
+            rebuild_all();
+        }
+
+        //update spline node count cache and rebuild splines if dirty
+        //TODO: optimize to only rebuild dirty splines instead of all of them
+        bool dirty = false;
+        spline_node_count_cache.resize(spline_list->size());
+        for(size_t i = 0; i < spline_list->size(); ++i)
+        {
+            dirty |= ((*spline_list)[i].size() != spline_node_count_cache[i]);
+            spline_node_count_cache[i] = (*spline_list)[i].size();
+        }
+
+        if(dirty)
+        {
+            rebuild_all();
+        }
+
+        //if after rebuilding, there are no verts to render, don't even bother with anything below
+        if(spline_polygon.num_verts == 0)
+        {
+            return;
+        }
+
+        //rebuild_all(); //why does nothing display if I remove this???
+
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        spline_polygon.set_data(verts);
         spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
     }
 

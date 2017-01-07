@@ -98,8 +98,8 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        
         spline_renderer.init(Content.create_shader("spline", "colored", 330));
+        spline_renderer.spline_list = &map_data.splines;
     }
 
     void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
@@ -238,10 +238,7 @@ namespace ui
         sr_s->view_matrix       = shader->view_matrix;
         sr_s->projection_matrix = shader->projection_matrix;
 
-        spline_renderer.spline_batch.clear(); //temp
-        spline_renderer.batch(map_data.splines);
-        spline_renderer.end();
-
+        spline_renderer.render();
 
         //TODO: draw nodes and control nodes on selected splines
         //      especially the WIP spline if there is one

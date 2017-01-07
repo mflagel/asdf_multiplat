@@ -26,18 +26,22 @@ namespace ui
     struct spline_renderer_t
     {
         std::shared_ptr<shader_t> shader;
-        rendered_polygon_<spline_vertex_t> spline_polygon;
+        rendered_polygon_<spline_vertex_t> spline_polygon; //opengl data (vao, vbo, etc)
 
-        std::vector<data::spline_t const*> spline_batch;
+        //std::vector<data::spline_t const*> splines;
+        std::vector<data::spline_t> const* spline_list;
+        std::vector<size_t> spline_node_count_cache;
+
         std::vector<std::vector<data::line_node_t>> reticulated_splines;
+
+        //test
+        polygon_<spline_vertex_t> verts;
 
         void init(std::shared_ptr<shader_t>);
 
-        void batch(data::spline_t const& spline);
-        void batch(std::vector<data::spline_t> const& splines);
-        void reticulate_splines();
-
-        void end();
+        //void batch(data::spline_t const& spline);
+        //void batch(std::vector<data::spline_t> const& splines);
+        void rebuild_all();
 
         void render();
 
