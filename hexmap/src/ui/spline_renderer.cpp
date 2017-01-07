@@ -89,8 +89,7 @@ namespace ui
         }
 
         /// set up renderable vertices
-        //polygon_<spline_vertex_t> verts;  /// temp removed
-
+        polygon_<spline_vertex_t> verts;
         verts.resize(num_verts);
 
         size_t vert_ind = 0;
@@ -126,7 +125,7 @@ namespace ui
         //update spline node count cache and rebuild splines if dirty
         //TODO: optimize to only rebuild dirty splines instead of all of them
         bool dirty = false;
-        spline_node_count_cache.resize(spline_list->size());
+        spline_node_count_cache.resize(spline_list->size(), 0); //init new elements as 0
         for(size_t i = 0; i < spline_list->size(); ++i)
         {
             dirty |= ((*spline_list)[i].size() != spline_node_count_cache[i]);

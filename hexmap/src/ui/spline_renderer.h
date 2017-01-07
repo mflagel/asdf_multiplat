@@ -34,13 +34,8 @@ namespace ui
 
         std::vector<std::vector<data::line_node_t>> reticulated_splines;
 
-        //test
-        polygon_<spline_vertex_t> verts;
-
         void init(std::shared_ptr<shader_t>);
 
-        //void batch(data::spline_t const& spline);
-        //void batch(std::vector<data::spline_t> const& splines);
         void rebuild_all();
 
         void render();
