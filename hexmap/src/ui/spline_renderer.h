@@ -29,13 +29,19 @@ namespace ui
         rendered_polygon_<spline_vertex_t> spline_polygon;
 
         std::vector<data::spline_t const*> spline_batch;
+        std::vector<std::vector<data::line_node_t>> reticulated_splines;
 
-        void begin();
+        void init(std::shared_ptr<shader_t>);
 
         void batch(data::spline_t const& spline);
         void batch(std::vector<data::spline_t> const& splines);
+        void reticulate_splines();
 
         void end();
+
+        void render();
+
+
     };
 }
 }

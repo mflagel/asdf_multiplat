@@ -30,11 +30,10 @@ namespace ui
 
 
     /// Member Func Definitions
-    void spline_renderer_t::begin()
+    void spline_renderer_t::init(std::shared_ptr<shader_t> _shader)
     {
-        ASSERT(shader, "cannot render splines without a shader");
-
-        spline_batch.clear();
+        shader = std::move(_shader);
+        spline_polygon.initialize(shader);
     }
 
     void spline_renderer_t::batch(spline_t const& spline)
@@ -50,6 +49,10 @@ namespace ui
         {
             spline_batch.push_back(&(splines[i]));
         }
+    }
+
+    void reticulated_splines()
+    {
     }
 
     ///FIXME optimize to not reticulate every single frame
@@ -114,7 +117,7 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        spline_polygon.set_data(verts, shader);
+        spline_polygon.set_data(verts);
         spline_polygon.render(GL_LINE_LOOP); //will change this to GL_TRIANGLES later when I implement thickness
     }
 
