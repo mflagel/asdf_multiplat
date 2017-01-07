@@ -87,8 +87,8 @@ endif
 
 
 ifeq ($(DEBUG),1)  				 # if debug is defined in the makefile
-ifneq ($(MAKECMDGOALS), debug)   # but not the target passed when calling make
-ifneq ($(MAKECMDGOALS), release) # and release is not the make target
+ifneq (($findstring debug, $(MAKECMDGOALS)), debug)   # but not a goal passed when calling make
+ifneq (($findstring release, $(MAKECMDGOALS)), release) # and release is not a make goal
 CPPFLAGS += -DDEBUG -g  		 # add debug flags
 CFLAGS += -DDEBUG -g    		 #
 endif
@@ -99,7 +99,7 @@ endif
 
 # if rebuild is the target,  prevent all from initiating
 # compiliation before the object files are destroyed
-ifeq ($(MAKECMDGOALS), rebuild)
+ifeq ($(findstring rebuild, $(MAKECMDGOALS)), rebuild)
 $(info Requiring clean to finish before before objects are compiled)
 $(OBJECTS): clean
 endif
