@@ -183,6 +183,10 @@ namespace editor
 
             case editor_t::place_splines:
             {
+                if(editor.is_placing_spline())
+                {
+                    editor.update_WIP_node(mw);
+                }
                 break;
             }
 
@@ -254,36 +258,77 @@ namespace editor
         }
         else
         {
-            auto& current_tile_id   = editor.current_tile_id;
-            auto& current_object_id = editor.current_object_id;
+            switch(editor.current_tool)
+            {
+                case editor_t::terrain_paint:
+                {
+                    auto& current_tile_id   = editor.current_tile_id;
+                    switch(key)
+                    {
+                        case SDLK_1: current_tile_id = 1; break;
+                        case SDLK_2: current_tile_id = 2; break;
+                        case SDLK_3: current_tile_id = 3; break;
+                        case SDLK_4: current_tile_id = 4; break;
+                        case SDLK_5: current_tile_id = 5; break;
+                        case SDLK_6: current_tile_id = 6; break;
+                        case SDLK_7: current_tile_id = 7; break;
+                        case SDLK_8: current_tile_id = 8; break;
+                        case SDLK_9: current_tile_id = 9; break;
+                        case SDLK_0: current_tile_id = 0; break;
+                    }
+
+                    LOG("current tile_id: %ld", editor.current_tile_id);
+
+                    break;
+                }
+
+                case editor_t::place_objects:
+                {
+                    auto& current_object_id = editor.current_object_id;
+                    switch(key)
+                    {
+                        case SDLK_1: current_object_id = 1; break;
+                        case SDLK_2: current_object_id = 2; break;
+                        case SDLK_3: current_object_id = 3; break;
+                        case SDLK_4: current_object_id = 4; break;
+                        case SDLK_5: current_object_id = 5; break;
+                        case SDLK_6: current_object_id = 6; break;
+                        case SDLK_7: current_object_id = 7; break;
+                        case SDLK_8: current_object_id = 8; break;
+                        case SDLK_9: current_object_id = 9; break;
+                        case SDLK_0: current_object_id = 0; break;
+                    }
+
+                    LOG("current object_id: %ld", editor.current_object_id);
+
+                    break;
+                }
+                case editor_t::place_splines:
+                {
+                    size_t interp_index = 0;
+                    switch(key)
+                    {
+                        case SDLK_1: interp_index = 0; break;
+                        case SDLK_2: interp_index = 1; break;
+                        case SDLK_3: interp_index = 2; break;
+                        case SDLK_4: interp_index = 3; break;
+                        case SDLK_5: interp_index = 4; break;
+                        case SDLK_6: interp_index = 5; break;
+                        case SDLK_7: interp_index = 6; break;
+                        case SDLK_8: interp_index = 7; break;
+                        case SDLK_9: interp_index = 8; break;
+                        case SDLK_0: interp_index = 9; break;
+                    }
+
+                    editor.spline_interpolation_type = static_cast<data::spline_t::interpolation_e>(interp_index);
+
+                    break;
+                }
+            }
+                
 
             switch(key)
             {
-                case SDLK_1: current_tile_id = 1; break;
-                case SDLK_2: current_tile_id = 2; break;
-                case SDLK_3: current_tile_id = 3; break;
-                case SDLK_4: current_tile_id = 4; break;
-                case SDLK_5: current_tile_id = 5; break;
-                case SDLK_6: current_tile_id = 6; break;
-                case SDLK_7: current_tile_id = 7; break;
-                case SDLK_8: current_tile_id = 8; break;
-                case SDLK_9: current_tile_id = 9; break;
-                case SDLK_0: current_tile_id = 0; break;
-
-                case SDLK_KP_1: current_object_id = 1; break;
-                case SDLK_KP_2: current_object_id = 2; break;
-                case SDLK_KP_3: current_object_id = 3; break;
-                case SDLK_KP_4: current_object_id = 4; break;
-                case SDLK_KP_5: current_object_id = 5; break;
-                case SDLK_KP_6: current_object_id = 6; break;
-                case SDLK_KP_7: current_object_id = 7; break;
-                case SDLK_KP_8: current_object_id = 8; break;
-                case SDLK_KP_9: current_object_id = 9; break;
-                case SDLK_KP_0: current_object_id = 0; break;
-
-                case SDLK_KP_PERIOD: current_object_id = -1; break;
-
-
                 case sdl2_input_map[cancel_action]:
                     editor.cancel_action();
                     break;
@@ -303,9 +348,6 @@ namespace editor
 
                 default: return;
             }
-
-            LOG("current tile_id: %ld", current_tile_id);
-            LOG("current object_id: %ld", current_object_id);
         }
     }
 
