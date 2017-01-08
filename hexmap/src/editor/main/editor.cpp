@@ -326,6 +326,15 @@ namespace editor
         wip_spline_node = &(wip_spline->nodes.back());
     }
 
+    void editor_t::update_WIP_node(glm::vec2 const& position)
+    {
+        ASSERT(wip_spline, "");
+        wip_spline->nodes.back().position = position;
+
+        ptrdiff_t spline_ind = wip_spline - map_data.splines.data();
+        rendered_map->spline_renderer.dirty_splines.insert(spline_ind);
+    }
+
     void editor_t::add_node_to_wip_spline(data::line_node_t node)
     {
         ASSERT(wip_spline, "cannot add a spline node when not currently constructing one");

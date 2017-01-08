@@ -66,6 +66,7 @@ namespace editor
 
         //spline
         data::line_node_t new_node_style;
+        data::spline_t::interpolation_e spline_interpolation_type = data::spline_t::linear;
         data::spline_t* wip_spline = nullptr; //the last node will follow the mouse
         data::line_node_t* wip_spline_node = nullptr;
         data::spline_selection_t spline_selection;
@@ -109,6 +110,7 @@ namespace editor
 
         void spline_click(glm::vec2 position);
         void start_spline(data::line_node_t start);
+        void update_WIP_node(glm::vec2 const& position);
         void add_node_to_wip_spline(data::line_node_t node);
         void finish_spline(bool spline_loops = false);
         void cancel_spline();
