@@ -79,34 +79,25 @@ namespace ui
             return;
         }
 
-
-        //pre-loop to get size info
-        size_t num_verts = 0;
-        for(auto const& polyline : constructed_lines)
-        {
-            //not doing thickness yet, so only one vertex per polyline node
-            num_verts += polyline.size();
-        }
-
         /// set up renderable vertices
-        polygon_<spline_vertex_t> verts;
-        verts.resize(num_verts);
+        std::vector<polygon_<spline_vertex_t>> rendered_vertex_lists;
+        rendered_vertex_lists.resize(constructed_lines.size());
 
-        size_t vert_ind = 0;
-        for(auto const& polyline : constructed_lines)
+        for(size_t i = 0; i < constructed_lines.size(); ++i)
         {
-            for(auto const& line_vert : polyline)
-            {
-                verts[vert_ind].position = glm::vec3(line_vert.position, 0.0f);
-                verts[vert_ind].color    = line_vert.color;
+            rendered_vertex_lists[i].resize(constructed_lines[i].size());
 
-                ++vert_ind;
+            for(size_t vert_ind = 0; vert_ind < constructed_lines[i].size(); ++vert_ind)
+            {
+                auto& rvert = rendered_vertex_lists[i][vert_ind];
+                auto& cvert = constructed_lines[i][vert_ind];
+
+                rvert.position = glm::vec3(cvert.position, 0.0f);
+                rvert.color    = cvert.color;
             }
         }
 
-        ASSERT(vert_ind == num_verts, "Unexpected unset vertices in polyline");
-
-        spline_polygon.set_data(verts);
+        spline_polygon.set_data(rendered_vertex_lists);
     }
 
     void spline_renderer_t::render()
@@ -137,8 +128,8 @@ namespace ui
             rebuild_all();
         }
 
-        //if after rebuilding, there are no verts to render, don't even bother with anything below
-        if(spline_polygon.num_verts == 0)
+        //if after rebuilding, there is nothing to render, don't bother with anything below
+        if(spline_polygon.num_sub_meshes() == 0)
         {
             return;
         }
