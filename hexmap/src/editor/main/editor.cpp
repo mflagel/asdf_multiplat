@@ -349,6 +349,15 @@ namespace editor
     {
         ASSERT(wip_spline, "finishing a spline that hasnt even started");
 
+        if(!spline_loops)
+        {
+            wip_spline->nodes.pop_back(); //kill the WIP node
+        }
+        else
+        {
+            wip_spline->nodes.back().position = wip_spline->nodes[0].position;
+        }
+
         if(wip_spline->nodes.size() < 2)
         {
             cancel_spline(); // if clicking on the one and only node, just cancel
