@@ -79,6 +79,68 @@ namespace asdf
         }
     };
 
+    // stores multiple meshes in one vbo and uses glMultiDrawArrays
+    template <typename VertexType>
+    struct rendered_multi_polygon_ : rendered_polygon_<VertexType>
+    {
+        std::vector<GLint> first_vert_indices;
+        std::vector<GLsizei> vert_counts;
+        size_t total_vertex_count;
+
+        void set_data(std::vector<polygon_<VertexType>> const& polygons)
+        {
+            LOG_IF(CheckGLError(), "Error before rendered_multi_polygon_::set_data()");
+
+            first_vert_indices.reserve(polygons.size());
+            vert_counts.reserve(polygons.size());
+
+            // accounting
+            total_vertex_count = 0;
+            for(size_t i = 0; i < polygons.size(); ++i)
+            {
+                first_vert_indices[i] = total_vertex_count;
+                vert_counts[i] = polygons[0].size();
+                total_vertex_count += polygons[0].size();
+            }
+
+
+            ///  Because a vector of vectors is not entirely contiguous
+            ///  I'll have to allocate enough VBO space to fit everything
+            ///  and then use glBufferSubData to send each polygon's vertices
+
+            GLsizeiptr bufsize = total_vertex_count * sizeof(VertexType);
+            GL_State->buffer_data(gl_renderable_t::vbo, bufsize, nullptr);  //nullptr data to reserve space without copying
+
+            for(size_t i = 0; i < polygons.size(); ++i)
+            {
+                auto vert_size_bytes = sizeof(VertexType);
+                auto       target = gl_buffer_target_enum_values[gl_renderable_t::vbo.target];
+                GLintptr   offset = first_vert_indices[i] * vert_size_bytes; //offset in bytes
+                GLsizeiptr size   = vert_counts[i] * vert_size_bytes;        //size in bytes
+
+                glBufferSubData(target, offset, size, static_cast<const void*>(polygons[i].data()));
+            }
+
+
+            LOG_IF(CheckGLError(), "Error during rendered_multi_polygon_::set_data()");
+        }
+
+        void render() const
+        {
+            render(gl_renderable_t::draw_mode);
+        }
+
+        void render(GLuint _draw_mode) const
+        {
+            ASSERT(polygon_<VertexType>::initialized, "Rendering multi_polygon before vao is set up with initialize()");
+
+            GL_State->bind(gl_renderable_t::vao);
+            size_t num_polygons = first_vert_indices.size();
+            glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_polygons);
+            GL_State->unbind_vao();
+        }
+    };
+
 	//polygon_t polygon_rect(glm::vec2 size, const color_t& color);
 	//polygon_t polygon_circle(float radius, const color_t& color, size_t num_facets = 40);
 }
