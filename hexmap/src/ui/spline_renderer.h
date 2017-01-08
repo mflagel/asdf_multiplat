@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <memory>
 
 #include <glm/glm.hpp>
@@ -31,11 +32,13 @@ namespace ui
         //std::vector<data::spline_t const*> splines;
         std::vector<data::spline_t> const* spline_list;
         std::vector<size_t> spline_node_count_cache;
+        std::set<size_t> dirty_splines;
 
         std::vector<std::vector<data::line_node_t>> reticulated_splines;
 
         void init(std::shared_ptr<shader_t>);
 
+        void rebuild_spline(size_t spline_ind);
         void rebuild_all();
 
         void render();

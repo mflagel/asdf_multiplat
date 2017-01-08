@@ -51,6 +51,11 @@ namespace ui
     //     }
     // }
 
+    void spline_renderer_t::rebuild_spline(size_t spline_ind)
+    {
+        //TODO
+    }
+
     void spline_renderer_t::rebuild_all()
     {
         if(!spline_list || (spline_list && spline_list->empty()))
@@ -120,8 +125,16 @@ namespace ui
         for(size_t i = 0; i < spline_list->size(); ++i)
         {
             dirty |= ((*spline_list)[i].size() != spline_node_count_cache[i]);
+            // if((*spline_list)[i].size() != spline_node_count_cache[i])
+            //     dirty_splines.insert(i);
+
             spline_node_count_cache[i] = (*spline_list)[i].size();
         }
+
+        //TEMP
+        dirty |= dirty_splines.size() > 0;
+        dirty_splines.clear();
+        //
 
         if(dirty)
         {
