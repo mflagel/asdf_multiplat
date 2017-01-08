@@ -146,7 +146,6 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-
         //TODO: render with glMultiDrawArrays
         //      so that I can draw seperated lines
 

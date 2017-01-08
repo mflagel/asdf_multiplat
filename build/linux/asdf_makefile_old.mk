@@ -21,6 +21,7 @@ OBJECTS := $(addprefix $(OBJPATH)/, $(OBJECT_NO_PATH))
 # $%	target's member name
 # $<	name of first prerequisite
 # $^	all prerequisites
+# %     wildcard
 
 
 #Fancy Colours
@@ -64,7 +65,7 @@ endif
 ifndef TARGET_TYPE
 
 ifeq ($(suffix $(BIN_OUT)),.so)
-CFLAGS += -fpic
+CFLAGS += -fpic -g
 LINK_FLAGS += -shared -Wl,-soname,$(SO_NAME) -lc
 TARGET_TYPE=shared
 $(info Compiling $(BIN_OUT) as shared object)
@@ -85,21 +86,15 @@ LINK_FLAGS += -v
 $(info Diplaying link invocation)
 endif
 
-
-ifeq ($(DEBUG),1)                  				        # if debug is defined in the makefile
-ifneq (($findstring debug, $(MAKECMDGOALS)), debug)     # but not a goal passed when calling make
-ifneq (($findstring release, $(MAKECMDGOALS)), release) # and release is not a make goal
-CPPFLAGS += -DDEBUG -g  		 				        # add debug flags
-CFLAGS += -DDEBUG -g    		 					 	#
+ifeq ($(DEBUG),1)
+$(warning Todo - Implement DEBUG)
+CFLAGS += -DDEBUG -g
 endif
-endif
-endif
-
 
 
 # if rebuild is the target,  prevent all from initiating
 # compiliation before the object files are destroyed
-ifeq ($(findstring rebuild, $(MAKECMDGOALS)), rebuild)
+ifeq ($(MAKECMDGOALS), rebuild)
 $(info Requiring clean to finish before before objects are compiled)
 $(OBJECTS): clean
 endif
@@ -107,15 +102,6 @@ endif
 
 all: $(PROJNAME)
 	@echo -e '\e[1;32m'----- $(PROJNAME) End ------- $(ENDCOLOR)
-
-debug: CPPFLAGS += -DDEBUG -g
-debug: CFLAGS   += -DDEBUG -g
-debug: all
-
-#release: CPPFLAGS += TODO release flags
-#release:   CFLAGS += TODO release flags
-#release: all
-
 
 
 intro:
@@ -174,6 +160,14 @@ clean:
 
 .PHONY: all intro rebuild clean
 
+
+# this will prepend the relevant source directory to the object name
+# ex:  project/src/foo/bar.cpp with OBJPATH of obj/linux will output
+#      obj/linux/foo_bar.o
+# ex2: project/src/foo/bar/baz.cpp would  become
+#      obj/linux/foo_bar_baz.o
+FINAL_OBJ_PATH=$$(addprefix $$(dir $$@), $$(addprefix $$(subst /,_,$(1))_, $$(notdir $$@)))
+
 ###############################
 define BUILD_SHIT
 
@@ -187,11 +181,9 @@ $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro
 	@$$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro
-	@echo -e $$(CYAN) $$(CXX) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
-	# use $(CXX) to compile with $CPPFLAGS $_INCLUDES AND $_SYSINCLUDES
-	# output an object file with a name equal to the rule's name (using $@)
-	# the file compiled is the name of the first prerequisite (using $<)
-	@$$(CXX) -c $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
+	@echo -e $$(CYAN) $$(CXX) $$< $$(ENDCOLOR)
+	@echo objpath: $(FINAL_OBJ_PATH)
+	@$$(CXX) -c $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) $$< -o $(FINAL_OBJ_PATH)
 
 endef
 
