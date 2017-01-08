@@ -22,6 +22,13 @@ namespace asdf
     template <typename VertexType>
     using polygon_ = std::vector<VertexType>;
 
+
+    /// TODO  I should probably rename this to something more generalized
+    ///       since 'polygon' is not really the best word
+    ///       ex: A mesh is a set of connected polygons that get rendered
+    ///       but this doesnt really store a mesh since there are no indices
+    ///       Maybe this should be named gl_renderable_<>?
+
     template <typename VertexType>
     struct rendered_polygon_ : gl_renderable_t
     {
@@ -87,20 +94,22 @@ namespace asdf
         std::vector<GLsizei> vert_counts;
         size_t total_vertex_count;
 
+        size_t num_sub_meshes() const { return first_vert_indices.size(); }
+
         void set_data(std::vector<polygon_<VertexType>> const& polygons)
         {
             LOG_IF(CheckGLError(), "Error before rendered_multi_polygon_::set_data()");
 
-            first_vert_indices.reserve(polygons.size());
-            vert_counts.reserve(polygons.size());
+            first_vert_indices.resize(polygons.size());
+            vert_counts.resize(polygons.size());
 
             // accounting
             total_vertex_count = 0;
             for(size_t i = 0; i < polygons.size(); ++i)
             {
                 first_vert_indices[i] = total_vertex_count;
-                vert_counts[i] = polygons[0].size();
-                total_vertex_count += polygons[0].size();
+                vert_counts[i] = polygons[i].size();
+                total_vertex_count += polygons[i].size();
             }
 
 
@@ -108,8 +117,11 @@ namespace asdf
             ///  I'll have to allocate enough VBO space to fit everything
             ///  and then use glBufferSubData to send each polygon's vertices
 
+            GL_State->bind(gl_renderable_t::vbo);
             GLsizeiptr bufsize = total_vertex_count * sizeof(VertexType);
             GL_State->buffer_data(gl_renderable_t::vbo, bufsize, nullptr);  //nullptr data to reserve space without copying
+
+            LOG_IF(CheckGLError(), "Error pre-allocating vertex buffer in rendered_multi_polygon_::set_data()");
 
             for(size_t i = 0; i < polygons.size(); ++i)
             {
@@ -120,6 +132,8 @@ namespace asdf
 
                 glBufferSubData(target, offset, size, static_cast<const void*>(polygons[i].data()));
             }
+
+            GL_State->unbind_vbo();
 
 
             LOG_IF(CheckGLError(), "Error during rendered_multi_polygon_::set_data()");
@@ -132,7 +146,7 @@ namespace asdf
 
         void render(GLuint _draw_mode) const
         {
-            ASSERT(polygon_<VertexType>::initialized, "Rendering multi_polygon before vao is set up with initialize()");
+            ASSERT(rendered_polygon_<VertexType>::initialized, "Rendering multi_polygon before vao is set up with initialize()");
 
             GL_State->bind(gl_renderable_t::vao);
             size_t num_polygons = first_vert_indices.size();
