@@ -225,73 +225,30 @@ namespace editor
         }
         else
         {
-            switch(editor.current_tool)
+            if(key >= SDLK_0 && key <= SDLK_9)
             {
-                case editor_t::terrain_paint:
+                ASSERT(uint64_t(key) >= uint64_t(SDLK_0), "");
+                uint64_t num_from_key = uint64_t(key) - uint64_t(SDLK_0);
+            
+                switch(editor.current_tool)
                 {
-                    auto& current_tile_id   = editor.current_tile_id;
-                    switch(key)
+                    case editor_t::terrain_paint:
                     {
-                        case SDLK_1: current_tile_id = 1; break;
-                        case SDLK_2: current_tile_id = 2; break;
-                        case SDLK_3: current_tile_id = 3; break;
-                        case SDLK_4: current_tile_id = 4; break;
-                        case SDLK_5: current_tile_id = 5; break;
-                        case SDLK_6: current_tile_id = 6; break;
-                        case SDLK_7: current_tile_id = 7; break;
-                        case SDLK_8: current_tile_id = 8; break;
-                        case SDLK_9: current_tile_id = 9; break;
-                        case SDLK_0: current_tile_id = 0; break;
+                        editor.set_current_tile_id(num_from_key);
+                        break;
                     }
 
-                    LOG("current tile_id: %ld", editor.current_tile_id);
-
-                    break;
-                }
-
-                case editor_t::place_objects:
-                {
-                    auto& current_object_id = editor.current_object_id;
-                    switch(key)
+                    case editor_t::place_objects:
                     {
-                        case SDLK_1: current_object_id = 1; break;
-                        case SDLK_2: current_object_id = 2; break;
-                        case SDLK_3: current_object_id = 3; break;
-                        case SDLK_4: current_object_id = 4; break;
-                        case SDLK_5: current_object_id = 5; break;
-                        case SDLK_6: current_object_id = 6; break;
-                        case SDLK_7: current_object_id = 7; break;
-                        case SDLK_8: current_object_id = 8; break;
-                        case SDLK_9: current_object_id = 9; break;
-                        case SDLK_0: current_object_id = 0; break;
+                        editor.set_current_object_id(num_from_key);
+                        break;
                     }
-
-                    LOG("current object_id: %ld", editor.current_object_id);
-
-                    break;
-                }
-                case editor_t::place_splines:
-                {
-                    size_t interp_index = editor.spline_interpolation_type;
-                    switch(key)
+                    case editor_t::place_splines:
                     {
-                        case SDLK_1: interp_index = 0; break;
-                        case SDLK_2: interp_index = 1; break;
-                        case SDLK_3: interp_index = 2; break;
-                        case SDLK_4: interp_index = 3; break;
-                        case SDLK_5: interp_index = 4; break;
-                        case SDLK_6: interp_index = 5; break;
-                        case SDLK_7: interp_index = 6; break;
-                        case SDLK_8: interp_index = 7; break;
-                        case SDLK_9: interp_index = 8; break;
-                        case SDLK_0: interp_index = 9; break;
+                        auto interp_type = static_cast<data::spline_t::interpolation_e>(num_from_key);
+                        editor.set_current_spline_interpolation(interp_type);
+                        break;
                     }
-
-                    editor.spline_interpolation_type = static_cast<data::spline_t::interpolation_e>(interp_index);
-
-                    LOG("current interp type: %d", interp_index);
-
-                    break;
                 }
             }
                 
