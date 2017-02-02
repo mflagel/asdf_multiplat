@@ -6,7 +6,6 @@
 
 #include "asdf_multiplat/data/content_manager.h"
 
-
 using namespace std;
 using namespace glm;
 
@@ -30,7 +29,6 @@ namespace editor
             ;
     }
     //--
-
 
     editor_t::editor_t()
     : hexmap_t()
@@ -294,6 +292,7 @@ namespace editor
     {
         auto node = new_node_style;
         node.position = position;
+        
 
         if(!is_placing_spline())
         {
@@ -318,12 +317,17 @@ namespace editor
         LOG("starting spline at (%f,%f)", start.position.x, start.position.y);
 
         data::spline_t spline;
-        spline.nodes.push_back(start);
-        spline.nodes.push_back(std::move(start)); //push a copy of start node to move under the mouse
+        spline.nodes.push_back(start);  //0th node is a copy of start
+        spline.nodes.push_back(std::move(start)); //use start as the second node to move under the mouse (the WIP node)
 
         map_data.splines.push_back(std::move(spline));
         wip_spline = &(map_data.splines.back());
         wip_spline_node = &(wip_spline->nodes.back());
+
+        if(spline_interpolation_type_has_control_nodes(spline_interpolation_type))
+        {
+            wip_spline->control_nodes.emplace_back(wip_spline_node->position);
+        }
     }
 
     void editor_t::update_WIP_node(glm::vec2 const& position)
@@ -333,6 +337,23 @@ namespace editor
 
         ptrdiff_t spline_ind = wip_spline - map_data.splines.data();
         rendered_map->spline_renderer.dirty_splines.insert(spline_ind);
+
+        //todo: move WIP control point(s) with this node
+    }
+
+    void editor_t::update_WIP_control_nodes(glm::vec2 const& position)
+    {
+        ASSERT(wip_spline && wip_spline->control_nodes.size() >= 2, "");
+        auto& cnodes = wip_spline->control_nodes;
+
+        // all nodes have two control nodes except the first and last nodes
+        // the second control node for the last line node will be removed in finish_spline
+        auto& wip_cnode_behind = cnodes[cnodes.size() - 2]; // control curve behind
+        auto& wip_cnode_ahead  = cnodes[cnodes.size() - 1]; // control for curve ahead
+        auto const& node = wip_spline->nodes.back();
+
+        wip_cnode_ahead = position;
+        wip_cnode_behind = node.position - (wip_cnode_ahead - node.position);  //dragging the ahead-node should move the behind-node equally in the opposite direction
     }
 
     void editor_t::add_node_to_wip_spline(data::line_node_t node)
@@ -343,6 +364,13 @@ namespace editor
         *wip_spline_node = node;
         wip_spline->nodes.push_back(node);
         wip_spline_node = &(wip_spline->nodes.back());
+
+        if(spline_interpolation_type_has_control_nodes(spline_interpolation_type))
+        {
+            //these control points belong to the new WIP node
+            wip_spline->control_nodes.emplace_back(wip_spline_node->position);
+            wip_spline->control_nodes.emplace_back(wip_spline_node->position);
+        }
     }
 
     void editor_t::finish_spline(bool spline_loops)
@@ -362,6 +390,12 @@ namespace editor
         {
             cancel_spline(); // if clicking on the one and only node, just cancel
             return;
+        }
+
+        //remove the terminating control node (if this spline has control nodes)
+        if(wip_spline->control_nodes.size() > 0)
+        {
+            wip_spline->control_nodes.pop_back();
         }
 
         LOG("finished a%s spline", spline_loops ? " looping" : "");
