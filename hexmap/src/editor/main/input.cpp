@@ -74,44 +74,6 @@ namespace editor
         return false;
     }
 
-    bool input_handler_t::handle_click_selection(mouse_button_event_t& event, vec2 const& mw)
-    {
-        size_t obj_ind = editor.map_data.object_index_at(mw);
-
-        if(obj_ind != size_t(-1))
-        {
-            switch(modifier_keys)
-            {
-                case KMOD_LSHIFT: [[fallthrough]]
-                case KMOD_RSHIFT:
-                    editor.select_object(obj_ind);
-                    break;
-
-                case KMOD_LALT: [[fallthrough]]
-                case KMOD_RALT:
-                    editor.deselect_object(obj_ind);
-                    break;
-
-                case 0:
-                    editor.deselect_all();
-                    editor.select_object(obj_ind);
-                    break;
-
-                default:
-                    return false;
-            };
-
-            return true;
-        }
-        else if(modifier_keys == 0)
-        {
-            editor.deselect_all();
-            return true;
-        }
-
-        return false;
-    }
-
     bool input_handler_t::on_mouse_up(mouse_button_event_t& event)
     {
         auto mw = world_coords(event.mouse_state.mouse_position);
@@ -185,6 +147,11 @@ namespace editor
             {
                 if(editor.is_placing_spline())
                 {
+                    if(event.mouse_state.is_dragging())
+                    {
+                        editor.update_WIP_control_nodes(mw);
+                    }
+
                     editor.update_WIP_node(mw);
                 }
                 break;
@@ -305,7 +272,7 @@ namespace editor
                 }
                 case editor_t::place_splines:
                 {
-                    size_t interp_index = 0;
+                    size_t interp_index = editor.spline_interpolation_type;
                     switch(key)
                     {
                         case SDLK_1: interp_index = 0; break;
@@ -321,6 +288,8 @@ namespace editor
                     }
 
                     editor.spline_interpolation_type = static_cast<data::spline_t::interpolation_e>(interp_index);
+
+                    LOG("current interp type: %d", interp_index);
 
                     break;
                 }
@@ -361,6 +330,45 @@ namespace editor
         //     , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
         //     , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
         // );
+    }
+
+
+    bool input_handler_t::handle_click_selection(mouse_button_event_t& event, vec2 const& mw)
+    {
+        size_t obj_ind = editor.map_data.object_index_at(mw);
+
+        if(obj_ind != size_t(-1))
+        {
+            switch(modifier_keys)
+            {
+                case KMOD_LSHIFT: [[fallthrough]]
+                case KMOD_RSHIFT:
+                    editor.select_object(obj_ind);
+                    break;
+
+                case KMOD_LALT: [[fallthrough]]
+                case KMOD_RALT:
+                    editor.deselect_object(obj_ind);
+                    break;
+
+                case 0:
+                    editor.deselect_all();
+                    editor.select_object(obj_ind);
+                    break;
+
+                default:
+                    return false;
+            };
+
+            return true;
+        }
+        else if(modifier_keys == 0)
+        {
+            editor.deselect_all();
+            return true;
+        }
+
+        return false;
     }
 
 }
