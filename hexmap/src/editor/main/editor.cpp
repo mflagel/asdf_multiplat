@@ -190,6 +190,41 @@ namespace editor
         LOG("current tool: %s", tool_type_strings[current_tool]);
     }
 
+    void editor_t::set_current_tile_id(uint64_t new_id)
+    {
+        if(current_tile_id != new_id)
+        {
+        }
+
+        current_tile_id = new_id;
+        LOG("current tile_id: %ld", current_tile_id);
+    }
+
+    void editor_t::set_current_object_id(uint64_t new_id)
+    {
+        if(current_object_id != new_id)
+        {
+        }
+
+        current_object_id = new_id;
+        LOG("current object_id: %ld", current_object_id);
+    }
+
+    void editor_t::set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type)
+    {
+        if(spline_interpolation_type != new_interp_type)
+        {
+            if(is_placing_spline())
+            {
+                finish_spline();
+            }
+        }
+
+        spline_interpolation_type = new_interp_type;
+        LOG("current interp type: %d", new_interp_type);
+    }
+
+
 
     /// Selection
     bool editor_t::select_object(size_t object_index)
