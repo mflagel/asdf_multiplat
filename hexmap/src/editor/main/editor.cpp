@@ -54,6 +54,7 @@ namespace editor
     {
         hexmap_t::render();
 
+        rendered_map->spline_renderer.render_handles();
         render_selection();
     }
 
