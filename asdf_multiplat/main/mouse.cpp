@@ -9,7 +9,7 @@ namespace asdf
 {
     bool mouse_input_t::is_dragging(mouse_button_e btn) const
     {
-        return mouse_button_states == btn && drag_delta().length() > drag_threshold_px;
+        return mouse_button_states == mouse_button_bit(btn) && drag_delta().x > drag_threshold_px && drag_delta().y > drag_threshold_px;
     }
 
     glm::ivec2 mouse_input_t::drag_delta() const
