@@ -25,10 +25,10 @@ namespace data
         enum interpolation_e
         {
             linear
-          , bezier
           // , cubic_bspline
-          // , catmull_rom
+           , catmull_rom
           // , hermite
+            , bezier
         };
 
         std::vector<line_node_t> nodes;
@@ -37,6 +37,11 @@ namespace data
 
         size_t size() const { return nodes.size(); }
     };
+
+    constexpr bool spline_interpolation_type_has_control_nodes(spline_t::interpolation_e interp_type)
+    {
+        return interp_type == spline_t::bezier;
+    }
 
 
     struct spline_selection_t
