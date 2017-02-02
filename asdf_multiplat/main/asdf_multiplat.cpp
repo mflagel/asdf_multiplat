@@ -252,6 +252,7 @@ namespace asdf {
 
         SDL_GL_SetSwapInterval(1);
         LOG("SDL Initialized");
+        LOG("Window Size: %d x %d", settings.resolution_width, settings.resolution_height);
     }
 
 
