@@ -384,12 +384,14 @@ namespace editor
 
         // all nodes have two control nodes except the first and last nodes
         // the second control node for the last line node will be removed in finish_spline
+        ASSERT(cnodes.size() >= 2, "");
         auto& wip_cnode_behind = cnodes[cnodes.size() - 2]; // control curve behind
         auto& wip_cnode_ahead  = cnodes[cnodes.size() - 1]; // control for curve ahead
-        auto const& node = wip_spline->nodes.back();
+        // auto const& node = wip_spline->nodes.back();
+        auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
 
         wip_cnode_ahead = position;
-        wip_cnode_behind = node.position - (wip_cnode_ahead - node.position);  //dragging the ahead-node should move the behind-node equally in the opposite direction
+        wip_cnode_behind = node.position - (position - node.position);  //dragging the ahead-node should move the behind-node equally in the opposite direction
     }
 
     void editor_t::add_node_to_wip_spline(data::line_node_t node)
