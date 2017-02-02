@@ -204,8 +204,8 @@ namespace ui
 
             for(size_t i = 0; i < subdivisions_per_segment; ++i)
             {
-                auto t = static_cast<float>( (i+1) / (subdivisions_per_segment+2) ); //i+1 becuase the 0th node is the spline's start node, not this one
-                                                                                     //subdivisions_per_segment+2 because 
+                auto t = float(i+1) / float(subdivisions_per_segment+2); //i+1 becuase the 0th node is the spline's start node, not this one
+                                                                         //subdivisions_per_segment+2 because 
                 constructed_line.push_back(interpolated_node(spline, spline_node_ind, t));
             }
 
