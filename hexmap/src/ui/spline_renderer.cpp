@@ -33,7 +33,7 @@ namespace ui
     void spline_renderer_t::init(std::shared_ptr<shader_t> _shader)
     {
         shader = std::move(_shader);
-        spline_polygon.initialize(shader);
+        spline_geometry.initialize(shader);
     }
 
     // void spline_renderer_t::batch(spline_t const& spline)
@@ -102,16 +102,14 @@ namespace ui
             }
         }
 
-        spline_polygon.set_data(rendered_vertex_lists);
+        spline_geometry.set_data(rendered_vertex_lists);
     }
 
-    void spline_renderer_t::render()
+    bool spline_renderer_t::rebuild_if_dirty()
     {
-        ASSERT(shader, "cannot render splines without a shader");
-
         if(!spline_list)
         {
-            return;
+            return false;
         }
         else if(spline_list->size() != spline_node_count_cache.size())
         {
@@ -141,8 +139,15 @@ namespace ui
             rebuild_all();
         }
 
+        return true;
+    }
+
+    void spline_renderer_t::render()
+    {
+        ASSERT(shader, "cannot render splines without a shader");
+
         //if after rebuilding, there is nothing to render, don't bother with anything below
-        if(spline_polygon.num_sub_meshes() == 0)
+        if(spline_geometry.num_sub_meshes() == 0)
         {
             return;
         }
@@ -150,10 +155,10 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        //TODO: render with glMultiDrawArrays
-        //      so that I can draw seperated lines
+        spline_geometry.render(GL_LINE_STRIP); //will change this to GL_TRIANGLES later when I implement thickness
+    }
 
-        spline_polygon.render(GL_LINE_STRIP); //will change this to GL_TRIANGLES later when I implement thickness
+
     }
 
 
