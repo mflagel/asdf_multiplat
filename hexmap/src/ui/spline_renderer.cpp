@@ -210,7 +210,7 @@ namespace ui
             {
                 auto cn_ind = spline_node_ind * 2 + 1;  //+1 so it grabs the ahead cnode of the start node, and the behind cnode of the second node
 
-                ASSERT(spline.control_nodes.size() > cn_ind, "out of bounds");
+                ASSERT(spline.control_nodes.size() > cn_ind + 1, "out of bounds");
 
                 // // if not at the end
                 // if(cn_ind + 1 < spline.control_nodes.size())
