@@ -11,6 +11,9 @@ using namespace glm;
 
 namespace asdf {
 namespace hexmap {
+
+    using spline_t = data::spline_t;
+
 namespace editor
 {
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
@@ -361,9 +364,13 @@ namespace editor
         wip_spline = &(map_data.splines.back());
         wip_spline_node = &(wip_spline->nodes.back());
 
-        if(spline_interpolation_type_has_control_nodes(spline_interpolation_type))
+        if(wip_spline->spline_type == spline_t::bezier)
         {
             //these belong to the 0th node
+            wip_spline->control_nodes.emplace_back(wip_spline_node->position);
+            wip_spline->control_nodes.emplace_back(wip_spline_node->position);
+
+            //these belong to the WIP node
             wip_spline->control_nodes.emplace_back(wip_spline_node->position);
             wip_spline->control_nodes.emplace_back(wip_spline_node->position);
         }
@@ -376,23 +383,26 @@ namespace editor
 
         ptrdiff_t spline_ind = wip_spline - map_data.splines.data();
         rendered_map->spline_renderer.dirty_splines.insert(spline_ind);
+
+        if(wip_spline->spline_type == spline_t::bezier)
+        {
+            ASSERT(wip_spline->control_nodes.size() >= 2, "");
+            wip_spline->control_nodes.rbegin()[1] = position; // control curve behind
+            wip_spline->control_nodes.rbegin()[0] = position;// control for curve ahead
+        }
     }
 
     void editor_t::update_WIP_control_nodes(glm::vec2 const& position)
     {
         ASSERT(wip_spline, "");
-        auto& cnodes = wip_spline->control_nodes;
+        ASSERT(wip_spline->nodes.size() >= 2, "");
+        auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
 
         // all nodes have two control nodes except the first and last nodes
         // the second control node for the last line node will be removed in finish_spline
-        ASSERT(cnodes.size() >= 2, "");
-        auto& wip_cnode_behind = cnodes[cnodes.size() - 2]; // control curve behind
-        auto& wip_cnode_ahead  = cnodes[cnodes.size() - 1]; // control for curve ahead
-        // auto const& node = wip_spline->nodes.back();
-        auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
-
-        wip_cnode_ahead = position;
-        wip_cnode_behind = node.position - (position - node.position);  //dragging the ahead-node should move the behind-node equally in the opposite direction
+        ASSERT(wip_spline->control_nodes.size() >= 4, "");
+        wip_spline->control_nodes.rbegin()[3] = node.position - (position - node.position);  // control curve behind
+        wip_spline->control_nodes.rbegin()[2] = position; // control for curve ahead
     }
 
     void editor_t::add_node_to_wip_spline(data::line_node_t node)
@@ -404,9 +414,9 @@ namespace editor
         wip_spline->nodes.push_back(node);
         wip_spline_node = &(wip_spline->nodes.back());
 
-        if(spline_interpolation_type_has_control_nodes(spline_interpolation_type))
+        if(wip_spline->spline_type == spline_t::bezier)
         {
-            //these control points belong to the new non-WIP node
+            //these control points belong to the new WIP node
             wip_spline->control_nodes.emplace_back(wip_spline_node->position);
             wip_spline->control_nodes.emplace_back(wip_spline_node->position);
         }
