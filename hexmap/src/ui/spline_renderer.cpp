@@ -194,6 +194,46 @@ namespace ui
         handles_geometry.render(GL_LINE_STRIP);
     }
 
+    void spline_renderer_t::render_some_spline_handles(std::vector<size_t> spline_indices)
+    {
+        std::vector<GLint> first_vert_indices;
+        std::vector<GLsizei> vert_counts;
+
+        size_t cur_node_count = 0;
+        size_t counting_spline_ind = 0;
+
+        for(auto const& spline_ind : spline_indices)
+        {
+            for(; counting_spline_ind < spline_ind; ++counting_spline_ind)
+            {
+                cur_node_count += spline_node_count_cache[counting_spline_ind];
+            }
+
+            auto const& spline = (*spline_list)[spline_ind];
+
+            //grab the subset of handles_geometry.first_vert_indices and .vert_counts corrisponding to this spline
+            //each node in a spline has a handle
+            //each handle has four primatives (square node, two diamond cnodes, and a line connecting the cnodes)
+
+            constexpr size_t primatives_per_node = 4;
+            size_t primatives_subset_index = cur_node_count * primatives_per_node;
+            size_t primatives_subset_end_index = primatives_subset_index + (spline.nodes.size() * primatives_per_node);
+
+            first_vert_indices.insert(first_vert_indices.begin()
+                                    , handles_geometry.first_vert_indices.begin() + primatives_subset_index
+                                    , handles_geometry.first_vert_indices.begin() + primatives_subset_end_index);
+
+            vert_counts.insert(vert_counts.begin()
+                             , handles_geometry.vert_counts.begin() + primatives_subset_index
+                             , handles_geometry.vert_counts.begin() + primatives_subset_end_index);
+        }
+
+        GL_State->bind(handles_geometry.vao);
+        size_t num_polygons = first_vert_indices.size();
+        glMultiDrawArrays(GL_LINE_STRIP, first_vert_indices.data(), vert_counts.data(), num_polygons);
+        GL_State->unbind_vao();
+    }
+
 
     /// Helper Func Definitions
     line_node_t interpolated_node(spline_t const& spline, size_t spline_node_ind, float t)

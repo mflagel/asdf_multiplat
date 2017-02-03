@@ -45,6 +45,7 @@ namespace ui
 
         void render();
         void render_handles();
+        void render_some_spline_handles(std::vector<size_t> spline_indices);
 
 
     };
