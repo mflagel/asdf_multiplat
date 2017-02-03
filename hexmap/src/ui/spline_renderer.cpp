@@ -125,8 +125,13 @@ namespace ui
         handles_geometry.set_data(handles_vert_lists);
     }
 
+
+    ///TODO: better handle tracking of what to return
+    ///      chunks of this function could probably be organized better
     bool spline_renderer_t::rebuild_if_dirty()
     {
+        bool rebuilt = false;
+
         if(!spline_list)
         {
             return false;
@@ -134,6 +139,13 @@ namespace ui
         else if(spline_list->size() != spline_node_count_cache.size())
         {
             rebuild_all();
+            rebuilt = true;
+        }
+        else if(spline_list->empty())
+        {
+            spline_geometry.first_vert_indices.clear(); //reset this so that no splines are rendered after deleting/removing all splines
+            spline_geometry.vert_counts.clear();
+            return true;  //true, since the geometry was 'rebuilt' to be empty
         }
 
         //update spline node count cache and rebuild splines if dirty
@@ -157,9 +169,10 @@ namespace ui
         if(dirty)
         {
             rebuild_all();
+            rebuilt = true;
         }
 
-        return true;
+        return rebuilt;
     }
 
     void spline_renderer_t::render()
