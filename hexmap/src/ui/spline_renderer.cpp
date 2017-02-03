@@ -212,25 +212,12 @@ namespace ui
 
                 ASSERT(spline.control_nodes.size() > cn_ind + 1, "out of bounds");
 
-                // // if not at the end
-                // if(cn_ind + 1 < spline.control_nodes.size())
-                {
-                    auto const& p0 = spline.nodes[spline_node_ind];
-                    auto const& p1 = spline.control_nodes[cn_ind];
-                    auto const& p2 = spline.control_nodes[cn_ind + 1];
-                    auto const& p3 = spline.nodes[spline_node_ind+1];
+                auto const& p0 = spline.nodes[spline_node_ind];
+                auto const& p1 = spline.control_nodes[cn_ind];
+                auto const& p2 = spline.control_nodes[cn_ind + 1];
+                auto const& p3 = spline.nodes[spline_node_ind+1];
 
-                    return interpolate_bezier(p0, p1, p2, p3, t);
-                }
-                // else
-                // {
-                //     auto const& p0 = spline.nodes[spline_node_ind];
-                //     auto const& p1 = spline.control_nodes[cn_ind];
-                //     auto const& p2 = spline.nodes[spline_node_ind+1].position;
-                //     auto const& p3 = spline.nodes[spline_node_ind+1];
-
-                //     return interpolate_bezier(p0, p1, p2, p3, t);
-                // }
+                return interpolate_bezier(p0, p1, p2, p3, t);
             }
         };
 
