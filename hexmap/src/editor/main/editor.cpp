@@ -216,6 +216,9 @@ namespace editor
 
     void editor_t::set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type)
     {
+        if((int)new_interp_type >= (int)data::spline_t::num_interp_types)
+            return;
+
         if(spline_interpolation_type != new_interp_type)
         {
             if(is_placing_spline())
@@ -225,7 +228,7 @@ namespace editor
         }
 
         spline_interpolation_type = new_interp_type;
-        LOG("current interp type: %d", new_interp_type);
+        LOG("current interp type: %s", data::spline_interpolation_names[new_interp_type]);
     }
 
 
