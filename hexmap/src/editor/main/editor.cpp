@@ -57,7 +57,16 @@ namespace editor
     {
         hexmap_t::render();
 
-        rendered_map->spline_renderer.render_handles();
+        //rendered_map->spline_renderer.render_handles();
+
+        //testing   render_some_spline_handles()
+        if(wip_spline)
+        {
+            std::vector<size_t> inds;
+            inds.emplace_back(map_data.splines.size() - 1);
+            rendered_map->spline_renderer.render_some_spline_handles(inds);
+        }
+
         render_selection();
     }
 
@@ -432,6 +441,8 @@ namespace editor
         if(!spline_loops)
         {
             wip_spline->nodes.pop_back(); //kill the WIP node
+            wip_spline->control_nodes.pop_back(); //and its control nodes
+            wip_spline->control_nodes.pop_back(); //
         }
         else
         {
