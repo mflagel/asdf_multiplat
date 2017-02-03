@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 
 #include <glm/glm.hpp>
 
@@ -24,11 +25,12 @@ namespace data
     {
         enum interpolation_e
         {
-            linear
-          // , cubic_bspline
-           , catmull_rom
-          // , hermite
+              linear
+            , cubic_bspline
+            , catmull_rom
+            , hermite
             , bezier
+            , num_interp_types
         };
 
         std::vector<line_node_t> nodes;
@@ -37,7 +39,17 @@ namespace data
 
         size_t size() const { return nodes.size(); }
     };
-    
+
+
+    constexpr std::array<char*, spline_t::num_interp_types> spline_interpolation_names =
+    {
+          "linear"
+        , "cubic_bspline"
+        , "catmull_rom"
+        , "hermite"
+        , "bezier"
+    };
+
 
     struct spline_selection_t
     {
