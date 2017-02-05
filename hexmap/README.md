@@ -44,3 +44,12 @@ Android/iOS Hexmap Viewer
 Hexographer Compatability
 Custom Hexagon and Object Data
     ex: Descriptions, Encounters, City Info, etc
+
+
+
+
+Dependancies
+------------
+[asdf_multiplat](https://github.com/mflagel/asdf_multiplat.git)
+[Qt](https://www.qt.io/)
+[Qt-Color-Widgets](https://github.com/mbasaglia/Qt-Color-Widgets.git)
