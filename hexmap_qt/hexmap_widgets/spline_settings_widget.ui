@@ -40,15 +40,15 @@
       <item row="1" column="1">
        <widget class="QComboBox" name="InterpolationDropDown"/>
       </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="LineThicknessSpinner"/>
-      </item>
       <item row="2" column="0">
        <widget class="QLabel" name="lbl_linethickness">
         <property name="text">
          <string>Line Thickness</string>
         </property>
        </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="LineThicknessSpinner"/>
       </item>
      </layout>
     </widget>
