@@ -5,6 +5,10 @@ A code library meant for storing and rendering hexagon tilemaps for use in vario
 Hexmap is currently being developed on Windows and Linux (Mint/Ubuntu) with plans to support mobile platforms for hexmap viewing (but probably not editing).
 
 
+There are two versions of the program:
+    A basic, UI-less version
+    A more traditional application made using the Qt framework
+
 
 Controls
 ------------
@@ -20,29 +24,23 @@ Current Features
 ------------
 Rendering a hexagon tilemap of an arbitrary size
     only horizontal hexagons at the moment
-Painting different colors onto hexagons
-    currently hardcoded colors selected by number keys
-Camera movement and zoom
-Importing custom terrain textures
-    Reads from a user-modifiable json file
-Painting textures onto hexagons
+Painting textured hexagons from a list of loaded textures
+Placing lines and curves
+Basic UI done with the Qt framework
 
 
 In Progress
 ------------
-Importing custom object textures
-Better Sprite Atlas System
+Placing objects defined in a texture atlas atlas
+Improved line rendering
+Hex Grid Data Import/Export
 
 
 TODO
 ------------
-Hex Grid Data Import/Export
 Colored Splines for rivers/roads/etc
 Textured Splines
-Undo/Redo Support
-Editor User Interface
-    Need to figure out what UI library/system to use (probably wxWidgets)
 Android/iOS Hexmap Viewer
 Hexographer Compatability
 Custom Hexagon and Object Data
-    Descriptions, Encounters, City Info, etc
+    ex: Descriptions, Encounters, City Info, etc
