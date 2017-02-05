@@ -238,10 +238,8 @@ namespace ui
         sr_s->view_matrix       = shader->view_matrix;
         sr_s->projection_matrix = shader->projection_matrix;
 
+        spline_renderer.rebuild_if_dirty();
         spline_renderer.render();
-
-        //TODO: draw nodes and control nodes on selected splines
-        //      especially the WIP spline if there is one
     }
 
 

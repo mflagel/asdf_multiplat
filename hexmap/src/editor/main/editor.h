@@ -157,7 +157,7 @@ namespace editor
                 create empty spline
                 add start node to spline
                 add a copy of start to act as the WIP node, which will move under the mouse
-                add a control node
+                add control nodes for 0th node
 
             editor_t::add_node_to_wip_spline(new_node)
                 set contents of wip_node to that of new_node

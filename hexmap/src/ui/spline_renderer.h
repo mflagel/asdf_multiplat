@@ -27,7 +27,8 @@ namespace ui
     struct spline_renderer_t
     {
         std::shared_ptr<shader_t> shader;
-        rendered_multi_polygon_<spline_vertex_t> spline_polygon; //opengl data (vao, vbo, etc)
+        rendered_multi_polygon_<spline_vertex_t> spline_geometry; //opengl data (vao, vbo, etc)
+        rendered_multi_polygon_<spline_vertex_t> handles_geometry;
 
         //std::vector<data::spline_t const*> splines;
         std::vector<data::spline_t> const* spline_list;
@@ -40,8 +41,11 @@ namespace ui
 
         void rebuild_spline(size_t spline_ind);
         void rebuild_all();
+        bool rebuild_if_dirty();
 
         void render();
+        void render_handles();
+        void render_some_spline_handles(std::vector<size_t> spline_indices);
 
 
     };

@@ -245,6 +245,9 @@ namespace editor
                     }
                     case editor_t::place_splines:
                     {
+                        num_from_key += 11 * (num_from_key == 0);
+                        --num_from_key;
+
                         auto interp_type = static_cast<data::spline_t::interpolation_e>(num_from_key);
                         editor.set_current_spline_interpolation(interp_type);
                         break;

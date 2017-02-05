@@ -80,9 +80,12 @@ namespace asdf
         {
             ASSERT(initialized, "Rendering polygon before vao is set up with initialize()");
 
-            GL_State->bind(vao);
-            glDrawArrays(_draw_mode, 0, num_verts);
-            GL_State->unbind_vao();
+            if(num_verts > 0)
+            {
+                GL_State->bind(vao);
+                glDrawArrays(_draw_mode, 0, num_verts);
+                GL_State->unbind_vao();
+            }
         }
     };
 
@@ -147,11 +150,15 @@ namespace asdf
         void render(GLuint _draw_mode) const
         {
             ASSERT(rendered_polygon_<VertexType>::initialized, "Rendering multi_polygon before vao is set up with initialize()");
+            ASSERT(first_vert_indices.size() == vert_counts.size(), "");
 
-            GL_State->bind(gl_renderable_t::vao);
-            size_t num_polygons = first_vert_indices.size();
-            glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_polygons);
-            GL_State->unbind_vao();
+            if(first_vert_indices.size() > 0)
+            {
+                GL_State->bind(gl_renderable_t::vao);
+                size_t num_polygons = first_vert_indices.size();
+                glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_polygons);
+                GL_State->unbind_vao();
+            }
         }
     };
 
