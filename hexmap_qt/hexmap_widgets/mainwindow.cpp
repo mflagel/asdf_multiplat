@@ -4,15 +4,19 @@
 //#include <QQuickView>
 #include <QGLFormat>
 #include <QListView>
+#include <QComboBox>
 
 #include <memory>
 
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
+#include <hexmap/data/spline.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "palette_widget.h"
+#include "spline_settings_widget.h"
+#include "ui_spline_settings_widget.h"
 #include "ui_tools_panel.h"
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
@@ -26,8 +30,9 @@ namespace
     constexpr int scroll_sub_ticks = 10;
 }
 
-using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
-
+using editor_t = asdf::hexmap::editor::editor_t;
+using tool_type_e = editor_t::tool_type_e;
+using spline_t = asdf::hexmap::data::spline_t;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -60,6 +65,20 @@ MainWindow::MainWindow(QWidget *parent) :
                              this, &MainWindow::editor_tool_changed);
         connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
                              this, &MainWindow::set_scrollbar_stuff);
+
+        //FIXME cleanup and/or optimize
+        connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
+                [this](tool_type_e tool){
+                    if(tool == editor_t::place_splines)
+                    {
+                        ui->right_dock->setWidget(spline_settings_widget);
+                    }
+                    else
+                    {
+                        ui->right_dock->setWidget(palette_widget);
+                    }
+                }
+        );
     }
 
     {
@@ -69,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(tools_ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
         connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
         connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
+        connect(tools_ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
     }
 
     {
@@ -83,6 +103,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
         ui->right_dock->setWidget(palette_widget);
+    }
+
+
+    {
+        spline_settings_widget = new spline_settings_widget_t();
+
+        connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+            , [this](int index)
+              {
+                  ASSERT(index > 0, "");
+                  auto interp = (spline_t::interpolation_e)(index);
+                  ui->hexmap_widget->editor.set_current_spline_interpolation(interp);
+              });
+
+        connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+                [this](double value)
+                {
+                    ui->hexmap_widget->editor.new_node_style.thickness = value;
+                });
+
     }
 
 
