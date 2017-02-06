@@ -64,10 +64,15 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-            rendered_map->spline_renderer.render_some_spline_handles(inds);
+
+            /// temp disabled while I work on line thickness.
+            /// was causing a GL error
+            // rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
+
+        ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
 
     void editor_t::render_selection()
