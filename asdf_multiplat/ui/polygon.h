@@ -28,6 +28,7 @@ namespace asdf
     ///       ex: A mesh is a set of connected polygons that get rendered
     ///       but this doesnt really store a mesh since there are no indices
     ///       Maybe this should be named gl_renderable_<>?
+    /// Potential Name: renderable_geometry_<>
 
     template <typename VertexType>
     struct rendered_polygon_ : gl_renderable_t
