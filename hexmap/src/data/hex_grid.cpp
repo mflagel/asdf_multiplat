@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "hex_grid.h"
+#include "ui/hex_map.h"
 
 //#include "to_from_json.h"
 
