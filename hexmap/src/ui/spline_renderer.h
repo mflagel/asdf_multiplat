@@ -18,16 +18,20 @@ namespace ui
 {
     struct spline_vertex_t
     {
-        static gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> vertex_spec;
+        static gl_vertex_spec_<vertex_attrib::position2_t
+                             , vertex_attrib::normal2_t
+                             , vertex_attrib::color_t> vertex_spec;
 
-        glm::vec3 position;
+        glm::vec2 position;
+        glm::vec2 normal;
         color_t color;
     };
+
 
     struct spline_renderer_t
     {
         std::shared_ptr<shader_t> shader;
-        rendered_multi_polygon_<spline_vertex_t> spline_geometry; //opengl data (vao, vbo, etc)
+        rendered_multi_polygon_<spline_vertex_t> spline_geometry;  //opengl data (vao, vbo, etc)
         rendered_multi_polygon_<spline_vertex_t> handles_geometry;
 
         //std::vector<data::spline_t const*> splines;
