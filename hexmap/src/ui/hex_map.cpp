@@ -98,7 +98,7 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        spline_renderer.init(Content.create_shader("spline", "colored", 330));
+        spline_renderer.init(Content.create_shader("spline", "spline", 330));
         spline_renderer.spline_list = &map_data.splines;
     }
 
