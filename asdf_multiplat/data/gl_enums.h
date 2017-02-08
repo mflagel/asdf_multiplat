@@ -46,7 +46,7 @@ namespace asdf
         , GL_UNIFORM_BUFFER              // Uniform block storage
     };
 
-    constexpr std::array<char*, gl_buffer_target_count> gl_buffer_target_strings =
+    constexpr std::array<const char*, gl_buffer_target_count> gl_buffer_target_strings =
     {
           "GL_ARRAY_BUFFER"
         , "GL_ATOMIC_COUNTER_BUFFER"

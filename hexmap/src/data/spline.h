@@ -41,7 +41,7 @@ namespace data
     };
 
 
-    constexpr std::array<char*, spline_t::num_interp_types> spline_interpolation_names =
+    constexpr std::array<const char*, spline_t::num_interp_types> spline_interpolation_names =
     {
           "linear"
         , "cubic_bspline"
