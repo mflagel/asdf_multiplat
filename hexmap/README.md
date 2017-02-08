@@ -40,6 +40,8 @@ TODO
 ------------
 Colored Splines for rivers/roads/etc
 Textured Splines
+Vertical Hexes
+Texture Rotation (Both Hexagon Textures and Map Objects)
 Android/iOS Hexmap Viewer
 Hexographer Compatability
 Custom Hexagon and Object Data
