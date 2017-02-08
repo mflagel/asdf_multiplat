@@ -18,7 +18,7 @@
 #include "ui_new_map_dialog.h"
 
 using namespace std;
-using namespace glm;
+//using namespace glm;  //causes namespace collision with uint
 
 
 namespace
@@ -110,6 +110,8 @@ MainWindow::~MainWindow()
 ///       and the widget then calls this function with scrollbar ranges as params
 void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
 {
+    using namespace glm;
+
     hexmap_widget_t* hxm_wgt = ui->hexmap_widget;
 
     vec2 hex_size(asdf::hexmap::hex_width, asdf::hexmap::hex_height);

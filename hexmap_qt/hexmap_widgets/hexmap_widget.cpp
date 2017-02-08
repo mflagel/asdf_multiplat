@@ -11,7 +11,9 @@
 /// https://doc-snapshots.qt.io/qt5-dev/qopenglwidget.html
 
 using namespace std;
-using namespace glm;
+//using namespace glm;  //causes namespace collison with uint
+
+using vec2 = glm::vec2;
 
 namespace
 {
