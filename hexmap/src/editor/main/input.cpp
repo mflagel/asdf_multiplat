@@ -194,12 +194,12 @@ namespace editor
             {
                 //save on ctrl+s
                 case SDLK_s:
-                    editor.save_action();
+                    editor.save_action("test_map.hxm");
                     return;
 
                 //load on ctrl+o
                 case SDLK_o:
-                    editor.load_action();
+                    editor.load_action("test_map.hxm");
                     return;
 
                 case SDLK_z:

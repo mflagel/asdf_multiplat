@@ -120,14 +120,21 @@ namespace editor
 
     void editor_t::save_action()
     {
-        map_data.save_to_file("test_save.hxm");
-        LOG("map saved");
+        save_action(map_filepath);
     }
 
-    void editor_t::load_action()
+    void editor_t::save_action(std::string const& filepath)
     {
-        map_data.load_from_file("test_save.hxm");
-        LOG("map loaded");
+        map_filepath = filepath;
+        map_data.save_to_file(filepath);
+        LOG("map saved to %s", filepath.c_str());
+    }
+
+    void editor_t::load_action(std::string const& filepath)
+    {
+        map_filepath = filepath;
+        map_data.load_from_file(filepath);
+        LOG("map loaded from %s", filepath.c_str());
     }
 
     bool editor_t::undo()

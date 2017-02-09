@@ -55,6 +55,7 @@ namespace editor
             , num_tool_types
         };
 
+
         //terrain
         uint64_t current_tile_id = 0;
         tile_coord_dict_t painted_terrain_coords;
@@ -72,6 +73,7 @@ namespace editor
         data::spline_selection_t spline_selection;
 
         ///
+        std::string map_filepath;
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
@@ -87,7 +89,8 @@ namespace editor
 
         void new_map_action(glm::uvec2 const& size);
         void save_action();
-        void load_action();
+        void save_action(std::string const& filepath);
+        void load_action(std::string const& filepath);
 
         bool undo();
         bool redo();
