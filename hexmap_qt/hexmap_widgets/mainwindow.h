@@ -4,6 +4,7 @@
 #include <hexmap/ui/hex_map.h>  //put before any QT stuff that will include openGL
 
 #include <QMainWindow>
+#include <QDir>
 
 #include "hexmap/editor/main/editor.h"
 
@@ -47,6 +48,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    asdf::hexmap::editor::editor_t* editor = nullptr;
+
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
@@ -54,6 +57,8 @@ private:
     spline_settings_widget_t* spline_settings_widget = nullptr;
 
     glm::vec2 base_camera_offset;
+
+    QDir current_save_dir;
 };
 
 #endif // MAINWINDOW_H

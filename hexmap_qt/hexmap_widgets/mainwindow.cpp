@@ -6,6 +6,7 @@
 #include <QListView>
 #include <QComboBox>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include <memory>
 
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Hexmap");
+    editor = &(ui->hexmap_widget->editor);
 
 
     {
@@ -220,25 +222,49 @@ void MainWindow::scrollbar_changed()
 
 void MainWindow::new_map()
 {
+    if(editor->map_is_dirty)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("The document has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+
+
+        switch (ret) {
+          case QMessageBox::Save:
+              save_map();
+              break;
+          case QMessageBox::Discard:
+              break;
+          case QMessageBox::Cancel:
+              return;
+          default: break;
+        }
+    }
+
+
     new_map_dialog_t nm(this);
-
-    auto accepted = nm.exec(); //supposedly this blocks until the modal dialog is dismissed
-
-    if(!accepted)
+    if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
-
-    //TODO: prompt to save any unsaved changes in the current map
-    save_map();
-
-    ui->hexmap_widget->editor.new_map_action(glm::uvec2(nm.ui->spb_width->value(), nm.ui->spb_height->value()));
+    } else {
+        glm::uvec2 map_size(nm.ui->spb_width->value(), nm.ui->spb_height->value());
+        ui->hexmap_widget->editor.new_map_action(map_size);
+    }
 }
 
 void MainWindow::open_map()
 {
-    auto QString = QFileDialog::getOpenFileName(this,
-        tr("Open Map"), "/home/", tr("Hexmap Files (*.hxm)"));
+    QDir map_file(QString(editor->map_filepath.c_str()));
 
+    QString filepath = QFileDialog::getOpenFileName(this,
+        tr("Open Map"), map_file.path(), tr("Hexmap Files (*.hxm)"));
 
+    if(filepath.size() > 0)
+    {
+        editor->load_action(std::string(filepath.toUtf8().constData()));
+    }
 }
 
 void MainWindow::save_map()
@@ -256,7 +282,12 @@ void MainWindow::save_map()
 void MainWindow::save_map_as()
 {
     QString dir(ui->hexmap_widget->editor.map_filepath.c_str());
-    QFileDialog::getSaveFileName(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+    QString filepath = QFileDialog::getSaveFileName(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+
+    if(filepath.size() > 0)
+    {
+        editor->save_action( std::string(filepath.toUtf8().constData()) );
+    }
 }
 
 
