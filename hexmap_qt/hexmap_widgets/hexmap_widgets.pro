@@ -12,6 +12,8 @@ CONFIG += c++14 console
 #QMAKE_CXXFLAGS_WARN_OFF += -Wno-missing-braces -Wno-writable-strings
 
 
+debug: DEFINES += DEBUG
+
 include( ../../../Qt-Color-Widgets/color_widgets.pri )
 
 
