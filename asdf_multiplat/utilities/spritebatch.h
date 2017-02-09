@@ -86,8 +86,8 @@ namespace asdf {
         std::shared_ptr<shader_t> spritebatch_shader = nullptr;
 
     private:        
-        uint vertex_buffer = 0;
-        uint index_buffer = 0;
+        uint32_t vertex_buffer = 0;
+        uint32_t index_buffer = 0;
         bool has_begun = false;
 
         //might be faster to store it all in one big vector and then sort it afterwards
