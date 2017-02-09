@@ -5,6 +5,7 @@
 #include <QGLFormat>
 #include <QListView>
 #include <QComboBox>
+#include <QFileDialog>
 
 #include <memory>
 
@@ -39,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Hexmap");
 
 
     {
@@ -220,25 +222,41 @@ void MainWindow::new_map()
 {
     new_map_dialog_t nm(this);
 
-    nm.exec(); //supposedly this blocks until the modal dialog is dismissed
+    auto accepted = nm.exec(); //supposedly this blocks until the modal dialog is dismissed
 
-    if(!nm.Accepted)
+    if(!accepted)
         return;
 
     //TODO: prompt to save any unsaved changes in the current map
+    save_map();
+
     ui->hexmap_widget->editor.new_map_action(glm::uvec2(nm.ui->spb_width->value(), nm.ui->spb_height->value()));
 }
 
 void MainWindow::open_map()
 {
+    auto QString = QFileDialog::getOpenFileName(this,
+        tr("Open Map"), "/home/", tr("Hexmap Files (*.hxm)"));
+
+
 }
 
 void MainWindow::save_map()
 {
+    if(ui->hexmap_widget->editor.map_filepath.size() == 0)
+    {
+        save_map_as();
+    }
+    else
+    {
+        ui->hexmap_widget->editor.save_action();
+    }
 }
 
 void MainWindow::save_map_as()
 {
+    QString dir(ui->hexmap_widget->editor.map_filepath.c_str());
+    QFileDialog::getSaveFileName(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
 }
 
 
