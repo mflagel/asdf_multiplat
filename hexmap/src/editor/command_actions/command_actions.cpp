@@ -1,6 +1,7 @@
 #include "command_actions.h"
 
 #include "asdf_multiplat/main/asdf_defs.h"
+#include "editor/main/editor.h"
 
 namespace asdf {
 namespace hexmap {
@@ -38,6 +39,7 @@ namespace editor
     {
         actions.push_back(std::move(action));
         undone_actions.clear();
+        editor.map_is_dirty = true;
     }
 
     void action_stack_t::push_and_execute(std::unique_ptr<editor_action_t>&& action)

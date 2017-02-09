@@ -74,6 +74,7 @@ namespace editor
 
         ///
         std::string map_filepath;
+        bool map_is_dirty = false;
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;

@@ -116,6 +116,9 @@ namespace editor
         //reset camera
         rendered_map->camera_controller.position = default_camera_position;
         rendered_map->update(0.0f);
+
+        map_filepath = "";
+        map_is_dirty = false;
     }
 
     void editor_t::save_action()
@@ -127,6 +130,7 @@ namespace editor
     {
         map_filepath = filepath;
         map_data.save_to_file(filepath);
+        map_is_dirty = false;
         LOG("map saved to %s", filepath.c_str());
     }
 
@@ -134,6 +138,7 @@ namespace editor
     {
         map_filepath = filepath;
         map_data.load_from_file(filepath);
+        map_is_dirty = false;
         LOG("map loaded from %s", filepath.c_str());
     }
 
