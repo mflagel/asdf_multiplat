@@ -45,7 +45,7 @@ ext/glm/doc
 
 #hexmap build stuff
 /hexmap/obj
-/hexmap_qt/build-hexmap_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/
+/hexmap_qt/build-hexmap_widgets*
 
 
 #windows
@@ -57,3 +57,5 @@ ext/glm/doc
 *.VC.db
 Thumbs.db
 ipch
+
+/lib/win32/*
