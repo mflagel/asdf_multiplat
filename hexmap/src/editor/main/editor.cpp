@@ -412,6 +412,11 @@ namespace editor
     void editor_t::update_WIP_control_nodes(glm::vec2 const& position)
     {
         ASSERT(wip_spline, "");
+        if(wip_spline->spline_type == data::spline_t::linear)
+        {
+            return;
+        }
+
         ASSERT(wip_spline->nodes.size() >= 2, "");
         auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
 
