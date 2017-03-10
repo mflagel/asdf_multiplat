@@ -44,7 +44,7 @@ namespace editor
         hexmap_t::init();
 
 #ifdef DEBUG
-        new_map_action(uvec2(20,20));
+        new_map_action(uvec2(16,16));
 #else
         new_map_action(uvec2(1,1));
 #endif
@@ -64,10 +64,15 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-            rendered_map->spline_renderer.render_some_spline_handles(inds);
+
+            /// temp disabled while I work on line thickness.
+            /// was causing a GL error
+            // rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
+
+        ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
 
     void editor_t::render_selection()
@@ -407,6 +412,11 @@ namespace editor
     void editor_t::update_WIP_control_nodes(glm::vec2 const& position)
     {
         ASSERT(wip_spline, "");
+        if(wip_spline->spline_type == data::spline_t::linear)
+        {
+            return;
+        }
+
         ASSERT(wip_spline->nodes.size() >= 2, "");
         auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
 

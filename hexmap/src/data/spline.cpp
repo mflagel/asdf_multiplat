@@ -1,6 +1,9 @@
 #include "spline.h"
 
+#include "asdf_multiplat/data/gl_vertex_spec.h"
+
 namespace asdf {
+    using namespace vertex_attrib;
 namespace hexmap {
 namespace data
 {

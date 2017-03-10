@@ -1,9 +1,9 @@
-#version 330 core
+#version 130
 // Spline Vertex Shader
 
-layout(location = 0) in vec2 VertexPosition;
-layout(location = 1) in vec2 VertexNormal;
-layout(location = 2) in vec4 VertexColor;
+in vec2 VertexPosition;
+in vec2 VertexNormal;
+in vec4 VertexColor;
 
 
 //smooth out vec2 FragTexCoord;
