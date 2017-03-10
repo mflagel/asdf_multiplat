@@ -104,9 +104,7 @@ namespace ui
 
     public:
         hex_map_t(data::hex_map_t& _map_data);
-
-        // void set_tile_colors(std::array<glm::vec4, num_tile_colors> const&);
-
+        
         void update(float dt);
         void render();
         void on_event(SDL_Event* event);

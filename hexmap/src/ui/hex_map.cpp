@@ -102,7 +102,6 @@ namespace ui
 
             GL_State->bind(hexagon.vbo);
             hexagon_vertex_t::vertex_spec.set_vertex_attribs(shader);
-            ASSERT(!CheckGLError(), "Error setting vertex attributes");
 
             GL_State->bind(hex_gl_data);
             GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, "TileID");
@@ -114,33 +113,10 @@ namespace ui
             {
                 glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
             }
-            else
-            {
-                /// not working as expected for some reason wtf
-                /// I'll instead just make hexagon data per-vertex
-                //glVertexBindingDivisor(attrib_loc, 1);
-            }
 
         GL_State->unbind_vao();
 
-        ASSERT(!CheckGLError(), "");
-
-        // std::array<glm::vec4, num_tile_colors> colors =
-        // {
-        //       COLOR_RED
-        //     , COLOR_GREEN
-        //     , COLOR_BLUE
-        //     , COLOR_CYAN
-        //     , COLOR_YELLOW
-        //     , COLOR_MAGENTA
-        //     , COLOR_TEAL
-        //     , COLOR_ORANGE
-        //     , COLOR_LIGHTGREY
-        //     , COLOR_GREY
-        // };
-
-        // set_tile_colors(colors);
-        ASSERT(!CheckGLError(), "");
+        ASSERT(!CheckGLError(), "GL Error setting hexmap VAO and vertex attributes");
 
 
         auto dir = find_folder("data");
@@ -164,14 +140,6 @@ namespace ui
 
         spline_renderer.spline_list = &map_data.splines;
     }
-
-    // void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
-    // {
-    //     GL_State->bind(shader);
-    //     glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, reinterpret_cast<const GLfloat*>(colors.data()));
-    //     ASSERT(!CheckGLError(), "");
-    // }
-
 
     void hex_map_t::update(float dt)
     {
