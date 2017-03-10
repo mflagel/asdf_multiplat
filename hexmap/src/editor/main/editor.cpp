@@ -44,7 +44,7 @@ namespace editor
         hexmap_t::init();
 
 #ifdef DEBUG
-        new_map_action(uvec2(20,20));
+        new_map_action(uvec2(16,16));
 #else
         new_map_action(uvec2(1,1));
 #endif

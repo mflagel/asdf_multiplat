@@ -21,8 +21,8 @@ namespace hexmap
 {
 namespace ui
 {
-    //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
-    const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
+    const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
+    // const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
 
     constexpr char terrain_types_json_filename[] = "terrain_types.json";
@@ -125,21 +125,21 @@ namespace ui
 
         ASSERT(!CheckGLError(), "");
 
-        std::array<glm::vec4, num_tile_colors> colors =
-        {
-              COLOR_RED
-            , COLOR_GREEN
-            , COLOR_BLUE
-            , COLOR_CYAN
-            , COLOR_YELLOW
-            , COLOR_MAGENTA
-            , COLOR_TEAL
-            , COLOR_ORANGE
-            , COLOR_LIGHTGREY
-            , COLOR_GREY
-        };
+        // std::array<glm::vec4, num_tile_colors> colors =
+        // {
+        //       COLOR_RED
+        //     , COLOR_GREEN
+        //     , COLOR_BLUE
+        //     , COLOR_CYAN
+        //     , COLOR_YELLOW
+        //     , COLOR_MAGENTA
+        //     , COLOR_TEAL
+        //     , COLOR_ORANGE
+        //     , COLOR_LIGHTGREY
+        //     , COLOR_GREY
+        // };
 
-        set_tile_colors(colors);
+        // set_tile_colors(colors);
         ASSERT(!CheckGLError(), "");
 
 
@@ -165,12 +165,12 @@ namespace ui
         spline_renderer.spline_list = &map_data.splines;
     }
 
-    void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
-    {
-        GL_State->bind(shader);
-        glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, reinterpret_cast<const GLfloat*>(colors.data()));
-        ASSERT(!CheckGLError(), "");
-    }
+    // void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
+    // {
+    //     GL_State->bind(shader);
+    //     glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, reinterpret_cast<const GLfloat*>(colors.data()));
+    //     ASSERT(!CheckGLError(), "");
+    // }
 
 
     void hex_map_t::update(float dt)
@@ -304,12 +304,13 @@ namespace ui
         }
         else
         {
+            ASSERT(n <= hexagon.num_sub_meshes(), "trying to render more hexagons at once than currently possible");
             //glDrawArrays(draw_mode, 0, hexagon.num_verts);
             glMultiDrawArrays(draw_mode
                 , hexagon.first_vert_indices.data()
                 , hexagon.vert_counts.data()
-                //, n); //render n primatives instead of hexagon.num_sub_meshes()
-                , hexagon.num_sub_meshes());
+                , n); //render n primatives instead of hexagon.num_sub_meshes()
+                //, hexagon.num_sub_meshes());
         }
         
     }
@@ -363,6 +364,8 @@ namespace ui
                     //add i to get current element
                     size_t vert_index = (x*chunk.size.y + y) * num_verts + i;
                     cell_data[vert_index] = chunk.cells[x][y].tile_id;
+
+                    // cell_data[vert_index] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
                 }
             }
         }
