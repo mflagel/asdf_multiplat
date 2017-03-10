@@ -20,10 +20,7 @@ uniform int CHUNK_HEIGHT = 10;
 void main(void)
 {
     /// Instanced Rendering is not available below GL 3.1 (glsl 140)
-    /// However since all hexagons have the same number of verts, I can
-    /// sort of hack it by using gl_VertexID
-    int instanceID = gl_VertexID / 6;
-
+    /*
     /// Position
     int col_x = instanceID / CHUNK_HEIGHT;
     int col_y = instanceID % CHUNK_HEIGHT;
@@ -34,8 +31,11 @@ void main(void)
 
     pos.y -= float(col_x % 2) * HEX_HEIGHT / 2.0;  //hexagon y offest
 
+    gl_Position = WVP * pos;
+    */
+
+
 	gl_Position = WVP * VertexPosition;
-    
 
 
     /// UV Coords

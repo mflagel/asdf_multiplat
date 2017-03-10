@@ -1,9 +1,9 @@
 #version 130
 
-in vec4 ColorOut;
-in vec2 NormalOut;
+smooth in vec4 ColorOut;
+smooth in vec2 NormalOut;
 
-/*layout(location = 0) */out vec4 FragColor;
+out vec4 FragColor;
 
 const float feather_at_percentage = 0.6; //TODO: turn this into a uniform
 
