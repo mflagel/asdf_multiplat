@@ -5,6 +5,7 @@
 #include <SOIL/SOIL.h>
 
 #include "utilities/utilities.h"
+#include "data/gl_state.h"
 
 using namespace std;
 //using namespace boost::filesystem;
@@ -123,6 +124,11 @@ namespace asdf
         auto shader = make_shared<shader_t>(std::move(name), vshd_path, fshd_path);
 
         return shader;
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& name)
+    {
+        return create_shader(name, GL_State->highest_glsl_version);
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {
