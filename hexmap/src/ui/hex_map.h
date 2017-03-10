@@ -87,7 +87,8 @@ namespace ui
         asdf::input_handler_sdl2_t camera_controller;
 
         std::shared_ptr<shader_t> shader;
-        rendered_polygon_<hexagon_vertex_t> hexagon;
+        //rendered_polygon_<hexagon_vertex_t> hexagon;
+        rendered_multi_polygon_<hexagon_vertex_t> hexagon;  //multi-polyogn because we need to track info for non-instanced rendering
 
         data::terrain_bank_t terrain_bank;
         std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;

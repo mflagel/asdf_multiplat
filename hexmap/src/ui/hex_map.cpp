@@ -53,8 +53,37 @@ namespace ui
         }
 
         hexagon.initialize(shader);
-        hexagon.set_data(verts);
         hexagon.draw_mode = GL_LINE_LOOP;
+
+        /// FIXME OpenGL Compatability
+        /// Should use a more descriptive boolean to indicate that I am
+        /// checking whether or not to use instanced rendering
+        if(GLEW_VERSION_3_1)
+        {
+            hexagon.set_data(verts);
+        }
+        else
+        {
+            ///FIXME figure out how to deal with chunks of differing sizes
+            //for now just throw a bunch of vertices at the wall
+            //lazy: just fill a buffer with enough copies of hexagon verts
+            //      that it will fill a chunk
+            auto size = map_data.hex_grid.chunk_size();
+            std::vector<hexagon_vertex_t> non_instanced_verts;
+            non_instanced_verts.reserve(size.x * size.y * verts.size());
+
+            for(size_t i = 0; i < size.x * size.y; ++i)
+            {
+                //multi_draw metadata
+                hexagon.first_vert_indices.push_back(non_instanced_verts.size());
+                hexagon.vert_counts.push_back(6);
+
+                non_instanced_verts.insert(non_instanced_verts.end()
+                                         , verts.begin(), verts.end());
+            }
+
+            hexagon.set_data(non_instanced_verts);
+        }
         
         ASSERT(!CheckGLError(), "");
         GL_State->bind(hexagons_vao);
@@ -224,7 +253,11 @@ namespace ui
         }
         else
         {
-            glDrawArrays(draw_mode, 0, 6);
+            //glDrawArrays(draw_mode, 0, hexagon.num_verts);
+            glMultiDrawArrays(draw_mode
+                , hexagon.first_vert_indices.data()
+                , hexagon.vert_counts.data()
+                , hexagon.num_sub_meshes());
         }
         
     }
