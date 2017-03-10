@@ -124,7 +124,17 @@ namespace asdf
 
     std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& name)
     {
-        return create_shader(name, GL_State->highest_glsl_version);
+        return create_shader_highest_supported(name, name);
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& vs_name, std::string const& fs_name)
+    {
+        return create_shader(vs_name, fs_name, GL_State->highest_glsl_version);
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name)
+    {
+        return create_shader(shader_path, vs_name, fs_name, GL_State->highest_glsl_version);
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {

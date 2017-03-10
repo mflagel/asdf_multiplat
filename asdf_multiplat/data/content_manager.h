@@ -32,6 +32,8 @@ namespace asdf {
         std::shared_ptr<shader_t> create_shader(std::string const& vs_name, std::string const& fs_name, size_t glsl_ver);
         std::shared_ptr<shader_t> create_shader(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name, size_t glsl_ver);
         std::shared_ptr<shader_t> create_shader_highest_supported(std::string const& name);
+        std::shared_ptr<shader_t> create_shader_highest_supported(std::string const& vs_name, std::string const& fs_name);
+        std::shared_ptr<shader_t> create_shader_highest_supported(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name);
 
         void load_texture(std::string const& name, std::string const& relative_path);
 
