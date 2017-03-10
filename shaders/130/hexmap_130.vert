@@ -5,10 +5,10 @@ in vec4 VertexPosition;
 in uint TileID;
 
 smooth out vec2 FragTexCoord;
-flat out vec4 ColorOut;
+// flat out vec4 ColorOut;
 
 uniform mat4 WVP;
-uniform vec4 TileColors[10];
+// uniform vec4 TileColors[10];
 
 uniform float HEX_HEIGHT = 0.86602540378;
 uniform float HEX_HEIGHT_D4 =   0.216506350945;
@@ -63,7 +63,7 @@ void main(void)
 
 
     /// Color
-    vec4 tile_color = TileColors[TileID];
-    ColorOut = tile_color;
-    ColorOut.a = 1.0;
+    // vec4 tile_color = TileColors[TileID];
+    // ColorOut = tile_color;
+    // ColorOut.a = 1.0;
 }
