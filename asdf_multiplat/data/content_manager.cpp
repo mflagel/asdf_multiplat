@@ -61,9 +61,13 @@ namespace asdf
         //ADD_TEXTURE("particle_test", "particle_test_texture.png");
 
         // //shaders
-        shaders.add_resource(create_shader("passthrough", 330));
-        shaders.add_resource(create_shader("colored", 330));
-        shaders.add_resource(create_shader("spritebatch", 330));
+        /// FIXME opengl shader compatability
+        // shaders.add_resource(create_shader("passthrough", 330));
+        // shaders.add_resource(create_shader("colored", 330));
+        // shaders.add_resource(create_shader("spritebatch", 330));
+        shaders.add_resource(create_shader("passthrough", 130));
+        //shaders.add_resource(create_shader("colored", 130));
+        shaders.add_resource(create_shader("spritebatch", 130));
 
         shaders.default_resource = shaders["passthrough"];
 
