@@ -99,7 +99,10 @@ namespace ui
         hex_buffer_data_t hex_gl_data;
         spritebatch_t spritebatch; //used to render map objects
 
-        
+    private:
+        bool are_hexagons_instanced = false;
+
+    public:
         hex_map_t(data::hex_map_t& _map_data);
 
         void set_tile_colors(std::array<glm::vec4, num_tile_colors> const&);
@@ -109,7 +112,7 @@ namespace ui
         void on_event(SDL_Event* event);
 
         void render_chunk(data::hex_grid_chunk_t const&);
-        void render_grid_overlay(glm::uvec2 grid_size);
+        void render_grid_overlay_instanced(glm::uvec2 grid_size);
         void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode);
         void render_map_objects();
         void render_splines();

@@ -197,8 +197,10 @@ namespace ui
         });
 
         
-        glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
-        render_grid_overlay(map_data.hex_grid.size);
+        if(are_hexagons_instanced)
+        {
+            render_grid_overlay_instanced(map_data.hex_grid.size);
+        }
         
 
         render_map_objects();
@@ -252,10 +254,26 @@ namespace ui
         glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
 
         render_hexagons(chunk.size, GL_TRIANGLE_FAN);
+
+        /// if not using instanced rendering, just tack the grid draw on here
+        /// since all the matricies and such are set up anyways
+        if(!are_hexagons_instanced)
+        {
+            //TODO: refactor setting of state for grid render?
+            glLineWidth(grid_overlay_thickness);
+            glUniform4fv( shader->uniform("Color"), 1, glm::value_ptr(grid_color) );
+            glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
+
+            render_hexagons(chunk.size, GL_LINE_LOOP);
+
+            glUniform1i(shader->uniform("ApplyTexture"), 1);  //turn textures back on for next chunk render
+        }
+
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_grid_overlay(glm::uvec2 grid_size)
+    //TODO: refactor setting of state for grid render?
+    void hex_map_t::render_grid_overlay_instanced(glm::uvec2 grid_size)
     {
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
@@ -267,8 +285,9 @@ namespace ui
         shader->update_wvp_uniform();
 
         glUniform4fv( shader->uniform("Color"), 1, glm::value_ptr(grid_color) );
+        glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn off textures for the grid
 
-        render_hexagons(grid_size, hexagon.draw_mode);
+        render_hexagons(grid_size, GL_LINE_LOOP);
         GL_State->unbind_vao();
     }
 
@@ -289,6 +308,7 @@ namespace ui
             glMultiDrawArrays(draw_mode
                 , hexagon.first_vert_indices.data()
                 , hexagon.vert_counts.data()
+                //, n); //render n primatives instead of hexagon.num_sub_meshes()
                 , hexagon.num_sub_meshes());
         }
         
