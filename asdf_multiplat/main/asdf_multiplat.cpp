@@ -317,9 +317,7 @@ namespace asdf {
 
 
         auto shader_path = find_folder("shaders");
-        /// FIXME: opengl compatability: load different shader based on supported opengl version
-        //screen_shader = Content.create_shader(shader_path, "passthrough", "textured", 330);
-        screen_shader = Content.create_shader(shader_path, "passthrough", "textured", 130);
+        screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");
 
         const quad_vertex_t quad_verts[] =
         {

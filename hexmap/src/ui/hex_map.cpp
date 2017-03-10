@@ -38,20 +38,7 @@ namespace ui
     {
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
-        /// TODO: shader version cleanup
-        if(are_hexagons_instanced)
-        {
-            shader = Content.create_shader("hexmap", 330);
-        }
-        else// if GLSL 130 is supported (otherwise will have to fallback to 120)
-        {
-            shader = Content.create_shader("hexmap", 130);
-        }
-        // else  //leaving commented out here as a reminder for later
-        // {
-        //     shader = Content.create_shader("hexmap", 120);
-        // }
-
+        shader = Content.create_shader_highest_supported("hexmap");
 
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
@@ -128,15 +115,7 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        /// TODO: shader version cleanup
-        if(GLEW_VERSION_3_3)
-        {
-            spline_renderer.init(Content.create_shader("spline", "spline", 330));
-        }
-        else
-        {
-            spline_renderer.init(Content.create_shader("spline", "spline", 130));
-        }
+        spline_renderer.init(Content.create_shader_highest_supported("spline"));
 
         spline_renderer.spline_list = &map_data.splines;
     }
