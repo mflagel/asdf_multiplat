@@ -37,9 +37,6 @@ void main(void)
     gl_Position = WVP * pos;
 
 
-	//gl_Position = WVP * VertexPosition;
-
-
     /// UV Coords
     uint atlas_dim   = uint(1280);
     uint tile_dim    = uint(128);
