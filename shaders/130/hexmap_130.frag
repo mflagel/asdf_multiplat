@@ -2,7 +2,6 @@
 // Hexmap Shader
 
 smooth in vec2 FragTexCoord;
-// flat in vec4 ColorOut;
 
 out vec4 FragColor;
 
