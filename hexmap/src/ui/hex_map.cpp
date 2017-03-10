@@ -36,7 +36,9 @@ namespace ui
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
     {
-        shader = Content.create_shader("hexmap", 330);
+        /// FIXME opengl shader compatability
+        //shader = Content.create_shader("hexmap", 330);
+        shader = Content.create_shader("hexmap", 130);
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
         std::vector<hexagon_vertex_t> verts(6);
@@ -64,8 +66,11 @@ namespace ui
             GL_State->bind(hex_gl_data);
             GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, "TileID");
             glEnableVertexAttribArray(attrib_loc); //tell the location
+
+            //FIXME OpenGL Compatability
             glVertexAttribIPointer(attrib_loc, 1, GL_UNSIGNED_INT, sizeof(data::hex_tile_id_t), 0);  // must use Atrib ** I ** for unsigned int to be used as a uint in glsl
-            glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
+            //glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
+            glVertexAttribDivisorARB(attrib_loc, 1);
 
         GL_State->unbind_vao();
 
@@ -98,7 +103,9 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        spline_renderer.init(Content.create_shader("spline", "spline", 330));
+        /// FIXME OpenGL Compatability
+        //spline_renderer.init(Content.create_shader("spline", "spline", 330));
+        spline_renderer.init(Content.create_shader("spline", "spline", 130));
         spline_renderer.spline_list = &map_data.splines;
     }
 
@@ -209,7 +216,17 @@ namespace ui
         glUniform1i(loc, grid_size.y);
 
         size_t n = grid_size.x * grid_size.y;
-        glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
+
+        ///FIXME OpenGL Compatability
+        if(GLEW_VERSION_3_1)
+        {
+            glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
+        }
+        else
+        {
+            glDrawArrays(draw_mode, 0, 6);
+        }
+        
     }
 
     void hex_map_t::render_map_objects()
