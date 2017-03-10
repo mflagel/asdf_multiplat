@@ -36,9 +36,23 @@ namespace ui
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
     {
-        /// FIXME opengl shader compatability
-        //shader = Content.create_shader("hexmap", 330);
-        shader = Content.create_shader("hexmap", 130);
+        are_hexagons_instanced = GLEW_VERSION_3_3;
+
+        /// TODO: shader version cleanup
+        if(are_hexagons_instanced)
+        {
+            shader = Content.create_shader("hexmap", 330);
+        }
+        else// if GLSL 130 is supported (otherwise will have to fallback to 120)
+        {
+            shader = Content.create_shader("hexmap", 130);
+        }
+        // else  //leaving commented out here as a reminder for later
+        // {
+        //     shader = Content.create_shader("hexmap", 120);
+        // }
+
+
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
         std::vector<hexagon_vertex_t> verts(6);
@@ -55,10 +69,8 @@ namespace ui
         hexagon.initialize(shader);
         hexagon.draw_mode = GL_LINE_LOOP;
 
-        /// FIXME OpenGL Compatability
-        /// Should use a more descriptive boolean to indicate that I am
-        /// checking whether or not to use instanced rendering
-        if(GLEW_VERSION_3_1)
+
+        if(are_hexagons_instanced)
         {
             hexagon.set_data(verts);
         }
@@ -96,10 +108,18 @@ namespace ui
             GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, "TileID");
             glEnableVertexAttribArray(attrib_loc); //tell the location
 
-            //FIXME OpenGL Compatability
             glVertexAttribIPointer(attrib_loc, 1, GL_UNSIGNED_INT, sizeof(data::hex_tile_id_t), 0);  // must use Atrib ** I ** for unsigned int to be used as a uint in glsl
-            //glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
-            glVertexAttribDivisorARB(attrib_loc, 1);
+
+            if(are_hexagons_instanced)
+            {
+                glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
+            }
+            else
+            {
+                /// not working as expected for some reason wtf
+                /// I'll instead just make hexagon data per-vertex
+                //glVertexBindingDivisor(attrib_loc, 1);
+            }
 
         GL_State->unbind_vao();
 
@@ -132,9 +152,16 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        /// FIXME OpenGL Compatability
-        //spline_renderer.init(Content.create_shader("spline", "spline", 330));
-        spline_renderer.init(Content.create_shader("spline", "spline", 130));
+        /// TODO: shader version cleanup
+        if(GLEW_VERSION_3_3)
+        {
+            spline_renderer.init(Content.create_shader("spline", "spline", 330));
+        }
+        else
+        {
+            spline_renderer.init(Content.create_shader("spline", "spline", 130));
+        }
+
         spline_renderer.spline_list = &map_data.splines;
     }
 
@@ -205,7 +232,13 @@ namespace ui
     {
         GL_State->bind(hexagons_vao);
 
-        hex_gl_data.set_data(chunk);
+        if(are_hexagons_instanced)
+        {
+            hex_gl_data.set_data_instanced(chunk);
+        }
+        {
+            hex_gl_data.set_data(chunk);
+        }
 
         float chunk_width_cells = hex_width_d4 * 3 * chunk.allocated_size.x;
         float chunk_height_cells = hex_height * chunk.allocated_size.y;
@@ -246,8 +279,7 @@ namespace ui
 
         size_t n = grid_size.x * grid_size.y;
 
-        ///FIXME OpenGL Compatability
-        if(GLEW_VERSION_3_1)
+        if(are_hexagons_instanced)
         {
             glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
         }
@@ -292,20 +324,44 @@ namespace ui
         spline_renderer.render();
     }
 
-
-
+    /// For whatever reason glVertexBindingDivisor doesn't seem to work
+    /// so for compatability reasons, I'll just duplicate the tileID data
+    /// so that it's per vertex instead of per-primative
     void hex_buffer_data_t::set_data(data::hex_grid_chunk_t const& chunk)
     {
-        //std::array<data::hex_tile_id_t, data::max_chunk_width * data::max_chunk_height> cell_data;
+        constexpr size_t num_verts = 6; //6 verts per hex
+        std::vector<data::hex_tile_id_t> cell_data(chunk.size.x * chunk.size.y * num_verts);
+
+        for(size_t x = 0; x < chunk.size.x; ++x)
+        {
+            for(size_t y = 0; y < chunk.size.y; ++y)
+            {
+                for(size_t i = 0; i < num_verts; ++i)
+                {
+                    //x*chunk.size.y + y gets cell
+                    //multiply that by num_verts because that's how many elements per cell
+                    //add i to get current element
+                    size_t vert_index = (x*chunk.size.y + y) * num_verts + i;
+                    cell_data[vert_index] = chunk.cells[x][y].tile_id;
+                }
+            }
+        }
+
+        GL_State->bind(*this);
+        GL_State->buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
+
+        ASSERT(!CheckGLError(), "Error setting hexagon buffer data");
+    }
+
+    void hex_buffer_data_t::set_data_instanced(data::hex_grid_chunk_t const& chunk)
+    {
         std::vector<data::hex_tile_id_t> cell_data(chunk.size.x * chunk.size.y);
 
         for(size_t x = 0; x < chunk.size.x; ++x)
         {
             for(size_t y = 0; y < chunk.size.y; ++y)
             {
-                //cell_data[x*chunk.size.y + y] = rand() % 10;
                 //cell_data[x*chunk.size.y + y] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
-
                 cell_data[x*chunk.size.y + y] = chunk.cells[x][y].tile_id;
             }
         }

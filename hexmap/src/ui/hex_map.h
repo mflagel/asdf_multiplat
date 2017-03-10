@@ -77,6 +77,7 @@ namespace ui
         }
 
         void set_data(data::hex_grid_chunk_t const&);
+        void set_data_instanced(data::hex_grid_chunk_t const&);
     };
 
     struct hex_map_t
