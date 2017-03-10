@@ -10,6 +10,7 @@ namespace asdf
 
         std::vector<std::string> gl_extensions;
         GLint max_uniform_components = 0;
+        size_t highest_glsl_version = 0;
 
         GLuint current_vao = 0;
         GLuint current_shader = 0;
@@ -44,6 +45,8 @@ namespace asdf
 
         gl_state_t* operator->();
     };
+
+    size_t get_highest_glsl_ver();
 
     extern gl_state_proxy_t GL_State;
 }
