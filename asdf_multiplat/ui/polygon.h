@@ -100,6 +100,8 @@ namespace asdf
 
         size_t num_sub_meshes() const { return first_vert_indices.size(); }
 
+        using rendered_polygon_<VertexType>::set_data;
+
         void set_data(std::vector<polygon_<VertexType>> const& polygons)
         {
             LOG_IF(CheckGLError(), "Error before rendered_multi_polygon_::set_data()");
@@ -156,8 +158,7 @@ namespace asdf
             if(first_vert_indices.size() > 0)
             {
                 GL_State->bind(gl_renderable_t::vao);
-                size_t num_polygons = first_vert_indices.size();
-                glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_polygons);
+                glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_sub_meshes());
                 GL_State->unbind_vao();
             }
         }
