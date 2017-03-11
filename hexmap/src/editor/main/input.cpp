@@ -275,6 +275,15 @@ namespace editor
                     editor.set_tool(editor_t::place_splines);
                     break;
 
+                case SDLK_EQUALS: //plus
+                    editor.new_node_style.thickness += 0.2f;
+                    LOG("spline thickness: %0.3f", editor.new_node_style.thickness);
+                    break;
+                case SDLK_MINUS:
+                    editor.new_node_style.thickness -= 0.2f;
+                    LOG("spline thickness: %0.3f", editor.new_node_style.thickness);
+                    break;
+
                 default: return;
             }
         }
