@@ -19,6 +19,7 @@ namespace ui
     namespace
     {
         constexpr size_t default_subdivs_per_spline_segment = 10;
+        constexpr float miter_limit = 1.0f;
 
         constexpr uint32_t spline_handle_size_px = 10;
         const/*expr*/ color_t spline_handle_color = color_t(1.0f, 1.0f, 1.0f, 1.0f);
@@ -163,6 +164,24 @@ namespace ui
                 verts[1].extrusion *= s_thc;
                 verts[2].extrusion *= e_thc;
                 verts[3].extrusion *= e_thc;
+
+                //handle edge joints with previous segment
+                if(segment_index > 0)
+                {
+                    auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
+
+                    //TODO: implement miter limit
+
+                    //just add verts together to get correct direciton
+                    auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
+                    auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
+                    
+                    prev_verts[3].extrusion = top_extr;
+                    verts[1].extrusion = top_extr;
+
+                    prev_verts[2].extrusion = btm_extr;
+                    verts[0].extrusion = btm_extr;
+                }
 
                 /// normal (1 or -1, used to interpolate in fragment shader and get distance to the line center
                 verts[0].normal = -1.0f;
