@@ -26,7 +26,8 @@ namespace ui
 
     /// vertex spec allocation / definition
     gl_vertex_spec_<vertex_attrib::position2_t
-                  , vertex_attrib::normal2_t
+                  , vertex_attrib::extrusion_t
+                  , spline_vert_normal_t
                   , vertex_attrib::color_t>    spline_vertex_t::vertex_spec;
 
 
@@ -84,21 +85,6 @@ namespace ui
         spline_geometry.initialize(shader);
         handles_geometry.initialize(shader);
     }
-
-    // void spline_renderer_t::batch(spline_t const& spline)
-    // {
-    //     spline_batch.push_back(&spline);
-    // }
-
-    // void spline_renderer_t::batch(std::vector<spline_t> const& splines)
-    // {
-    //     spline_batch.reserve(spline_batch.size() + splines.size());
-
-    //     for(size_t i = 0; i < splines.size(); ++i)
-    //     {
-    //         spline_batch.push_back(&(splines[i]));
-    //     }
-    // }
 
     void spline_renderer_t::rebuild_spline(size_t spline_ind)
     {
@@ -160,17 +146,29 @@ namespace ui
                 verts[2].position = end_node.position;
                 verts[3].position = end_node.position;
 
-                //normals  TODO: support joints
+                /// extrusion vector  TODO: support joints
                 vec2 segment_vector = end_node.position - start_node.position;
                 segment_vector.x += 0.0000001f * (segment_vector.x == 0.0f && segment_vector.y == 0.0f);
                 segment_vector = glm::normalize(segment_vector);
 
-                //todo: bake the camera zoom info into the normal
+                verts[0].extrusion = vec2(segment_vector.y, -segment_vector.x); //rotate seg_vec forward  90 degrees
+                verts[1].extrusion = vec2(-segment_vector.y, segment_vector.x); //rotate seg_vec backward 90 degrees
+                verts[2].extrusion = verts[0].extrusion;
+                verts[3].extrusion = verts[1].extrusion;
 
-                verts[0].normal = vec2(segment_vector.y, -segment_vector.x); //rotate seg_vec forward  90 degrees
-                verts[1].normal = vec2(-segment_vector.y, segment_vector.x); //rotate seg_vec backward 90 degrees
-                verts[2].normal = verts[0].normal;
-                verts[3].normal = verts[1].normal;
+                // bake thickness into extrusion vector
+                auto s_thc = start_node.thickness / 2.0f;
+                auto e_thc =   end_node.thickness / 2.0f;
+                verts[0].extrusion *= s_thc;
+                verts[1].extrusion *= s_thc;
+                verts[2].extrusion *= e_thc;
+                verts[3].extrusion *= e_thc;
+
+                /// normal (1 or -1, used to interpolate in fragment shader and get distance to the line center
+                verts[0].normal = -1.0f;
+                verts[1].normal =  1.0f;
+                verts[2].normal = -1.0f;
+                verts[3].normal =  1.0f;
 
                 verts[0].color = start_node.color;
                 verts[1].color = start_node.color;
@@ -259,6 +257,10 @@ namespace ui
         shader->update_wvp_uniform();
 
         // spline_geometry.render(GL_LINE_STRIP);
+
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         spline_geometry.render(GL_TRIANGLE_STRIP);
 
         ASSERT(!CheckGLError(), "Error in spline_renderer_t::render()");
@@ -421,10 +423,10 @@ namespace ui
             vertex_lists.emplace_back();
             auto& vert_list = vertex_lists.back(); //in c++17 I can just grab what emplace_back() returns
 
-            vert_list.push_back(spline_vertex_t{node.position, vec2(), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{node.position, vec2(), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{node.position, vec2(), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{node.position, vec2(), spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
 
             //square shape
             vert_list[0].position += vec2(-sh_s_d2,  sh_s_d2); //top left
@@ -437,10 +439,10 @@ namespace ui
         {
             auto push_handle_verts = [&sh_s_d2](polygon_<spline_vertex_t>& vert_list, vec2 pos)
             {
-                vert_list.push_back(spline_vertex_t{pos,  vec2(),spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos,  vec2(),spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos,  vec2(),spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos,  vec2(),spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
 
                 //diamond shape
                 vert_list[0].position.y += sh_s_d2; //up
@@ -462,8 +464,8 @@ namespace ui
 
                 //connecting line
                 vertex_lists.emplace_back();
-                vertex_lists.back().push_back(spline_vertex_t{cnode_1,  vec2(),spline_handle_color});
-                vertex_lists.back().push_back(spline_vertex_t{cnode_2,  vec2(),spline_handle_color});
+                vertex_lists.back().push_back(spline_vertex_t{cnode_1,  vec2{}, 0.0f, spline_handle_color});
+                vertex_lists.back().push_back(spline_vertex_t{cnode_2,  vec2{}, 0.0f, spline_handle_color});
             }
         }
 
