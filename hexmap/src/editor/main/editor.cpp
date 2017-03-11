@@ -19,6 +19,12 @@ namespace editor
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
     const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
 
+    const/*expr*/ data::line_node_t default_spline_style = {
+          vec2{0.0f,0.0f}                   //pos
+        , 1.0f                            //thickness
+        , color_t{0.0f, 0.5f, 1.0f, 1.0f} //color
+    };
+
     constexpr float snap_dist_threshold = 0.1f; //in units
 
     //TODO: move this into an asdf_multiplat header
@@ -37,6 +43,7 @@ namespace editor
     : hexmap_t()
     , action_stack(*this)
     , object_selection(*this)
+    , new_node_style{default_spline_style}
     {}
 
     void editor_t::init()
@@ -473,6 +480,7 @@ namespace editor
 
         LOG("finished a%s spline", spline_loops ? " looping" : "");
 
+        /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
         action_stack.push(std::move(cmd));
 
