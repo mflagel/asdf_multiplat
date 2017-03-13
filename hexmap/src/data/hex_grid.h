@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+struct SDL_RWops;
+
 namespace asdf
 {
 namespace hexmap
@@ -15,6 +17,8 @@ namespace hexmap
 
 namespace data
 {
+    struct hxm_header_t;
+
     constexpr size_t new_chunk_width  = 10;
     constexpr size_t new_chunk_height = 10;
 
@@ -81,12 +85,11 @@ namespace data
         }
 
         hex_grid_t(glm::uvec2 size);
-        hex_grid_t(std::string const& filepath);
 
         void init(glm::uvec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height));
 
-        void save_to_file(std::string const& filepath);
-        void load_from_file(std::string const& filepath);
+        void save_to_file(SDL_RWops*); //TODO: look into not_null pointers from C++17
+        void load_from_file(SDL_RWops*, hxm_header_t const&);
 
         void resize_by_copy(glm::ivec2 new_size, resize_x_direction_e, resize_y_direction_e);
 
@@ -104,16 +107,6 @@ namespace data
         hex_grid_cell_t& cell_at(glm::vec2 world_pos);
         glm::ivec2 chunk_coord_from_hex_coord(glm::ivec2) const;
         hex_grid_chunk_t& chunk_from_hex_coord(glm::ivec2);
-    };
-
-
-
-    struct hxm_header_t
-    {
-        size_t version = size_t(-1);
-
-        glm::uvec2 map_size;
-        glm::uvec2 chunk_size;
     };
 }
 }

@@ -24,6 +24,16 @@ namespace data
 
         size_t object_index_at(glm::vec2 world_pos);
     };
+
+    struct hxm_header_t
+    {
+        size_t version{0}; //this might need to be seperate from the header in case the header changes
+
+        glm::uvec2 map_size{0};
+        glm::uvec2 chunk_size{0};
+        size_t num_map_objects{0};
+        size_t num_splines{0};
+    };
 }
 }
 }
