@@ -176,16 +176,23 @@ namespace editor
 
         modifier_keys = modifier_keys_from_sdl2_event(keysm, true);
 
-        // LOG("Key Mods: %s %s %s %s"
-        //     , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
-        //     , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
-        //     , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
-        //     , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
-        // );
+        bool is_shft = (modifier_keys & KMOD_SHIFT)>0;
+        bool is_ctrl = (modifier_keys & KMOD_CTRL)>0;
+        bool is_alt  = (modifier_keys & KMOD_ALT)>0;
 
 
-        //bool mod_ctrl_only = keysm.mod == KMOD_LCTRL || keysm.mod == KMOD_RCTRL;
-        bool mod_ctrl_only = (keysm.mod & KMOD_CTRL) > 0;
+        bool mod_ctrl_only = modifier_keys == KMOD_LCTRL 
+                          || modifier_keys == KMOD_RCTRL;
+
+        if(key == SDLK_p)
+        {
+            LOG("Key Mods: %s %s %s %s"
+                , (modifier_keys & KMOD_SHIFT)>0 ? "S" : "-"
+                , (modifier_keys & KMOD_CTRL)>0  ? "C" : "-"
+                , (modifier_keys & KMOD_ALT)>0   ? "A" : "-"
+                , (modifier_keys & KMOD_GUI)>0   ? "^" : "-"
+            );
+        }
 
         //modifier key combos first
         if(mod_ctrl_only)
@@ -211,6 +218,15 @@ namespace editor
                     return;
 
                 default: return;
+            }
+        }
+        else if(is_ctrl && is_shft)
+        {
+            switch(key)
+            {
+                case SDLK_z:
+                    editor.redo();
+                    return; 
             }
         }
         else if ((keysm.mod & KMOD_ALT) > 0)
