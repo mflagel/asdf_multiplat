@@ -458,8 +458,13 @@ namespace editor
         if(!spline_loops)
         {
             wip_spline->nodes.pop_back(); //kill the WIP node
-            wip_spline->control_nodes.pop_back(); //and its control nodes
-            wip_spline->control_nodes.pop_back(); //
+
+            if(wip_spline->control_nodes.size() > 0)
+            {
+                ASSERT(wip_spline->control_nodes.size() >= 2, "");
+                wip_spline->control_nodes.pop_back(); //and its control nodes
+                wip_spline->control_nodes.pop_back(); //
+            }
         }
         else
         {
@@ -479,6 +484,8 @@ namespace editor
         // }
 
         LOG("finished a%s spline", spline_loops ? " looping" : "");
+
+        ASSERT(wip_spline->control_nodes.size() >= 0, "apparently control_nodes might have a negtaive length, which I thought was impossible");
 
         /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);

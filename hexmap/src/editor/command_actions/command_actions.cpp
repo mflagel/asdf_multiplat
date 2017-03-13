@@ -144,9 +144,9 @@ namespace editor
 
 
     ///Add Spline
-    add_spline_action_t::add_spline_action_t(data::hex_map_t& _map_data, data::spline_t _spline)
+    add_spline_action_t::add_spline_action_t(data::hex_map_t& _map_data, data::spline_t const& _spline)
     : map_data(_map_data)
-    , spline(_spline)
+    , spline(_spline) //store copy created from const&
     {
     }
 

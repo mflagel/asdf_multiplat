@@ -118,7 +118,7 @@ namespace editor
         data::hex_map_t& map_data;
         data::spline_t spline;
 
-        add_spline_action_t(data::hex_map_t&, data::spline_t);
+        add_spline_action_t(data::hex_map_t&, data::spline_t const&);
 
         void execute() override;
         void unexecute() override;
