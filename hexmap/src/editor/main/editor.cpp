@@ -124,6 +124,7 @@ namespace editor
     void editor_t::new_map_action(glm::uvec2 const& size)
     {
         map_data = data::hex_map_t(size);
+        action_stack.clear();
 
         //reset camera
         rendered_map->camera_controller.position = default_camera_position;
@@ -139,6 +140,7 @@ namespace editor
     void editor_t::load_action()
     {
         map_data.load_from_file("test_save.hxm");
+        action_stack.clear();
         LOG("map loaded");
     }
 
