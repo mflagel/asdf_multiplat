@@ -34,6 +34,12 @@ namespace editor
         return undone_actions.size() > 0;
     }
 
+    void action_stack_t::clear()
+    {
+        actions.clear();
+        undone_actions.clear();
+    }
+
     void action_stack_t::push(std::unique_ptr<editor_action_t>&& action)
     {
         actions.push_back(std::move(action));

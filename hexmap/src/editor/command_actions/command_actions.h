@@ -52,6 +52,8 @@ namespace editor
         bool can_undo() const;
         bool can_redo() const;
 
+        void clear();
+
         void push(std::unique_ptr<editor_action_t>&&);
         void push_and_execute(std::unique_ptr<editor_action_t>&&);
 
