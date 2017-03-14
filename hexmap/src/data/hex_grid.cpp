@@ -57,6 +57,7 @@ namespace data
 
     void hex_grid_t::load_from_file(SDL_RWops* io, hxm_header_t const& header)
     {
+        chunks.clear();
         init(header.map_size, header.chunk_size);
 
         size_t total_bytes = 0;
@@ -87,8 +88,8 @@ namespace data
 
     void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size)
     {
-        auto dv_x = div(long(size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
-        auto dv_y = div(long(size.y), chunk_size.y); //
+        auto dv_x = div(long(_size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
+        auto dv_y = div(long(_size.y), chunk_size.y); //
 
         size_t num_chunks_x = dv_x.quot + (dv_x.rem > 0);
         size_t num_chunks_y = dv_y.quot + (dv_y.rem > 0);
