@@ -57,7 +57,7 @@ namespace editor
 #endif
 
         input = make_unique<input_handler_t>(*this);
-        app.mouse_state.thing = input.get();
+        app.mouse_state.receiver = input.get();
     }
 
     void editor_t::render()

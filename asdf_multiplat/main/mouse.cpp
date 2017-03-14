@@ -30,7 +30,7 @@ namespace asdf
         mouse_position = mouse_pos;
         mouse_down_pos = mouse_pos;
 
-        thing->on_mouse_down(event);
+        receiver->on_mouse_down(event);
     }
 
     void mouse_input_t::mouse_up(mouse_button_event_t& event, glm::ivec2 mouse_pos)
@@ -43,18 +43,18 @@ namespace asdf
 
         mouse_position = mouse_pos;
 
-        thing->on_mouse_up(event);
+        receiver->on_mouse_up(event);
     }
 
     void mouse_input_t::mouse_move(mouse_motion_event_t& event, glm::ivec2 mouse_pos)
     {
         mouse_position = mouse_pos;
 
-        thing->on_mouse_move(event);
+        receiver->on_mouse_move(event);
     }
 
     void mouse_input_t::mouse_wheel(mouse_wheel_event_t& event)
     {
-        thing->on_mouse_wheel(event);
+        receiver->on_mouse_wheel(event);
     }
 }

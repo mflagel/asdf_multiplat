@@ -34,7 +34,7 @@ namespace editor
         , SDLK_s // place_spline
     };
 
-    struct input_handler_t : thing_that_gets_events_t
+    struct input_handler_t : mouse_event_receiver_t
     {
         editor_t& editor;
 
