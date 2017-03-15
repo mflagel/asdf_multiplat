@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // been initialized yet
     // EDIT: This may be solvable with the hex_map_initialized signal
     ui->hexmap_widget->main_window = this;
+    ui->hexmap_widget->setMouseTracking(true); //enable to get mouseMove events
 
     connect(ui->hexmap_hscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
     connect(ui->hexmap_vscroll, &QScrollBar::valueChanged, this, &MainWindow::scrollbar_changed);
@@ -116,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             , [this](int index)
               {
-                  ASSERT(index > 0, "");
+                  ASSERT(index >= 0, "");
                   auto interp = (spline_t::interpolation_e)(index);
                   ui->hexmap_widget->editor.set_current_spline_interpolation(interp);
               });
