@@ -14,7 +14,7 @@ CONFIG += c++14 console
 
 debug: DEFINES += DEBUG
 
-include( ../../../Qt-Color-Widgets/color_widgets.pri )
+#include( ../../../Qt-Color-Widgets/color_widgets.pri )
 
 
 TARGET = hexmap_widgets
@@ -96,3 +96,9 @@ unix: PKGCONFIG += glew ftgl sdl2
 
 
 
+# Qt-Color-Widgets
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/release/ -lColorWidgets-qt51
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/debug/ -lColorWidgets-qt51
+
+INCLUDEPATH += $$PWD/../../../Qt-Color-Widgets/include
+DEPENDPATH += $$PWD/../../../Qt-Color-Widgets/include
