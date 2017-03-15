@@ -99,6 +99,7 @@ namespace editor
         void set_tool(tool_type_e const& new_tool);
         void set_current_tile_id(uint64_t new_id);
         void set_current_object_id(uint64_t new_id);
+        void set_spline_node_style(data::line_node_t const& style);
         void set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type);
 
         bool select_object(size_t object_index);

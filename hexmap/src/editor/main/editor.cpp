@@ -249,6 +249,16 @@ namespace editor
         LOG("current object_id: %ld", current_object_id);
     }
 
+    void editor_t::set_spline_node_style(data::line_node_t const& style)
+    {
+        new_node_style = style;
+
+        if(wip_spline_node)
+        {
+            *wip_spline_node = style;
+        }
+    }
+
     void editor_t::set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type)
     {
         if((int)new_interp_type >= (int)data::spline_t::num_interp_types)
