@@ -3,13 +3,19 @@
 
 #include "hexmap/data/spline.h"
 
+#include <ColorWheel>
+#include <ColorPreview>
+
 //using spline_t = hexmap::data::spline_t;
 using namespace asdf::hexmap::data;
+
 
 namespace
 {
     constexpr float min_line_thickness =  0.1f;  //is also the spinner increment amount
     constexpr float max_line_thickness = 10.0f;
+
+    const QColor default_spline_color(0, 128, 255);
 }
 
 spline_settings_widget_t::spline_settings_widget_t(QWidget *parent) :
@@ -31,7 +37,22 @@ spline_settings_widget_t::spline_settings_widget_t(QWidget *parent) :
     ui->RoundJoin->setEnabled(false);
     ui->BevelJoin->setEnabled(false);
 
-    //todo: color
+    color_wheel   = new color_widgets::ColorWheel();
+    color_wheel->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    color_wheel->setColor(default_spline_color);
+
+    color_preview = new color_widgets::ColorPreview();
+    color_preview->setColor(default_spline_color);
+
+    connect(color_wheel, &color_widgets::ColorWheel::colorChanged, [this](QColor c){color_preview->setColor(c);});
+
+    connect(color_wheel, &color_widgets::ColorWheel::colorSelected,
+            [this](QColor c) {
+                emit colorSelected(c);
+            });
+
+    ui->colors_layout->addWidget(color_wheel);
+    ui->colors_layout->addWidget(color_preview);
 }
 
 void spline_settings_widget_t::set_from_spline(spline_t const& spline)
