@@ -125,9 +125,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                 [this](double value)
                 {
-                    ui->hexmap_widget->editor.new_node_style.thickness = value;
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor.new_node_style;
+                    ASSERT(value <= std::numeric_limits<float>::max(), "spline thickness too large to store in a float");
+                    node_style.thickness = static_cast<float>(value);
+                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
                 });
-
     }
 
 
