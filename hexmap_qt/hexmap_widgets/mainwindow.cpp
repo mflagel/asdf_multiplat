@@ -131,6 +131,14 @@ MainWindow::MainWindow(QWidget *parent) :
                     node_style.thickness = static_cast<float>(value);
                     ui->hexmap_widget->editor.set_spline_node_style(node_style);
                 });
+
+        connect(spline_settings_widget, &spline_settings_widget_t::colorSelected,
+                [this](QColor c) {
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor.new_node_style;
+                    node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
+                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
+                });
     }
 
 
