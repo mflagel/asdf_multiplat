@@ -32,7 +32,8 @@ namespace data
 
         {
             GL_State->bind(atlas_fbo);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
+            //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, atlas_texture.texture_id, 0);
 
             GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
             glDrawBuffers(1, &draw_buffers);

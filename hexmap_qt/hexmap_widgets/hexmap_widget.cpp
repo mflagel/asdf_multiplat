@@ -38,7 +38,7 @@ void hexmap_widget_t::initializeGL()
     asdf::app.renderer->init(); //loads screen shader, among other things
     asdf::Content.init(); //needed for Content::shader_path
 
-    auto shader = asdf::Content.create_shader("hexmap", 330);
+    auto shader = asdf::Content.create_shader_highest_supported("hexmap");
     asdf::Content.shaders.add_resource(shader);
 
     editor.init();

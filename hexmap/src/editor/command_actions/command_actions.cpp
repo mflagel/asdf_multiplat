@@ -35,6 +35,12 @@ namespace editor
         return undone_actions.size() > 0;
     }
 
+    void action_stack_t::clear()
+    {
+        actions.clear();
+        undone_actions.clear();
+    }
+
     void action_stack_t::push(std::unique_ptr<editor_action_t>&& action)
     {
         actions.push_back(std::move(action));
@@ -146,9 +152,9 @@ namespace editor
 
 
     ///Add Spline
-    add_spline_action_t::add_spline_action_t(data::hex_map_t& _map_data, data::spline_t _spline)
+    add_spline_action_t::add_spline_action_t(data::hex_map_t& _map_data, data::spline_t const& _spline)
     : map_data(_map_data)
-    , spline(_spline)
+    , spline(_spline) //store copy created from const&
     {
     }
 

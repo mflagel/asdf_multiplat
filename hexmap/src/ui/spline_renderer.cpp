@@ -19,13 +19,18 @@ namespace ui
     namespace
     {
         constexpr size_t default_subdivs_per_spline_segment = 10;
+        constexpr float miter_limit = 1.0f;
 
         constexpr uint32_t spline_handle_size_px = 10;
         const/*expr*/ color_t spline_handle_color = color_t(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     /// vertex spec allocation / definition
-    gl_vertex_spec_<vertex_attrib::position3_t, vertex_attrib::color_t> spline_vertex_t::vertex_spec;
+    gl_vertex_spec_<vertex_attrib::position2_t
+                  , vertex_attrib::extrusion_t
+                  , spline_vert_normal_t
+                  , vertex_attrib::color_t>    spline_vertex_t::vertex_spec;
+
 
     /// Helper Func Declarations
     line_node_t interpolated_node(spline_t const& spline, size_t spline_node_ind, float t);
@@ -36,6 +41,44 @@ namespace ui
     std::vector<polygon_<spline_vertex_t>> build_spline_handles(spline_t const& spline);
 
 
+
+    /*
+    Current (Poly)Line Rendering
+        On Geometry Rebuild:
+            Allocate a bunch of GPU memory with a VBO
+                Currently one vertex per line node
+            Allocate main memory array of spline_vertex_t
+            Copy relevant data from line_nodes to spline_vertex_t array
+            Push spline_vertex_t array from main memory to VBO
+        Render VBO using GL_LINE_STRIP and whatever thickness was set before
+
+        Notes: Could potentially skip the local array of spline_vertex_t
+               and copy directly from line_node_t?
+
+
+    Current Spline Reticulation:
+        Reticulate a spline by subdividing each spline segment
+            Each newly create node has its position calculated with the desired interpolation
+        TODO: simplify coplanar vertices
+
+        Spline is then rendered the same as a polyline
+
+
+    New Method:
+        Line Reticulation:
+            Each segment generates 4 vertices to form a quad:
+              1 +-------------+ 3
+                |``''--.._    |
+              0 +----------``-+ 2
+            However vertices for the starts and ends of lines will
+            originally be placed in the same position
+            They will be transformed in the vertex shader by moving them
+            along a normal vector. The distance moved is half the line
+            thickness
+    */
+
+
+
     /// Member Func Definitions
     void spline_renderer_t::init(std::shared_ptr<shader_t> _shader)
     {
@@ -43,21 +86,6 @@ namespace ui
         spline_geometry.initialize(shader);
         handles_geometry.initialize(shader);
     }
-
-    // void spline_renderer_t::batch(spline_t const& spline)
-    // {
-    //     spline_batch.push_back(&spline);
-    // }
-
-    // void spline_renderer_t::batch(std::vector<spline_t> const& splines)
-    // {
-    //     spline_batch.reserve(spline_batch.size() + splines.size());
-
-    //     for(size_t i = 0; i < splines.size(); ++i)
-    //     {
-    //         spline_batch.push_back(&(splines[i]));
-    //     }
-    // }
 
     void spline_renderer_t::rebuild_spline(size_t spline_ind)
     {
@@ -96,22 +124,81 @@ namespace ui
         std::vector<polygon_<spline_vertex_t>> rendered_vertex_lists;
         rendered_vertex_lists.resize(constructed_lines.size());
 
-        for(size_t i = 0; i < constructed_lines.size(); ++i)
+        size_t vert_list_index = 0;
+        for(auto const& constructed_line : constructed_lines)
         {
-            rendered_vertex_lists[i].resize(constructed_lines[i].size());
+            ASSERT(constructed_line.size() > 1, "constructed line is empty, or only has one point");
+            size_t num_segments = constructed_line.size() - 1;
+            rendered_vertex_lists[vert_list_index].resize(num_segments * 4); //4 verts (a quad) per line segment
 
-            for(size_t vert_ind = 0; vert_ind < constructed_lines[i].size(); ++vert_ind)
+            for(size_t segment_index = 0; segment_index < num_segments; ++segment_index)
             {
-                auto& rvert = rendered_vertex_lists[i][vert_ind];
-                auto& cvert = constructed_lines[i][vert_ind];
+                //   layout of quad (draw using triangle_strip)
+                // 1 +-------------+ 3
+                //   |``''--.._    |
+                // 0 +----------``-+ 2
 
-                rvert.position = glm::vec3(cvert.position, 0.0f);
-                rvert.color    = cvert.color;
+                auto const& start_node = constructed_line[segment_index];
+                auto const& end_node   = constructed_line[segment_index + 1];
+
+                auto* verts = rendered_vertex_lists[vert_list_index].data() + (segment_index * 4);
+                verts[0].position = start_node.position;
+                verts[1].position = start_node.position;
+                verts[2].position = end_node.position;
+                verts[3].position = end_node.position;
+
+                /// extrusion vector  TODO: support joints
+                vec2 segment_vector = end_node.position - start_node.position;
+                segment_vector.x += 0.0000001f * (segment_vector.x == 0.0f && segment_vector.y == 0.0f);
+                segment_vector = glm::normalize(segment_vector);
+
+                verts[0].extrusion = vec2(segment_vector.y, -segment_vector.x); //rotate seg_vec forward  90 degrees
+                verts[1].extrusion = vec2(-segment_vector.y, segment_vector.x); //rotate seg_vec backward 90 degrees
+                verts[2].extrusion = verts[0].extrusion;
+                verts[3].extrusion = verts[1].extrusion;
+
+                // bake thickness into extrusion vector
+                auto s_thc = start_node.thickness / 2.0f;
+                auto e_thc =   end_node.thickness / 2.0f;
+                verts[0].extrusion *= s_thc;
+                verts[1].extrusion *= s_thc;
+                verts[2].extrusion *= e_thc;
+                verts[3].extrusion *= e_thc;
+
+                //handle edge joints with previous segment
+                if(segment_index > 0)
+                {
+                    auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
+
+                    //TODO: implement miter limit
+
+                    //just add verts together to get correct direciton
+                    auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
+                    auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
+                    
+                    prev_verts[3].extrusion = top_extr;
+                    verts[1].extrusion = top_extr;
+
+                    prev_verts[2].extrusion = btm_extr;
+                    verts[0].extrusion = btm_extr;
+                }
+
+                /// normal (1 or -1, used to interpolate in fragment shader and get distance to the line center
+                verts[0].normal = -1.0f;
+                verts[1].normal =  1.0f;
+                verts[2].normal = -1.0f;
+                verts[3].normal =  1.0f;
+
+                verts[0].color = start_node.color;
+                verts[1].color = start_node.color;
+                verts[2].color = end_node.color;
+                verts[3].color = end_node.color;
             }
+
+            ++vert_list_index;
         }
 
         spline_geometry.set_data(rendered_vertex_lists);
-
 
 
         std::vector<polygon_<spline_vertex_t>> handles_vert_lists;
@@ -188,7 +275,14 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        spline_geometry.render(GL_LINE_STRIP); //will change this to GL_TRIANGLES later when I implement thickness
+        // spline_geometry.render(GL_LINE_STRIP);
+
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        spline_geometry.render(GL_TRIANGLE_STRIP);
+
+        ASSERT(!CheckGLError(), "Error in spline_renderer_t::render()");
     }
 
     ///TODO: factor out similarities between this and the above render func?
@@ -348,26 +442,26 @@ namespace ui
             vertex_lists.emplace_back();
             auto& vert_list = vertex_lists.back(); //in c++17 I can just grab what emplace_back() returns
 
-            vert_list.push_back(spline_vertex_t{vec3(node.position, 0.0f), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{vec3(node.position, 0.0f), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{vec3(node.position, 0.0f), spline_handle_color});
-            vert_list.push_back(spline_vertex_t{vec3(node.position, 0.0f), spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
+            vert_list.push_back(spline_vertex_t{node.position, vec2{}, 0.0f, spline_handle_color});
 
             //square shape
-            vert_list[0].position += vec3(-sh_s_d2,  sh_s_d2, 0.0f); //top left
-            vert_list[1].position += vec3( sh_s_d2,  sh_s_d2, 0.0f); //top right
-            vert_list[2].position += vec3( sh_s_d2, -sh_s_d2, 0.0f); //bottom right
-            vert_list[3].position += vec3(-sh_s_d2, -sh_s_d2, 0.0f); //bottom left
+            vert_list[0].position += vec2(-sh_s_d2,  sh_s_d2); //top left
+            vert_list[1].position += vec2( sh_s_d2,  sh_s_d2); //top right
+            vert_list[2].position += vec2( sh_s_d2, -sh_s_d2); //bottom right
+            vert_list[3].position += vec2(-sh_s_d2, -sh_s_d2); //bottom left
         }
 
         if(spline.spline_type == spline_t::bezier)
         {
-            auto push_handle_verts = [&sh_s_d2](polygon_<spline_vertex_t>& vert_list, vec3 pos)
+            auto push_handle_verts = [&sh_s_d2](polygon_<spline_vertex_t>& vert_list, vec2 pos)
             {
-                vert_list.push_back(spline_vertex_t{pos, spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos, spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos, spline_handle_color});
-                vert_list.push_back(spline_vertex_t{pos, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
+                vert_list.push_back(spline_vertex_t{pos,  vec2{}, 0.0f, spline_handle_color});
 
                 //diamond shape
                 vert_list[0].position.y += sh_s_d2; //up
@@ -381,16 +475,16 @@ namespace ui
             {
                 auto const& cnode_1 = spline.control_nodes[i];
                 vertex_lists.emplace_back();
-                push_handle_verts(vertex_lists.back(), vec3(cnode_1, 0.0f));
+                push_handle_verts(vertex_lists.back(), cnode_1);
 
                 auto const& cnode_2 = spline.control_nodes[i+1];
                 vertex_lists.emplace_back();
-                push_handle_verts(vertex_lists.back(), vec3(cnode_2, 0.0f));
+                push_handle_verts(vertex_lists.back(), cnode_2);
 
                 //connecting line
                 vertex_lists.emplace_back();
-                vertex_lists.back().push_back(spline_vertex_t{vec3(cnode_1, 0.0f), spline_handle_color});
-                vertex_lists.back().push_back(spline_vertex_t{vec3(cnode_2, 0.0f), spline_handle_color});
+                vertex_lists.back().push_back(spline_vertex_t{cnode_1,  vec2{}, 0.0f, spline_handle_color});
+                vertex_lists.back().push_back(spline_vertex_t{cnode_2,  vec2{}, 0.0f, spline_handle_color});
             }
         }
 

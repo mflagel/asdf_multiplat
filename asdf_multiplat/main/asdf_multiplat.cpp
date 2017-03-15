@@ -304,7 +304,8 @@ namespace asdf {
         ASSERT(!CheckGLError(), "Error before asdf_renderer_t::init()");
 
         gl_state.bind(framebuffer);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);
+        //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);  /// GL 3.2+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_target.texture_id, 0);
 
         GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
         glDrawBuffers(1, DrawBuffers);
@@ -316,7 +317,7 @@ namespace asdf {
 
 
         auto shader_path = find_folder("shaders");
-        screen_shader = Content.create_shader(shader_path, "passthrough", "textured", 330);
+        screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");
 
         const quad_vertex_t quad_verts[] =
         {

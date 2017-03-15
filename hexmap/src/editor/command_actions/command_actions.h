@@ -52,6 +52,8 @@ namespace editor
         bool can_undo() const;
         bool can_redo() const;
 
+        void clear();
+
         void push(std::unique_ptr<editor_action_t>&&);
         void push_and_execute(std::unique_ptr<editor_action_t>&&);
 
@@ -118,7 +120,7 @@ namespace editor
         data::hex_map_t& map_data;
         data::spline_t spline;
 
-        add_spline_action_t(data::hex_map_t&, data::spline_t);
+        add_spline_action_t(data::hex_map_t&, data::spline_t const&);
 
         void execute() override;
         void unexecute() override;

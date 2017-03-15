@@ -41,6 +41,9 @@ WARNING_FLAGS += -Wno-microsoft \
 				 -Wno-writable-strings \
 				 -Wno-comment
 
+# Promote some warnings to errors
+WARNING_FLAGS += -Werror=return-type
+
 
 CLANG_EXTENSIONS := -fms-extensions
 DAS_FLAGS 		 := $(WARNING_FLAGS) $(CLANG_EXTENSIONS) -g -pedantic -fmacro-backtrace-limit=20

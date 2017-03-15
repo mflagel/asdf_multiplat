@@ -1,0 +1,14 @@
+#version 130
+
+/*layout(location = 0) */in vec4 Position;
+/*layout(location = 1) */in vec2 TexCoord;
+
+smooth out vec2 FragTexCoord;
+
+uniform mat4 WVP;
+
+void main(void)
+{
+	gl_Position = WVP * Position;
+	FragTexCoord = TexCoord;
+}

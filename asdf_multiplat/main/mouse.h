@@ -47,9 +47,9 @@ namespace asdf
     };
 
 
-    struct thing_that_gets_events_t
+    struct mouse_event_receiver_t
     {
-        virtual ~thing_that_gets_events_t() = default;
+        virtual ~mouse_event_receiver_t() = default;
 
         virtual bool on_mouse_down(mouse_button_event_t&) = 0;
         virtual bool on_mouse_up(mouse_button_event_t&) = 0;
@@ -64,7 +64,7 @@ namespace asdf
         glm::ivec2 mouse_position;
         glm::ivec2 mouse_down_pos;
 
-        thing_that_gets_events_t* thing;
+        mouse_event_receiver_t* receiver;
 
         ~mouse_input_t() = default;
 

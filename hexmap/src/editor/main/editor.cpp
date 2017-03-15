@@ -19,6 +19,12 @@ namespace editor
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
     const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
 
+    const/*expr*/ data::line_node_t default_spline_style = {
+          vec2{0.0f,0.0f}                   //pos
+        , 1.0f                            //thickness
+        , color_t{0.0f, 0.5f, 1.0f, 1.0f} //color
+    };
+
     constexpr float snap_dist_threshold = 0.1f; //in units
 
     //TODO: move this into an asdf_multiplat header
@@ -37,6 +43,7 @@ namespace editor
     : hexmap_t()
     , action_stack(*this)
     , object_selection(*this)
+    , new_node_style{default_spline_style}
     {}
 
     void editor_t::init()
@@ -44,13 +51,13 @@ namespace editor
         hexmap_t::init();
 
 #ifdef DEBUG
-        new_map_action(uvec2(20,20));
+        new_map_action(uvec2(16,16));
 #else
         new_map_action(uvec2(1,1));
 #endif
 
         input = make_unique<input_handler_t>(*this);
-        app.mouse_state.thing = input.get();
+        app.mouse_state.receiver = input.get();
     }
 
     void editor_t::render()
@@ -64,10 +71,15 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-            rendered_map->spline_renderer.render_some_spline_handles(inds);
+
+            /// temp disabled while I work on line thickness.
+            /// was causing a GL error
+            // rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
+
+        ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
 
     void editor_t::render_selection()
@@ -112,6 +124,7 @@ namespace editor
     void editor_t::new_map_action(glm::uvec2 const& size)
     {
         map_data = data::hex_map_t(size);
+        action_stack.clear();
 
         //reset camera
         rendered_map->camera_controller.position = default_camera_position;
@@ -139,6 +152,7 @@ namespace editor
         map_filepath = filepath;
         map_data.load_from_file(filepath);
         map_is_dirty = false;
+        action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
     }
 
@@ -419,6 +433,11 @@ namespace editor
     void editor_t::update_WIP_control_nodes(glm::vec2 const& position)
     {
         ASSERT(wip_spline, "");
+        if(wip_spline->spline_type == data::spline_t::linear)
+        {
+            return;
+        }
+
         ASSERT(wip_spline->nodes.size() >= 2, "");
         auto const& node = wip_spline->nodes.rbegin()[1]; //grab second to last (last will be WIP node);
 
@@ -453,8 +472,13 @@ namespace editor
         if(!spline_loops)
         {
             wip_spline->nodes.pop_back(); //kill the WIP node
-            wip_spline->control_nodes.pop_back(); //and its control nodes
-            wip_spline->control_nodes.pop_back(); //
+
+            if(wip_spline->control_nodes.size() > 0)
+            {
+                ASSERT(wip_spline->control_nodes.size() >= 2, "");
+                wip_spline->control_nodes.pop_back(); //and its control nodes
+                wip_spline->control_nodes.pop_back(); //
+            }
         }
         else
         {
@@ -475,6 +499,9 @@ namespace editor
 
         LOG("finished a%s spline", spline_loops ? " looping" : "");
 
+        ASSERT(wip_spline->control_nodes.size() >= 0, "apparently control_nodes might have a negtaive length, which I thought was impossible");
+
+        /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
         action_stack.push(std::move(cmd));
 

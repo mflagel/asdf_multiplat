@@ -1,7 +1,11 @@
 #pragma once
 
+#include <array>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
+
+#include "asdf_multiplat/main/mouse.h"
 
 namespace asdf {
 namespace hexmap {
@@ -30,7 +34,7 @@ namespace editor
         , SDLK_s // place_spline
     };
 
-    struct input_handler_t : thing_that_gets_events_t
+    struct input_handler_t : mouse_event_receiver_t
     {
         editor_t& editor;
 

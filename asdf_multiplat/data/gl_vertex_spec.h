@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <gl/glew.h>
 
 #include "stdafx.h"
@@ -22,13 +24,20 @@ namespace asdf
             }
         };
 
+
+#define VERTEX_ATTRIB_NAMED(struct_name, attrib_name)         \
+        template <size_t N, typename T, GLuint GL_Type>       \
+        struct struct_name : vertex_attrib_<N, T, GL_Type>    \
+        {                                                     \
+            static constexpr char* name = #attrib_name;       \
+        };                                                    \
+        template <size_t N, typename T, GLuint GL_Type> constexpr char* struct_name<N, T, GL_Type>::name;    //apparently clang needs this to link properly
+        //----
+
+        
+
         /// Position
-        template <size_t N, typename T, GLuint GL_Type>
-        struct position_ : vertex_attrib_<N, T, GL_Type> 
-        {
-            static constexpr char* name = "VertexPosition";
-        };
-        template <size_t N, typename T, GLuint GL_Type> constexpr char* position_<N, T, GL_Type>::name;  //apparently clang needs this to link properly
+        VERTEX_ATTRIB_NAMED(position_, VertexPosition);
 
         template<size_t N>
         using position_f32_ = position_<N, float, GL_FLOAT>;
@@ -42,6 +51,16 @@ namespace asdf
         using positioni2_t = position_i32_<2>;
         using positioni3_t = position_i32_<3>;
         using positioni4_t = position_i32_<4>;
+
+
+        // /// Normal
+        VERTEX_ATTRIB_NAMED(normal_, VertexNormal);
+
+        template<size_t N>
+        using normal_f32_ = normal_<N, float, GL_FLOAT>;
+
+        using normal2_t = normal_f32_<2>;
+        using normal3_t = normal_f32_<3>;
 
 
         /// Color
@@ -67,7 +86,8 @@ namespace asdf
         template <typename T, GLuint GL_Type> constexpr char* texture_coords_<T, GL_Type>::name;
 
         using texture_coords_t = texture_coords_<float, GL_FLOAT>;
-    }
+
+    } // end namespace vertex_attrib
 
 
     //defined in gl_resources.cpp so I can access CheckGLError()

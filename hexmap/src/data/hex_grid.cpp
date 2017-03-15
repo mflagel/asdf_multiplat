@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "hex_grid.h"
+#include "ui/hex_map.h"
 
 //#include "to_from_json.h"
 
@@ -24,28 +25,42 @@ namespace data
         }
     }
 
-    hex_grid_t::hex_grid_t(std::string const& filepath)
+
+    /* --Save Format--
+        For each chunk
+            write the size of the chunk (two unsigned 32-bit integers)
+            for each column in the chunk
+                write the cells of this column
+    */
+    void hex_grid_t::save_to_file(SDL_RWops* io)
     {
-        load_from_file(filepath);
+        ASSERT(io, "can't save a hex_grid to a null SDL_RWops");
+        WARN_IF(chunks.empty(), "Saving an empty hex_grid");
+
+        size_t total_bytes = 0;
+
+        for_each_chunk([&](hex_grid_chunk_t const& chunk)
+        {
+            SDL_RWwrite(io, reinterpret_cast<const void*>(&chunk.size), sizeof(glm::uvec2), 1);
+            for(auto column : chunk.cells)
+            {
+                size_t num_w = SDL_RWwrite(io, column.data(), sizeof(hex_grid_cell_t), column.size());
+                ASSERT(num_w == column.size(), "chunk save error");
+                LOG("wrote %zu cells", num_w);
+
+                total_bytes += num_w * sizeof(hex_grid_cell_t);
+            }
+        });
+
+        LOG("total hex_grid bytes written: %zu", total_bytes);
     }
 
-
-    void hex_grid_t::load_from_file(std::string const& filepath)
+    void hex_grid_t::load_from_file(SDL_RWops* io, hxm_header_t const& header)
     {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
-
-        if (!io)
-        {
-            EXPLODE("hex_grid_t::load_to_file()");  //todo: handle errors better
-        }
-
-
-        hxm_header_t header;
-        size_t num_read = SDL_RWread(io, &header, sizeof (hxm_header_t), 1);
-        ASSERT(num_read > 0, "Error reading file header");
-
-
+        chunks.clear();
         init(header.map_size, header.chunk_size);
+
+        size_t total_bytes = 0;
 
         for_each_chunk([&](hex_grid_chunk_t& chunk)
         {
@@ -56,53 +71,12 @@ namespace data
                 size_t num_r = SDL_RWread(io, column.data(), sizeof(hex_grid_cell_t), column.size());
                 ASSERT(num_r == column.size(), "");
                 LOG("read %zu cells", num_r);
+
+                total_bytes += num_r * sizeof(hex_grid_cell_t);
             }
         });
 
-
-        SDL_RWclose(io);
-    }
-
-
-    // https://wiki.libsdl.org/SDL_RWops?highlight=%28%5CbCategoryStruct%5Cb%29%7C%28CategoryIO%29
-    // https://wiki.libsdl.org/SDL_RWwrite?highlight=%28%5CbCategoryIO%5Cb%29%7C%28CategoryEnum%29%7C%28CategoryStruct%29
-    void hex_grid_t::save_to_file(std::string const& filepath)
-    {
-        WARN_IF(!chunks.empty(), "Saving an empty map");
-
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
-
-        if(!io)
-        {
-            EXPLODE("hex_grid_t::save_to_file() error");  //todo: handle errors better
-        }
-
-        hxm_header_t header;
-        header.version = 0;
-        header.chunk_size = chunk_size();
-        header.map_size = size;
-
-        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(&header), sizeof(hxm_header_t), 1);
-
-        if(num_written != 1)
-        {
-            EXPLODE("error writing hxm header");
-        }
-
-
-        for_each_chunk([&](hex_grid_chunk_t const& chunk)
-        {
-            SDL_RWwrite(io, reinterpret_cast<const void*>(&chunk.size), sizeof(glm::uvec2), 1);
-            for(auto column : chunk.cells)
-            {
-                size_t num_w = SDL_RWwrite(io, column.data(), sizeof(hex_grid_cell_t), column.size());
-                ASSERT(num_w == column.size(), "chunk save error");
-                LOG("wrote %zu cells", num_w);
-            }
-        });
-        
-
-        SDL_RWclose(io);
+        LOG("total hex_grid bytes read: %zu", total_bytes);
     }
 
 
@@ -114,8 +88,8 @@ namespace data
 
     void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size)
     {
-        auto dv_x = div(long(size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
-        auto dv_y = div(long(size.y), chunk_size.y); //
+        auto dv_x = div(long(_size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
+        auto dv_y = div(long(_size.y), chunk_size.y); //
 
         size_t num_chunks_x = dv_x.quot + (dv_x.rem > 0);
         size_t num_chunks_y = dv_y.quot + (dv_y.rem > 0);

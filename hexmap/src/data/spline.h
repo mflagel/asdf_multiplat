@@ -8,6 +8,8 @@
 #include "asdf_multiplat/main/asdf_defs.h"
 // #include "map_objects.h"
 
+struct SDL_RWops;
+
 namespace asdf {
 namespace hexmap {
 namespace data
@@ -38,6 +40,9 @@ namespace data
         interpolation_e spline_type = linear;
 
         size_t size() const { return nodes.size(); }
+
+        void save_to_file(SDL_RWops*) const;
+        void load_from_file(SDL_RWops*);
     };
 
 

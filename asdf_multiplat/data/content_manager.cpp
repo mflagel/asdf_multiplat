@@ -5,6 +5,7 @@
 #include <SOIL/SOIL.h>
 
 #include "utilities/utilities.h"
+#include "data/gl_state.h"
 
 using namespace std;
 //using namespace boost::filesystem;
@@ -54,16 +55,16 @@ namespace asdf
         LOG_IF(asset_path.length() > 0, "Could not find asset folder");
         LOG_IF(shader_path.length() > 0, "Could not find shader folder");
 
-        //textures
+        /// Textures
         load_texture("pixel", "pixel.bmp");
         //ADD_TEXTURE("debug", "debug_purple.png");
         //ADD_TEXTURE("pixel", "pixel.bmp");
         //ADD_TEXTURE("particle_test", "particle_test_texture.png");
 
-        // //shaders
-        shaders.add_resource(create_shader("passthrough", 330));
-        shaders.add_resource(create_shader("colored", 330));
-        shaders.add_resource(create_shader("spritebatch", 330));
+        /// Shaders
+        shaders.add_resource(create_shader_highest_supported("passthrough"));
+        // shaders.add_resource(create_shader_highest_supported("colored", 330));
+        shaders.add_resource(create_shader_highest_supported("spritebatch"));
 
         shaders.default_resource = shaders["passthrough"];
 
@@ -119,6 +120,21 @@ namespace asdf
         auto shader = make_shared<shader_t>(std::move(name), vshd_path, fshd_path);
 
         return shader;
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& name)
+    {
+        return create_shader_highest_supported(name, name);
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& vs_name, std::string const& fs_name)
+    {
+        return create_shader(vs_name, fs_name, GL_State->highest_glsl_version);
+    }
+
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name)
+    {
+        return create_shader(shader_path, vs_name, fs_name, GL_State->highest_glsl_version);
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {

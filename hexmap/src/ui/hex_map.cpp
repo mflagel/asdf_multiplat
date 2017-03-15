@@ -21,8 +21,8 @@ namespace hexmap
 {
 namespace ui
 {
-    //const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
-    const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
+    const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
+    // const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
 
     constexpr char terrain_types_json_filename[] = "terrain_types.json";
@@ -36,7 +36,10 @@ namespace ui
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
     {
-        shader = Content.create_shader("hexmap", 330);
+        are_hexagons_instanced = GLEW_VERSION_3_3;
+
+        shader = Content.create_shader_highest_supported("hexmap");
+
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
 
         std::vector<hexagon_vertex_t> verts(6);
@@ -51,42 +54,56 @@ namespace ui
         }
 
         hexagon.initialize(shader);
-        hexagon.set_data(verts);
         hexagon.draw_mode = GL_LINE_LOOP;
+
+
+        if(are_hexagons_instanced)
+        {
+            hexagon.set_data(verts);
+        }
+        else
+        {
+            ///FIXME figure out how to deal with chunks of differing sizes
+            //for now just throw a bunch of vertices at the wall
+            //lazy: just fill a buffer with enough copies of hexagon verts
+            //      that it will fill a chunk
+            auto size = map_data.hex_grid.chunk_size();
+            std::vector<hexagon_vertex_t> non_instanced_verts;
+            non_instanced_verts.reserve(size.x * size.y * verts.size());
+
+            for(size_t i = 0; i < size.x * size.y; ++i)
+            {
+                //multi_draw metadata
+                hexagon.first_vert_indices.push_back(non_instanced_verts.size());
+                hexagon.vert_counts.push_back(6);
+
+                non_instanced_verts.insert(non_instanced_verts.end()
+                                         , verts.begin(), verts.end());
+            }
+
+            hexagon.set_data(non_instanced_verts);
+        }
         
         ASSERT(!CheckGLError(), "");
         GL_State->bind(hexagons_vao);
 
             GL_State->bind(hexagon.vbo);
             hexagon_vertex_t::vertex_spec.set_vertex_attribs(shader);
-            ASSERT(!CheckGLError(), "Error setting vertex attributes");
 
             GL_State->bind(hex_gl_data);
             GLint attrib_loc = glGetAttribLocation(shader->shader_program_id, "TileID");
             glEnableVertexAttribArray(attrib_loc); //tell the location
+
             glVertexAttribIPointer(attrib_loc, 1, GL_UNSIGNED_INT, sizeof(data::hex_tile_id_t), 0);  // must use Atrib ** I ** for unsigned int to be used as a uint in glsl
-            glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
+
+            if(are_hexagons_instanced)
+            {
+                glVertexAttribDivisor(attrib_loc, 1); //second arg is 1, which means the vertex buffer for hexagon tile ID is incremented every instance, instead of every vertex
+            }
 
         GL_State->unbind_vao();
 
-        ASSERT(!CheckGLError(), "");
-
-        std::array<glm::vec4, num_tile_colors> colors =
-        {
-              COLOR_RED
-            , COLOR_GREEN
-            , COLOR_BLUE
-            , COLOR_CYAN
-            , COLOR_YELLOW
-            , COLOR_MAGENTA
-            , COLOR_TEAL
-            , COLOR_ORANGE
-            , COLOR_LIGHTGREY
-            , COLOR_GREY
-        };
-
-        set_tile_colors(colors);
-        ASSERT(!CheckGLError(), "");
+        ASSERT(!CheckGLError(), "GL Error setting hexmap VAO and vertex attributes");
 
 
         auto dir = find_folder("data");
@@ -98,17 +115,10 @@ namespace ui
 
         objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
 
-        spline_renderer.init(Content.create_shader("spline", "colored", 330));
+        spline_renderer.init(Content.create_shader_highest_supported("spline"));
+
         spline_renderer.spline_list = &map_data.splines;
     }
-
-    void hex_map_t::set_tile_colors(std::array<glm::vec4, num_tile_colors> const& colors)
-    {
-        GL_State->bind(shader);
-        glUniform4fv(shader->uniform("TileColors[0]"), num_tile_colors, reinterpret_cast<const GLfloat*>(colors.data()));
-        ASSERT(!CheckGLError(), "");
-    }
-
 
     void hex_map_t::update(float dt)
     {
@@ -134,8 +144,10 @@ namespace ui
         });
 
         
-        glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
-        render_grid_overlay(map_data.hex_grid.size);
+        if(are_hexagons_instanced)
+        {
+            render_grid_overlay_instanced(map_data.hex_grid.size);
+        }
         
 
         render_map_objects();
@@ -169,7 +181,13 @@ namespace ui
     {
         GL_State->bind(hexagons_vao);
 
-        hex_gl_data.set_data(chunk);
+        if(are_hexagons_instanced)
+        {
+            hex_gl_data.set_data_instanced(chunk);
+        }
+        {
+            hex_gl_data.set_data(chunk);
+        }
 
         float chunk_width_cells = hex_width_d4 * 3 * chunk.allocated_size.x;
         float chunk_height_cells = hex_height * chunk.allocated_size.y;
@@ -183,10 +201,26 @@ namespace ui
         glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
 
         render_hexagons(chunk.size, GL_TRIANGLE_FAN);
+
+        /// if not using instanced rendering, just tack the grid draw on here
+        /// since all the matricies and such are set up anyways
+        if(!are_hexagons_instanced)
+        {
+            //TODO: refactor setting of state for grid render?
+            glLineWidth(grid_overlay_thickness);
+            glUniform4fv( shader->uniform("Color"), 1, glm::value_ptr(grid_color) );
+            glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn of textures for the grid
+
+            render_hexagons(chunk.size, GL_LINE_LOOP);
+
+            glUniform1i(shader->uniform("ApplyTexture"), 1);  //turn textures back on for next chunk render
+        }
+
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_grid_overlay(glm::uvec2 grid_size)
+    //TODO: refactor setting of state for grid render?
+    void hex_map_t::render_grid_overlay_instanced(glm::uvec2 grid_size)
     {
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
@@ -198,8 +232,9 @@ namespace ui
         shader->update_wvp_uniform();
 
         glUniform4fv( shader->uniform("Color"), 1, glm::value_ptr(grid_color) );
+        glUniform1i(shader->uniform("ApplyTexture"), 0);  //turn off textures for the grid
 
-        render_hexagons(grid_size, hexagon.draw_mode);
+        render_hexagons(grid_size, GL_LINE_LOOP);
         GL_State->unbind_vao();
     }
 
@@ -209,7 +244,22 @@ namespace ui
         glUniform1i(loc, grid_size.y);
 
         size_t n = grid_size.x * grid_size.y;
-        glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
+
+        if(are_hexagons_instanced)
+        {
+            glDrawArraysInstanced(draw_mode, 0, 6, n); //start at 0th, draw 6 points per shape, draw (width/2)
+        }
+        else
+        {
+            ASSERT(n <= hexagon.num_sub_meshes(), "trying to render more hexagons at once than currently possible");
+            //glDrawArrays(draw_mode, 0, hexagon.num_verts);
+            glMultiDrawArrays(draw_mode
+                , hexagon.first_vert_indices.data()
+                , hexagon.vert_counts.data()
+                , n); //render n primatives instead of hexagon.num_sub_meshes()
+                //, hexagon.num_sub_meshes());
+        }
+        
     }
 
     void hex_map_t::render_map_objects()
@@ -242,20 +292,46 @@ namespace ui
         spline_renderer.render();
     }
 
-
-
+    /// For whatever reason glVertexBindingDivisor doesn't seem to work
+    /// so for compatability reasons, I'll just duplicate the tileID data
+    /// so that it's per vertex instead of per-primative
     void hex_buffer_data_t::set_data(data::hex_grid_chunk_t const& chunk)
     {
-        //std::array<data::hex_tile_id_t, data::max_chunk_width * data::max_chunk_height> cell_data;
+        constexpr size_t num_verts = 6; //6 verts per hex
+        std::vector<data::hex_tile_id_t> cell_data(chunk.size.x * chunk.size.y * num_verts);
+
+        for(size_t x = 0; x < chunk.size.x; ++x)
+        {
+            for(size_t y = 0; y < chunk.size.y; ++y)
+            {
+                for(size_t i = 0; i < num_verts; ++i)
+                {
+                    //x*chunk.size.y + y gets cell
+                    //multiply that by num_verts because that's how many elements per cell
+                    //add i to get current element
+                    size_t vert_index = (x*chunk.size.y + y) * num_verts + i;
+                    cell_data[vert_index] = chunk.cells[x][y].tile_id;
+
+                    // cell_data[vert_index] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
+                }
+            }
+        }
+
+        GL_State->bind(*this);
+        GL_State->buffer_data(*this, (cell_data.size() * sizeof(data::hex_tile_id_t)), reinterpret_cast<GLvoid*>(cell_data.data()) );
+
+        ASSERT(!CheckGLError(), "Error setting hexagon buffer data");
+    }
+
+    void hex_buffer_data_t::set_data_instanced(data::hex_grid_chunk_t const& chunk)
+    {
         std::vector<data::hex_tile_id_t> cell_data(chunk.size.x * chunk.size.y);
 
         for(size_t x = 0; x < chunk.size.x; ++x)
         {
             for(size_t y = 0; y < chunk.size.y; ++y)
             {
-                //cell_data[x*chunk.size.y + y] = rand() % 10;
                 //cell_data[x*chunk.size.y + y] = chunk.position.x + abs(chunk.position.y);  //set id to chunk pos for debugging chunks
-
                 cell_data[x*chunk.size.y + y] = chunk.cells[x][y].tile_id;
             }
         }

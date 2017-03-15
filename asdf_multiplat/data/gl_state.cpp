@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "gl_state.h"
 
+#include <algorithm>
+
 #include "main/asdf_multiplat.h"
 
 namespace asdf
@@ -22,6 +24,8 @@ namespace asdf
 
         LOG("### Using OpenGL Version: %s ###\n\n", glGetString(GL_VERSION));
 
+        highest_glsl_version = get_highest_glsl_ver();
+        LOG("### Highest Supported GLSL Version: %zu", highest_glsl_version);
 
         initialized = true;
         LOG("OpenGL Initialized");
@@ -126,5 +130,26 @@ namespace asdf
         //check shader
 
         return true;
+    }
+
+
+    // currently support glsl 130 and 330
+    size_t get_highest_glsl_ver()
+    {
+        size_t ver = 0;
+        // ver = std::max(ver, size_t(110 * GLEW_VERSION_2_0));
+        // ver = std::max(ver, size_t(120 * GLEW_VERSION_2_1));
+        ver = std::max(ver, size_t(130 * GLEW_VERSION_3_0));
+        // ver = std::max(ver, size_t(140 * GLEW_VERSION_3_1));
+        // ver = std::max(ver, size_t(150 * GLEW_VERSION_3_2));
+        ver = std::max(ver, size_t(330 * GLEW_VERSION_3_3));
+        // ver = std::max(ver, size_t(400 * GLEW_VERSION_4_0));
+        // ver = std::max(ver, size_t(410 * GLEW_VERSION_4_1));
+        // ver = std::max(ver, size_t(420 * GLEW_VERSION_4_2));
+        // ver = std::max(ver, size_t(430 * GLEW_VERSION_4_3));
+        // ver = std::max(ver, size_t(440 * GLEW_VERSION_4_4));
+        // ver = std::max(ver, size_t(450 * GLEW_VERSION_4_5));
+
+        return ver;
     }
 }
