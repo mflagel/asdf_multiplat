@@ -4,7 +4,7 @@
 The personal repo of Mathias Flagel: A collection of mostly-multi-platform programs and libraries
 
 
-asdf_multiplat is primarily a basic C++ rendering/input/UI/utility codebase that acts as pool of common code between my various projects. Most of these side-projects are exploratory, and impulse-driven. They act as an excuse to learn new and interesting things, be it new C++ features, openGL rendering techniques, or interesting areas of mathematics.
+asdf_multiplat is primarily a basic C++ rendering/input/UI/utility codebase that acts as pool of common code between my various projects. Most of these side-projects are exploratory and impulse-driven. They act as an excuse to learn new and interesting things, be it new C++ features, openGL rendering techniques, or interesting areas of mathematics.
 
 The project started out in Windows using as much C++11 as MSVC allowed, but almost everything written in 2015+ was done in Linux as a way to explore and understand that environment.
 
@@ -16,7 +16,9 @@ Sub-Projects
 ============
 Hexmap
 ------------
-My current focus. This will eventually be a program to render (and eventually edit) hexagon grids. My intent is to have a decent tool for creating hexagon tile maps for use in tabletop RPGs, but the underlying code will be useful for anything that uses tiled hexagons.
+My current focus, 'Hexmap' is a program to render and edit hexagon hexagon tilemaps. My intent is to have a useful tool for creating maps for use in tabletop RPGs, but the underlying code will be useful for anything that uses tiled hexagons.
+
+Hexmap uses Qt for a cross-platform user interface, and is currently being developed on Windows and Linux (Mint/Ubuntu)
 
 
 GURPS Track
