@@ -32,8 +32,8 @@ git_token
 /__kiui_test/
 files_linux
 /dasmusic/
-todo
-/include/SDL
+    todo
+    /include/SDL
 
 ext/glm/doc
 
