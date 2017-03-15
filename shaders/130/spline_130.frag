@@ -1,4 +1,5 @@
 #version 130
+// Spline Fragment Shader
 
 smooth in vec4 VertColor_Frag;
 smooth in float Normal_Frag;
