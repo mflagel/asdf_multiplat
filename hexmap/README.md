@@ -8,28 +8,25 @@ Hexmap uses Qt for a cross-platform user interface, and is currently being devel
 
 Current Features
 ------------
-Rendering a hexagon tilemap of an arbitrary size
-    only horizontal hexagons at the moment
-Painting textured hexagons from a list of loaded textures
-Placing colored lines and curves for rivers/roads/etc
-Basic UI using the Qt framework
-Saving and Loading
-Undo and Redo
+* Painting textured hexagons from a list of loaded textures
+* Placing colored lines and curves for rivers/roads/etc
+* Basic UI using the Qt framework
+* Saving and Loading
+* Undo and Redo
 
 
 In Progress
 ------------
-Placing objects defined in a texture atlas atlas
-Improved line rendering
-Extending the Qt user interface
+* Placing objects defined in a texture atlas atlas
+* Improved line rendering
+* Extending the Qt user interface
 
 
 TODO
 ------------
-Textured Splines
-Vertical Hexes
-Texture Rotation (Both Hexagon Textures and Map Objects)
-Android/iOS Hexmap Viewer
-Hexographer Compatability
-Custom Hexagon and Object Data
-    ex: Descriptions, Encounters, City Info, etc
+* Textured Splines
+* Vertical Hexes
+* Texture Rotation (Both Hexagon Textures and Map Objects)
+* Android/iOS Hexmap Viewer
+* Hexographer Compatability
+* Custom Hexagon and Object Data (ex: Descriptions, Encounters, City Info, etc)

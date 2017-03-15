@@ -34,9 +34,9 @@ A small sandbox to play around with rendering and geometry (meta-balls, bezier c
 
 Dependancies
 ============
-opengl
-[sdl2](https://www.libsdl.org/index.php)
-[glm](https://github.com/g-truc/glm)
-[glew](https://github.com/nigels-com/glew)
-[SOIL](http://www.lonesock.net/soil.html)
-[cJSON](http://www.lonesock.net/soil.html)
+* opengl
+* [sdl2](https://www.libsdl.org/index.php)
+* [glm](https://github.com/g-truc/glm)
+* [glew](https://github.com/nigels-com/glew)
+* [SOIL](http://www.lonesock.net/soil.html)
+* [cJSON](http://www.lonesock.net/soil.html)
