@@ -16,7 +16,8 @@ namespace asdf
     /// As much as I'd love to just cast SDL's uint8 to a mouse_button_e
     /// they rather annoyingly have mid-mouse as button 2 and right-mouse as button 3
     /// NOTE this does NOT take a flag, but rather the numbered value from 1 to 5
-    constexpr mouse_button_e mouse_button_from_sdl_btn(uint32_t sdl_btn)
+    /// MSVC CONSTEXPR
+    /*constexpr*/inline mouse_button_e mouse_button_from_sdl_btn(uint32_t sdl_btn)
     {
         uint32_t btn = 0;
         btn += mouse_left   * (sdl_btn == SDL_BUTTON_LEFT);

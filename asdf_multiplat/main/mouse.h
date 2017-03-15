@@ -64,7 +64,7 @@ namespace asdf
         glm::ivec2 mouse_position;
         glm::ivec2 mouse_down_pos;
 
-        mouse_event_receiver_t* receiver;
+        mouse_event_receiver_t* receiver = nullptr;
 
         ~mouse_input_t() = default;
 
