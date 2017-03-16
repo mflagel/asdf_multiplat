@@ -185,6 +185,7 @@ namespace ui
         {
             hex_gl_data.set_data_instanced(chunk);
         }
+        else
         {
             hex_gl_data.set_data(chunk);
         }
