@@ -216,8 +216,12 @@ void MainWindow::scrollbar_changed()
     //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
 
     glm::vec2 p(ui->hexmap_hscroll->value());
-    p.y = ui->hexmap_vscroll->maximum() - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
+
+    auto docheight = ui->hexmap_vscroll->maximum() + ui->hexmap_vscroll->pageStep();
+    p.y = docheight - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
+
     p /= scroll_sub_ticks;
+    p.x -= asdf::hexmap::hex_width_d2; //since 0,0 is the center of a hex
 
     ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
