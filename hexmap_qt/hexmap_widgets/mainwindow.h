@@ -36,6 +36,9 @@ public slots:
     void save_map();
     void save_map_as();
 
+    void undo();
+    void redo();
+
 protected:
     void mouseMoveEvent(QMouseEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
@@ -55,8 +58,6 @@ private:
     palette_item_model_t* objects_palette_model = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
-
-    glm::vec2 base_camera_offset;
 
     QDir current_save_dir;
 };

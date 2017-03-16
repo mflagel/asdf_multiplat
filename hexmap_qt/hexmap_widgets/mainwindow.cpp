@@ -50,6 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(ui->actionOpen,    &QAction::triggered, this, &MainWindow::open_map);
         connect(ui->actionSave,    &QAction::triggered, this, &MainWindow::save_map);
         connect(ui->actionSave_As, &QAction::triggered, this, &MainWindow::save_map_as);
+
+        connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::undo);
+        connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::redo);
     }
 
 
@@ -160,64 +163,58 @@ MainWindow::~MainWindow()
   ||________|      |
   |________________|
             ^------^ scroll range
+  ^---------^        page step
+  ^----------------^ document length
 */
-
-
-/// TODO: refactor this such that most of the math is done in the hexmap widget
-///       and the widget then calls this function with scrollbar ranges as params
 void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
 {
     using namespace glm;
 
+    ///VALUES NEEDED:
+    ///    "entire_map"     the size of the map in world units
+    ///    "viewable_rect"  the rectangle of viewable area in world units
+
     hexmap_widget_t* hxm_wgt = ui->hexmap_widget;
 
+    ///MAP SIZE
+    auto const& map_size_cells = hxm_wgt->map_size(); //array size
     vec2 hex_size(asdf::hexmap::hex_width, asdf::hexmap::hex_height);
-
-    auto const& map_size = hxm_wgt->map_size(); //array size
-    vec2 map_size_units = vec2(map_size) * hex_size; //total map width in units. Width is not equal to array width because hexagons overlap, and hexagons aren't one unit tall
-    map_size_units.x -= (map_size.x - 1) * asdf::hexmap::hex_width_d4; //handle horizontal overlap
+    vec2 map_size_units = vec2(map_size_cells) * hex_size; //total map width in units. Width is not equal to array width because hexagons overlap, and hexagons aren't one unit tall
+    map_size_units.x -= (map_size_units.x - 1) * asdf::hexmap::hex_width_d4; //handle horizontal overlap
     map_size_units.y += asdf::hexmap::hex_height_d2; //add room for the offset
 
-    //get size of a hex in pixels. hex_width and hex_height constexpr constants exist in ui/hex_map.h
-    vec2 hx_size_px = hex_size * camera.zoom();
-    vec2 map_size_px = map_size_units * hx_size_px;
+    ///VIEWABLE RECT
+    ///convert the screen coords of the lower-bound and upper-bound of the hexmap rect into world coords
+    ///lb and ub are basically {0,0} and {width,height}
+    vec2 wgt_size(hxm_wgt->width(), hxm_wgt->height());
+    vec3 r_lb = camera.screen_to_world_coord(vec2(0.0f));
+    vec3 r_ub = camera.screen_to_world_coord(wgt_size);
+    //vec2 viewable_rect_pos = vec2(r_lb + (r_ub - r_lb)/2.0f);
+    vec2 viewable_rect_size = vec2(r_ub - r_lb);
 
-    base_camera_offset = glm::vec2();
-    base_camera_offset.x = width()/2 / asdf::hexmap::px_per_unit;
-    base_camera_offset.y = map_size_units.y - (height()/2 / asdf::hexmap::px_per_unit);
-
-    hxm_wgt->camera_pos(base_camera_offset, false);
-
-    //range is equal to how many units fit on the screen minus total map size in units
-
-    //map_size_screen_px = unproject map_size_units from camera?
-
-    glm::vec2 wgt_size(hxm_wgt->width(), hxm_wgt->height());
-
-
-    auto hxm_proj = hxm_wgt->hex_map->camera.projection_ortho();
-
-    vec4 vp;
-    vp.x = 0.0f;
-    vp.y = 0.0f;
-    vp.z = wgt_size.x;
-    vp.w = wgt_size.y;
-    auto unprojd = unProject(vec3(wgt_size, 0.0f), glm::mat4(), hxm_proj, vp);
-
-    auto screen_size_units = glm::vec2(unprojd);
-    auto scr_range_units = glm::vec2(map_size_units) - glm::vec2(screen_size_units);
+    ///SET SCROLLBAR VALUES
+    /// these values are in world units
+    vec2 scroll_range = glm::max(vec2{0.0f}, map_size_units - viewable_rect_size);
+    vec2 scroll_min = glm::min(viewable_rect_size, map_size_units) / 2.0f;
+    vec2 scroll_max = scroll_min + scroll_range;
 
     auto* h_scr = ui->hexmap_hscroll;
-    h_scr->setMinimum(0);
-    h_scr->setMaximum(scr_range_units.x * scroll_sub_ticks);
-    h_scr->setPageStep(screen_size_units.x * scroll_sub_ticks);
+    h_scr->setMinimum(scroll_min.x * scroll_sub_ticks);
+    h_scr->setMaximum(scroll_max.x * scroll_sub_ticks);
+    h_scr->setPageStep(viewable_rect_size.x * scroll_sub_ticks);
 
     auto* v_scr = ui->hexmap_hscroll;
-    v_scr->setMinimum(0);
-    v_scr->setMaximum(scr_range_units.y * scroll_sub_ticks);
-    v_scr->setPageStep(screen_size_units.y * scroll_sub_ticks);
+    v_scr->setMinimum(scroll_min.y * scroll_sub_ticks);
+    v_scr->setMaximum(scroll_max.y * scroll_sub_ticks);
+    v_scr->setPageStep(viewable_rect_size.y * scroll_sub_ticks);
 
-    scrollbar_changed();
+    auto hv = std::max(h_scr->value(), h_scr->minimum());
+         hv = std::min(h_scr->value(), h_scr->maximum());
+    h_scr->setValue(hv);
+
+    auto vv = std::max(v_scr->value(), v_scr->minimum());
+         vv = std::min(v_scr->value(), v_scr->maximum());
+    v_scr->setValue(vv);
 }
 
 
@@ -225,9 +222,9 @@ void MainWindow::scrollbar_changed()
 {
     //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
 
-    glm::vec2 p(ui->hexmap_hscroll->value(), -ui->hexmap_vscroll->value());
+    glm::vec2 p(ui->hexmap_hscroll->value());
+    p.y = ui->hexmap_vscroll->maximum() - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
     p /= scroll_sub_ticks;
-    p += base_camera_offset;
 
     ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
@@ -301,6 +298,16 @@ void MainWindow::save_map_as()
     {
         editor->save_action( std::string(filepath.toUtf8().constData()) );
     }
+}
+
+void MainWindow::undo()
+{
+    editor->undo();
+}
+
+void MainWindow::redo()
+{
+    editor->redo();
 }
 
 
