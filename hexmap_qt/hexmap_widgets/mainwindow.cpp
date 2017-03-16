@@ -113,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     {
         spline_settings_widget = new spline_settings_widget_t();
+        spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
 
         connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             , [this](int index)
