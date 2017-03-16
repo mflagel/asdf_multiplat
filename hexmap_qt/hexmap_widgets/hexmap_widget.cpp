@@ -172,6 +172,11 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     }
     else if(keyboard_mods == Qt::ShiftModifier)
     {
+        // because shift button is held, the hscroll will act as if I'm shift-scrolling the scrollbar
+        // which uses large page-sized jumps instead of regular jumps
+        Qt::KeyboardModifiers mods = event->modifiers();
+        mods.setFlag(Qt::ShiftModifier, false);
+        event->setModifiers(mods);
         main_window->ui->hexmap_hscroll->event(event);
     }
     else if(keyboard_mods == Qt::ControlModifier)
