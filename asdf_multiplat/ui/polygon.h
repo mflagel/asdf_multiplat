@@ -100,7 +100,21 @@ namespace asdf
 
         size_t num_sub_meshes() const { return first_vert_indices.size(); }
 
-        using rendered_polygon_<VertexType>::set_data;
+        void set_data(polygon_<VertexType> const& verts)
+        {
+            set_data(verts.data(), verts.size());
+        }
+
+        void set_data(const VertexType* verts, size_t n)
+        {
+            rendered_polygon_<VertexType>::set_data(verts, n);
+
+            first_vert_indices.resize(1);
+            first_vert_indices[0] = 0;
+            vert_counts.resize(1);
+            vert_counts[0] = n;
+            total_vertex_count = n;
+        }
 
         void set_data(std::vector<polygon_<VertexType>> const& polygons)
         {
