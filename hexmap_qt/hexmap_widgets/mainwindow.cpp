@@ -197,24 +197,17 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     vec2 scroll_range = glm::max(vec2{0.0f}, map_size_units - viewable_rect_size);
     vec2 scroll_min = glm::min(viewable_rect_size, map_size_units) / 2.0f;
     vec2 scroll_max = scroll_min + scroll_range;
+    vec2 page_step = glm::min(viewable_rect_size, map_size_units);
 
     auto* h_scr = ui->hexmap_hscroll;
     h_scr->setMinimum(scroll_min.x * scroll_sub_ticks);
     h_scr->setMaximum(scroll_max.x * scroll_sub_ticks);
-    h_scr->setPageStep(viewable_rect_size.x * scroll_sub_ticks);
+    h_scr->setPageStep(page_step.x * scroll_sub_ticks);
 
-    auto* v_scr = ui->hexmap_hscroll;
+    auto* v_scr = ui->hexmap_vscroll;
     v_scr->setMinimum(scroll_min.y * scroll_sub_ticks);
     v_scr->setMaximum(scroll_max.y * scroll_sub_ticks);
-    v_scr->setPageStep(viewable_rect_size.y * scroll_sub_ticks);
-
-    auto hv = std::max(h_scr->value(), h_scr->minimum());
-         hv = std::min(h_scr->value(), h_scr->maximum());
-    h_scr->setValue(hv);
-
-    auto vv = std::max(v_scr->value(), v_scr->minimum());
-         vv = std::min(v_scr->value(), v_scr->maximum());
-    v_scr->setValue(vv);
+    v_scr->setPageStep(page_step.y * scroll_sub_ticks);
 }
 
 
