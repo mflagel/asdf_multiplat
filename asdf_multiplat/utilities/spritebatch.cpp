@@ -53,6 +53,7 @@ namespace asdf {
     /************************************************************************/
     /* Spritebatch Draw
     /* Add a sprite to a map indexed by texture used
+    /* src_rect is relative to the bottom_left of the texture (since that's the openGL {0,0} point)
     /************************************************************************/    
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, rectf_t dest_rect, color_t const& color/*vec4(1.0f)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
