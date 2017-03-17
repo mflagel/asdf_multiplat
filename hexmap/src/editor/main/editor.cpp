@@ -68,9 +68,6 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-
-            /// temp disabled while I work on line thickness.
-            /// was causing a GL error
             rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
@@ -103,7 +100,7 @@ namespace editor
         //render selection box
         if(object_selection.object_indices.size() > 0)
         {
-            auto const& quad = app.renderer->quad; //no sense making a new one
+            auto const& box = app.renderer->box; //no sense making a new one
 
             auto& shader = rendered_map->shader;
 
@@ -114,7 +111,14 @@ namespace editor
             shader->world_matrix *= glm::scale(glm::mat4(), vec3(bbox_size, 0.0f));
             shader->world_matrix *= glm::translate(glm::mat4(), vec3(trans, 0.0f));
 
-            quad.render(GL_LINE_LOOP);
+            auto const& camera = rendered_map->camera;
+            shader->view_matrix       = camera.view_matrix();
+            shader->projection_matrix = camera.projection_ortho();
+
+            GL_State->bind(shader);
+            shader->update_wvp_uniform();
+
+            box.render(GL_LINE_LOOP);
         }
     }
 
