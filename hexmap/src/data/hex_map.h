@@ -22,7 +22,8 @@ namespace data
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
 
-        size_t object_index_at(glm::vec2 world_pos);
+        size_t object_index_at(glm::vec2 const& world_pos) const;
+        std::vector<size_t> object_indices_at(glm::vec2 const& world_pos) const;
     };
 
     struct hxm_header_t
