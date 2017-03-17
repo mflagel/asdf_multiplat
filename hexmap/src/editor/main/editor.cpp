@@ -64,9 +64,6 @@ namespace editor
     {
         hexmap_t::render();
 
-        //rendered_map->spline_renderer.render_handles();
-
-        //testing   render_some_spline_handles()
         if(wip_spline)
         {
             std::vector<size_t> inds;
@@ -74,7 +71,7 @@ namespace editor
 
             /// temp disabled while I work on line thickness.
             /// was causing a GL error
-            // rendered_map->spline_renderer.render_some_spline_handles(inds);
+            rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
