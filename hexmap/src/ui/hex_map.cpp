@@ -272,7 +272,10 @@ namespace ui
             ASSERT(obj.id < objects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
             auto const& atlas_entry = objects_atlas->atlas_entries[obj.id];
 
-            rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
+            // set y to the texture height minus entry height, since in openGL the 0,0 coord is
+            // the bottom left but in the atlas 0,0 is the top left
+            rect_t src_rect(atlas_entry.top_left_px.x, objects_atlas->atlas_texture->height - (atlas_entry.top_left_px.y + atlas_entry.size_px.y),
+                            atlas_entry.size_px.x, atlas_entry.size_px.y);
             auto sprite_scale = obj.scale * glm::vec2(units_per_px);
 
             spritebatch.draw(objects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);
