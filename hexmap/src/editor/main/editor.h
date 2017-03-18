@@ -111,6 +111,7 @@ namespace editor
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);
+        bool paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick = 0.25f);
         void paint_terrain_end();
 
         void place_object(glm::vec2 position);
