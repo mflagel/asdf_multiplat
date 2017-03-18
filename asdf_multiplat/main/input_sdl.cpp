@@ -8,7 +8,7 @@ namespace asdf
 {
     void process_sdl_mouse_events(mouse_input_t& mouse, SDL_Event* event)
     {
-        ASSERT(mouse.receiver, "expected thing (I should rename thing)");
+        ASSERT(mouse.receiver, "expected mouse to have a receiver");
 
         switch(event->type)
         {
