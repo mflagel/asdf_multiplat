@@ -127,6 +127,7 @@ namespace data
             {
                 v = objects[possible_objects[i]].position - world_pos;
                 auto dist_sq = (v.x*v.x) + (v.y*v.y);
+
                 if(dist_sq < closest_dist_sq)
                 {
                     closest = i;

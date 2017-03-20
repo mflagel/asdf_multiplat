@@ -365,7 +365,7 @@ namespace editor
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
 
-        data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
+        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
         action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
