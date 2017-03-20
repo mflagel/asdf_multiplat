@@ -81,7 +81,8 @@ namespace ui
                                          , verts.begin(), verts.end());
             }
 
-            hexagon.set_data(non_instanced_verts);
+            //use base class set_data() to avoid overwriting first_vert_indices and counts
+            hexagon.rendered_polygon_<hexagon_vertex_t>::set_data(non_instanced_verts);
         }
         
         ASSERT(!CheckGLError(), "");

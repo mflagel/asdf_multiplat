@@ -61,6 +61,11 @@ namespace asdf
 
         void set_data(const VertexType* verts, size_t n)
         {
+            buffer_data(verts, n);
+        }
+
+        void buffer_data(const VertexType* verts, size_t n)
+        {
             LOG_IF(CheckGLError(), "Error before rendered_polygon_::set_data()");
 
             GL_State->bind(vbo);
@@ -99,6 +104,8 @@ namespace asdf
         size_t total_vertex_count;
 
         size_t num_sub_meshes() const { return first_vert_indices.size(); }
+
+        using rendered_polygon_<VertexType>::buffer_data;
 
         void set_data(polygon_<VertexType> const& verts)
         {

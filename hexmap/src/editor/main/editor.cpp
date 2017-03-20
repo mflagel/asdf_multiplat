@@ -341,6 +341,29 @@ namespace editor
         return false;
     }
 
+
+    bool editor_t::paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick)
+    {
+        auto vec = p2_world - p1_world;
+        auto len = glm::length(vec);
+        auto unit = glm::normalize(vec);
+
+        float sample_len = 0.0f;
+        bool stuff_painted = false;
+        do
+        {
+            auto sample_pos = p1_world + unit * sample_len;
+            auto hx = world_to_hex_coord(sample_pos);
+
+            stuff_painted |= paint_terrain_at_coord(hx);
+
+            sample_len += sample_tick;
+        }
+        while(sample_len + sample_tick < len);
+
+        return stuff_painted;
+    }
+
     void editor_t::paint_terrain_end()
     {
         if(!painted_terrain_coords.empty())

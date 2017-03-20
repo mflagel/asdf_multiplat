@@ -61,6 +61,7 @@ namespace asdf
     struct mouse_input_t
     {
         uint32_t mouse_button_states = 0;
+        glm::ivec2 mouse_prev_position;
         glm::ivec2 mouse_position;
         glm::ivec2 mouse_down_pos;
 
@@ -78,6 +79,7 @@ namespace asdf
             return (mouse_button_states & mouse_button_bit(btn)) > 0;
         }
         
+        glm::ivec2 move_delta() const;
         bool is_dragging(mouse_button_e btn = mouse_left) const;
         glm::ivec2 drag_delta() const;
     };

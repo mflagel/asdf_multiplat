@@ -7,6 +7,11 @@
 
 namespace asdf
 {
+    glm::ivec2 mouse_input_t::move_delta() const
+    {
+        return mouse_position - mouse_prev_position;
+    }
+
     bool mouse_input_t::is_dragging(mouse_button_e btn) const
     {
         auto d = drag_delta();
@@ -27,6 +32,7 @@ namespace asdf
         mouse_button_states |= mouse_button_bit(mouse_4)      * (event.button == mouse_4);
         mouse_button_states |= mouse_button_bit(mouse_5)      * (event.button == mouse_5);
 
+        mouse_prev_position = mouse_position;
         mouse_position = mouse_pos;
         mouse_down_pos = mouse_pos;
 
@@ -41,6 +47,7 @@ namespace asdf
         mouse_button_states &= mouse_button_bit(mouse_4)      * (event.button != mouse_4);
         mouse_button_states &= mouse_button_bit(mouse_5)      * (event.button != mouse_5);
 
+        mouse_prev_position = mouse_position;
         mouse_position = mouse_pos;
 
         receiver->on_mouse_up(event);
@@ -48,6 +55,7 @@ namespace asdf
 
     void mouse_input_t::mouse_move(mouse_motion_event_t& event, glm::ivec2 mouse_pos)
     {
+        mouse_prev_position = mouse_position;
         mouse_position = mouse_pos;
 
         receiver->on_mouse_move(event);
