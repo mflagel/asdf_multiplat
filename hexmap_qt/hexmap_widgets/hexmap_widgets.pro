@@ -103,5 +103,7 @@ unix: PKGCONFIG += glew ftgl sdl2
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/release/ -lColorWidgets-qt51
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/debug/ -lColorWidgets-qt51
 
+unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
+
 INCLUDEPATH += $$PWD/../../../Qt-Color-Widgets/include
 DEPENDPATH += $$PWD/../../../Qt-Color-Widgets/include
