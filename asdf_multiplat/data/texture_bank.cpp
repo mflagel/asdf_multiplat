@@ -19,8 +19,9 @@ namespace asdf
 namespace data
 {
 
-    texture_bank_t::texture_bank_t()
-    : atlas_texture("hex texture atlas", nullptr, atlas_dim, atlas_dim)
+    texture_bank_t::texture_bank_t(string _name)
+    : name(_name)
+    , atlas_texture(_name + string(" atlas"), nullptr, atlas_dim, atlas_dim)
     {
         glBindTexture(GL_TEXTURE_2D, atlas_texture.texture_id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -108,6 +109,7 @@ namespace data
 
 
         saved_textures.push_back(saved_texture_t{filepath});
+        LOG("Added texture '%s' to '%s'", filepath.c_str(), atlas_texture.name.c_str());
 
         ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", filepath.c_str());
     }
