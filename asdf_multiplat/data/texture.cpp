@@ -44,7 +44,7 @@ namespace asdf
     }
 
 
-    texture_t::texture_t(std::string const& _name, color_t* color_data, size_t _width, size_t _height, bool generate_mipmaps)
+    texture_t::texture_t(std::string const& _name, color_t* color_data, int _width, int _height, bool generate_mipmaps)
     : name{_name}
     , width{_width}
     , height{_height}
@@ -109,19 +109,85 @@ namespace asdf
         ASSERT(!CheckGLError(), "Error writing to texture \"%s\" from color_t array", name.c_str());
     }
 
+    /// Most of this code is based on SOIL_load_OGL_texture()  in SOIL.C 
+    /// There was no way to get the texture dimensions without grabbing them from openGL
+    /// but if the texture size wasnt a power of two, openGL could give incorrect values
     void texture_t::load_texture(std::string const& filepath, int force_channels)
     {
-        texture_id = SOIL_load_OGL_texture(filepath.c_str(),
-                                          force_channels, 
-                                          SOIL_CREATE_NEW_ID, 
-                                          /*SOIL_FLAG_MIPMAPS | */SOIL_FLAG_INVERT_Y);
+        int channels = 0;
+        unsigned char* img = SOIL_load_image(filepath.c_str(), &width, &height, &channels, force_channels);
+
+        // SOIL_load_image gives the original number of channels even when we force
+        // however the resulting image data has the forced format
+        channels = (force_channels > 0) ? force_channels : channels;
+
+        if(img == nullptr)
+        {
+            auto error = SOIL_last_result();
+            throw content_load_exception(filepath, error);
+        }
+
+        /// COPYPASTE FROM SOIL.C  SOIL_internal_create_OGL_texture()
+        /// Invert Image
+		int i, j;
+		for( j = 0; j*2 < height; ++j )
+		{
+			int index1 = j * width * channels;
+			int index2 = (height - 1 - j) * width * channels;
+			for( i = width * channels; i > 0; --i )
+			{
+				unsigned char temp = img[index1];
+				img[index1] = img[index2];
+				img[index2] = temp;
+				++index1;
+				++index2;
+			}
+		}
+
+
+        glGenTextures(1, &texture_id);
+        ASSERT(!CheckGLError(), "Error allocating GL texture for %s", filepath.c_str());
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        ASSERT(!CheckGLError(), "Error binding GL texture for %s", filepath.c_str());
+
+        switch(channels)
+        {
+            case 1: format = GL_LUMINANCE; break;
+            case 2: format = GL_LUMINANCE_ALPHA; break;
+            case 3: format = GL_RGB; break;
+            case 4: format = GL_RGBA; break;
+            default: EXPLODE("invalid image channel count");
+        }
+
+
+        glTexImage2D(GL_TEXTURE_2D
+                   , 0 //level 0
+                   , format            //format of the resulting opengl texture
+                   , width
+                   , height
+                   , 0                 //some deprecated value
+                   , format            //format of the image data in memory
+                   , GL_UNSIGNED_BYTE  //supposedly SOIL loads image data as ubytes
+                   , img);
+
+        ASSERT(!CheckGLError(), "GL Error loading SOIL image data into OpenGL Texture for %s", filepath.c_str());
+
+        //ignore mipmapping and clamp uv sampling
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+        ASSERT(!CheckGLError(), "GL Error setting texture filter / wrap paramaters" );
+        
         if (texture_id == 0)
         {
             auto error = SOIL_last_result();
             throw content_load_exception(filepath, error);
         }
 
-        refresh_params();
+
+        SOIL_free_image_data(img);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void texture_t::refresh_params()

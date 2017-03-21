@@ -22,11 +22,11 @@ namespace asdf {
     {
         std::string name = "";
         GLuint texture_id = 9001;
-        size_t width = 0;
-        size_t height = 0;
-        size_t halfwidth = 0;
-        size_t halfheight = 0;
-        int format = 0;
+        int width = -1;
+        int height = -1;
+        int halfwidth = -1;
+        int halfheight = -1;
+        int format = -1;
         //int numChannels = 0;
         bool is_compressed = false;
         GLint types[5];
@@ -42,7 +42,7 @@ namespace asdf {
         texture_t(std::string const& name, std::string const& filepath);
         texture_t(std::string const& name, const GLuint texture_index);
         //FIXME: replace {ptr, len} with array_view_<T>
-        texture_t(std::string const& _name, color_t* color_data, size_t _width, size_t _height, bool generate_mipmaps = false);
+        texture_t(std::string const& _name, color_t* color_data, int _width, int _height, bool generate_mipmaps = false);
 
         ~texture_t();
 
