@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "main/hexmap.h"
 #include "editor/main/input.h"
@@ -27,23 +28,52 @@ namespace editor
         , num_hex_regions
     };
 
-    struct object_selection_t
+    struct base_selection_t
     {
         glm::vec2 upper_bound;
         glm::vec2 lower_bound;
 
         editor_t& editor;
+    };
+
+    struct object_selection_t : base_selection_t
+    {
         std::unordered_set<size_t> object_indices;
+        std::unordered_set<size_t> spline_indices;
 
         object_selection_t(editor_t&);
 
-        bool operator ==(object_selection_t const& rhs);
-        bool operator !=(object_selection_t const& rhs);
+        bool operator ==(object_selection_t const& rhs) const;
+        bool operator !=(object_selection_t const& rhs) const;
 
         bool add_object_index(size_t);
         bool remove_object_index(size_t);
         void clear_selection();
-        bool is_empty() const { return object_indices.empty(); }
+        bool is_empty() const { return object_indices.empty() && spline_indices.empty(); }
+
+        void recalc_bounds();
+    };
+
+    using spline_index_t = size_t;
+    using spline_node_index_t = size_t;
+
+    struct spline_node_selection_t : base_selection_t
+    {
+        std::unordered_map<size_t, std::unordered_set<size_t>> node_indices; //map of spline inds, set of spline node inds
+
+        spline_node_selection_t(editor_t&);
+
+        bool operator ==(spline_node_selection_t const& rhs) const { return node_indices == rhs.node_indices; }
+        bool operator !=(spline_node_selection_t const& rhs) const { return !(*this == rhs); }
+
+        bool add_node_index(spline_index_t, spline_node_index_t);
+        bool remove_node_index(spline_index_t, spline_node_index_t);
+        bool add_all_nodes_from_spline(spline_index_t);
+        bool remove_all_nodes_from_spline(spline_index_t);
+
+        void clear_selection();
+
+        bool is_empty() const { return node_indices.empty(); }
 
         void recalc_bounds();
     };

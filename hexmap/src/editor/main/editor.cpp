@@ -623,16 +623,16 @@ namespace editor
     }
 
     object_selection_t::object_selection_t(editor_t& _e)
-    : editor(_e)
+    : base_selection_t{vec2{}, vec2{},_e}
     {
     }
 
-    bool object_selection_t::operator ==(object_selection_t const& rhs)
+    bool object_selection_t::operator ==(object_selection_t const& rhs) const
     {
-        return object_indices == rhs.object_indices;
+        return object_indices == rhs.object_indices && spline_indices == rhs.spline_indices;
     }
 
-    bool object_selection_t::operator !=(object_selection_t const& rhs)
+    bool object_selection_t::operator !=(object_selection_t const& rhs) const
     {
         return !(*this == rhs);
     }
@@ -678,6 +678,79 @@ namespace editor
             lower_bound.x = std::min(lower_bound.x, obj.position.x - obj.size_d2.x);
             lower_bound.y = std::min(lower_bound.y, obj.position.y - obj.size_d2.y);
         }
+    }
+
+    spline_node_selection_t::spline_node_selection_t(editor_t& _editor)
+    : base_selection_t{vec2{}, vec2{},_editor}
+    {
+    }
+
+    bool spline_node_selection_t::add_node_index(spline_index_t _si, spline_node_index_t _ni)
+    {
+        auto x = node_indices[_si].insert(_ni);
+        recalc_bounds();
+        return x.second;
+    }
+
+    bool spline_node_selection_t::remove_node_index(spline_index_t _si, spline_node_index_t _ni)
+    {
+        bool was_removed = false;
+        if(node_indices.count(_si) > 0)
+        {
+            auto n = node_indices[_si].erase(_ni);
+            was_removed = n > 0;
+        }
+        
+        recalc_bounds();
+        return was_removed;
+    }
+
+    bool spline_node_selection_t::add_all_nodes_from_spline(spline_index_t _si)
+    {
+        bool nodes_were_added = false;
+        auto& node_set = node_indices[_si];
+
+        ASSERT(editor.map_data.splines.size() >= _si, "no spline at index %zu", _si);
+        auto const& spline = editor.map_data.splines[_si];
+        for(size_t i = 0; i < spline.nodes.size(); ++i)
+        {
+            auto x = node_set.insert(i);
+            nodes_were_added |= x.second;
+        }
+
+        recalc_bounds();
+        return nodes_were_added;
+    }
+
+    bool spline_node_selection_t::remove_all_nodes_from_spline(spline_index_t _si)
+    {
+        bool was_removed = false;
+
+        if(node_indices.count(_si) > 0)
+        {
+            auto& node_set = node_indices[_si];
+            ASSERT(editor.map_data.splines.size() >= _si, "no spline at index %zu", _si);
+            auto const& spline = editor.map_data.splines[_si];
+            for(size_t i = 0; i < spline.nodes.size(); ++i)
+            {
+                auto n = node_set.erase(i);
+                was_removed |= n > 0;
+            }
+        }
+
+        recalc_bounds();
+        return was_removed;
+    }
+
+    void spline_node_selection_t::clear_selection()
+    {
+        node_indices.clear();
+        recalc_bounds();
+    }
+
+    void spline_node_selection_t::recalc_bounds()
+    {
+        
     }
 
 }
