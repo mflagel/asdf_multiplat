@@ -132,8 +132,6 @@ void hexmap_widget_t::mousePressEvent(QMouseEvent* event)
     , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
-    LOG("x,y: %i, %i", event->x(), event->y());
-
     mouse.mouse_down(asdf_event, adjusted_screen_coords(event->x(), event->y()));
     update();
 }
@@ -148,7 +146,14 @@ void hexmap_widget_t::mouseReleaseEvent(QMouseEvent* event)
     , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
+    auto obj_sel = editor.object_selection;
     mouse.mouse_up(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+
+    if(obj_sel != editor.object_selection)
+    {
+        emit object_selection_changed(editor);
+    }
+
     update();
 }
 
