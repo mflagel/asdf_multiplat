@@ -585,6 +585,16 @@ namespace editor
     {
     }
 
+    bool object_selection_t::operator ==(object_selection_t const& rhs)
+    {
+        return object_indices == rhs.object_indices;
+    }
+
+    bool object_selection_t::operator !=(object_selection_t const& rhs)
+    {
+        return !(*this == rhs);
+    }
+
     bool object_selection_t::add_object_index(size_t obj_ind)
     {
         auto x = object_indices.insert(obj_ind);

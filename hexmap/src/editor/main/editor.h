@@ -36,6 +36,9 @@ namespace editor
 
         object_selection_t(editor_t&);
 
+        bool operator ==(object_selection_t const& rhs);
+        bool operator !=(object_selection_t const& rhs);
+
         bool add_object_index(size_t);
         bool remove_object_index(size_t);
         void clear_selection();
