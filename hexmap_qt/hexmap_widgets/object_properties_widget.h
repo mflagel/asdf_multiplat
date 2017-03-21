@@ -83,6 +83,22 @@ private:
     void add_fields_map_object();
     void add_fields_line_node();
 
+    void set_from_map_object(asdf::hexmap::data::map_object_t const& obj);
+    void set_map_object_values(asdf::hexmap::data::map_object_t& obj);
+
+    template <typename QtType>
+    QtType* component_object(obj_component_e component, int index)
+    {
+        ///FIXME modify asdf_multiplat so that I can use ASSERT here without failing to compile
+        if(!components[component])
+            return nullptr;
+        if(components[component]->count() <= index)
+            return nullptr;
+        //ASSERT(components[component], "");
+        //ASSERT(components[component]->count() > index, "");
+        return qobject_cast<QtType*>(components[component]->itemAt(index)->widget());
+    }
+
     template <typename QtType, typename T>
     void set_component_value(obj_component_e component, T value)
     {
@@ -90,19 +106,30 @@ private:
     }
 
     template <typename QtType, typename T>
-    void set_component_sub_value(obj_component_e component, size_t index, T value)
+    void set_component_sub_value(obj_component_e component, int index, T value)
     {
-        ///FIXME modify asdf_multiplat so that I can use ASSERT here without failing to compile
-        if(!components[component])
-            return;
-        if(components[component]->count() <= index)
-            return;
-        //ASSERT(components[component], "");
-        //ASSERT(components[component]->count() > index, "");
-        qobject_cast<QtType*>(components[component]->itemAt(index)->widget())->setValue(value);
+        auto* qobj = component_object<QtType>(component, index);
+        const QSignalBlocker blk(qobj);
+        qobj->setValue(value);
     }
 
-    void set_from_map_object(asdf::hexmap::data::map_object_t const& obj);
+    template <typename QtType, typename T>
+    T get_component_value(obj_component_e component)
+    {
+        return get_component_sub_value<QtType, T>(component, 0);
+    }
+
+    template <typename QtType, typename T>
+    T get_component_sub_value(obj_component_e component, int index)
+    {
+        return component_object<QtType>(component, index)->value();
+    }
+
+public slots:
+    void property_changed();
+
+signals:
+    void objects_modified();
 };
 
 #endif // OBJECT_PROPERTIES_WIDGET_H

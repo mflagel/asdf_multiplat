@@ -104,6 +104,10 @@ MainWindow::MainWindow(QWidget *parent) :
         object_properties = new object_properties_widget_t();
 
         connect(ui->hexmap_widget, &hexmap_widget_t::object_selection_changed, this, &MainWindow::object_selection_changed);
+        connect(object_properties, &object_properties_widget_t::objects_modified,
+                [this]() {
+                    ui->hexmap_widget->update(); //repaint
+                });
     }
 
     {
