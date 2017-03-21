@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     tools_panel.cpp \
     palette_widget.cpp \
     dialogs/new_map_dialog.cpp \
-    spline_settings_widget.cpp
+    spline_settings_widget.cpp \
+    object_properties_widget.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -35,14 +36,16 @@ HEADERS  += mainwindow.h \
     tools_panel.h \
     palette_widget.h \
     dialogs/new_map_dialog.h \
-    spline_settings_widget.h
+    spline_settings_widget.h \
+    object_properties_widget.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
     layers_widget.ui \
     palette_widget.ui \
     dialogs/new_map_dialog.ui \
-    spline_settings_widget.ui
+    spline_settings_widget.ui \
+    object_properties_widget.ui
 
 
 # hexmap shaders
