@@ -113,8 +113,41 @@ namespace data
     }
 
 
-    size_t hex_map_t::object_index_at(glm::vec2 world_pos)
+    size_t hex_map_t::object_index_at(glm::vec2 const& world_pos) const
     {
+        auto possible_objects = object_indices_at(world_pos);
+
+        if(possible_objects.size() > 0)
+        {
+            size_t closest = 0;
+            auto v = objects[possible_objects[0]].position - world_pos;
+            auto closest_dist_sq = (v.x*v.x) + (v.y*v.y); //don't need actual length since we're just comparing
+
+            for(size_t i = 1; i < possible_objects.size(); ++i)
+            {
+                v = objects[possible_objects[i]].position - world_pos;
+                auto dist_sq = (v.x*v.x) + (v.y*v.y);
+
+                if(dist_sq < closest_dist_sq)
+                {
+                    closest = i;
+                    closest_dist_sq = dist_sq;
+                }
+            }
+
+            return possible_objects[closest];
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    std::vector<size_t> hex_map_t::object_indices_at(glm::vec2 const& world_pos) const
+    {
+        std::vector<size_t> object_inds;
+
+        //grab every object that intersects the position
         size_t obj_index = 0;
         for(auto const& obj : objects)
         {
@@ -124,13 +157,13 @@ namespace data
             if(world_pos.x >= lb.x && world_pos.x <= ub.x &&
                world_pos.y >= lb.y && world_pos.y <= ub.y)
             {
-                return obj_index;
+                object_inds.push_back(obj_index);
             }
 
             ++obj_index;
         }
 
-        return -1;
+        return object_inds;
     }
 
 }

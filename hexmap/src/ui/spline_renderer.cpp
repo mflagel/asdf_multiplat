@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "spline_renderer.h"
 
+#include <algorithm>
 #include <glm/gtx/spline.hpp>
 #include <glm/gtx/compatibility.hpp> //for lerp
 
@@ -275,11 +276,6 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        // spline_geometry.render(GL_LINE_STRIP);
-
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         spline_geometry.render(GL_TRIANGLE_STRIP);
 
         ASSERT(!CheckGLError(), "Error in spline_renderer_t::render()");
@@ -306,25 +302,29 @@ namespace ui
         std::vector<GLint> first_vert_indices;
         std::vector<GLsizei> vert_counts;
 
-        size_t cur_node_count = 0;
-        size_t counting_spline_ind = 0;
+        size_t current_spline_ind = 0;
+        size_t current_primative_index = 0;
 
-        for(auto const& spline_ind : spline_indices)
+        std::sort(spline_indices.begin(), spline_indices.end()); //should I just require the list to be pre-sorted?
+
+        for(auto const& spline_ind_to_render : spline_indices)
         {
-            for(; counting_spline_ind < spline_ind; ++counting_spline_ind)
+            // because each spline has a variable number of nodes, and a variable number of
+            // handle primatives per node, count upwards to get the primative_index of the
+            // spline to be rendered
+            // OPTIMIZE: cache this
+            for(; current_spline_ind < spline_ind_to_render; ++current_spline_ind)
             {
-                cur_node_count += spline_node_count_cache[counting_spline_ind];
+                auto const& cur_spline = (*spline_list)[current_spline_ind];
+                current_primative_index += cur_spline.nodes.size() * handle_primatives_per_node[cur_spline.spline_type];
             }
 
-            auto const& spline = (*spline_list)[spline_ind];
+            auto const& spline = (*spline_list)[spline_ind_to_render];
 
             //grab the subset of handles_geometry.first_vert_indices and .vert_counts corrisponding to this spline
-            //each node in a spline has a handle
-            //each handle has four primatives (square node, two diamond cnodes, and a line connecting the cnodes)
-
-            constexpr size_t primatives_per_node = 4;
-            size_t primatives_subset_index = cur_node_count * primatives_per_node;
-            size_t primatives_subset_end_index = primatives_subset_index + (spline.nodes.size() * primatives_per_node);
+            size_t primatives_subset_index = current_primative_index;
+            size_t num_handle_prims = spline.nodes.size() * handle_primatives_per_node[spline.spline_type];
+            size_t primatives_subset_end_index = current_primative_index + num_handle_prims;
 
             first_vert_indices.insert(first_vert_indices.begin()
                                     , handles_geometry.first_vert_indices.begin() + primatives_subset_index

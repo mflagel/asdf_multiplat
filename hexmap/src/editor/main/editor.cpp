@@ -64,17 +64,11 @@ namespace editor
     {
         hexmap_t::render();
 
-        //rendered_map->spline_renderer.render_handles();
-
-        //testing   render_some_spline_handles()
         if(wip_spline)
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-
-            /// temp disabled while I work on line thickness.
-            /// was causing a GL error
-            // rendered_map->spline_renderer.render_some_spline_handles(inds);
+            rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
@@ -106,18 +100,26 @@ namespace editor
         //render selection box
         if(object_selection.object_indices.size() > 0)
         {
-            auto const& quad = app.renderer->quad; //no sense making a new one
+            auto const& box = app.renderer->box; //no sense making a new one
 
             auto& shader = rendered_map->shader;
 
             glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
             glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
 
-            shader->world_matrix = glm::mat4();
-            shader->world_matrix *= glm::scale(glm::mat4(), vec3(bbox_size, 0.0f));
-            shader->world_matrix *= glm::translate(glm::mat4(), vec3(trans, 0.0f));
+            shader->world_matrix = mat4{};
+            shader->world_matrix = glm::translate(shader->world_matrix, vec3(trans, 0.0f));
+            shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
+            
 
-            quad.render(GL_LINE_LOOP);
+            auto const& camera = rendered_map->camera;
+            shader->view_matrix       = camera.view_matrix();
+            shader->projection_matrix = camera.projection_ortho();
+
+            GL_State->bind(shader);
+            shader->update_wvp_uniform();
+
+            box.render(GL_LINE_LOOP);
         }
     }
 
@@ -339,6 +341,29 @@ namespace editor
         return false;
     }
 
+
+    bool editor_t::paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick)
+    {
+        auto vec = p2_world - p1_world;
+        auto len = glm::length(vec);
+        auto unit = glm::normalize(vec);
+
+        float sample_len = 0.0f;
+        bool stuff_painted = false;
+        do
+        {
+            auto sample_pos = p1_world + unit * sample_len;
+            auto hx = world_to_hex_coord(sample_pos);
+
+            stuff_painted |= paint_terrain_at_coord(hx);
+
+            sample_len += sample_tick;
+        }
+        while(sample_len + sample_tick < len);
+
+        return stuff_painted;
+    }
+
     void editor_t::paint_terrain_end()
     {
         if(!painted_terrain_coords.empty())
@@ -363,7 +388,7 @@ namespace editor
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
 
-        data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
+        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
         action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }

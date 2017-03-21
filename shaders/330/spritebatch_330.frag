@@ -1,4 +1,5 @@
 #version 330 core
+// Spritebatch Fragment Shader
 
 smooth in vec2 TexCoordOut;
 flat in vec4 ColorOut;

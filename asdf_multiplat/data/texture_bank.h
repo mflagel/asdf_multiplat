@@ -40,12 +40,13 @@ namespace data
     */
     struct texture_bank_t
     {
+        std::string name;
         texture_t atlas_texture;
         framebuffer_t atlas_fbo;
 
         std::vector<saved_texture_t> saved_textures;
 
-        texture_bank_t();
+        texture_bank_t(std::string name = "unnamed texture bank");
 
         void load_from_list_file(std::string const& filepath);
         void add_texture(std::string const& filesystem_location);

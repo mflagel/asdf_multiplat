@@ -129,9 +129,17 @@ namespace editor
 
             case editor_t::terrain_paint:
             {
+                /// If the user is dragging the mouse
+                /// paint hexes along the line they have dragged
+                /// otherwise it will only paint one hex per update
+                /// which looks terrible if their performance is bad
                 if(event.mouse_state.mouse_button_state(mouse_left))
                 {
-                    editor.paint_terrain_at_coord(hx);
+                    vec2 mw_begin = world_coords(event.mouse_state.mouse_prev_position);
+                    vec2 mw_end = world_coords(event.mouse_state.mouse_position);
+
+                    editor.paint_terrain_along_line(mw_begin, mw_end);
+
                     return true;
                 }
 

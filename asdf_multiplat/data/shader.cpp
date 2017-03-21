@@ -69,6 +69,7 @@ namespace asdf {
 
     void shader_t::update_wvp_uniform()
     {
+        ASSERT(GL_State->current_shader = shader_program_id, "Shader must be bound before setting uniform");
         ASSERT(!CheckGLError(), "Error before updating shader WVP uniform");
         glm::mat4 wvp = projection_matrix * view_matrix * world_matrix;
         glUniformMatrix4fv(uniforms.at("WVP"), 1, GL_FALSE, glm::value_ptr(wvp));

@@ -104,6 +104,8 @@ namespace ui
 
     public:
         hex_map_t(data::hex_map_t& _map_data);
+
+        void load_terrain_assets(std::string const& data_dir);
         
         void update(float dt);
         void render();

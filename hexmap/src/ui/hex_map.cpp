@@ -35,6 +35,7 @@ namespace ui
 
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
+    , terrain_bank(std::string("hexmap terrain"))
     {
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
@@ -81,7 +82,8 @@ namespace ui
                                          , verts.begin(), verts.end());
             }
 
-            hexagon.set_data(non_instanced_verts);
+            //use base class set_data() to avoid overwriting first_vert_indices and counts
+            hexagon.rendered_polygon_<hexagon_vertex_t>::set_data(non_instanced_verts);
         }
         
         ASSERT(!CheckGLError(), "");
@@ -105,19 +107,20 @@ namespace ui
 
         ASSERT(!CheckGLError(), "GL Error setting hexmap VAO and vertex attributes");
 
-
-        auto dir = find_folder("data");
-        ASSERT(dir.length() > 0, "Could not find data folder");
-
-        auto terrain_types_json_filepath = dir + "/" + string(terrain_types_json_filename);
-        terrain_bank.load_from_file(terrain_types_json_filepath);
-        
-
-        objects_atlas = make_unique<texture_atlas_t>(string(dir + "/../assets/Objects/objects_atlas_data.json"));
+        auto data_dir = find_folder("data");
+        load_terrain_assets(data_dir);
+        objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
 
         spline_renderer.init(Content.create_shader_highest_supported("spline"));
 
         spline_renderer.spline_list = &map_data.splines;
+    }
+
+    void hex_map_t::load_terrain_assets(std::string const& data_dir)
+    {
+        auto terrain_types_json_filepath = data_dir + "/" + string(terrain_types_json_filename);
+        terrain_bank.saved_textures.clear(); //reset so I'm not infinitely piling stuff on
+        terrain_bank.load_from_file(terrain_types_json_filepath);
     }
 
     void hex_map_t::update(float dt)
@@ -157,15 +160,11 @@ namespace ui
 
         //TEST
         // re-importing every frame so I can capture it with nvidia's gfx debugger
-        // GL_State->bind(texture_bank.atlas_fbo);
+        // GL_State->bind(terrain_bank.atlas_fbo);
         // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // auto dir = find_folder("data");
-        // auto imported_textures_json_filepath = dir + "/" + string(imported_textures_json_filename);
-        // texture_bank.saved_textures.clear(); //reset so I'm not infinitely piling stuff on
-        // texture_bank.load_from_list_file(imported_textures_json_filepath);
-        // glBindTexture(GL_TEXTURE_2D, texture_bank.atlas_texture.texture_id);
+        //load_terrain_assets(find_folder("data"));
+        //glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
         //---
     }
 
@@ -185,6 +184,7 @@ namespace ui
         {
             hex_gl_data.set_data_instanced(chunk);
         }
+        else
         {
             hex_gl_data.set_data(chunk);
         }
@@ -271,7 +271,10 @@ namespace ui
             ASSERT(obj.id < objects_atlas->atlas_entries.size(), "object ID does not exist in atlas");
             auto const& atlas_entry = objects_atlas->atlas_entries[obj.id];
 
-            rect_t src_rect(atlas_entry.top_left_px.x, atlas_entry.top_left_px.y, atlas_entry.size_px.x, atlas_entry.size_px.y);
+            // set y to the texture height minus (entry height + entry top_left), since in openGL the 0,0 coord is
+            // the bottom left but in the atlas 0,0 is the top left
+            rect_t src_rect(atlas_entry.top_left_px.x, objects_atlas->atlas_texture->height - (atlas_entry.top_left_px.y + atlas_entry.size_px.y),
+                            atlas_entry.size_px.x, atlas_entry.size_px.y);
             auto sprite_scale = obj.scale * glm::vec2(units_per_px);
 
             spritebatch.draw(objects_atlas->atlas_texture, obj.position, src_rect, obj.color, sprite_scale, obj.rotation);

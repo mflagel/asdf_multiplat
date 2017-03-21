@@ -46,6 +46,7 @@ namespace asdf {
             glm::vec3 position;
         };
         rendered_polygon_<quad_vertex_t> quad;
+        rendered_polygon_<quad_vertex_t> box; //4 verts, instead of two triangles
 
         //color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
         glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};

@@ -11,6 +11,7 @@ namespace asdf
 namespace hexmap {
 namespace data
 {
+
     void terrain_bank_t::load_from_file(std::string const& filepath)
     {
         std::string json_str = read_text_file(filepath);

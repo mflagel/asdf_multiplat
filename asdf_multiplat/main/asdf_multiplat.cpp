@@ -56,11 +56,8 @@ namespace asdf {
         //main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
     }
 
-    asdf_multiplat_t::~asdf_multiplat_t() {
-        /*glDeleteBuffers(1, &quad_VBO);
-        glDeleteRenderbuffers(1, &render_depth_buffer);
-        glDeleteFramebuffers(1, &frame_buffer);*/
-
+    asdf_multiplat_t::~asdf_multiplat_t()
+    {
         SDL_FreeSurface(main_surface);
         SDL_GL_DeleteContext(gl_context);
         SDL_DestroyWindow(main_window);
@@ -319,21 +316,37 @@ namespace asdf {
         auto shader_path = find_folder("shaders");
         screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");
 
-        const quad_vertex_t quad_verts[] =
         {
-            quad_vertex_t{vec3(-0.5f, -0.5f, 0.0f)},
-            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
-            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
-            quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
-            quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
-            quad_vertex_t{vec3( 0.5f,  0.5f, 0.0f)}
-        };
+            const quad_vertex_t quad_verts[] =
+            {
+                quad_vertex_t{vec3(-0.5f, -0.5f, 0.0f)},
+                quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+                quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+                quad_vertex_t{vec3(-0.5f,  0.5f, 0.0f)},
+                quad_vertex_t{vec3( 0.5f, -0.5f, 0.0f)},
+                quad_vertex_t{vec3( 0.5f,  0.5f, 0.0f)}
+            };
 
 
-        quad.draw_mode = GL_TRIANGLES;
-        quad.vbo.usage = GL_STATIC_DRAW;
-        quad.initialize(screen_shader);
-        quad.set_data(quad_verts, 6);
+            quad.draw_mode = GL_TRIANGLES;
+            quad.vbo.usage = GL_STATIC_DRAW;
+            quad.initialize(screen_shader);
+            quad.set_data(quad_verts, 6);
+        }
+        {
+            const quad_vertex_t box_verts[] =
+            {
+                  quad_vertex_t{vec3{-0.5f, -0.5f, 0.5f}} //bottom left
+                , quad_vertex_t{vec3{-0.5f,  0.5f, 0.5f}} //top left
+                , quad_vertex_t{vec3{ 0.5f,  0.5f, 0.5f}} //top right
+                , quad_vertex_t{vec3{ 0.5f, -0.5f, 0.5f}} //bottom right
+            };
+
+            box.draw_mode = GL_LINE_LOOP;
+            box.vbo.usage = GL_STATIC_DRAW;
+            box.initialize(screen_shader);
+            box.set_data(box_verts, 4);
+        }
 
         gl_state.unbind_vao();
         gl_state.unbind_vbo();

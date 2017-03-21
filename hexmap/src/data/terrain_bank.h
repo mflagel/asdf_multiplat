@@ -20,6 +20,7 @@ namespace data
             void from_JSON(cJSON*);
         };
 
+        asdf::data::texture_bank_t::texture_bank_t;
 
         std::vector<std::string> asset_names;
 

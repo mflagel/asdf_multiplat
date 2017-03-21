@@ -45,7 +45,6 @@ namespace data
         void load_from_file(SDL_RWops*);
     };
 
-
     constexpr std::array<const char*, spline_t::num_interp_types> spline_interpolation_names =
     {
           "linear"
@@ -53,6 +52,15 @@ namespace data
         , "catmull_rom"
         , "hermite"
         , "bezier"
+    };
+
+    constexpr std::array<size_t, spline_t::num_interp_types> handle_primatives_per_node
+    {
+          1 // linear
+        , 0 // cubic_bspline
+        , 0 // catmull_rom
+        , 0 // hermite
+        , 4 // bezier
     };
 
 
