@@ -13,6 +13,7 @@
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
 #include <hexmap/data/spline.h>
+#include <hexmap/ui/hex_map.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -22,6 +23,7 @@
 #include "ui_tools_panel.h"
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
+#include "object_properties_widget.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -77,13 +79,12 @@ MainWindow::MainWindow(QWidget *parent) :
         //FIXME cleanup and/or optimize
         connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
                 [this](tool_type_e tool){
-                    if(tool == editor_t::place_splines)
+                    switch(tool)
                     {
-                        ui->right_dock->setWidget(spline_settings_widget);
-                    }
-                    else
-                    {
-                        ui->right_dock->setWidget(palette_widget);
+                        case editor_t::select: ui->right_dock->setWidget(object_properties); return;
+                        case editor_t::terrain_paint: [[FALLTHROUGH]]
+                        case editor_t::place_objects: ui->right_dock->setWidget(palette_widget); return;
+                        case editor_t::place_splines: ui->right_dock->setWidget(spline_settings_widget); return;
                     }
                 }
         );
@@ -97,6 +98,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
         connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
         connect(tools_ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
+    }
+
+    {
+        object_properties = new object_properties_widget_t();
+
+        connect(ui->hexmap_widget, &hexmap_widget_t::object_selection_changed, this, &MainWindow::object_selection_changed);
     }
 
     {
@@ -351,4 +358,9 @@ void MainWindow::editor_tool_changed(tool_type_e new_tool)
         palette_widget->list_view->setModel(nullptr);
         break;
     }
+}
+
+void MainWindow::object_selection_changed(asdf::hexmap::editor::editor_t& editor)
+{
+    object_properties->set_from_object_selection(editor.object_selection, editor.map_data.objects);
 }

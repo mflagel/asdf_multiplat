@@ -15,6 +15,7 @@ class MainWindow;
 class palette_widget_t;
 class palette_item_model_t;
 class spline_settings_widget_t;
+class object_properties_widget_t;
 
 class MainWindow : public QMainWindow
 {
@@ -47,6 +48,7 @@ protected:
 private slots:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
+    void object_selection_changed(asdf::hexmap::editor::editor_t&);
 
 private:
     Ui::MainWindow *ui;
@@ -56,6 +58,7 @@ private:
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
+    object_properties_widget_t* object_properties = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
 
