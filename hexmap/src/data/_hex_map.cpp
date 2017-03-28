@@ -13,7 +13,7 @@ namespace data
 
     hex_map_t::hex_map_t(std::string const& _map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style)
     : map_name(_map_name)
-    , hex_grid(grid_size)
+    , hex_grid(grid_size, default_cell_style)
     {
 
     }

@@ -208,7 +208,7 @@ namespace editor
             switch(key)
             {
                 case SDLK_n:
-                    editor.new_map_action(editor.map_data.hex_grid.size);
+                    editor.new_map_action("", editor.map_data.hex_grid.size);
                     return;
 
                 //save on ctrl+s
