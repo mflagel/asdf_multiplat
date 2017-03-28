@@ -283,6 +283,8 @@ void MainWindow::new_map()
         cell.tile_id = nm.selected_base_tile_index();
 
         ui->hexmap_widget->editor.new_map_action(name, map_size, cell);
+        ui->hexmap_widget->camera_pos(glm::vec2(map_size) / 2.0f);
+        scrollbar_changed();
     }
 }
 
