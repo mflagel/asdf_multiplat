@@ -32,6 +32,7 @@ using namespace std;
 namespace
 {
     constexpr int scroll_sub_ticks = 10;
+    constexpr float scroll_padding_units = 1.0f;
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -210,6 +211,9 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     vec2 scroll_max = scroll_min + scroll_range;
     vec2 page_step = glm::min(viewable_rect_size, map_size_units);
 
+    scroll_min -= scroll_padding_units;
+    scroll_max += scroll_padding_units;
+
     auto* h_scr = ui->hexmap_hscroll;
     h_scr->setMinimum(scroll_min.x * scroll_sub_ticks);
     h_scr->setMaximum(scroll_max.x * scroll_sub_ticks);
@@ -227,12 +231,12 @@ void MainWindow::scrollbar_changed()
     //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
 
     glm::vec2 p(ui->hexmap_hscroll->value());
-
     auto docheight = ui->hexmap_vscroll->maximum() + ui->hexmap_vscroll->pageStep();
     p.y = docheight - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
 
     p /= scroll_sub_ticks;
     p.x -= asdf::hexmap::hex_width_d2; //since 0,0 is the center of a hex
+    p.y -= asdf::hexmap::hex_height;
 
     ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
@@ -240,6 +244,8 @@ void MainWindow::scrollbar_changed()
 
 void MainWindow::new_map()
 {
+    ASSERT(editor, "Can't create a new map before the editor object is created");
+
     if(editor->map_is_dirty)
     {
         QMessageBox msgBox;
@@ -264,6 +270,8 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
+    nm.set_base_tiles(editor->rendered_map->terrain_bank);
+
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
     } else {
