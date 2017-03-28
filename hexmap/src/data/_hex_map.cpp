@@ -8,10 +8,18 @@ namespace hexmap
 {
 namespace data
 {
+    constexpr const char* default_map_name = "unnamed map";
     constexpr size_t hxm_version = 1;
 
+    hex_map_t::hex_map_t(std::string const& _map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style)
+    : map_name(_map_name)
+    , hex_grid(grid_size)
+    {
+
+    }
+
     hex_map_t::hex_map_t(glm::uvec2 grid_size)
-    : hex_grid(grid_size)
+    : hex_map_t(default_map_name, grid_size)
     {
     }
 
