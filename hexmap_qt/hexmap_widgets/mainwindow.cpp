@@ -84,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     switch(tool)
                     {
                         case editor_t::select: ui->right_dock->setWidget(object_properties); return;
-                        case editor_t::terrain_paint: [[FALLTHROUGH]]
+                        case editor_t::terrain_paint: //[[FALLTHROUGH]]
                         case editor_t::place_objects: ui->right_dock->setWidget(palette_widget); return;
                         case editor_t::place_splines: ui->right_dock->setWidget(spline_settings_widget); return;
                     }

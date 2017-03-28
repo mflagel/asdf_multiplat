@@ -29,11 +29,11 @@ QLayout* layout_from_component_type(editable_component_type_e composite_type, ob
 
     switch(composite_type)
     {
-        case component_int_8:   [[FALLTHROUGH]]
-        case component_int_32:  [[FALLTHROUGH]]
-        case component_int_64:  [[FALLTHROUGH]]
-        case component_uint_8:  [[FALLTHROUGH]]
-        case component_uint_32: [[FALLTHROUGH]]
+        case component_int_8:   //[[FALLTHROUGH]] ///FIXME fallthrough in clang
+        case component_int_32:  //[[FALLTHROUGH]]
+        case component_int_64:  //[[FALLTHROUGH]]
+        case component_uint_8:  //[[FALLTHROUGH]]
+        case component_uint_32: //[[FALLTHROUGH]]
         case component_uint_64:
         {
             add_component_to_layout<QSpinBox, int>(layout, op_wgt);
@@ -47,11 +47,11 @@ QLayout* layout_from_component_type(editable_component_type_e composite_type, ob
             return layout;
         }
 
-        case component_vec4: [[FALLTHROUGH]]
+        case component_vec4: //[[FALLTHROUGH]]
         {
             add_component_to_layout<QDoubleSpinBox, double>(layout, op_wgt);
         }
-        case component_vec3: [[FALLTHROUGH]]
+        case component_vec3: //[[FALLTHROUGH]]
         {
             add_component_to_layout<QDoubleSpinBox, double>(layout, op_wgt);
         }
