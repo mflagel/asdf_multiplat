@@ -12,6 +12,7 @@
 
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
+#include <hexmap/data/hex_grid.h>
 #include <hexmap/data/spline.h>
 #include <hexmap/ui/hex_map.h>
 
@@ -275,8 +276,13 @@ void MainWindow::new_map()
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
     } else {
+        std::string name(nm.ui->txt_mapName->displayText().toUtf8().constData());
         glm::uvec2 map_size(nm.ui->spb_width->value(), nm.ui->spb_height->value());
-        ui->hexmap_widget->editor.new_map_action(map_size);
+
+        asdf::hexmap::data::hex_grid_cell_t cell;
+        cell.tile_id = nm.selected_base_tile_index();
+
+        ui->hexmap_widget->editor.new_map_action(name, map_size, cell);
     }
 }
 

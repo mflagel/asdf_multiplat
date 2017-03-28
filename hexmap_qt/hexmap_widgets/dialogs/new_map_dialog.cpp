@@ -47,13 +47,15 @@ void new_map_dialog_t::set_base_tiles(asdf::hexmap::data::terrain_bank_t const& 
         ui->base_tile_palette->list_view->selectionModel()->select(ind, QItemSelectionModel::Select);
 }
 
-size_t new_map_dialog_t::selected_base_tile_index() const
+using hxm_tile_id_t = asdf::hexmap::data::hex_tile_id_t;
+
+hxm_tile_id_t new_map_dialog_t::selected_base_tile_index() const
 {
     ASSERT(ui->base_tile_palette->selected_index().row() >= 0, "expecting a non-negative selected tile");
     auto ind = ui->base_tile_palette->selected_index();
 
     if(ind.isValid())
-        return static_cast<size_t>(ui->base_tile_palette->selected_index().row());
+        return static_cast<hxm_tile_id_t>(ui->base_tile_palette->selected_index().row());
     else
         return 0; //default to 0th terrain type
 }

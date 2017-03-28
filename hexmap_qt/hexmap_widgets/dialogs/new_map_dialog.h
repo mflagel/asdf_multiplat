@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include <hexmap/data/hex_grid.h>
+
 namespace Ui {
 class new_map_dialog_t;
 }
@@ -22,7 +24,7 @@ public:
     ~new_map_dialog_t();
 
     void set_base_tiles(asdf::hexmap::data::terrain_bank_t const&);
-    size_t selected_base_tile_index() const;
+    asdf::hexmap::data::hex_tile_id_t selected_base_tile_index() const;
 
 private:
     Ui::new_map_dialog_t *ui;
