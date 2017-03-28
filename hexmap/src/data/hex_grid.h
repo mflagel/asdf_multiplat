@@ -29,7 +29,7 @@ namespace data
 
     struct hex_grid_cell_t
     {
-        hex_tile_id_t tile_id = 1; //temp setting as 1 to for saving/loading
+        hex_tile_id_t tile_id;
     };
 
     
@@ -84,9 +84,10 @@ namespace data
             }
         }
 
-        hex_grid_t(glm::uvec2 size);
+        hex_grid_t(glm::uvec2 size, hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
 
-        void init(glm::uvec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height));
+        void init(glm::uvec2 size, glm::uvec2 chunk_size = glm::uvec2(new_chunk_width, new_chunk_height), hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
+        void init(glm::uvec2 size, hex_grid_cell_t const& default_cell_style);
 
         void save_to_file(SDL_RWops*); //TODO: look into not_null pointers from C++17
         void load_from_file(SDL_RWops*, hxm_header_t const&);

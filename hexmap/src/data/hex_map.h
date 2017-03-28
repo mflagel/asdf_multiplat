@@ -14,10 +14,13 @@ namespace data
 {
     struct hex_map_t
     {
+        std::string map_name = "";
+
         data::hex_grid_t hex_grid;
         std::vector<map_object_t> objects;
         std::vector<spline_t> splines;
         
+        hex_map_t(std::string const& map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
         hex_map_t(glm::uvec2 grid_size);
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
