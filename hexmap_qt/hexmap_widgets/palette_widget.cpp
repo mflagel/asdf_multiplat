@@ -6,7 +6,7 @@
 #include "mainwindow.h"
 
 #include "hexmap/data/terrain_bank.h"
-#include "hexmap/editor/main/editor.h"
+//#include "hexmap/editor/main/editor.h"
 
 palette_widget_t::palette_widget_t(QWidget* parent)
 : QWidget(parent)
@@ -112,6 +112,16 @@ void palette_item_model_t::build_from_atlas(asdf::data::texture_atlas_t const& a
 
         entries.append(std::move(entry));
     }
+}
+
+QModelIndex palette_widget_t::selected_index() const
+{
+    auto indices = ui->listView->selectionModel()->selectedIndexes();
+
+    if(indices.size() == 0)
+        return QModelIndex();
+    else
+        return indices.at(0);
 }
 
 int palette_item_model_t::rowCount(const QModelIndex &parent) const

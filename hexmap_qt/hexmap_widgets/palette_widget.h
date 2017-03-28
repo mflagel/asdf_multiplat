@@ -20,10 +20,10 @@ namespace asdf{
         {
             struct terrain_bank_t;
         }
-        namespace editor
-        {
-            struct editor_t;
-        }
+//        namespace editor
+//        {
+//            struct editor_t;
+//        }
     }
 }
 
@@ -79,6 +79,8 @@ public:
 
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
     void build_from_atlas(asdf::data::texture_atlas_t const& atlas);
+
+    QModelIndex selected_index() const;
 
 
 public:
