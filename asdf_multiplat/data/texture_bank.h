@@ -12,7 +12,7 @@
 namespace asdf {
 namespace data
 {
-
+    //TODO: move or rename to something less generic?
     constexpr size_t saved_texture_dim = 128;
     constexpr size_t saved_texture_dim_d2 = saved_texture_dim / 2;
     constexpr size_t max_saved_textures_1d = 10;
