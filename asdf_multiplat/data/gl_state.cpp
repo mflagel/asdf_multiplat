@@ -123,6 +123,7 @@ namespace asdf
 
     void gl_state_t::init_render_target(framebuffer_t const& fbo, texture_t const& texture)
     {
+        auto prev_fbo = current_framebuffer;
         bind(fbo);
         glFramebufferTexture2D(GL_FRAMEBUFFER          // this is the only value allowed
                              , GL_COLOR_ATTACHMENT0    // use GL_COLOR_ATTACHMENT0 to render color data (as opposed to depth or stencil)
@@ -133,13 +134,18 @@ namespace asdf
         // only care about rendering into one draw buffer
         GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
         glDrawBuffers(1, &draw_buffers);
-        ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d", fbo.id, texture.texture_id);
+
+        auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d. FBO Status: %d", fbo.id, texture.texture_id, gl_fbo_status);
 
         glViewport(0, 0, texture.width, texture.height);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        GL_State->unbind_fbo();
+
+
+        glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
+        current_framebuffer = prev_fbo;
     }
 
 
