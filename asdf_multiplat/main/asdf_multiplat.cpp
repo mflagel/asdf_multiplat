@@ -300,18 +300,7 @@ namespace asdf {
     {
         ASSERT(!CheckGLError(), "Error before asdf_renderer_t::init()");
 
-        gl_state.bind(framebuffer);
-        //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);  /// GL 3.2+
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_target.texture_id, 0);
-
-        GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-        glDrawBuffers(1, DrawBuffers);
-        ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Error creating main app framebuffer");
-
-
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
-        ASSERT(!CheckGLError(), "");
-
+        gl_state.init_render_target(framebuffer, render_target);
 
         auto shader_path = find_folder("shaders");
         screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");

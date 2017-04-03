@@ -28,26 +28,7 @@ namespace data
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
         glBindTexture(GL_TEXTURE_2D, 0);
 
-
-        ASSERT(!CheckGLError(), "GL Error Before Initializing texture_bank_t");
-
-        {
-            GL_State->bind(atlas_fbo);
-            //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, atlas_texture.texture_id, 0);
-
-            GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
-            glDrawBuffers(1, &draw_buffers);
-            ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error creating texture bank framebuffer");
-
-            glViewport(0,0,atlas_texture.width, atlas_texture.height);
-
-            glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            GL_State->unbind_fbo();
-        }
-
+        GL_State->init_render_target(atlas_fbo, atlas_texture);
 
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
