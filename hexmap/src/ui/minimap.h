@@ -36,7 +36,7 @@ namespace ui
 
     struct minimap_t
     {
-        ui::hex_map_t const& rendered_map;
+        ui::hex_map_t& rendered_map;
         data::hex_map_t const& map_data;
 
         texture_t texture;
@@ -44,7 +44,9 @@ namespace ui
 
         // rendered_multi_polygon_<minimap_vertex_t> minimap_geometry;
 
-        minimap_t(ui::hex_map_t const&);
+        minimap_t(ui::hex_map_t&);
+
+        void rebuild();
 
         void render();
     };
