@@ -27,11 +27,12 @@ namespace ui
 
     struct minimap_vertex_t
     {
-        static gl_vertex_spec<vertex_attrib::position2_t, vertex_attrib::color_t>
+        static gl_vertex_spec_<vertex_attrib::position2_t
+                             , vertex_attrib::color_t> vertex_spec;
 
         glm::vec2 position;
         glm::vec4 color;
-    }
+    };
 
     struct minimap_t
     {
@@ -41,9 +42,11 @@ namespace ui
         texture_t texture;
         framebuffer_t fbo;
 
-        rendered_multi_polygon_<minimap_vertex_t>
+        // rendered_multi_polygon_<minimap_vertex_t> minimap_geometry;
 
         minimap_t(ui::hex_map_t const&);
+
+        void render();
     };
 }
 }
