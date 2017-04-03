@@ -136,7 +136,7 @@ namespace asdf
         glDrawBuffers(1, &draw_buffers);
 
         auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d. FBO Status: %d", fbo.id, texture.texture_id, gl_fbo_status);
+        ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d. FBO Status: 0x%0x", fbo.id, texture.texture_id, gl_fbo_status);
 
         glViewport(0, 0, texture.width, texture.height);
 
