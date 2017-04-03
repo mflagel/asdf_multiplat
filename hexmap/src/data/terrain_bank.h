@@ -23,8 +23,15 @@ namespace data
         using asdf::data::texture_bank_t::texture_bank_t;
 
         std::vector<std::string> asset_names;
+        std::vector<glm::vec4> terrain_colors;
+
+    private:
+        framebuffer_t colors_fbo;
+
+    public:
 
         void load_from_file(std::string const& filepath);
+        void rebuild_colors();
     };
 }
 }
