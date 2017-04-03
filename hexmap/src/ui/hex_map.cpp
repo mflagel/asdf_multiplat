@@ -157,9 +157,8 @@ namespace ui
             render_grid_overlay_instanced(map_data.hex_grid.size);
         }
         
-
         render_map_objects();
-
+        spline_renderer.rebuild_if_dirty();
         render_splines();
 
 
@@ -227,7 +226,7 @@ namespace ui
     }
 
     //TODO: refactor setting of state for grid render?
-    void hex_map_t::render_grid_overlay_instanced(glm::uvec2 grid_size)
+    void hex_map_t::render_grid_overlay_instanced(glm::uvec2 grid_size) const
     {
         GL_State->bind(shader);
         GL_State->bind(hexagon.vao);
@@ -245,7 +244,7 @@ namespace ui
         GL_State->unbind_vao();
     }
 
-    void hex_map_t::render_hexagons(glm::uvec2 grid_size, GLuint draw_mode)
+    void hex_map_t::render_hexagons(glm::uvec2 grid_size, GLuint draw_mode) const
     {
         auto loc = shader->uniform("CHUNK_HEIGHT");
         glUniform1i(loc, grid_size.y);
@@ -290,7 +289,7 @@ namespace ui
         spritebatch.end();
     }
 
-    void hex_map_t::render_splines()
+    void hex_map_t::render_splines() const
     {
         ASSERT(spline_renderer.shader, "spline shader required to render splines");
 
@@ -298,7 +297,6 @@ namespace ui
         sr_s->view_matrix       = shader->view_matrix;
         sr_s->projection_matrix = shader->projection_matrix;
 
-        spline_renderer.rebuild_if_dirty();
         spline_renderer.render();
     }
 

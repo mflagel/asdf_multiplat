@@ -263,7 +263,7 @@ namespace ui
         return rebuilt;
     }
 
-    void spline_renderer_t::render()
+    void spline_renderer_t::render() const
     {
         ASSERT(shader, "cannot render splines without a shader");
 
@@ -282,7 +282,7 @@ namespace ui
     }
 
     ///TODO: factor out similarities between this and the above render func?
-    void spline_renderer_t::render_handles()
+    void spline_renderer_t::render_handles() const
     {
         ASSERT(shader, "");
 
@@ -297,7 +297,7 @@ namespace ui
         handles_geometry.render(GL_LINE_STRIP);
     }
 
-    void spline_renderer_t::render_some_spline_handles(std::vector<size_t> spline_indices)
+    void spline_renderer_t::render_some_spline_handles(std::vector<size_t> spline_indices) const
     {
         std::vector<GLint> first_vert_indices;
         std::vector<GLsizei> vert_counts;
