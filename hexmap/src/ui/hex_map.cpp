@@ -21,6 +21,8 @@ namespace hexmap
 {
 namespace ui
 {
+    using render_flags_e = hex_map_t::render_flags_e;
+
     const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     // const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
@@ -129,7 +131,7 @@ namespace ui
         camera.position = camera_controller.position;
     }
 
-    void hex_map_t::render()
+    void hex_map_t::render(render_flags_e render_flags)
     {
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
@@ -141,13 +143,16 @@ namespace ui
         GL_State->bind(shader);
         glUniform1i(shader->uniform("ApplyTexture"), apply_hexagon_textures);
 
-        map_data.hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
+        if((render_flags & render_flags_e::terrain) > 0)
         {
-            render_chunk(chunk);
-        });
+            map_data.hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
+            {
+                render_chunk(chunk);
+            });
+        }
 
         
-        if(are_hexagons_instanced)
+        if(are_hexagons_instanced && (render_flags & render_flags_e::grid_outline) > 0)
         {
             render_grid_overlay_instanced(map_data.hex_grid.size);
         }
@@ -176,7 +181,7 @@ namespace ui
 
 
 
-    void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk)
+    void hex_map_t::render_chunk(data::hex_grid_chunk_t const& chunk, render_flags_e render_flags)
     {
         GL_State->bind(hexagons_vao);
 
@@ -198,13 +203,15 @@ namespace ui
 
         glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
-        glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
-
-        render_hexagons(chunk.size, GL_TRIANGLE_FAN);
+        if((render_flags & render_flags_e::terrain) > 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
+            render_hexagons(chunk.size, GL_TRIANGLE_FAN);
+        }
 
         /// if not using instanced rendering, just tack the grid draw on here
         /// since all the matricies and such are set up anyways
-        if(!are_hexagons_instanced)
+        if(!are_hexagons_instanced && (render_flags & render_flags_e::grid_outline) > 0)
         {
             //TODO: refactor setting of state for grid render?
             glLineWidth(grid_overlay_thickness);
