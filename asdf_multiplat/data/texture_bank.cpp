@@ -24,9 +24,6 @@ namespace data
     , atlas_texture(_name + string(" atlas"), nullptr, atlas_dim, atlas_dim)
     {
         glBindTexture(GL_TEXTURE_2D, atlas_texture.texture_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-        glBindTexture(GL_TEXTURE_2D, 0);
 
         GL_State->init_render_target(atlas_fbo, atlas_texture);
 
