@@ -121,6 +121,27 @@ namespace asdf
         ASSERT(!CheckGLError(), "error sending data to buffer");
     }
 
+    void gl_state_t::init_render_target(framebuffer_t const& fbo, texture_t const& texture)
+    {
+        bind(fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER          // this is the only value allowed
+                             , GL_COLOR_ATTACHMENT0    // use GL_COLOR_ATTACHMENT0 to render color data (as opposed to depth or stencil)
+                             , GL_TEXTURE_2D           // currently texture_t always uses GL_TEXTURE_2D
+                             , texture.texture_id      // self-explanetory
+                             , 0);                     // always 0 for the 0th mipmap level
+
+        // only care about rendering into one draw buffer
+        GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
+        glDrawBuffers(1, &draw_buffers);
+        ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d", fbo.id, texture.texture_id);
+
+        glViewport(0, 0, texture.width, texture.height);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GL_State->unbind_fbo();
+    }
+
 
     bool gl_state_t::assert_sync()
     {

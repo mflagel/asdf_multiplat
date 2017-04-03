@@ -50,7 +50,6 @@ namespace asdf
     GL_OBJ(vao_t, glGenVertexArrays, glDeleteVertexArrays);
     GL_OBJ(framebuffer_t, glGenFramebuffers, glDeleteFramebuffers);
     GL_OBJ(render_buffer_t, glGenRenderbuffers, glDeleteRenderbuffers);
-
         
 
     struct gl_buffer_object_t : opengl_object_t

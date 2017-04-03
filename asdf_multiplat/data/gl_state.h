@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gl_resources.h"
+#include "texture.h"
 
 namespace asdf
 {
@@ -35,6 +36,7 @@ namespace asdf
         void unbind_shader();
 
         void buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data);
+        void init_render_target(framebuffer_t const&, texture_t const&);
 
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
