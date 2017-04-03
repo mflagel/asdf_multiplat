@@ -7,6 +7,7 @@
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
 
+#include "ui/minimap.h"
 
 namespace asdf {
 namespace hexmap {
@@ -82,6 +83,8 @@ namespace editor
 
         std::unique_ptr<input_handler_t> input;
         action_stack_t action_stack;
+
+        std::shared_ptr<ui::minimap_t> test_minimap;
 
         editor_t();
         void init() override;

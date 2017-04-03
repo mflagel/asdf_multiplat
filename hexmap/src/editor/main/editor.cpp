@@ -58,6 +58,8 @@ namespace editor
 
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
+
+        test_minimap = make_shared<ui::minimap_t>(*rendered_map);
     }
 
     void editor_t::render()
@@ -72,6 +74,9 @@ namespace editor
         }
 
         render_selection();
+
+        test_minimap->rebuild(); ///OPTIMIZE: only re-render if map data has changed
+        test_minimap->render();
 
         ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
