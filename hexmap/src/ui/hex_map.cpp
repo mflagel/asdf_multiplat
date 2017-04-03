@@ -145,9 +145,9 @@ namespace ui
 
         if((render_flags & render_flags_e::terrain) > 0)
         {
-            map_data.hex_grid.for_each_chunk( [this](data::hex_grid_chunk_t& chunk) -> void
+            map_data.hex_grid.for_each_chunk( [this, render_flags](data::hex_grid_chunk_t& chunk) -> void
             {
-                render_chunk(chunk);
+                render_chunk(chunk, render_flags);
             });
         }
 
@@ -157,9 +157,16 @@ namespace ui
             render_grid_overlay_instanced(map_data.hex_grid.size);
         }
         
-        render_map_objects();
-        spline_renderer.rebuild_if_dirty();
-        render_splines();
+        if((render_flags & render_flags_e::map_objects) > 0)
+        {
+            render_map_objects();
+        }
+
+        if((render_flags & render_flags_e::splines) > 0)
+        {
+            spline_renderer.rebuild_if_dirty();
+            render_splines();
+        }
 
 
         //TEST
