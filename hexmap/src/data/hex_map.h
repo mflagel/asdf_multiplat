@@ -12,6 +12,10 @@ namespace hexmap
 {
 namespace data
 {
+    using object_index_t = size_t;
+    using spline_index_t = size_t;
+    using spline_node_index_t = size_t;
+
     struct hex_map_t
     {
         std::string map_name = "";
@@ -25,8 +29,10 @@ namespace data
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
 
-        size_t object_index_at(glm::vec2 const& world_pos) const;
-        std::vector<size_t> object_indices_at(glm::vec2 const& world_pos) const;
+        object_index_t object_index_at(glm::vec2 const& world_pos) const;
+        spline_index_t spline_index_at(glm::vec2 const& world_pos) const;
+        std::vector<object_index_t> object_indices_at(glm::vec2 const& world_pos) const;
+        std::vector<spline_index_t> spline_indices_at(glm::vec2 const& world_pos) const;
     };
 
     struct hxm_header_t
