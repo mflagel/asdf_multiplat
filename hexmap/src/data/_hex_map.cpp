@@ -151,9 +151,9 @@ namespace data
         }
     }
 
-    std::vector<size_t> hex_map_t::object_indices_at(glm::vec2 const& world_pos) const
+    std::vector<object_index_t> hex_map_t::object_indices_at(glm::vec2 const& world_pos) const
     {
-        std::vector<size_t> object_inds;
+        std::vector<object_index_t> object_inds;
 
         //grab every object that intersects the position
         size_t obj_index = 0;
@@ -172,6 +172,23 @@ namespace data
         }
 
         return object_inds;
+    }
+
+    std::vector<spline_index_t> hex_map_t::spline_indices_at(glm::vec2 const& world_pos) const
+    {
+        EXPLODE("WIP");
+        std::vector<spline_index_t> spline_inds;
+
+        size_t spline_ind = 0;
+        for(auto const& spline : splines)
+        {
+            if(point_intersects_spline(world_pos, spline))
+                spline_inds.push_back(spline_ind);
+
+            ++spline_ind;
+        }
+
+        return spline_inds;
     }
 
 }
