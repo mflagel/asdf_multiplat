@@ -73,6 +73,69 @@ namespace data
     }
 
 
+    bool point_intersects_spline(glm::vec2 const& world_pos, spline_t const& spline, float dist_threshold)
+    {
+        if(spline.nodes.size() == 0)
+        {
+            return false;
+        }
+        else if(spline.nodes.size() == 1)
+        {
+            auto dist = glm::length(spline.nodes[0].position - world_pos);
+            return dist <= dist_threshold;
+        }
+        else
+        {
+            //get two closest point
+            spline_node_index_t closest = 0;
+            auto cv = spline.nodes[0].position - world_pos;
+            auto closest_dist_sq = (cv.x*cv.x)+(cv.y+cv.y);
+
+            for(size_t i = 0; i < spline.nodes.size(); ++i)
+            {
+                auto v = spline.nodes[i].position - world_pos;
+                auto dsq = (v.x*v.x)+(v.y+v.y);
+
+                if(dsq < closest_dist_sq)
+                {
+                    closest = i;
+                    closest_dist_sq = dsq;
+                }
+            }
+
+            auto n1 = spline.nodes[closest].position;
+            //TODO: get prev or next node, whichever is closest (and exists)
+
+
+
+            switch(spline.spline_type)
+            {
+                case spline_t::linear:
+                    //return circle_intersects_line(world_pos, dist_threshold, n1, n2);
+                case spline_t::bezier:
+                {
+                    //auto c1 = spline.control_nodes[2*inds[0]+0].position;
+                    //auto c2 = spline.control_nodes[2*inds[0]+1].position;
+                    //return circle_intersects_bezier(world_pos, dist_threshold
+                    //                                n1.position, c1, c2, n2.position);
+                }
+                default: EXPLODE("TODO: implement intersection with %s splines", spline_interpolation_names[spline.spline_type]);
+                    break;
+            }
+        }
+    }
+
+    bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1)
+    {
+        return false;
+    }
+
+    bool circle_intersects_bezier(glm::vec2 circle_pos, float radius, glm::vec2 p0, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+    {
+        EXPLODE("todo");
+        return false;
+    }
+
 
     void spline_selection_t::select_spline(spline_t& spline)
     {
