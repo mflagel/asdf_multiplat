@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "main/hexmap.h"
+#include "data/hex_map.h"
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
 
@@ -14,6 +15,8 @@ namespace asdf {
 namespace hexmap {
 namespace editor
 {
+    using spline_index_t = data::spline_index_t;
+    using spline_node_index_t = data::spline_node_index_t;
 
     enum hex_region_e
     {
@@ -53,9 +56,6 @@ namespace editor
 
         void recalc_bounds();
     };
-
-    using spline_index_t = size_t;
-    using spline_node_index_t = size_t;
 
     struct spline_node_selection_t : base_selection_t
     {
