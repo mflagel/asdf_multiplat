@@ -48,6 +48,12 @@ namespace data
         void load_from_file(SDL_RWops*);
     };
 
+    bool point_intersects_spline(glm::vec2 const& world_pos, spline_t const&, float dist_threshold = 0.1f);
+
+    bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1);
+    bool circle_intersects_bezier(glm::vec2 const& circle_pos, float radius
+                                , glm::vec2 const& p0, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec2 const& p3);
+
     constexpr std::array<const char*, spline_t::num_interp_types> spline_interpolation_names =
     {
           "linear"
