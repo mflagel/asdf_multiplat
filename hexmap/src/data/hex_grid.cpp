@@ -80,13 +80,13 @@ namespace data
     }
 
 
-    hex_grid_t::hex_grid_t(glm::uvec2 _size)
+    hex_grid_t::hex_grid_t(glm::uvec2 _size, hex_grid_cell_t const& default_cell_style)
     : size(_size)
     {
-        init(size);
+        init(size, default_cell_style);
     }
 
-    void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size)
+    void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size, hex_grid_cell_t const& default_cell_style)
     {
         auto dv_x = div(long(_size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
         auto dv_y = div(long(_size.y), chunk_size.y); //
@@ -104,18 +104,32 @@ namespace data
             //for each chunk, set position and handle odd edges
             for(size_t y = 0; y < num_chunks_y; ++y)
             {
-                //set position
-                chunks[x][y].position = ivec2(x,y);
+                auto& chunk = chunks[x][y];
 
-                //adjust the size of everything on the furthest column
+                //init cells
+                for(auto& column : chunk.cells)
+                    for(auto& cell : column)
+                        cell = default_cell_style;
+
+                //set position to be used when rendering (acts like an {x,y} offset)
+                chunk.position = ivec2(x,y);
+
+                // adjust the size of the furthest chunks in this **column** if necessary
+                // allows for map sizes that aren't multiples of chunk_size
                 if(dv_x.rem > 0 && x == num_chunks_x - 1)
-                    chunks[x][y].size.x = dv_x.rem;
+                    chunk.size.x = dv_x.rem;
             }
 
-            //adjust the size of the furthest cells of the row if necessary
+            // adjust the size of the furthest chunks in this **row** if necessary
+            // allows for map sizes that aren't multiples of chunk_size
             if(dv_y.rem > 0)
                 chunks[x][chunks[x].size() - 1].size.y = dv_y.rem;
         }
+    }
+
+    void hex_grid_t::init(glm::uvec2 size, hex_grid_cell_t const& default_cell_style)
+    {
+        init(size, glm::uvec2(new_chunk_width, new_chunk_height), default_cell_style);
     }
 
     /// Resize by allocating an entirely new hex-grid and copying the data over

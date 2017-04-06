@@ -51,9 +51,9 @@ namespace editor
         hexmap_t::init();
 
 #ifdef DEBUG
-        new_map_action(uvec2(16,16));
+        new_map_action("", uvec2(16,16));
 #else
-        new_map_action(uvec2(1,1));
+        new_map_action("", uvec2(1,1));
 #endif
 
         input = make_unique<input_handler_t>(*this);
@@ -123,9 +123,9 @@ namespace editor
         }
     }
 
-    void editor_t::new_map_action(glm::uvec2 const& size)
+    void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
-        map_data = data::hex_map_t(size);
+        map_data = data::hex_map_t(map_name, size, default_cell_style);
         action_stack.clear();
 
         //reset camera
