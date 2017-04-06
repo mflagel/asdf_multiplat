@@ -13,8 +13,6 @@ namespace hexmap
 namespace data
 {
     using object_index_t = size_t;
-    using spline_index_t = size_t;
-    using spline_node_index_t = size_t;
 
     struct hex_map_t
     {
