@@ -14,6 +14,9 @@ namespace asdf {
 namespace hexmap {
 namespace data
 {
+    using spline_index_t = size_t;
+    using spline_node_index_t = size_t;
+
     struct line_node_t
     {
         glm::vec2 position;
@@ -62,7 +65,6 @@ namespace data
         , 0 // hermite
         , 4 // bezier
     };
-
 
     struct spline_selection_t
     {

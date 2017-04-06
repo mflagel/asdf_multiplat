@@ -6,6 +6,8 @@
 
 #include "asdf_multiplat/data/content_manager.h"
 
+#include "data/spline.h"
+
 using namespace std;
 using namespace glm;
 
