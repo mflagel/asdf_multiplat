@@ -41,6 +41,7 @@ namespace data
         std::vector<line_node_t> nodes;
         std::vector<control_node_t> control_nodes;
         interpolation_e spline_type = linear;
+        bool loops = false;
 
         size_t size() const { return nodes.size(); }
 
