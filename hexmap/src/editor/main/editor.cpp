@@ -502,6 +502,7 @@ namespace editor
         }
     }
 
+    ///FIXME: use the new spline_t::loops property
     void editor_t::finish_spline(bool spline_loops)
     {
         ASSERT(wip_spline, "finishing a spline that hasnt even started");
@@ -538,7 +539,6 @@ namespace editor
 
         ASSERT(wip_spline->control_nodes.size() >= 0, "apparently control_nodes might have a negtaive length, which I thought was impossible");
 
-        /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
         action_stack.push(std::move(cmd));
 
