@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "spline.h"
 
+#include <glm/gtx/norm.hpp>
+
 #include "asdf_multiplat/data/gl_vertex_spec.h"
 
 namespace asdf {
@@ -86,15 +88,15 @@ namespace data
         }
         else
         {
-            //get two closest point
+            //get closest point to world_pos
             spline_node_index_t closest = 0;
             auto cv = spline.nodes[0].position - world_pos;
-            auto closest_dist_sq = (cv.x*cv.x)+(cv.y+cv.y);
+            auto closest_dist_sq = glm::length2(cv);
 
-            for(size_t i = 0; i < spline.nodes.size(); ++i)
+            for(size_t i = 1; i < spline.nodes.size(); ++i)
             {
                 auto v = spline.nodes[i].position - world_pos;
-                auto dsq = (v.x*v.x)+(v.y+v.y);
+                auto dsq = glm::length2(v);
 
                 if(dsq < closest_dist_sq)
                 {
@@ -103,16 +105,47 @@ namespace data
                 }
             }
 
-            auto n1 = spline.nodes[closest].position;
-            //TODO: get prev or next node, whichever is closest (and exists)
+            auto const& p0 = spline.nodes[closest].position;
 
+
+            // get prev or next node, whichever is closest to world_pos (and exists)
+            line_node_t const* prev = nullptr;
+            line_node_t const* next = nullptr;
+
+            if(spline.loops)
+            {
+                prev = (closest == 0) ? &(*spline.nodes.end())  : &(spline.nodes[closest-1]);
+                next = (closest+1 == spline.nodes.size()) ?  &(spline.nodes[0])     : &(spline.nodes[closest+1]);
+            }
+            else
+            {
+                prev = (closest==0)                       ? nullptr : &(spline.nodes[closest-1]);
+                next = (closest+1 == spline.nodes.size()) ? nullptr : &(spline.nodes[closest+1]);
+            }
+
+            ASSERT(next || prev, "somehow both next and prev are null");
+
+            //if prev is null, use next, else use prev
+            auto* second_closest = (prev != nullptr) ? prev : next;
+
+            //if both are not-null, grab the closest one
+            if(prev && next)
+            {
+                auto d_prev = glm::length2(prev->position - p0);
+                auto d_next = glm::length2(next->position - p0);
+
+                second_closest = (d_prev > d_next) ? next : prev;
+            }
+
+
+            auto p1 = second_closest->position;
 
 
             switch(spline.spline_type)
             {
                 case spline_t::linear:
-                    //return circle_intersects_line(world_pos, dist_threshold, n1, n2);
-                case spline_t::bezier:
+                    return circle_intersects_line(world_pos, dist_threshold, p0, p1);
+                // case spline_t::bezier:
                 {
                     //auto c1 = spline.control_nodes[2*inds[0]+0].position;
                     //auto c2 = spline.control_nodes[2*inds[0]+1].position;
@@ -120,13 +153,15 @@ namespace data
                     //                                n1.position, c1, c2, n2.position);
                 }
                 default: EXPLODE("TODO: implement intersection with %s splines", spline_interpolation_names[spline.spline_type]);
-                    break;
+                    return false;
             }
         }
     }
 
     bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1)
     {
+        
+
         return false;
     }
 
