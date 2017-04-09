@@ -131,8 +131,8 @@ namespace data
             //if both are not-null, grab the closest one
             if(prev && next)
             {
-                auto d_prev = glm::length2(prev->position - p0);
-                auto d_next = glm::length2(next->position - p0);
+                auto d_prev = glm::length2(prev->position - world_pos);
+                auto d_next = glm::length2(next->position - world_pos);
 
                 second_closest = (d_prev > d_next) ? next : prev;
             }
@@ -160,9 +160,29 @@ namespace data
 
     bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1)
     {
-        
+        using namespace glm;
 
-        return false;
+        auto a = circle_pos - p0;
+        auto b = p1-p0;
+        
+        float cos_theta = dot(a, b) / (length(a) * length(b));
+        float proj_length = length(a) * cos_theta;
+
+        //if beyond the line segment, check dist to p0 and p1
+        //otherwise corners won't be handled
+        auto t = proj_length / length(b); //I feel like there's proably a more optimal way to calculate this value
+        if(t < 0 || t > 1)
+        {
+            auto d0 = circle_pos - p0;
+            auto d1 = circle_pos - p1;
+            return (length(d0) <= radius) || (length(d1) <= radius);
+        }
+
+        vec2 proj_vect = proj_length * normalize(b);
+        vec2 dist_vect = a - proj_vect;
+        float dist = length(dist_vect);
+
+        return dist <= radius;
     }
 
     bool circle_intersects_bezier(glm::vec2 circle_pos, float radius, glm::vec2 p0, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
