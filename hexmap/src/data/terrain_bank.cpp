@@ -63,12 +63,13 @@ namespace data
         int height = atlas_texture.height / saved_texture_dim;
         ASSERT((width * height) == max_saved_textures, "");
 
-        float buffer[4 * width * height]; //4 floats per 
+        std::vector<float> buffer(4 * width * height);
+        //float buffer[4 * width * height]; //4 floats per 
         glReadPixels(0,0
                    , width, height
                    , GL_RGBA
                    , GL_FLOAT
-                   , buffer);
+                   , buffer.data());
 
         ASSERT(!CheckGLError(), "GL Error reading pixels from color fbo");
     }
