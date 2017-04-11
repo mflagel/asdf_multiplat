@@ -264,6 +264,44 @@ namespace data
         return hx.x >= 0 && hx.y >= 0 && hx.x < size.x && hx.y < size.y;
     }
 
+    bbox_units_t hex_grid_t::bounding_box_units() const
+    {
+        if(chunks.empty())
+            return bbox_units_t{vec2(0), vec2(0)};
+
+        bbox_units_t bb;
+        bb.lower = chunks[0][0].position * ivec2(chunk_size());
+        bb.upper = chunks.back().back().position * ivec2(chunk_size());
+
+        return bb;
+    }
+
+    glm::vec2 hex_grid_t::size_units() const
+    {
+        glm::vec2 size(0);
+
+        auto bbox = bounding_box_units();
+
+        /// FIXME support vertical hexes
+        size.x = bbox.upper.x - bbox.lower.x;
+        size.x -= size.x * hex_width_d4;  //account for horizontal overlap
+        size.y = (bbox.upper.y - bbox.lower.y) * hex_height;
+
+        return size;
+    }
+
+    glm::uvec2 hex_grid_t::size_chunks() const
+    {
+        if(chunks.empty())
+            return glm::uvec2(0);
+
+        glm::uvec2 size;
+        size.x = chunks.size();
+        size.y = chunks[0].size();
+
+        return size;
+    }
+
     glm::uvec2 hex_grid_t::chunk_size() const
     {
         if(chunks.empty())
