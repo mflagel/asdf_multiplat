@@ -36,10 +36,25 @@ namespace ui
         auto prev_fbo = GL_State->current_framebuffer;
         GL_State->bind(fbo);
 
+        glClearColor(0,0,0,0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // use glBlendFuncSeparate to allow the minimap FBO to have a transparent background
+        // instead of black
+        glEnable(GL_BLEND);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        //set camera such that the entire map will fit within the fbo when rendered
+        auto& camera = rendered_map.camera;
+        auto prev_pos = camera.position;
+
+
+        //render just the terrain (and grid outline for now)
         using flags_e = hex_map_t::render_flags_e;
-        uint32_t flags = flags_e::terrain;
+        uint32_t flags = flags_e::terrain | flags_e::grid_outline;
         rendered_map.render(flags_e(flags));
 
+        //bind prev fbo
         glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
         GL_State->current_framebuffer = prev_fbo;
     }
@@ -52,14 +67,21 @@ namespace ui
 
         GL_State->bind(shader);
 
-        shader->world_matrix = mat4();
+        float minimap_scale_px = 500.0f;
+
+        shader->world_matrix = scale(translate(mat4(), vec3(0, 0, 0)), vec3(minimap_scale_px));
         shader->view_matrix = mat4();
 
         float halfwidth = app.settings.resolution_width / 2.0f;
         float halfheight = app.settings.resolution_height / 2.0f;
+        // float const& halfwidth = texture.halfwidth;
+        // float const& halfheight = texture.halfheight;
+
+        //project such that each unit is one pixel
         shader->projection_matrix = ortho<float>(-halfwidth, halfwidth,
                             -halfheight, halfheight,
                             -1000, 1000);
+
         shader->update_wvp_uniform();
 
         glBindTexture(GL_TEXTURE_2D, texture.texture_id);
