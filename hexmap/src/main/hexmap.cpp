@@ -35,12 +35,6 @@ namespace hexmap
 
         rendered_map = make_unique<ui::hex_map_t>(map_data);
 
-        auto w = static_cast<float>(app.settings.resolution_width);
-        auto h = static_cast<float>(app.settings.resolution_height);  ///FIXME subtract size of window title bar if necessary
-
-        rendered_map->camera.viewport.size_d2 = vec2(w,h) / 2.0f;
-        rendered_map->camera.viewport.bottom_left = -1.0f * rendered_map->camera.viewport.size_d2;
-
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
     }
 

@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "asdf_multiplat/main/asdf_multiplat.h"
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
 
@@ -39,6 +40,11 @@ namespace ui
     : map_data(_map_data)
     , terrain_bank(std::string("hexmap terrain"))
     {
+        //FIXME: change how this is set? Seems janky to just pull it from app.settings
+        float w = static_cast<float>(app.settings.resolution_width);
+        float h = static_cast<float>(app.settings.resolution_height);
+        camera.aspect_ratio = w / h;
+
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
         shader = Content.create_shader_highest_supported("hexmap");
@@ -128,6 +134,7 @@ namespace ui
     void hex_map_t::update(float dt)
     {
         camera_controller.update(dt);
+        camera_controller.position.z = glm::clamp(camera_controller.position.z, 1.0f / 16.0f, 16.0f);
         camera.position = camera_controller.position;
     }
 
@@ -135,6 +142,20 @@ namespace ui
     {
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
+
+        vec2 sz_d2 = map_data.hex_grid.size_units() / 2.0f;
+
+        if(sz_d2.x >= sz_d2.y) //if x is bigger, set y
+        {
+            sz_d2.y = sz_d2.x / camera.aspect_ratio;
+        }
+        else //if y is bigger, set x
+        {
+            sz_d2.x = sz_d2.y * camera.aspect_ratio;
+        }
+        camera.viewport = {-sz_d2, sz_d2};
+
+        auto z = zoom_for_size(camera.viewport, map_data.hex_grid.size_units());
 
         shader->world_matrix = glm::mat4();
         shader->view_matrix       = camera.view_matrix();
