@@ -278,10 +278,9 @@ namespace data
 
     glm::vec2 hex_grid_t::size_units() const
     {
-        glm::vec2 size(0);
-
         auto bbox = bounding_box_units();
 
+        glm::vec2 size(0);
         /// FIXME support vertical hexes
         size.x = bbox.upper.x - bbox.lower.x;
         size.x -= size.x * hex_width_d4;  //account for horizontal overlap
