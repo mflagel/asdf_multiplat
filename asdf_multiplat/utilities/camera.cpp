@@ -26,7 +26,7 @@ namespace asdf
 
     void camera_t::zoom_to_size(glm::vec2 const& _size)
     {
-        position.z = glm::sqrt(zoom_for_size(viewport, _size));
+        position.z = zoom_for_size(viewport, _size);
     }
 
     vec3 camera_t::screen_to_world_coord(vec2 const& screen_coord) const
@@ -41,5 +41,21 @@ namespace asdf
     {
         auto zooms = (size / 2.0f) / viewport.size_d2;
         return glm::max(zooms.x, zooms.y);
+    }
+
+    viewport_t viewport_for_size_aspect(glm::vec2 const& size, float aspect_ratio)
+    {
+        vec2 sz_d2 = size / 2.0f;
+
+        if(sz_d2.x >= sz_d2.y) //if x is bigger, set y
+        {
+            sz_d2.y = sz_d2.x / aspect_ratio;
+        }
+        else //if y is bigger, set x
+        {
+            sz_d2.x = sz_d2.y * aspect_ratio;
+        }
+
+        return viewport_t{-sz_d2, sz_d2};
     }
 }

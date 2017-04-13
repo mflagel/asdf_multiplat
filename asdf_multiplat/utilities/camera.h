@@ -11,6 +11,7 @@ namespace asdf
     };
 
     float zoom_for_size(viewport_t const& viewport, glm::vec2 const& size);
+    viewport_t viewport_for_size_aspect(glm::vec2 const&, float aspect_ratio);
 
     struct camera_t
     {
