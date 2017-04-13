@@ -269,9 +269,26 @@ namespace data
         if(chunks.empty())
             return bbox_units_t{vec2(0), vec2(0)};
 
+        //start with the bounds of cell positions
         bbox_units_t bb;
         bb.lower = chunks[0][0].position * ivec2(chunk_size());
         bb.upper = chunks.back().back().position * ivec2(chunk_size());
+
+        //scale vertically since hexes aren't one unit tall
+        bb.lower.y *= hex_height;
+        bb.upper.y *= hex_height;
+
+        //padding to account for column height offset and overlap (if applicable)
+        if(chunks.size() > 1) ///FIXME handle vertical hexes
+        {
+            glm::vec2 size = bb.upper - bb.lower;
+            bb.upper.x -= size.x * hex_width_d4;  //horizontal overlap
+            bb.lower.y -= hex_height_d2; //vertical offset
+        }
+
+        //add padding to account for the fact that cell positions are at their centers
+        bb.lower -= vec2(hex_width_d2, hex_height_d2);
+        bb.upper += vec2(hex_width_d2, hex_height_d2);
 
         return bb;
     }
@@ -279,14 +296,7 @@ namespace data
     glm::vec2 hex_grid_t::size_units() const
     {
         auto bbox = bounding_box_units();
-
-        glm::vec2 size(0);
-        /// FIXME support vertical hexes
-        size.x = bbox.upper.x - bbox.lower.x;
-        size.x -= size.x * hex_width_d4;  //account for horizontal overlap
-        size.y = (bbox.upper.y - bbox.lower.y) * hex_height;
-
-        return size;
+        return vec2(bbox.upper - bbox.lower);
     }
 
     glm::uvec2 hex_grid_t::size_chunks() const
