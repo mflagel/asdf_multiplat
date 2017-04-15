@@ -290,8 +290,9 @@ namespace asdf {
 
 
     asdf_renderer_t::asdf_renderer_t()
-    : render_target("asdf main render target", nullptr, app.settings.resolution_width, app.settings.resolution_height)
+    : render_target(app.settings.resolution_width, app.settings.resolution_height)
     {   
+        render_target.texture.name = "asdf main render target texture";
     }
 
     /// Putting this in an init func, since it relies on app.renderer being fully constructed for the 
@@ -300,7 +301,8 @@ namespace asdf {
     {
         ASSERT(!CheckGLError(), "Error before asdf_renderer_t::init()");
 
-        gl_state.init_render_target(framebuffer, render_target);
+        render_target.init();
+        GL_State->bind(render_target); //push this on as the base of the fbo stack. It'll sit there
 
         auto shader_path = find_folder("shaders");
         screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");
@@ -346,10 +348,8 @@ namespace asdf {
     void asdf_renderer_t::pre_render()
     {
         // Render to to frameBuffer
-        GL_State->bind(framebuffer);
+        
         //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
-
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
 
 
         glClearColor(gl_clear_color.r
@@ -367,7 +367,10 @@ namespace asdf {
 
     void asdf_renderer_t::post_render()
     {
-        GL_State->unbind_fbo();
+        ASSERT(GL_State->current_framebuffer() == render_target.fbo.id, "There shouldn't be any leftover FBOs in the stack");
+        
+        scoped_fbo_t scoped(0,  0,0, app.settings.resolution_width, app.settings.resolution_height);
+
         GL_State->bind(screen_shader);
         glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -378,7 +381,7 @@ namespace asdf {
         screen_shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
         screen_shader->update_wvp_uniform();
 
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+        
 
         glClearColor(0.0f
                    , 0.0f
@@ -388,7 +391,7 @@ namespace asdf {
 
 
         //glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, render_target.texture_id);
+        glBindTexture(GL_TEXTURE_2D, render_target.texture.texture_id);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //glDisable(GL_CULL_FACE);
 

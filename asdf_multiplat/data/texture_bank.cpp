@@ -46,8 +46,6 @@ namespace data
 
     void texture_bank_t::add_texture(std::string const& filepath)
     {
-        auto prev_fbo = GL_State->current_framebuffer;
-
         ASSERT(is_file(filepath), "File not found %s", filepath.c_str());
         texture_t new_texture(filepath, SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
 
@@ -60,9 +58,7 @@ namespace data
         dest_loc_x += saved_texture_dim_d2;
         //dest_loc_y += saved_texture_dim_d2;
 
-
-        GL_State->bind(atlas_fbo);
-        glViewport(0,0,atlas_texture.width, atlas_texture.height);
+        scoped_fbo_t scoped(atlas_fbo, 0,0,atlas_texture.width, atlas_texture.height);
 
         ASSERT(!CheckGLError(), "");
         auto& screen_shader = app.renderer->screen_shader;
@@ -80,10 +76,6 @@ namespace data
         glBindTexture(GL_TEXTURE_2D, new_texture.texture_id);
 
         app.renderer->quad.render();
-        
-        //re-bind prev fbo
-        glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
-        GL_State->current_framebuffer = prev_fbo;
 
 
         saved_textures.push_back(saved_texture_t{filepath});

@@ -75,9 +75,28 @@ namespace asdf
 
     void gl_state_t::bind(framebuffer_t const& fbo)
     {
+        ASSERT(!fbo_stack.empty(), "");
+
+        //overwrite top of stack's FBO id (re-use existing viewport)
+        auto& f_v = fbo_stack.top();
+        f_v.first = fbo.id;
         glBindFramebuffer(GL_FRAMEBUFFER, fbo.id);
-        current_framebuffer = fbo.id;
     }
+
+    void gl_state_t::bind(render_target_t const& render_target)
+    {
+        if(fbo_stack.empty())
+        {
+            push_fbo(render_target.fbo.id, 0, 0, render_target.texture.width, render_target.texture.height);
+        }
+        else
+        {
+            auto& f_v = fbo_stack.top();
+            f_v.first = render_target.fbo.id;
+            f_v.second = gl_viewport_t{glm::ivec2(0, 0), glm::uvec2(render_target.texture.width, render_target.texture.height)};
+        }
+    }
+
 
     void gl_state_t::bind(gl_buffer_object_t const& buffer)
     {
@@ -102,8 +121,16 @@ namespace asdf
 
     void gl_state_t::unbind_fbo()
     {
+        while(!fbo_stack.empty())
+            fbo_stack.pop();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        current_framebuffer = 0;
+        // current_framebuffer = 0;
+    }
+
+    void gl_state_t::unbind_render_target()
+    {
+        unbind_fbo();
+        pop_fbo();
     }
 
     void gl_state_t::unbind_shader()
@@ -112,6 +139,45 @@ namespace asdf
         current_shader = 0;
     }
 
+
+    void gl_state_t::push_fbo(GLuint fbo_id, gl_viewport_t const& v)
+    {
+        fbo_stack.push(std::make_pair(std::ref(fbo_id), v));
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
+        glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+    }
+
+    void gl_state_t::push_fbo(framebuffer_t const& fbo, gl_viewport_t const& v)
+    {
+        push_fbo(fbo.id, v);
+    }
+
+    void gl_state_t::push_fbo(GLuint fbo_id, GLint x, GLint y, GLsizei width, GLsizei height)
+    {
+        push_fbo(fbo_id, gl_viewport_t{glm::ivec2{x,y}, glm::uvec2{width,height}});
+    }
+
+    void gl_state_t::push_fbo(framebuffer_t const& fbo, GLint x, GLint y, GLsizei width, GLsizei height)
+    {
+        push_fbo(fbo.id, x, y, width, height);
+    }
+
+    void gl_state_t::pop_fbo()
+    {
+        ASSERT(!fbo_stack.empty(), "");
+        fbo_stack.pop();
+
+        if(!fbo_stack.empty())
+        {
+            auto const& v = fbo_stack.top().second;
+            glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo_stack.top().first);
+        }
+        else
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+    }
 
     void gl_state_t::buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data)
     {
@@ -123,8 +189,8 @@ namespace asdf
 
     void gl_state_t::init_render_target(framebuffer_t const& fbo, texture_t const& texture)
     {
-        auto prev_fbo = current_framebuffer;
-        bind(fbo);
+        scoped_fbo_t scoped(fbo, 0, 0, texture.width, texture.height);
+
         glFramebufferTexture2D(GL_FRAMEBUFFER          // this is the only value allowed
                              , GL_COLOR_ATTACHMENT0    // use GL_COLOR_ATTACHMENT0 to render color data (as opposed to depth or stencil)
                              , GL_TEXTURE_2D           // currently texture_t always uses GL_TEXTURE_2D
@@ -138,15 +204,11 @@ namespace asdf
         auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d. FBO Status: 0x%0x", fbo.id, texture.texture_id, gl_fbo_status);
 
-        glViewport(0, 0, texture.width, texture.height);
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-        glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
-        current_framebuffer = prev_fbo;
     }
+
+
 
 
     bool gl_state_t::assert_sync()

@@ -39,8 +39,7 @@ namespace ui
         ui::hex_map_t& rendered_map;
         data::hex_map_t const& map_data;
 
-        texture_t texture;
-        framebuffer_t fbo;
+        render_target_t render_target;
 
         // rendered_multi_polygon_<minimap_vertex_t> minimap_geometry;
 

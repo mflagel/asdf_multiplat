@@ -24,17 +24,17 @@ namespace ui
     minimap_t::minimap_t(ui::hex_map_t& _rendered_map)
     : rendered_map(_rendered_map)
     , map_data(_rendered_map.map_data)
-    , texture("minimap", nullptr, 1024, 1024)
+    , render_target(1024, 1024)
     {
-        GL_State->init_render_target(fbo, texture);
+        render_target.texture.name = "minimap";
+        render_target.init();
     }
 
 
 
     void minimap_t::rebuild()
     {
-        auto prev_fbo = GL_State->current_framebuffer;
-        GL_State->bind(fbo);
+        scoped_render_target_t scoped(this->render_target);  //MSVC is making me put a this->  why?
 
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -84,7 +84,7 @@ namespace ui
 
         shader->update_wvp_uniform();
 
-        glBindTexture(GL_TEXTURE_2D, texture.texture_id);
+        glBindTexture(GL_TEXTURE_2D, render_target.texture.texture_id);
         quad.render();
 
         //TODO: render box-outline representing current viewport

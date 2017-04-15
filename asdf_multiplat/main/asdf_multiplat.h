@@ -34,9 +34,8 @@ namespace asdf {
     {
         gl_state_t gl_state;
 
-        framebuffer_t   framebuffer;
-        texture_t       render_target;
-        render_buffer_t render_depth_buffer;
+        render_target_t render_target;
+        //render_buffer_t render_depth_buffer;
 
         std::shared_ptr<shader_t> screen_shader;
 
