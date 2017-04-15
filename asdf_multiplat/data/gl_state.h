@@ -95,7 +95,7 @@ namespace asdf
     struct scoped_render_target_t : scoped_fbo_t
     {
         scoped_render_target_t(render_target_t const& r)
-        : scoped_fbo_t(r.fbo.id, 0, 0, r.texture.halfwidth, r.texture.halfheight)
+        : scoped_fbo_t(r.fbo.id, 0, 0, r.texture.width, r.texture.height)
         {
         }
 
