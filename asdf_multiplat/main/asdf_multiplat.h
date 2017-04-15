@@ -103,6 +103,8 @@ namespace asdf {
 
         void save_screenshot(std::string file_path) const;
         float average_frame_time() const;
+
+        gl_viewport_t screen_viewport() const;
     };
 
     extern asdf_multiplat_t app;

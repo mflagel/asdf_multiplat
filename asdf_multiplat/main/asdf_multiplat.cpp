@@ -284,7 +284,20 @@ namespace asdf {
         }
     }
 
+    gl_viewport_t asdf_multiplat_t::screen_viewport() const
+    {
+        gl_viewport_t v;
+        v.bottom_left = -ivec2(settings.resolution_width, settings.resolution_height) / 2;
+        v.size = uvec2(settings.resolution_width, settings.resolution_height);
 
+        return v;
+    }
+
+
+
+    ///
+    /// Asdf Renderer
+    ///
 
     gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
 
