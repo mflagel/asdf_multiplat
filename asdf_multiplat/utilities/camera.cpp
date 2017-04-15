@@ -3,7 +3,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "data/gl_state.h"
+#include "main/asdf_multiplat.h"
 
 using namespace glm;
 
@@ -33,14 +33,8 @@ namespace asdf
 
     vec3 camera_t::screen_to_world_coord(vec2 const& screen_coord) const
     {
-        auto glvp = GL_State->current_viewport();
-        vec4 vp;
-        //vp.xy = viewport.bottom_left;
-        //vp.zw = viewport.size_d2 * 2.0f;*/
-
-        vp.zw = vec2{glvp.size};
-        vp.xy = vec2{glvp.bottom_left} - (vec2{glvp.size} / 2.0f);  //screen coords adjusted to have0 in the center, so adjust the viewport
-
+        auto _vp = app.screen_viewport();
+        glm::vec4 vp(_vp.bottom_left.x, _vp.bottom_left.y, _vp.size.x, _vp.size.y);
         return unProject(vec3(screen_coord, 0.0f), view_matrix(), projection_ortho(), vp).xyz;
     }
 
