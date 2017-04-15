@@ -273,6 +273,8 @@ namespace data
         bbox_units_t bb;
         bb.lower = chunks[0][0].position * ivec2(chunk_size());
         bb.upper = chunks.back().back().position * ivec2(chunk_size());
+        bb.upper.x += chunks.back().front().size.x;
+        bb.upper.y += chunks.back().back().size.y;
 
         //scale vertically since hexes aren't one unit tall
         bb.lower.y *= hex_height;
