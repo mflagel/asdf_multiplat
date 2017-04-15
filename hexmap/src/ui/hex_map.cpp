@@ -136,26 +136,14 @@ namespace ui
         camera_controller.update(dt);
         camera_controller.position.z = glm::clamp(camera_controller.position.z, 1.0f / 16.0f, 16.0f);
         camera.position = camera_controller.position;
+
+        camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), camera.aspect_ratio);
     }
 
     void hex_map_t::render(render_flags_e render_flags)
     {
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
-
-        vec2 sz_d2 = map_data.hex_grid.size_units() / 2.0f;
-
-        if(sz_d2.x >= sz_d2.y) //if x is bigger, set y
-        {
-            sz_d2.y = sz_d2.x / camera.aspect_ratio;
-        }
-        else //if y is bigger, set x
-        {
-            sz_d2.x = sz_d2.y * camera.aspect_ratio;
-        }
-        camera.viewport = {-sz_d2, sz_d2};
-
-        auto z = zoom_for_size(camera.viewport, map_data.hex_grid.size_units());
 
         shader->world_matrix = glm::mat4();
         shader->view_matrix       = camera.view_matrix();
