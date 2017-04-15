@@ -5,6 +5,26 @@
 namespace asdf
 {
     using namespace util;
+
+
+    render_target_t::render_target_t(int width, int height)
+    : fbo{}
+    , texture{"render_target_t texture", nullptr, width, height}
+    {
+        ASSERT(!CheckGLError(), "GL Error Creating Render Target");
+    }
+
+    void render_target_t::init()
+    {
+        ASSERT(!CheckGLError(), "GL Error **Before** Initializing Render Target");
+
+        GL_State->init_render_target(fbo, texture);
+
+        ASSERT(!CheckGLError(), "GL Error Initializing Render Target");
+    }
+
+
+
     /// I'm not entirely sure why these functions return true if there's an error, but whatever
 
     bool CheckShader(GLuint shader)

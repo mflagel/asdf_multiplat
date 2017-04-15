@@ -9,6 +9,7 @@
 #include "gl_enums.h"
 #include "gl_vertex_spec.h"
 #include "shader.h"
+#include "texture.h"
 
 namespace asdf
 {
@@ -50,6 +51,15 @@ namespace asdf
     GL_OBJ(vao_t, glGenVertexArrays, glDeleteVertexArrays);
     GL_OBJ(framebuffer_t, glGenFramebuffers, glDeleteFramebuffers);
     GL_OBJ(render_buffer_t, glGenRenderbuffers, glDeleteRenderbuffers);
+
+    struct render_target_t
+    {
+        framebuffer_t fbo;
+        texture_t texture;
+
+        render_target_t(int width, int height);
+        void init();
+    };
         
 
     struct gl_buffer_object_t : opengl_object_t
@@ -96,7 +106,11 @@ namespace asdf
     };
 
 
-
+    struct gl_viewport_t
+    {
+        glm::ivec2 bottom_left;
+        glm::uvec2 size;
+    };
 
 
     bool CheckShader(GLuint shader);
