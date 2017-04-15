@@ -188,13 +188,7 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     ///    "viewable_rect"  the rectangle of viewable area in world units
 
     hexmap_widget_t* hxm_wgt = ui->hexmap_widget;
-
-    ///MAP SIZE
-    auto const& map_size_cells = hxm_wgt->map_size(); //array size
-    vec2 hex_size(asdf::hexmap::hex_width, asdf::hexmap::hex_height);
-    vec2 map_size_units = vec2(map_size_cells) * hex_size; //total map width in units. Width is not equal to array width because hexagons overlap, and hexagons aren't one unit tall
-    map_size_units.x -= (map_size_units.x - 1) * asdf::hexmap::hex_width_d4; //handle horizontal overlap
-    map_size_units.y += asdf::hexmap::hex_height_d2; //add room for the offset
+    vec2 map_size_units = hxm_wgt->map_size_units();
 
     ///VIEWABLE RECT
     ///convert the screen coords of the lower-bound and upper-bound of the hexmap rect into world coords

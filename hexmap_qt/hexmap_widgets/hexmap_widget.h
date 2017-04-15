@@ -16,7 +16,8 @@ class hexmap_widget_t : public QOpenGLWidget
 public:
     hexmap_widget_t(QWidget* parent);
 
-    glm::uvec2 map_size() const;
+    glm::uvec2 map_size_cells() const;
+    glm::vec2  map_size_units() const;
 
     glm::vec2 camera_pos() const;
     void camera_pos(glm::vec2 const&, bool emit_signal = true);
