@@ -44,19 +44,29 @@ namespace ui
         glEnable(GL_BLEND);
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-        //set camera such that the entire map will fit within the fbo when rendered
+        //snapshot the camera
         auto& camera = rendered_map.camera;
-        auto prev_pos = camera.position;
+        auto prev_camera = camera;
 
+        //set camera such that the entire map will fit within the fbo when rendered
+        auto grid_size = map_data.hex_grid.size_units();
+        auto grid_size_d2 = grid_size / 2.0f;
+        auto grid_bbox = map_data.hex_grid.bounding_box_units();
+
+        camera.position = vec3(grid_bbox.lower + grid_size_d2, camera.position.z);
+        camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), 1.0f);
+        //camera.zoom_to_size(grid_size);
+
+        //TEST
+        //camera.position.y -= 5.0f;
+        //
 
         //render just the terrain (and grid outline for now)
         using flags_e = hex_map_t::render_flags_e;
         uint32_t flags = flags_e::terrain | flags_e::grid_outline;
         rendered_map.render(flags_e(flags));
 
-        //bind prev fbo
-        glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
-        GL_State->current_framebuffer = prev_fbo;
+        camera = prev_camera;
     }
 
     void minimap_t::render()
