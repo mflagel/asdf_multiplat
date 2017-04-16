@@ -17,7 +17,7 @@ namespace hexmap {
 namespace editor
 {
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
-    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 1.0f); // zoom is camera.position.z ^ 2
+    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     const/*expr*/ data::line_node_t default_spline_style = {
           vec2{0.0f,0.0f}                   //pos
