@@ -350,6 +350,12 @@ namespace editor
     bool editor_t::paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick)
     {
         auto vec = p2_world - p1_world;
+
+        if(vec.x == 0.0f && vec.y == 0.0f)
+        {
+            return false;
+        }
+
         auto len = glm::length(vec);
         auto unit = glm::normalize(vec);
 
