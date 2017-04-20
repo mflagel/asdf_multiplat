@@ -40,9 +40,8 @@ namespace ui
     : map_data(_map_data)
     , terrain_bank(std::string("hexmap terrain"))
     {
-        //FIXME: change how this is set? Seems janky to just pull it from app.settings
-        float w = static_cast<float>(app.settings.resolution_width);
-        float h = static_cast<float>(app.settings.resolution_height);
+        float w = static_cast<float>(app.render_target_size().x);
+        float h = static_cast<float>(app.render_target_size().y);
         camera.aspect_ratio = w / h;
 
         are_hexagons_instanced = GLEW_VERSION_3_3;

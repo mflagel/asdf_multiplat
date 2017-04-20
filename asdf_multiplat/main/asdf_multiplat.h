@@ -56,6 +56,8 @@ namespace asdf {
 
         void pre_render();
         void post_render();
+
+        glm::uvec2 render_target_size() const { return glm::uvec2(render_target.texture.width, render_target.texture.height); }
     };
 
     struct asdf_multiplat_t 
@@ -65,6 +67,8 @@ namespace asdf {
         SDL_Window*     main_window{nullptr};
         SDL_GLContext   gl_context;
         SDL_Surface*    main_surface{nullptr};
+        uint32_t surface_width  = 0;
+        uint32_t surface_height = 0;
 
         std::unique_ptr<asdf_renderer_t> renderer;
 
@@ -83,7 +87,6 @@ namespace asdf {
 
         settings_t settings;
         std::shared_ptr<spritebatch_t> spritebatch{nullptr};
-        //std::shared_ptr<ui_view_t>  main_view{nullptr};
 
         mouse_input_t mouse_state;
 
@@ -105,6 +108,7 @@ namespace asdf {
         float average_frame_time() const;
 
         gl_viewport_t screen_viewport() const;
+        glm::uvec2 render_target_size() const { return renderer->render_target_size(); }
     };
 
     extern asdf_multiplat_t app;

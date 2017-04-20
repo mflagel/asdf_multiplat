@@ -28,9 +28,6 @@ namespace asdf {
         signal(SIGINT,util::interrupt_handler);
     }
 
-    // asdf_specific_t::~asdf_specific_t()
-    // {}
-
     void asdf_multiplat_t::init(std::string _exec_dir) {
         LOG("--- Initializing This Crazy Contraption ---");
 
@@ -52,8 +49,6 @@ namespace asdf {
         Content.init();
         spritebatch = make_shared<spritebatch_t>();
         spritebatch->spritebatch_shader = Content.shaders["spritebatch"];
-
-        //main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
     }
 
     asdf_multiplat_t::~asdf_multiplat_t()
@@ -178,14 +173,14 @@ namespace asdf {
                 break;
 
             case SDL_MOUSEMOTION:
-                event->motion.x -= settings.resolution_width  / 2;
-                event->motion.y = settings.resolution_height / 2 - event->motion.y;
+                event->motion.x -= surface_width  / 2;
+                event->motion.y = surface_height / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                event->button.x -= settings.resolution_width / 2;
-                event->motion.y = settings.resolution_height / 2 - event->motion.y;
+                event->button.x -= surface_width / 2;
+                event->motion.y = surface_height / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEWHEEL:
@@ -238,6 +233,9 @@ namespace asdf {
         checkSDLError(__LINE__);
         ASSERT(main_window != 0, "Unable to create window");
 
+        surface_width = settings.resolution_width;
+        surface_height = settings.resolution_height;
+
         //create OpenGL context
         gl_context = SDL_GL_CreateContext(main_window);
         checkSDLError(__LINE__);
@@ -249,7 +247,7 @@ namespace asdf {
 
         SDL_GL_SetSwapInterval(1);
         LOG("SDL Initialized");
-        LOG("Window Size: %d x %d", settings.resolution_width, settings.resolution_height);
+        LOG("Window Size: %d x %d", surface_width, surface_height);
     }
 
 
@@ -268,14 +266,14 @@ namespace asdf {
         (
             file_path.c_str(),
             SOIL_SAVE_TYPE_BMP,
-            0, 0, settings.resolution_width, settings.resolution_height
+            0, 0, surface_width, surface_height
         );
 
         //soil returns 0 for failure apparently
         if(save_result == 0)
         {
             LOG("ERROR: SOIL failed saving screenshot {%zu,%zu} \"%s\""
-                , settings.resolution_width, settings.resolution_height, file_path.c_str());
+                , surface_width, surface_height, file_path.c_str());
             LOG(" SOIL: %s", SOIL_last_result());
         }
         else
@@ -287,8 +285,8 @@ namespace asdf {
     gl_viewport_t asdf_multiplat_t::screen_viewport() const
     {
         gl_viewport_t v;
-        v.bottom_left = -ivec2(settings.resolution_width, settings.resolution_height) / 2;
-        v.size = uvec2(settings.resolution_width, settings.resolution_height);
+        v.bottom_left = -ivec2(surface_width, surface_height) / 2;
+        v.size = uvec2(surface_width, surface_height);
 
         return v;
     }
@@ -303,7 +301,7 @@ namespace asdf {
 
 
     asdf_renderer_t::asdf_renderer_t()
-    : render_target(app.settings.resolution_width, app.settings.resolution_height)
+    : render_target(app.settings.resolution_width, app.settings.resolution_height) //use settings resolution, which can differ from surface size
     {   
         render_target.texture.name = "asdf main render target texture";
     }
@@ -382,7 +380,7 @@ namespace asdf {
     {
         ASSERT(GL_State->current_framebuffer() == render_target.fbo.id, "There shouldn't be any leftover FBOs in the stack");
         
-        scoped_fbo_t scoped(0,  0,0, app.settings.resolution_width, app.settings.resolution_height);
+        scoped_fbo_t scoped(0,  0,0, app.surface_width, app.surface_height);
 
         GL_State->bind(screen_shader);
         glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);

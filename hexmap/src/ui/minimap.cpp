@@ -77,8 +77,8 @@ namespace ui
         shader->world_matrix = scale(translate(mat4(), vec3(0, 0, 0)), vec3(minimap_scale_px));
         shader->view_matrix = mat4();
 
-        float halfwidth = app.settings.resolution_width / 2.0f;
-        float halfheight = app.settings.resolution_height / 2.0f;
+        float halfwidth = app.surface_width / 2.0f;
+        float halfheight = app.surface_height / 2.0f;
         // float const& halfwidth = texture.halfwidth;
         // float const& halfheight = texture.halfheight;
 
