@@ -30,8 +30,8 @@ namespace asdf {
     /* Initializes a batch with an optional view and/or proj matrix
     /************************************************************************/
     void spritebatch_t::begin(glm::mat4 const& view_matrix/*mat4()*/) {
-        float halfwidth = app.surface_width / 2.0f;
-        float halfheight = app.surface_height / 2.0f;
+        float halfwidth = app.render_target_size().x / 2.0f;
+        float halfheight = app.render_target_size().y / 2.0f;
 
         mat4 proj = ortho<float>(-halfwidth, halfwidth,
                             -halfheight, halfheight,
