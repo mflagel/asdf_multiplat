@@ -23,6 +23,8 @@ namespace asdf
         float near_plane = -1000;
         float  far_plane =  1000;
 
+        void set_aspect_ratio(uint32_t screen_width, uint32_t screen_height);
+        void set_aspect_ratio(glm::uvec2 screen_size);
         float zoom() const { return position.z; }
         void zoom_to_size(glm::vec2 const&);
 

@@ -26,6 +26,18 @@ namespace asdf
                         near_plane, far_plane);
     }
 
+    void camera_t::set_aspect_ratio(uint32_t screen_width, uint32_t screen_height)
+    {
+        float w = static_cast<float>(screen_width);
+        float h = static_cast<float>(screen_height);
+        aspect_ratio = w / h;
+    }
+
+    void camera_t::set_aspect_ratio(glm::uvec2 s)
+    {
+        set_aspect_ratio(s.x, s.y);
+    }
+
     void camera_t::zoom_to_size(glm::vec2 const& _size)
     {
         position.z = zoom_for_size(viewport, _size);
@@ -37,6 +49,7 @@ namespace asdf
         glm::vec4 vp(_vp.bottom_left.x, _vp.bottom_left.y, _vp.size.x, _vp.size.y);
         return unProject(vec3(screen_coord, 0.0f), view_matrix(), projection_ortho(), vp).xyz;
     }
+
 
     float zoom_for_size(viewport_t const& viewport, glm::vec2 const& size)
     {
