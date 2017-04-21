@@ -38,6 +38,11 @@ namespace hexmap
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
     }
 
+    void hexmap_t::resize(uint32_t w, uint32_t h)
+    {
+        rendered_map->camera.set_aspect_ratio(w, h);
+    }
+
     void hexmap_t::update(float dt)
     {
         if(dt > max_delta_time)

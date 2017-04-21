@@ -22,6 +22,8 @@ namespace hexmap
 
         virtual void init() override;
 
+        virtual void resize(uint32_t w, uint32_t h) override;
+
         virtual void update(float dt) override;
         virtual void render() override;
 

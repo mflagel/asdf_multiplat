@@ -88,6 +88,7 @@ namespace editor
 
         editor_t();
         void init() override;
+        void resize(uint32_t w, uint32_t h) override;
 
         void render() override;
         void render_selection();

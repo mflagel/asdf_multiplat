@@ -9,6 +9,7 @@ namespace asdf {
 
         bool fullscreen = false;
         bool borderless = false;
+        bool resizable = true;
 
 
         float mouse_sensitivity;

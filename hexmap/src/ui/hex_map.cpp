@@ -40,10 +40,7 @@ namespace ui
     : map_data(_map_data)
     , terrain_bank(std::string("hexmap terrain"))
     {
-        float w = static_cast<float>(app.render_target_size().x);
-        float h = static_cast<float>(app.render_target_size().y);
-        camera.aspect_ratio = w / h;
-
+        camera.set_aspect_ratio(app.render_target_size());
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
         shader = Content.create_shader_highest_supported("hexmap");
@@ -133,7 +130,7 @@ namespace ui
     void hex_map_t::update(float dt)
     {
         camera_controller.update(dt);
-        camera_controller.position.z = glm::clamp(camera_controller.position.z, 1.0f / 16.0f, 16.0f);
+        camera_controller.position.z = glm::clamp(camera_controller.position.z, -16.0f, 16.0f);
         camera.position = camera_controller.position;
 
         camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), camera.aspect_ratio);
@@ -141,6 +138,8 @@ namespace ui
 
     void hex_map_t::render(render_flags_e render_flags)
     {
+        WARN_IF(camera.aspect_ratio == 0.0f, "Camera has no aspect ratio!");
+
         ASSERT(map_data.hex_grid.chunks.size(), "");
         ASSERT(map_data.hex_grid.chunks[0].size(), "");
 

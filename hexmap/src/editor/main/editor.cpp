@@ -62,6 +62,11 @@ namespace editor
         test_minimap = make_shared<ui::minimap_t>(*rendered_map);
     }
 
+    void editor_t::resize(uint32_t w, uint32_t h)
+    {
+        hexmap_t::resize(w, h);
+    }
+
     void editor_t::render()
     {
         hexmap_t::render();
@@ -76,7 +81,7 @@ namespace editor
         render_selection();
 
         test_minimap->rebuild(); ///OPTIMIZE: only re-render if map data has changed
-        test_minimap->render();
+        //test_minimap->render();
 
         ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }

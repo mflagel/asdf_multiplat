@@ -25,6 +25,7 @@ namespace asdf {
         virtual ~asdf_specific_t() = default;
 
         virtual void init() = 0;
+        virtual void resize(uint32_t w, uint32_t h) = 0;
         virtual void update(float dt) = 0;
         virtual void render() = 0;
         virtual void on_event(SDL_Event*) = 0;
@@ -53,6 +54,7 @@ namespace asdf {
         asdf_renderer_t();
 
         void init();
+        void resize(uint32_t w, uint32_t h);
 
         void pre_render();
         void post_render();
@@ -95,6 +97,7 @@ namespace asdf {
         ~asdf_multiplat_t();
 
         void init(std::string _exec_dir);
+        void resize(uint32_t w, uint32_t h);
 
         void init_SDL();
 

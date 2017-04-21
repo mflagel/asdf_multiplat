@@ -28,6 +28,14 @@ namespace asdf {
         signal(SIGINT,util::interrupt_handler);
     }
 
+    asdf_multiplat_t::~asdf_multiplat_t()
+    {
+        SDL_FreeSurface(main_surface);
+        SDL_GL_DeleteContext(gl_context);
+        SDL_DestroyWindow(main_window);
+        SDL_Quit();
+    }
+
     void asdf_multiplat_t::init(std::string _exec_dir) {
         LOG("--- Initializing This Crazy Contraption ---");
 
@@ -51,14 +59,20 @@ namespace asdf {
         spritebatch->spritebatch_shader = Content.shaders["spritebatch"];
     }
 
-    asdf_multiplat_t::~asdf_multiplat_t()
+    void asdf_multiplat_t::resize(uint32_t w, uint32_t h)
     {
-        SDL_FreeSurface(main_surface);
-        SDL_GL_DeleteContext(gl_context);
-        SDL_DestroyWindow(main_window);
-        SDL_Quit();
-    }
+        ASSERT(settings.resizable, "Why is a window being resized when settings say it can't be");
 
+        surface_width = w;
+        surface_height = h;
+
+        //for now the rendered resolution will always match the surface size
+        settings.resolution_width = w;
+        settings.resolution_width = h;
+
+        renderer->resize(w, h);
+        specific->resize(w, h);
+    }
 
     void asdf_multiplat_t::update() {
         uint32_t currentTicks = SDL_GetTicks();
@@ -187,7 +201,19 @@ namespace asdf {
                 break;
 
             case SDL_WINDOWEVENT:
+            {
+                switch(event->window.event)
+                {
+                    case SDL_WINDOWEVENT_RESIZED: [[FALLTHROUGH]]
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                    {
+                        resize(event->window.data1, event->window.data2);
+                        break;
+                    }
+                };
+
                 break;
+            }
         }
 
 
@@ -221,10 +247,9 @@ namespace asdf {
         //create window
         uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-        if (settings.fullscreen)
-            flags |= SDL_WINDOW_FULLSCREEN;
-        if (settings.borderless)
-            flags |= SDL_WINDOW_BORDERLESS;
+        flags |= SDL_WINDOW_FULLSCREEN * settings.fullscreen;
+        flags |= SDL_WINDOW_BORDERLESS * settings.borderless;
+        flags |= SDL_WINDOW_RESIZABLE  * settings.resizable;
 
         main_window = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -354,6 +379,16 @@ namespace asdf {
         gl_state.unbind_vbo();
 
         ASSERT(!CheckGLError(), "Error initializing renderer");
+    }
+
+    void asdf_renderer_t::resize(uint32_t w, uint32_t h)
+    {
+        render_target.texture.write(nullptr, w, h);
+
+        //rebind render target fbo so the correct gl viewport is set
+        //easier than holding onto the bottom-most stack element and changing the vp
+        GL_State->unbind_fbo();
+        GL_State->bind(render_target);
     }
 
     void asdf_renderer_t::pre_render()
