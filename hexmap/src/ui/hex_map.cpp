@@ -40,7 +40,6 @@ namespace ui
     : map_data(_map_data)
     , terrain_bank(std::string("hexmap terrain"))
     {
-        camera.set_aspect_ratio(app.render_target_size());
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
         shader = Content.create_shader_highest_supported("hexmap");
@@ -132,8 +131,6 @@ namespace ui
         camera_controller.update(dt);
         camera_controller.position.z = glm::clamp(camera_controller.position.z, -16.0f, 16.0f);
         camera.position = camera_controller.position;
-
-        camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), camera.aspect_ratio);
     }
 
     void hex_map_t::render(render_flags_e render_flags)

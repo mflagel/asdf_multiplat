@@ -34,13 +34,16 @@ namespace hexmap
         app.renderer->gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
 
         rendered_map = make_unique<ui::hex_map_t>(map_data);
+        resize(app.render_target_size().x, app.render_target_size().y);
 
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
     }
 
     void hexmap_t::resize(uint32_t w, uint32_t h)
     {
-        rendered_map->camera.set_aspect_ratio(w, h);
+        auto& camera = rendered_map->camera;
+        camera.set_aspect_ratio(w, h);
+        camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), camera.aspect_ratio);
     }
 
     void hexmap_t::update(float dt)
