@@ -22,7 +22,8 @@ public:
     glm::vec2 camera_pos() const;
     void camera_pos(glm::vec2 const&, bool emit_signal = true);
 
-    float camera_zoom() const { return hex_map->camera.zoom(); }
+    float camera_zoom_exponent() const { return hex_map->camera.zoom(); }
+    void camera_zoom_exponent(float zoom_exponent);
 
     bool is_hex_map_initialized() const { return hex_map != nullptr; }
 
@@ -30,7 +31,7 @@ public:
 
     //encapsulation is obnoxious
     asdf::hexmap::ui::hex_map_t* hex_map;
-    asdf::hexmap::data::hex_map_t& data_map;
+    asdf::hexmap::data::hex_map_t& map_data;
 
     asdf::hexmap::editor::editor_t editor;
 

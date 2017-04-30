@@ -75,8 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
                             this, &MainWindow::hex_map_initialized);
         connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
                              this, &MainWindow::editor_tool_changed);
-        connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
-                             this, &MainWindow::set_scrollbar_stuff);
+        //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
+        //                     this, &MainWindow::set_scrollbar_stuff);
 
         //FIXME cleanup and/or optimize
         connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
@@ -210,28 +210,35 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     scroll_max += scroll_padding_units;
 
     auto* h_scr = ui->hexmap_hscroll;
+    auto prev = h_scr->blockSignals(true);
     h_scr->setMinimum(scroll_min.x * scroll_sub_ticks);
     h_scr->setMaximum(scroll_max.x * scroll_sub_ticks);
     h_scr->setPageStep(page_step.x * scroll_sub_ticks);
+    h_scr->blockSignals(prev);
 
     auto* v_scr = ui->hexmap_vscroll;
+    prev = v_scr->blockSignals(true);
     v_scr->setMinimum(scroll_min.y * scroll_sub_ticks);
     v_scr->setMaximum(scroll_max.y * scroll_sub_ticks);
     v_scr->setPageStep(page_step.y * scroll_sub_ticks);
+    v_scr->blockSignals(prev);
+
+    scrollbar_changed();
 }
 
 
 void MainWindow::scrollbar_changed()
 {
-    //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
-
     glm::vec2 p(ui->hexmap_hscroll->value());
-    auto docheight = ui->hexmap_vscroll->maximum() + ui->hexmap_vscroll->pageStep();
+    auto scroll_range = ui->hexmap_vscroll->maximum() - ui->hexmap_vscroll->minimum();
+    auto docheight = scroll_range + ui->hexmap_vscroll->pageStep();
     p.y = docheight - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
 
     p /= scroll_sub_ticks;
     p.x -= asdf::hexmap::hex_width_d2; //since 0,0 is the center of a hex
     p.y -= asdf::hexmap::hex_height;
+
+    p.y -= scroll_padding_units;
 
     ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
@@ -278,7 +285,7 @@ void MainWindow::new_map()
 
         ui->hexmap_widget->editor.new_map_action(name, map_size, cell);
         ui->hexmap_widget->camera_pos(glm::vec2(map_size) / 2.0f);
-        scrollbar_changed();
+        set_scrollbar_stuff(ui->hexmap_widget->editor.rendered_map->camera);
     }
 }
 

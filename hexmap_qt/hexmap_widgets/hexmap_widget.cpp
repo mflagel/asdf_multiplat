@@ -19,7 +19,7 @@ namespace
 {
     constexpr float zoom_per_scroll_tick = 0.5f;
 
-    constexpr float min_zoom = 0.1f;
+    constexpr float min_zoom = -16.0f;
     constexpr float max_zoom = 16.0f;
 }
 
@@ -27,7 +27,7 @@ using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
 
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
-, data_map(editor.map_data)
+, map_data(editor.map_data)
 {
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
@@ -47,18 +47,19 @@ void hexmap_widget_t::initializeGL()
     editor.init();
     hex_map = editor.rendered_map.get();
 
-    hex_map->camera.position.z = 10;
-
     hex_map_initialized(editor);
 }
 
-///FIXME
 void hexmap_widget_t::resizeGL(int w, int h)
 {
-    hex_map->camera.viewport.size_d2 = vec2(w,h) / 2.0f;
-    hex_map->camera.viewport.bottom_left = -1.0f * hex_map->camera.viewport.size_d2;
+    using namespace asdf;
 
-    emit camera_changed(hex_map->camera);
+    app.surface_width = w;
+    app.surface_height = h;
+
+    editor.resize(w, h);
+    main_window->set_scrollbar_stuff(hex_map->camera);
+    //emit camera_changed(hex_map->camera);
 }
 
 void hexmap_widget_t::paintGL()
@@ -84,12 +85,12 @@ void hexmap_widget_t::paintGL()
 
 glm::uvec2 hexmap_widget_t::map_size_cells() const
 {
-    return data_map.hex_grid.size_cells();
+    return map_data.hex_grid.size_cells();
 }
 
 glm::vec2  hexmap_widget_t::map_size_units() const
 {
-    return data_map.hex_grid.size_units();
+    return map_data.hex_grid.size_units();
 }
 
 glm::vec2 hexmap_widget_t::camera_pos() const
@@ -102,8 +103,14 @@ void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
     hex_map->camera.position.x = p.x;
     hex_map->camera.position.y = p.y;
 
-    if(emit_signal)
-        emit camera_changed(hex_map->camera);
+    //if(emit_signal)
+        //emit camera_changed(hex_map->camera);
+}
+
+//final zoom is equal to 2^zoom_exponent
+void hexmap_widget_t::camera_zoom_exponent(float zoom_exponent)
+{
+    hex_map->camera.position.z = zoom_exponent;
 }
 
 
@@ -195,13 +202,14 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     }
     else if(keyboard_mods == Qt::ControlModifier)
     {
-        float num_steps = event->angleDelta().y() / 15.0f;
+        float num_steps = event->angleDelta().y() / 8.0f / 15.0f;
 
         auto& zoom = hex_map->camera.position.z;
 
         zoom += num_steps * zoom_per_scroll_tick;
         zoom = glm::clamp(zoom, min_zoom, max_zoom);
 
+        main_window->set_scrollbar_stuff(hex_map->camera);
         update();
         emit camera_changed(hex_map->camera);
     }
