@@ -45,6 +45,9 @@ protected:
     void mousePressEvent(QMouseEvent *) override;
     void mouseReleaseEvent(QMouseEvent *) override;
 
+private:
+    void save_status_message();
+
 private slots:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);

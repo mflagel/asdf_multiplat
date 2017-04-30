@@ -34,6 +34,7 @@ namespace
 {
     constexpr int scroll_sub_ticks = 10;
     constexpr float scroll_padding_units = 1.0f;
+    constexpr int status_message_timeout_ms = 5000;
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -311,6 +312,7 @@ void MainWindow::save_map()
     else
     {
         ui->hexmap_widget->editor.save_action();
+        save_status_message();
     }
 }
 
@@ -322,6 +324,7 @@ void MainWindow::save_map_as()
     if(filepath.size() > 0)
     {
         editor->save_action( std::string(filepath.toUtf8().constData()) );
+        save_status_message();
     }
 }
 
@@ -339,17 +342,24 @@ void MainWindow::redo()
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
-
+    Q_UNUSED(event);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
-
+    Q_UNUSED(event);
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
+    Q_UNUSED(event);
+}
 
+void MainWindow::save_status_message()
+{
+    QString save_str = "Map Saved to \"";
+    save_str.append(ui->hexmap_widget->editor.map_filepath.c_str());
+    statusBar()->showMessage(save_str, status_message_timeout_ms);
 }
 
 
