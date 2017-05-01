@@ -68,9 +68,18 @@ namespace asdf
 
     void gl_state_t::bind(std::shared_ptr<shader_t> const& shader)
     {
+        ASSERT(!CheckGLError(), "Error before binding shader");
         //LOG_IF(current_shader == shader->shader_program_id, "shader \'%s\' already in use", shader->name.c_str());
         glUseProgram(shader->shader_program_id);
         current_shader = shader->shader_program_id;
+
+#if _DEBUG
+        GLenum errCode = GL_NO_ERROR;
+        while((errCode = glGetError()) != GL_NO_ERROR)
+        {
+            ASSERT(errCode == GL_NO_ERROR, "Error binding shader %s\n%s", shader->name.c_str(), get_use_program_error(errCode));
+        }
+#endif
     }
 
     void gl_state_t::bind(framebuffer_t const& fbo)
@@ -144,7 +153,10 @@ namespace asdf
     {
         fbo_stack.push(std::make_pair(std::ref(fbo_id), v));
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
+
+        ASSERT(!CheckGLError(), "GL Error binding framebuffer %i", fbo_id);
         glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+        ASSERT(!CheckGLError(), "GL Error setting viewport to %i,%i %i,%i", v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
     }
 
     void gl_state_t::push_fbo(framebuffer_t const& fbo, gl_viewport_t const& v)
@@ -171,11 +183,15 @@ namespace asdf
         {
             auto const& v = fbo_stack.top().second;
             glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+            ASSERT(!CheckGLError(), "GL Error setting viewport");
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_stack.top().first);
+
+            ASSERT(!CheckGLError(), "GL Error Popping FBO to %d", fbo_stack.top().first);
         }
         else
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            ASSERT(!CheckGLError(), "GL Error Popping FBO to 0");
         }
     }
 
@@ -202,7 +218,7 @@ namespace asdf
         glDrawBuffers(1, &draw_buffers);
 
         auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "GL Error initializing framebuffer %d for render target (texture) %d. FBO Status: 0x%0x", fbo.id, texture.texture_id, gl_fbo_status);
+        ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "Broken FBO %i  Status: 0x%0x\nError: %s", fbo.id, gl_fbo_status, get_fbo_status_string(gl_fbo_status));
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -240,5 +256,52 @@ namespace asdf
         // ver = std::max(ver, size_t(450 * GLEW_VERSION_4_5));
 
         return ver;
+    }
+
+
+    /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCheckFramebufferStatus.xhtml
+    const/*expr*/ char* get_fbo_status_string(GLint status_code)
+    {
+        switch(status_code)
+        {
+        case GL_FRAMEBUFFER_COMPLETE_EXT:
+            return "GL_FRAMEBUFFER_COMPLETE";
+
+        //errors
+        case GL_FRAMEBUFFER_UNDEFINED:
+            return "GL_FRAMEBUFFER_UNDEFINED : the specified framebuffer is the default read or draw framebuffer, but the default framebuffer does not exist";
+        case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+            return "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT : one of the framebuffer attachment points are framebuffer incomplete";
+        case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+            return "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT : the framebuffer does not have at least one image attached to it";
+        case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+            return "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER : the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for any color attachment point(s) named by GL_DRAW_BUFFERi";
+        case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+            return "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER : GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for the color attachment point named by GL_READ_BUFFER";
+        case GL_FRAMEBUFFER_UNSUPPORTED:
+            return "GL_FRAMEBUFFER_UNSUPPORTED : the combination of internal formats of the attached images violates an implementation-dependent set of restrictions";
+        case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+            return "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE : One or both of the following\nthe value of GL_RENDERBUFFER_SAMPLES is not the same for all attached renderbuffers; if the value of GL_TEXTURE_SAMPLES is the not same for all attached textures; or, if the attached images are a mix of renderbuffers and textures, the value of GL_RENDERBUFFER_SAMPLES does not match the value of GL_TEXTURE_SAMPLES\nthe value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not the same for all attached textures; or, if the attached images are a mix of renderbuffers and textures, the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not GL_TRUE for all attached textures";
+        case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+            return "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS : one of the framebuffer attachment is layered, and any populated attachment is not layered, or if all populated color attachments are not from textures of the same target";
+
+
+        default:
+            return "Unknown FBO Status Code";
+        };
+    }
+
+    /// https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glUseProgram.xml
+    const char* get_use_program_error(GLint error_code)
+    {
+        switch(error_code)
+        {
+        case GL_INVALID_VALUE:
+            return "program is neither 0 nor a value generated by OpenGL";
+        case GL_INVALID_OPERATION:
+            return "one or more of:\n program is not a program object\n program could not be made part of current state\n";
+        default:
+            return "unknown error";
+        }
     }
 }

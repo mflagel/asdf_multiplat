@@ -55,18 +55,22 @@ namespace asdf
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
 
+    /// GL State Proxy Object
+    /// Allows code to access the gl state globally ex: GL_State->bind(something)
     struct gl_state_proxy_t
     {
         gl_state_proxy_t(){}
 
         gl_state_t* operator->();
     };
-
-    size_t get_highest_glsl_ver();
-
     extern gl_state_proxy_t GL_State;
 
+    ///GL Utility Function Declarations
+    size_t get_highest_glsl_ver();
+    const/*expr*/ char* get_fbo_status_string(GLint status_code);
+    const char* get_use_program_error(GLint error_code);
 
+    ///RAII objects to manage the lifetime of fbo's and render targets
     struct scoped_fbo_t
     {
         scoped_fbo_t(GLuint fbo_id, GLint x, GLint y, GLsizei width, GLsizei height)
