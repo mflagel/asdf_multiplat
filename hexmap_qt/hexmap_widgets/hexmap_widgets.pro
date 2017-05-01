@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     palette_widget.cpp \
     dialogs/new_map_dialog.cpp \
     spline_settings_widget.cpp \
-    object_properties_widget.cpp
+    object_properties_widget.cpp \
+    minimap_widget.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     palette_widget.h \
     dialogs/new_map_dialog.h \
     spline_settings_widget.h \
-    object_properties_widget.h
+    object_properties_widget.h \
+    minimap_widget.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
