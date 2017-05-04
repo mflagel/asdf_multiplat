@@ -54,7 +54,7 @@ namespace ui
         auto grid_bbox = map_data.hex_grid.bounding_box_units();
 
         camera.position = vec3(grid_bbox.lower + grid_size_d2, 0.0f);
-        camera.viewport = viewport_for_size_aspect(grid_size, 1.0f);
+        camera.viewport = viewport_for_size_aspect(grid_size, camera.aspect_ratio);
 
         //render just the terrain (and grid outline for now)
         using flags_e = hex_map_t::render_flags_e;
@@ -62,6 +62,8 @@ namespace ui
         rendered_map.render(flags_e(flags));
 
         camera = prev_camera;
+
+        ASSERT(!CheckGLError(), "GL Error building minimap");
     }
 
     void minimap_t::render()
