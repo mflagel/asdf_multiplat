@@ -25,6 +25,7 @@
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
+#include "minimap_widget.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -365,6 +366,17 @@ void MainWindow::save_status_message()
 
 void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
 {
+    minimap = new minimap_widget_t(editor);
+    minimap->setMinimumSize(200, 200);
+    minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
+    minimapdock->setWidget(minimap);
+
+    using qd = QDockWidget;
+    minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+    addDockWidget(Qt::RightDockWidgetArea, minimapdock);
+
     terrain_palette_model = new palette_item_model_t();
     objects_palette_model = new palette_item_model_t();
 

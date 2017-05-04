@@ -16,6 +16,7 @@ class palette_widget_t;
 class palette_item_model_t;
 class spline_settings_widget_t;
 class object_properties_widget_t;
+class minimap_widget_t;
 
 class MainWindow : public QMainWindow
 {
@@ -61,6 +62,8 @@ private:
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
+
+    minimap_widget_t* minimap = nullptr;
     object_properties_widget_t* object_properties = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
