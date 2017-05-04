@@ -29,7 +29,7 @@ namespace asdf
         template <size_t N, typename T, GLuint GL_Type>       \
         struct struct_name : vertex_attrib_<N, T, GL_Type>    \
         {                                                     \
-            static constexpr char* name = #attrib_name;       \
+            static constexpr const char* name = #attrib_name;       \
         };                                                    \
         template <size_t N, typename T, GLuint GL_Type> constexpr char* struct_name<N, T, GL_Type>::name;    //apparently clang needs this to link properly
         //----
