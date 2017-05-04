@@ -96,19 +96,6 @@ MainWindow::MainWindow(QWidget *parent) :
                              this, &MainWindow::editor_tool_changed);
         //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
         //                     this, &MainWindow::set_scrollbar_stuff);
-
-        //FIXME cleanup and/or optimize
-        connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
-                [this](tool_type_e tool){
-                    switch(tool)
-                    {
-                        case editor_t::select: ui->right_dock->setWidget(object_properties); return;
-                        case editor_t::terrain_paint: //[[FALLTHROUGH]]
-                        case editor_t::place_objects: ui->right_dock->setWidget(palette_widget); return;
-                        case editor_t::place_splines: ui->right_dock->setWidget(spline_settings_widget); return;
-                    }
-                }
-        );
     }
 
     {
@@ -405,18 +392,34 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
+    auto* dock = ui->right_dock;
+
     switch(new_tool)
     {
-        case tool_type_e::terrain_paint:
-            palette_widget->list_view->setModel(terrain_palette_model);
-            break;
-        case tool_type_e::place_objects:
-            palette_widget->list_view->setModel(objects_palette_model);
+        case tool_type_e::select:
+            dock->setWidget(object_properties);
             break;
 
-    default:
-        palette_widget->list_view->setModel(nullptr);
-        break;
+        case tool_type_e::terrain_paint:
+            palette_widget->list_view->setModel(terrain_palette_model);
+            dock->setWidget(palette_widget);
+            dock->setWindowTitle(tr("Terrain"));
+            break;
+
+        case tool_type_e::place_objects:
+            palette_widget->list_view->setModel(objects_palette_model);
+            dock->setWidget(palette_widget);
+            dock->setWindowTitle(tr("Objects"));
+            break;
+
+        case tool_type_e::place_splines:
+            dock->setWidget(spline_settings_widget);
+            break;
+
+        default:
+            dock->setWidget(nullptr);
+            //palette_widget->list_view->setModel(nullptr);
+            break;
     }
 }
 
