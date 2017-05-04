@@ -11,10 +11,23 @@ namespace asdf
     
     gl_state_t* gl_state_proxy_t::operator->()
     {
-        return &(app.renderer->gl_state);
+        ASSERT(current_state_machine, "Current GL State is null");
+        return current_state_machine;
+    }
+
+    void gl_state_proxy_t::set_current_state_machine(gl_state_t& state_machine)
+    {
+        current_state_machine = &state_machine;
     }
 
     using namespace util;
+
+    gl_state_t::gl_state_t(void* _gl_context)
+    : gl_context(_gl_context)
+    {
+        ASSERT(gl_context, "GL_State given a null context");
+        init_openGL();
+    }
 
     void gl_state_t::init_openGL()
     {

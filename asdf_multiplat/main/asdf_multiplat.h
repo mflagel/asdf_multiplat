@@ -33,7 +33,7 @@ namespace asdf {
 
     struct asdf_renderer_t
     {
-        gl_state_t gl_state;
+        gl_state_t gl_state; //must be first member to init opengl before other members
 
         render_target_t render_target;
         //render_buffer_t render_depth_buffer;
@@ -51,7 +51,7 @@ namespace asdf {
         //color_t     gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f}; //cornflower blue makin it feel like XNA
         glm::vec4 gl_clear_color = glm::vec4{0.5f, 0.75f, 0.9f, 1.0f};
 
-        asdf_renderer_t();
+        asdf_renderer_t(void* _gl_context);
 
         void init();
         void resize(uint32_t w, uint32_t h);
@@ -67,7 +67,7 @@ namespace asdf {
         // std::shared_ptr<asdf_specific_t> specific;
         asdf_specific_t* specific{nullptr};
         SDL_Window*     main_window{nullptr};
-        SDL_GLContext   gl_context;
+        SDL_GLContext   gl_context;             //should this belong to asdf_renderer_t?
         SDL_Surface*    main_surface{nullptr};
         uint32_t surface_width  = 0;
         uint32_t surface_height = 0;

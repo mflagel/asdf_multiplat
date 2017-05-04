@@ -51,7 +51,8 @@ namespace asdf {
         init_SDL();
         in_focus = true;
 
-        renderer = make_unique<asdf_renderer_t>();
+        renderer = make_unique<asdf_renderer_t>(gl_context);
+        GL_State.current_state_machine = &(renderer->gl_state);
         renderer->init();
 
         Content.init();
@@ -325,8 +326,9 @@ namespace asdf {
     gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
 
 
-    asdf_renderer_t::asdf_renderer_t()
-    : render_target(app.settings.resolution_width, app.settings.resolution_height) //use settings resolution, which can differ from surface size
+    asdf_renderer_t::asdf_renderer_t(void* _gl_context)
+    : gl_state(_gl_context)
+    , render_target(app.settings.resolution_width, app.settings.resolution_height) //use settings resolution, which can differ from surface size
     {   
         render_target.texture.name = "asdf main render target texture";
     }

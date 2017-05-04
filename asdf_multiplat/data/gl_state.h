@@ -7,8 +7,20 @@
 
 namespace asdf
 {
+    /*
+    Resources that are not shared across GL Contexts:
+        Framebuffers
+        Vertex Array Objects
+
+
+    Because of this, the current usage of gl_state_t will break in applications that use
+    more than one OpenGL context. In particular, the fbo_stack contains state information
+    specific to one context. pushing/popping fbos will more than likely crash
+    */
+
     struct gl_state_t
     {
+        void* gl_context = nullptr; // apparently SDL_GLContext is just a typedef for void*
         bool initialized = false;
 
         std::vector<std::string> gl_extensions;
@@ -25,7 +37,7 @@ namespace asdf
 
         std::array<GLuint, gl_buffer_target_count> current_buffers;
         
-        gl_state_t(){init_openGL();}
+        gl_state_t(void* _gl_context);
         void init_openGL();
 
         void bind(vao_t const&);
@@ -59,8 +71,11 @@ namespace asdf
     /// Allows code to access the gl state globally ex: GL_State->bind(something)
     struct gl_state_proxy_t
     {
+        gl_state_t* current_state_machine = nullptr;
+
         gl_state_proxy_t(){}
 
+        void set_current_state_machine(gl_state_t& state_machine);
         gl_state_t* operator->();
     };
     extern gl_state_proxy_t GL_State;
