@@ -35,19 +35,25 @@ hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 
 void hexmap_widget_t::initializeGL()
 {
+    using namespace asdf;
     // Set up the rendering context, load shaders and other resources, etc.:
 
-    asdf::app.renderer = make_unique<asdf::asdf_renderer_t>();  //do this before content init. Content needs GL_State to exist
-    asdf::app.renderer->init(); //loads screen shader, among other things
-    asdf::Content.init(); //needed for Content::shader_path
+    void* qt_gl_context = reinterpret_cast<void*>(context());  //this technically isnt the native context pointer, but I don't think I care so long as it's unique
+    app.renderer = make_unique<asdf::asdf_renderer_t>(qt_gl_context);  //do this before content init. Content needs GL_State to exist
+    GL_State.set_current_state_machine(app.renderer->gl_state);
 
-    auto shader = asdf::Content.create_shader_highest_supported("hexmap");
-    asdf::Content.shaders.add_resource(shader);
+    app.renderer->init(); //loads screen shader, among other things
+    Content.init(); //needed for Content::shader_path
+
+    defaultFramebufferObject();
+
+    auto shader = Content.create_shader_highest_supported("hexmap");
+    Content.shaders.add_resource(shader);
 
     editor.init();
     hex_map = editor.rendered_map.get();
 
-    hex_map_initialized(editor);
+    emit hex_map_initialized(editor);
 }
 
 void hexmap_widget_t::resizeGL(int w, int h)
@@ -60,17 +66,22 @@ void hexmap_widget_t::resizeGL(int w, int h)
     editor.resize(w, h);
     main_window->set_scrollbar_stuff(hex_map->camera);
     //emit camera_changed(hex_map->camera);
-}
-
-void hexmap_widget_t::paintGL()
-{
-    glDisable(GL_DEPTH_TEST);
 
     auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
     glClearColor(gl_clear_color.r
                        , gl_clear_color.g
                        , gl_clear_color.b
                        , gl_clear_color.a);
+}
+
+void hexmap_widget_t::paintGL()
+{
+    using namespace asdf;
+
+    //set global GL_State proxy object to point to this context
+    GL_State.set_current_state_machine(app.renderer->gl_state);
+
+    glDisable(GL_DEPTH_TEST);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

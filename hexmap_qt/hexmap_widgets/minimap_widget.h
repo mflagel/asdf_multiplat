@@ -51,6 +51,7 @@ protected:
 
 private:
     bool is_dirty = false;
+    std::unique_ptr<asdf::gl_state_t> gl_state;
     Ui::minimap_widget_t *ui;
 };
 

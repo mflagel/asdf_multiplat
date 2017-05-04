@@ -35,6 +35,9 @@ public:
 
     asdf::hexmap::editor::editor_t editor;
 
+private:
+    std::unique_ptr<asdf::gl_state_t> gl_state;
+
 protected:
     Qt::KeyboardModifiers keyboard_mods;
 
