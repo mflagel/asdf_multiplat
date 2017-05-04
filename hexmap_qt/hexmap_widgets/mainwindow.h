@@ -12,6 +12,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class QSpinBox;
+
 class palette_widget_t;
 class palette_item_model_t;
 class spline_settings_widget_t;
@@ -56,6 +58,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QSpinBox* zoom_spinbox = nullptr;
 
     asdf::hexmap::editor::editor_t* editor = nullptr;
 

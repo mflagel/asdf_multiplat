@@ -61,6 +61,23 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::redo);
     }
 
+    {
+        zoom_spinbox = new QSpinBox();
+        zoom_spinbox->setMinimum(10);
+        zoom_spinbox->setMaximum(1600);
+
+        connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed, [this](asdf::camera_t const& camera){zoom_spinbox->setValue(camera.position.z * 100);});
+        connect(zoom_spinbox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
+        {
+            float z = sqrt(v / 100.0f);
+            ui->hexmap_widget->camera_zoom_exponent(z);
+        });
+
+        auto* zoomform = new QFormLayout();
+        zoomform->addRow("Zoom:", zoom_spinbox);
+        statusBar()->addWidget(zoomform->widget());
+    }
+
 
     // give hexmap widget a pointer to this, so it can set up scrollbar ranges after initializeGL is called
     // can't do it now because we need the hex_map to be created, which requires an openGL context that hasnt
