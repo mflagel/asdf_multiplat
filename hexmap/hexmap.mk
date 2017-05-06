@@ -17,7 +17,11 @@ BINPATH = $(PROJPATH)/$(PROJNAME)/bin/linux/x86
 ############ LIBS #############
 LIBS += sdl2 gl glew ftgl
 
-LINK_FLAGS += -L$(LIBPATH) -rpath $(LIBPATH) -lasdfm -lSOIL
+LINK_FLAGS_CLANG += -L$(LIBPATH) -rpath $(LIBPATH) -lasdfm -lSOIL
+LINK_FLAGS_GCC += -L$(LIBPATH) -Wl,-rpath,$(LIBPATH) -lasdfm -lSOIL
+
+LINK_FLAGS += $(LINK_FLAGS_GCC)
+
 ###############################
 
 ########## INCLUDES ###########

@@ -46,6 +46,14 @@ using color_t = glm::vec4;
 //Assertion code shamelessly copymodified from: 
 //http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
 
+#ifdef _MSC_VER
+#define DEBUG_BREAK __debugbreak()
+#else
+#include <signal.h>
+#define DEBUG_BREAK raise(SIGTRAP);
+#endif
+
+
 #define ASSERTS_ENABLED
 
 //void asdf_fail(char const* condition, char const* file, int line, char const* msg, ...);
@@ -57,7 +65,7 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
         if (!(cond)) { \
             LOG("ASSERT FAILED: %s, %s, %i", #cond, __FILE__, __LINE__) \
             LOG(__VA_ARGS__); \
-            __debugbreak(); \
+            DEBUG_BREAK; \
         } \
     } while(0)
 
@@ -67,7 +75,7 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
         { \
             LOG("EXPLOSION: %s, %i", __FILE__, __LINE__); \
             LOG(__VA_ARGS__);\
-            __debugbreak(); \
+            DEBUG_BREAK; \
         } while(0)
 #else  
     #define ASSERT(condition) do { POW2_UNUSED(condition); } while (0)

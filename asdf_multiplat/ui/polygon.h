@@ -164,16 +164,16 @@ namespace asdf
             ///  I'll have to allocate enough VBO space to fit everything
             ///  and then use glBufferSubData to send each polygon's vertices
 
-            GL_State->bind(gl_renderable_t::vbo);
+            GL_State->bind(/*gl_renderable_t::*/this->vbo);
             GLsizeiptr bufsize = total_vertex_count * sizeof(VertexType);
-            GL_State->buffer_data(gl_renderable_t::vbo, bufsize, nullptr);  //nullptr data to reserve space without copying
+            GL_State->buffer_data(/*gl_renderable_t::*/this->vbo, bufsize, nullptr);  //nullptr data to reserve space without copying
 
             LOG_IF(CheckGLError(), "Error pre-allocating vertex buffer in rendered_multi_polygon_::set_data()");
 
             for(size_t i = 0; i < polygons.size(); ++i)
             {
                 auto vert_size_bytes = sizeof(VertexType);
-                auto       target = gl_buffer_target_enum_values[gl_renderable_t::vbo.target];
+                auto       target = gl_buffer_target_enum_values[/*gl_renderable_t::*/this->vbo.target];
                 GLintptr   offset = first_vert_indices[i] * vert_size_bytes; //offset in bytes
                 GLsizeiptr size   = vert_counts[i] * vert_size_bytes;        //size in bytes
 
@@ -188,7 +188,7 @@ namespace asdf
 
         void render() const
         {
-            render(gl_renderable_t::draw_mode);
+            render(/*gl_renderable_t::*/this->draw_mode);
         }
 
         void render(GLuint _draw_mode) const
@@ -198,7 +198,7 @@ namespace asdf
 
             if(first_vert_indices.size() > 0)
             {
-                GL_State->bind(gl_renderable_t::vao);
+                GL_State->bind(/*gl_renderable_t::*/this->vao);
                 glMultiDrawArrays(_draw_mode, first_vert_indices.data(), vert_counts.data(), num_sub_meshes());
                 GL_State->unbind_vao();
             }
