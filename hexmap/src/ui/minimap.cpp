@@ -58,7 +58,7 @@ namespace ui
 
         //render just the terrain (and grid outline for now)
         using flags_e = hex_map_t::render_flags_e;
-        uint32_t flags = flags_e::terrain | flags_e::grid_outline;
+        uint32_t flags = flags_e::terrain;
         rendered_map.render(flags_e(flags));
 
         camera = prev_camera;
