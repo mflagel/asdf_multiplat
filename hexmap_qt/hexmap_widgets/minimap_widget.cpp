@@ -79,27 +79,7 @@ void minimap_widget_t::paintGL(){
         is_dirty = false;
     }
 
-
-
-    using namespace asdf;
-    using namespace glm;
-
-    //renders the prebuilt minimap texture onto a quad
-    auto const& shader = app.renderer->screen_shader;
-    GL_State->bind(shader);
-
-    shader->world_matrix = mat4();
-    shader->view_matrix = mat4();
-    shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
-    shader->update_wvp_uniform();
-
-    glBindTexture(GL_TEXTURE_2D, minimap->render_target.texture.texture_id);
-    GL_State->bind(app.renderer->quad.vbo);
-    asdf_renderer_t::quad_vertex_t::vertex_spec.set_vertex_attribs(shader);
-    glDrawArrays(app.renderer->quad.draw_mode, 0, app.renderer->quad.num_verts);
-    GL_State->unbind_vbo();
-
-    GL_State->unbind_shader();
+    minimap->render();
 }
 
 void minimap_widget_t::mousePressEvent(QMouseEvent*){
