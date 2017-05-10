@@ -20,7 +20,7 @@ namespace
     constexpr float zoom_per_scroll_tick = 0.5f;
 
     constexpr float min_zoom = -16.0f;
-    constexpr float max_zoom = 16.0f;
+    constexpr float max_zoom = 128.0f;
 }
 
 using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
@@ -70,12 +70,6 @@ void hexmap_widget_t::resizeGL(int w, int h)
     editor.resize(w, h);
     main_window->set_scrollbar_stuff(hex_map->camera);
     //emit camera_changed(hex_map->camera);
-
-    auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
-    glClearColor(gl_clear_color.r
-                       , gl_clear_color.g
-                       , gl_clear_color.b
-                       , gl_clear_color.a);
 }
 
 void hexmap_widget_t::paintGL()
@@ -87,6 +81,11 @@ void hexmap_widget_t::paintGL()
 
     glDisable(GL_DEPTH_TEST);
 
+    auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
+    glClearColor(gl_clear_color.r
+                       , gl_clear_color.g
+                       , gl_clear_color.b
+                       , gl_clear_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_BLEND);
