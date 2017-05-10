@@ -174,6 +174,7 @@ namespace editor
         if(action_stack.can_undo())
         {
             action_stack.undo();
+            signal_data_changed();
             return true;
         }
 
@@ -185,6 +186,7 @@ namespace editor
         if(action_stack.can_redo())
         {
             action_stack.redo();
+            signal_data_changed();
             return true;
         }
 
@@ -331,6 +333,25 @@ namespace editor
     }
 
 
+    void editor_t::signal_data_changed()
+    {
+        ASSERT(map_changed_callback, "");
+        map_changed_callback();
+    }
+
+    void editor_t::push_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push(move(action));
+        signal_data_changed();
+    }
+
+    void editor_t::push_and_execute_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push_and_execute(move(action));
+        signal_data_changed();
+    }
+
+
     /// Terrain
     void editor_t::paint_terrain_start()
     {
@@ -385,7 +406,7 @@ namespace editor
     {
         if(!painted_terrain_coords.empty())
         {
-            action_stack.push(make_unique<paint_tiles_action_t>
+            push_action(make_unique<paint_tiles_action_t>
                 ( map_data.hex_grid
                 , std::move(painted_terrain_coords)
                 , current_tile_id
@@ -407,13 +428,13 @@ namespace editor
 
         data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
-        action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+        push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
     void editor_t::delete_object(size_t object_index)
     {
         auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
-        action_stack.push_and_execute(std::move(cmd));
+        push_and_execute_action(std::move(cmd));
     }
 
 
@@ -555,7 +576,7 @@ namespace editor
 
         /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
-        action_stack.push(std::move(cmd));
+        push_action(std::move(cmd));
 
         wip_spline = nullptr;
         wip_spline_node = nullptr;
