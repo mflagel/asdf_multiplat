@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
         zoom_spinbox->setMinimum(10);
         zoom_spinbox->setMaximum(1600);
 
-        connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed, [this](asdf::camera_t const& camera){zoom_spinbox->setValue(camera.position.z * 100);});
+        //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed, [this](asdf::camera_t const& camera){zoom_spinbox->setValue(camera.position.z * 100);});
         connect(zoom_spinbox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
         {
             float z = sqrt(v / 100.0f);
