@@ -53,6 +53,10 @@ void hexmap_widget_t::initializeGL()
     editor.init();
     hex_map = editor.rendered_map.get();
 
+    editor.map_changed_callback = [this](){
+        emit map_data_changed(map_data);
+    };
+
     emit hex_map_initialized(editor);
 }
 

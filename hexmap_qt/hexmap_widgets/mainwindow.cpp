@@ -377,6 +377,12 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
     minimapdock->setWidget(minimap);
 
+    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+        [this](){
+            minimap->is_dirty = true;
+            minimap->update();
+        });
+
     using qd = QDockWidget;
     minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
     addDockWidget(Qt::RightDockWidgetArea, minimapdock);

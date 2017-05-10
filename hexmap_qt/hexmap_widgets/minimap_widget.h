@@ -27,14 +27,11 @@ class minimap_widget_t : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    //asdf::hexmap::ui::hex_map_t* rendered_map = nullptr; 
-
-    //asdf::hexmap::editor::editor_t& editor;
-    //asdf::hexmap::ui::minimap_t* minimap = nullptr;
-
     asdf::hexmap::data::hex_map_t& map_data;
     std::unique_ptr<asdf::hexmap::ui::hex_map_t> rendered_map; //probably won't need this when hexmap::minimap_t has a better rendering method
     std::unique_ptr<asdf::hexmap::ui::minimap_t> minimap;
+
+    bool is_dirty = false;
 
     explicit minimap_widget_t(asdf::hexmap::editor::editor_t&, QWidget *parent = 0);
     ~minimap_widget_t();
@@ -50,7 +47,6 @@ protected:
     void wheelEvent(QWheelEvent*) override;
 
 private:
-    bool is_dirty = false;
     std::unique_ptr<asdf::gl_state_t> gl_state;
     Ui::minimap_widget_t *ui;
 };
