@@ -36,6 +36,8 @@ namespace
     constexpr int scroll_sub_ticks = 10;
     constexpr float scroll_padding_units = 1.0f;
     constexpr int status_message_timeout_ms = 5000;
+
+    constexpr int zoom_exponent_tick_per_press = 1;
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -59,6 +61,43 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::undo);
         connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::redo);
+
+        /// Render Flag Toggles
+        {
+            using rflags = asdf::hexmap::ui::hex_map_t::render_flags_e;
+
+            ui->actionGrid->setChecked((editor->map_render_flags & rflags::grid_outline));
+            ui->actionHex_Coords->setChecked((editor->map_render_flags & rflags::hex_coords));
+        
+            auto connect_thing = [this](QAction* thing, rflags flag)
+            {
+                connect(thing, &QAction::triggered, [this, flag](bool chk)
+                {
+                    uint32_t temp = static_cast<uint32_t>(ui->hexmap_widget->editor.map_render_flags);
+                    temp |= (flag * chk);
+                    temp &= ~(flag * !chk);
+                    ui->hexmap_widget->editor.map_render_flags = static_cast<rflags>(temp);
+                });
+            };
+
+            connect_thing(ui->actionGrid, rflags::grid_outline);
+            connect_thing(ui->actionHex_Coords, rflags::hex_coords);
+        }
+
+        /// Zoom
+        {
+            auto zoom_tick = [this](int num_ticks)
+            {
+                auto cur_zoom = ui->hexmap_widget->camera_zoom_exponent();
+                ui->hexmap_widget->camera_zoom_exponent(cur_zoom + zoom_exponent_tick_per_press * num_ticks);
+            };
+
+            connect(ui->actionZoom_In,  &QAction::triggered, [&zoom_tick](){zoom_tick(1);});
+            connect(ui->actionZoom_Out, &QAction::triggered, [&zoom_tick](){zoom_tick(-1);});
+
+            connect(ui->actionZoom_to_Selection, &QAction::triggered, ui->hexmap_widget, &hexmap_widget_t::zoom_to_selection);
+            connect(ui->actionZoom_to_Extents,   &QAction::triggered, ui->hexmap_widget, &hexmap_widget_t::zoom_extents);
+        }
     }
 
     {
