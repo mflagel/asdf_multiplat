@@ -58,7 +58,7 @@ namespace ui
 
         //render just the terrain (and grid outline for now)
         using flags_e = hex_map_t::render_flags_e;
-        uint32_t flags = flags_e::terrain | flags_e::grid_outline;
+        uint32_t flags = flags_e::terrain;
         rendered_map.render(flags_e(flags));
 
         camera = prev_camera;
@@ -74,25 +74,14 @@ namespace ui
 
         GL_State->bind(shader);
 
-        float minimap_scale_px = 400.0f;
-
-        //shader->world_matrix = scale(translate(mat4(), vec3(0, 0, 0)), vec3(minimap_scale_px));
         shader->world_matrix = mat4();
         shader->view_matrix = mat4();
         shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
-
-        float const& halfwidth = render_target.texture.halfwidth;
-        float const& halfheight = render_target.texture.halfheight;
-
-        //project such that each unit is one pixel
-        // shader->projection_matrix = ortho<float>(-halfwidth, halfwidth,
-        //                     -halfheight, halfheight,
-        //                     -1000, 1000);
-
         shader->update_wvp_uniform();
 
         glBindTexture(GL_TEXTURE_2D, render_target.texture.texture_id);
-        quad.render();
+        // quad.render();
+        quad.render_without_vao(shader);
 
         //TODO: render box-outline representing current viewport
         //      ie: how much of the map is on screen based on zoom/pan

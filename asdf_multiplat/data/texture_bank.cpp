@@ -75,7 +75,8 @@ namespace data
 
         glBindTexture(GL_TEXTURE_2D, new_texture.texture_id);
 
-        app.renderer->quad.render();
+        // app.renderer->quad.render();
+        app.renderer->quad.render_without_vao(screen_shader);
 
 
         saved_textures.push_back(saved_texture_t{filepath});

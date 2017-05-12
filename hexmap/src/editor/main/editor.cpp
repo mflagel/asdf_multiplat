@@ -145,6 +145,8 @@ namespace editor
 
         map_filepath = "";
         map_is_dirty = false;
+
+        signal_data_changed();
     }
 
     void editor_t::save_action()
@@ -167,6 +169,8 @@ namespace editor
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
+
+        signal_data_changed();
     }
 
     bool editor_t::undo()
@@ -335,8 +339,8 @@ namespace editor
 
     void editor_t::signal_data_changed()
     {
-        ASSERT(map_changed_callback, "");
-        map_changed_callback();
+        if(map_changed_callback)
+            map_changed_callback();
     }
 
     void editor_t::push_action(std::unique_ptr<editor_action_t>&& action)
