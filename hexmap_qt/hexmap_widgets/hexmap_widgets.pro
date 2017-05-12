@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     spline_settings_widget.cpp \
     object_properties_widget.cpp \
     minimap_widget.cpp \
-    dialogs/map_properties_dialog.cpp
+    dialogs/map_properties_dialog.cpp \
+    dialogs/export_image_dialog.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     spline_settings_widget.h \
     object_properties_widget.h \
     minimap_widget.h \
-    dialogs/map_properties_dialog.h
+    dialogs/map_properties_dialog.h \
+    dialogs/export_image_dialog.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
@@ -50,7 +52,8 @@ FORMS    += mainwindow.ui \
     dialogs/new_map_dialog.ui \
     spline_settings_widget.ui \
     object_properties_widget.ui \
-    dialogs/map_properties_dialog.ui
+    dialogs/map_properties_dialog.ui \
+    dialogs/export_image_dialog.ui
 
 
 # hexmap shaders
