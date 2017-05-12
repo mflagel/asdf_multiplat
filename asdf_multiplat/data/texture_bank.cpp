@@ -85,6 +85,8 @@ namespace data
         ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", filepath.c_str());
     }
 
+    /// FIXME: somehow indicate that this takes a list of local filepaths?
+    ///        currently this prepends Content.asset_path to the tex_filepath
     void texture_bank_t::add_textures(std::vector<const char*> const& filepaths)
     {
         for(auto const& tex_filepath : filepaths)
