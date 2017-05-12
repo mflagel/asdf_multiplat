@@ -87,8 +87,9 @@ namespace ui
               nothing      = 0
             , terrain      = 1
             , grid_outline = 2
-            , map_objects  = 4
-            , splines      = 8
+            , hex_coords   = 4
+            , map_objects  = 8
+            , splines      = 16
             , everything   = 0xFFFFFFFF
         };
 
@@ -127,6 +128,7 @@ namespace ui
         void render_map_objects();
         void render_splines() const;
     };
+
 }
 }
 }
