@@ -59,7 +59,7 @@ namespace hexmap
 
     void hexmap_t::render()
     {
-        rendered_map->render();
+        rendered_map->render(map_render_flags);
 
         LOG_IF(CheckGLError(), "Error during hex_map_t::render()");
     }
