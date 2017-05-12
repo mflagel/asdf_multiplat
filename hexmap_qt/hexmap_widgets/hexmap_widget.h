@@ -65,6 +65,9 @@ signals:
 public slots:
     void set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
     void set_palette_item(QModelIndex const&);
+
+    void zoom_to_selection();
+    void zoom_extents();
 };
 
 #endif // HEXMAP_WIDGET_T_H

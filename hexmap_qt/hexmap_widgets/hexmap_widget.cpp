@@ -289,3 +289,13 @@ void hexmap_widget_t::set_palette_item(QModelIndex const& index)
         break;
     }
 }
+
+void hexmap_widget_t::zoom_to_selection()
+{
+
+}
+
+void hexmap_widget_t::zoom_extents()
+{
+
+}
