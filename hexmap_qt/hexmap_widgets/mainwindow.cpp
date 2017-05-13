@@ -432,6 +432,13 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     terrain_palette_model->build_from_terrain_bank(editor.rendered_map->terrain_bank);
     objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 
+    //lazy rebuild
+    connect(palette_widget, &palette_widget_t::import_terrain,
+        [this]()
+        {
+            terrain_palette_model->build_from_terrain_bank(ui->hexmap_widget->editor.rendered_map->terrain_bank);
+        });
+
     editor_tool_changed(editor.current_tool);
 }
 
