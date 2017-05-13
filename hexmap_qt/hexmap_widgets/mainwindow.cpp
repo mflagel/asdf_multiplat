@@ -167,6 +167,8 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
                         ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
 
+        connect(palette_widget, &palette_widget_t::terrain_add, ui->hexmap_widget, &hexmap_widget_t::add_terrain);
+
 
         ui->right_dock->setWidget(palette_widget);
     }
@@ -433,11 +435,7 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 
     //lazy rebuild
-    connect(palette_widget, &palette_widget_t::import_terrain,
-        [this]()
-        {
-            terrain_palette_model->build_from_terrain_bank(ui->hexmap_widget->editor.rendered_map->terrain_bank);
-        });
+    connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
 
     editor_tool_changed(editor.current_tool);
 }
