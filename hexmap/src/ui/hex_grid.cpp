@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "hex_map.h"
+#include "hex_grid.h"
 
 #include <array>
 
@@ -22,7 +22,7 @@ namespace hexmap
 {
 namespace ui
 {
-    using render_flags_e = hex_map_t::render_flags_e;
+    using render_flags_e = hex_grid_t::render_flags_e;
 
     const glm::vec4 grid_color(0.0f, 0.0f, 0.0f, 1.0f);
     // const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);

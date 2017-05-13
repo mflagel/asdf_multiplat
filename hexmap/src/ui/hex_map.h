@@ -10,7 +10,7 @@
 
 #include "data/hex_map.h"
 #include "data/terrain_bank.h"
-#include "ui/hex_map.h"
+#include "ui/hex_grid.h"
 #include "ui/spline_renderer.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
