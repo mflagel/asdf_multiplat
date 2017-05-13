@@ -9,6 +9,11 @@
 #include "hexmap/data/terrain_bank.h"
 //#include "hexmap/editor/main/editor.h"
 
+namespace
+{
+    uint32_t thumbnail_dimm_px = 64;
+}
+
 palette_widget_t::palette_widget_t(QWidget* parent)
 : QWidget(parent)
 , ui(new Ui::palette_widget)
@@ -95,9 +100,13 @@ void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_b
     for(size_t i = 0; i < terrain.saved_textures.size(); ++i)
     {
         std::string filepath_str = terrain.saved_textures[i].filesystem_location.string();
+
+        QImage thumb(QString(filepath_str.c_str()));
+        thumb = thumb.scaled(thumbnail_dimm_px,thumbnail_dimm_px);
+
         palette_item_model_t::entry_t entry {
               terrain.asset_names[i].c_str()
-            , QImage(QString(filepath_str.c_str()))
+            , std::move(thumb)
         };
 
         entries.append(std::move(entry));
@@ -131,12 +140,12 @@ void palette_item_model_t::build_from_atlas(asdf::data::texture_atlas_t const& a
 
 void palette_widget_t::import_terrain()
 {
-    QStringList terrain_filepath = QFileDialog::getOpenFileNames(this,
+    QStringList terrain_filepaths = QFileDialog::getOpenFileNames(this,
         tr("Select one or more images to import"), default_texture_import_dir, tr("Image Files (*.png)"));
 
-    if(terrain_filepath.size() > 0)
+    if(terrain_filepaths.size() > 0)
     {
-        emit terrain_add(terrain_filepath);
+        emit terrain_add(terrain_filepaths);
     }
 }
 
