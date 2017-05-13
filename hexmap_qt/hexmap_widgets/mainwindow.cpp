@@ -328,7 +328,7 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
-    nm.set_base_tiles(editor->rendered_map->terrain_bank);
+    nm.set_base_tiles(*(editor->rendered_map->terrain_bank.get()));
 
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
@@ -424,14 +424,17 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     minimap->setMinimumSize(200, 200);
     minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
-    minimapdock->setWidget(minimap);
-
+    //must connect initialized before handing this tot he minimapdock
+    //otherwise the minimap initialize signal will have already fired before connecting
+    connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
     connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
         [this](){
             minimap->is_dirty = true;
             minimap->update();
         });
+
+    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
+    minimapdock->setWidget(minimap);
 
     using qd = QDockWidget;
     minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
@@ -440,13 +443,19 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     terrain_palette_model = new palette_item_model_t();
     objects_palette_model = new palette_item_model_t();
 
-    terrain_palette_model->build_from_terrain_bank(editor.rendered_map->terrain_bank);
+    terrain_palette_model->build_from_terrain_bank(*(editor.rendered_map->terrain_bank.get()));
     objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 
     //lazy rebuild
     connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
 
     editor_tool_changed(editor.current_tool);
+}
+
+void MainWindow::minimap_initialized()
+{
+    minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
+    //minimap->
 }
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
