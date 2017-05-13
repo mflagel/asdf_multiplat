@@ -61,7 +61,7 @@ signals:
     void camera_changed(asdf::camera_t const&);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);
     void map_data_changed(asdf::hexmap::data::hex_map_t&);
-    void terrain_added();
+    void terrain_added(asdf::hexmap::data::terrain_bank_t const&);
 
 public slots:
     void set_editor_tool(asdf::hexmap::editor::editor_t::tool_type_e new_tool);

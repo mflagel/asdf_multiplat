@@ -295,13 +295,18 @@ void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
 {
     if(terrain_filepaths.size() > 0)
     {
+        //ensure this is the current gl context before the terrain bank
+        //does any rendering in add_texture
+        makeCurrent();
+
         for(auto const& filepath : terrain_filepaths)
         {
             std::string filepath_str{filepath.toUtf8().constData()};
             editor.rendered_map->terrain_bank.add_texture(filepath_str);
+            editor.rendered_map->terrain_bank.asset_names.push_back("TEST");
         }
 
-        emit terrain_added();
+        emit terrain_added(editor.rendered_map->terrain_bank);
     }
 }
 
