@@ -11,7 +11,11 @@
 using namespace std;
 using namespace glm;
 
-namespace asdf {
+namespace asdf
+{
+    using namespace util;
+    using namespace data;
+
 namespace hexmap {
 
     using spline_t = data::spline_t;
@@ -20,6 +24,8 @@ namespace editor
 {
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
     const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    constexpr char terrain_types_json_filename[] = "terrain_types.json";
 
     const/*expr*/ data::line_node_t default_spline_style = {
           vec2{0.0f,0.0f}                   //pos
@@ -51,6 +57,11 @@ namespace editor
     void editor_t::init()
     {
         hexmap_t::init();
+
+        //load default terrain and map objects
+        auto data_dir = find_folder("data");
+        rendered_map->load_terrain_assets(data_dir + "/" + string(terrain_types_json_filename));
+        rendered_map->objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
 
 #ifdef DEBUG
         new_map_action("", uvec2(16,16));
