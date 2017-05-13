@@ -69,7 +69,7 @@ public slots:
     void add_terrain(QStringList const& terrain_filepaths);
 
     void zoom_to_selection();
-    void zoom_extents()
+    void zoom_extents();
 };
 
 #endif // HEXMAP_WIDGET_T_H
