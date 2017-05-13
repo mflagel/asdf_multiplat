@@ -31,6 +31,8 @@ void minimap_widget_t::initializeGL()
 
         rendered_map = std::make_unique<ui::hex_map_t>(map_data);
         minimap = std::make_unique<ui::minimap_t>(*(rendered_map.get()));
+
+        emit initialized();
     }
 }
 
