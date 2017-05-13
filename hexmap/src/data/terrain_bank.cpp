@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "terrain_bank.h"
 
+#include "asdf_multiplat/data/content_manager.h"
 #include "asdf_multiplat/data/gl_state.h"
 
 using namespace std;
+using namespace std::experimental::filesystem;
 
 namespace asdf
 {
@@ -14,20 +16,28 @@ namespace hexmap {
 namespace data
 {
 
-    void terrain_bank_t::load_from_file(std::string const& filepath)
+    void terrain_bank_t::load_from_file(path const& filepath)
     {
-        std::string json_str = read_text_file(filepath);
+        ASSERT(is_regular_file(filepath), "Not a valid file");
+
+        std::string json_str = read_text_file(filepath.string());
         cJSON* root = cJSON_Parse(json_str.c_str());
         ASSERT(root, "Error loading imported textures json file");
 
         vector<entry_t> terrain;
         CJSON_GET_ITEM_VECTOR(terrain);
 
-        std::vector<const char*> filepaths;
+        vector<path> filepaths;
+
         for(auto const& t : terrain)
         {
-            asset_names.push_back(t.name.c_str());
-            filepaths.push_back(t.asset.c_str());
+            asset_names.push_back(t.name);
+
+            //filepaths in json are relative to the json document itself
+            if(t.filepath.is_absolute())
+                filepaths.push_back(t.filepath);
+            else
+                filepaths.push_back(filepath.parent_path() / t.filepath);
         }
 
         add_textures(filepaths);
@@ -77,7 +87,7 @@ namespace data
     void terrain_bank_t::entry_t::from_JSON(cJSON* root)
     {
         CJSON_GET_STR(name);
-        CJSON_GET_STR(asset);
+        filepath = path(string(cJSON_GetObjectItem(root, "filepath")->valuestring));
     }
 }
 }

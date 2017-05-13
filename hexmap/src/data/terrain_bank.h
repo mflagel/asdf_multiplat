@@ -15,7 +15,7 @@ namespace data
         struct entry_t
         {
             std::string name;
-            std::string asset;
+            std::experimental::filesystem::path filepath;
 
             void from_JSON(cJSON*);
         };
@@ -30,7 +30,7 @@ namespace data
 
     public:
 
-        void load_from_file(std::string const& filepath);
+        void load_from_file(std::experimental::filesystem::path const& filepath);
         void rebuild_colors();
     };
 }

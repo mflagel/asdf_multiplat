@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <experimental/filesystem>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -22,7 +23,7 @@ namespace data
 
     struct saved_texture_t
     {
-        std::string filesystem_location;
+        std::experimental::filesystem::path filesystem_location;
     };
 
 
@@ -48,9 +49,9 @@ namespace data
 
         texture_bank_t(std::string name = "unnamed texture bank");
 
-        void load_from_list_file(std::string const& filepath);
-        void add_texture(std::string const& filesystem_location);
-        void add_textures(std::vector<const char*> const& filepaths);
+        void add_texture(std::experimental::filesystem::path const& texture_path);
+        void add_textures(std::vector<std::experimental::filesystem::path> const& filepaths, std::experimental::filesystem::path const& relative_dir = std::experimental::filesystem::path());
+        void add_textures_from_asset_dir(std::vector<std::experimental::filesystem::path> const& filepaths);
     };
 }
 }
