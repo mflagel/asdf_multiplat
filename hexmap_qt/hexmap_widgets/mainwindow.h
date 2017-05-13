@@ -19,6 +19,7 @@ class palette_item_model_t;
 class spline_settings_widget_t;
 class object_properties_widget_t;
 class minimap_widget_t;
+class terrain_brush_selector_t;
 
 class MainWindow : public QMainWindow
 {
@@ -70,6 +71,7 @@ private:
 
     minimap_widget_t* minimap = nullptr;
     object_properties_widget_t* object_properties = nullptr;
+    terrain_brush_selector_t* brush_settings = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
 
