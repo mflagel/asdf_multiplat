@@ -31,6 +31,7 @@
     <ClCompile Include="..\src\data\hex_grid.cpp" />
     <ClCompile Include="..\src\data\spline.cpp" />
     <ClCompile Include="..\src\data\terrain_bank.cpp" />
+    <ClCompile Include="..\src\data\terrain_brush.cpp" />
     <ClCompile Include="..\src\data\_hex_map.cpp" />
     <ClCompile Include="..\src\editor\command_actions\command_actions.cpp" />
     <ClCompile Include="..\src\editor\main\editor.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="..\src\data\map_objects.h" />
     <ClInclude Include="..\src\data\spline.h" />
     <ClInclude Include="..\src\data\terrain_bank.h" />
+    <ClInclude Include="..\src\data\terrain_brush.h" />
     <ClInclude Include="..\src\editor\command_actions\command_actions.h" />
     <ClInclude Include="..\src\editor\main\editor.h" />
     <ClInclude Include="..\src\editor\main\input.h" />
