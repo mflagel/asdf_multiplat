@@ -94,9 +94,10 @@ void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_b
 
     for(size_t i = 0; i < terrain.saved_textures.size(); ++i)
     {
+        std::string filepath_str = terrain.saved_textures[i].filesystem_location.string();
         palette_item_model_t::entry_t entry {
               terrain.asset_names[i].c_str()
-            , QImage(terrain.saved_textures[i].filesystem_location.c_str())
+            , QImage(QString(filepath_str.c_str()))
         };
 
         entries.append(std::move(entry));
