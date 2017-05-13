@@ -19,7 +19,7 @@ namespace hexmap {
 namespace editor
 {
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
-    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
+    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
 
     const/*expr*/ data::line_node_t default_spline_style = {
           vec2{0.0f,0.0f}                   //pos
@@ -60,6 +60,13 @@ namespace editor
 
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
+
+        test_minimap = make_shared<ui::minimap_t>(*rendered_map);
+    }
+
+    void editor_t::resize(uint32_t w, uint32_t h)
+    {
+        hexmap_t::resize(w, h);
     }
 
     void editor_t::render()
@@ -74,6 +81,9 @@ namespace editor
         }
 
         render_selection();
+
+        test_minimap->rebuild(); ///OPTIMIZE: only re-render if map data has changed
+        //test_minimap->render();
 
         ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
@@ -133,9 +143,12 @@ namespace editor
         //reset camera
         rendered_map->camera_controller.position = default_camera_position;
         rendered_map->update(0.0f);
+        rendered_map->camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map->camera.aspect_ratio);
 
         map_filepath = "";
         map_is_dirty = false;
+
+        signal_data_changed();
     }
 
     void editor_t::save_action()
@@ -158,6 +171,8 @@ namespace editor
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
+
+        signal_data_changed();
     }
 
     bool editor_t::undo()
@@ -165,6 +180,7 @@ namespace editor
         if(action_stack.can_undo())
         {
             action_stack.undo();
+            signal_data_changed();
             return true;
         }
 
@@ -176,6 +192,7 @@ namespace editor
         if(action_stack.can_redo())
         {
             action_stack.redo();
+            signal_data_changed();
             return true;
         }
 
@@ -322,6 +339,25 @@ namespace editor
     }
 
 
+    void editor_t::signal_data_changed()
+    {
+        if(map_changed_callback)
+            map_changed_callback();
+    }
+
+    void editor_t::push_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push(move(action));
+        signal_data_changed();
+    }
+
+    void editor_t::push_and_execute_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push_and_execute(move(action));
+        signal_data_changed();
+    }
+
+
     /// Terrain
     void editor_t::paint_terrain_start()
     {
@@ -347,6 +383,12 @@ namespace editor
     bool editor_t::paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick)
     {
         auto vec = p2_world - p1_world;
+
+        if(vec.x == 0.0f && vec.y == 0.0f)
+        {
+            return false;
+        }
+
         auto len = glm::length(vec);
         auto unit = glm::normalize(vec);
 
@@ -370,7 +412,7 @@ namespace editor
     {
         if(!painted_terrain_coords.empty())
         {
-            action_stack.push(make_unique<paint_tiles_action_t>
+            push_action(make_unique<paint_tiles_action_t>
                 ( map_data.hex_grid
                 , std::move(painted_terrain_coords)
                 , current_tile_id
@@ -392,13 +434,13 @@ namespace editor
 
         data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
-        action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+        push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
     void editor_t::delete_object(size_t object_index)
     {
         auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
-        action_stack.push_and_execute(std::move(cmd));
+        push_and_execute_action(std::move(cmd));
     }
 
 
@@ -540,7 +582,7 @@ namespace editor
         ASSERT(wip_spline->control_nodes.size() >= 0, "apparently control_nodes might have a negtaive length, which I thought was impossible");
 
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
-        action_stack.push(std::move(cmd));
+        push_action(std::move(cmd));
 
         wip_spline = nullptr;
         wip_spline_node = nullptr;

@@ -93,6 +93,26 @@ namespace asdf
                 GL_State->unbind_vao();
             }
         }
+
+        /// render without vao so that things don't break when rendered in
+        /// differing GL contexts
+        void render_without_vao(std::shared_ptr<shader_t >const& shader) const
+        {
+            render_without_vao(shader, draw_mode);
+        }
+
+        void render_without_vao(std::shared_ptr<shader_t >const& shader, GLuint _draw_mode) const
+        {
+            if(num_verts > 0)
+            {
+                GL_State->bind(vbo);
+                VertexType::vertex_spec.set_vertex_attribs(shader);
+
+                glDrawArrays(_draw_mode, 0, num_verts);
+
+                GL_State->unbind_vbo();
+            }
+        }
     };
 
     // stores multiple meshes in one vbo and uses glMultiDrawArrays

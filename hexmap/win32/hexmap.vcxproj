@@ -40,6 +40,7 @@
     <ClCompile Include="..\src\main\stdafx.cpp" />
     <ClCompile Include="..\src\ui\hex_map.cpp" />
     <ClCompile Include="..\src\ui\hex_tile.cpp" />
+    <ClCompile Include="..\src\ui\minimap.cpp" />
     <ClCompile Include="..\src\ui\spline_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +56,7 @@
     <ClInclude Include="..\src\main\stdafx.h" />
     <ClInclude Include="..\src\ui\hex_map.h" />
     <ClInclude Include="..\src\ui\hex_tile.h" />
+    <ClInclude Include="..\src\ui\minimap.h" />
     <ClInclude Include="..\src\ui\spline_renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

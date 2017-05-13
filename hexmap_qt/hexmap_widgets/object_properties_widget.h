@@ -4,6 +4,7 @@
 #include <array>
 
 #include <QWidget>
+#include <QLayout>
 
 namespace Ui {
 class object_properties_widget_t;

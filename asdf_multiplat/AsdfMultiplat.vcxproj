@@ -228,11 +228,6 @@
     <ClCompile Include="main\keyboard.cpp" />
     <ClCompile Include="main\mouse.cpp" />
     <ClCompile Include="ui\polygon.cpp" />
-    <ClCompile Include="ui\text.cpp" />
-    <ClCompile Include="ui\ui_base.cpp" />
-    <ClCompile Include="ui\ui_button.cpp" />
-    <ClCompile Include="ui\ui_drag_control.cpp" />
-    <ClCompile Include="ui\ui_label.cpp" />
     <ClCompile Include="utilities\camera.cpp" />
     <ClCompile Include="utilities\spritebatch.cpp" />
     <ClCompile Include="utilities\utilities.cpp" />
@@ -256,11 +251,6 @@
     <ClInclude Include="main\mouse.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\polygon.h" />
-    <ClInclude Include="ui\text.h" />
-    <ClInclude Include="ui\ui_base.h" />
-    <ClInclude Include="ui\ui_button.h" />
-    <ClInclude Include="ui\ui_drag_control.h" />
-    <ClInclude Include="ui\ui_label.h" />
     <ClInclude Include="utilities\camera.h" />
     <ClInclude Include="utilities\cjson_utils.hpp" />
     <ClInclude Include="utilities\macro_overloading.h" />

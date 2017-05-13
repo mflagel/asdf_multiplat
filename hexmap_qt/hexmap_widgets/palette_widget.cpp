@@ -2,11 +2,17 @@
 #include "ui_palette_widget.h"
 
 #include <QPainter>
+#include <QFileDialog>
 
 #include "mainwindow.h"
 
 #include "hexmap/data/terrain_bank.h"
-#include "hexmap/editor/main/editor.h"
+//#include "hexmap/editor/main/editor.h"
+
+namespace
+{
+    uint32_t thumbnail_dimm_px = 64;
+}
 
 palette_widget_t::palette_widget_t(QWidget* parent)
 : QWidget(parent)
@@ -14,11 +20,24 @@ palette_widget_t::palette_widget_t(QWidget* parent)
 {
     ui->setupUi(this);
     list_view = ui->listView;
+
+    connect(ui->btn_add_terrain,    &QPushButton::pressed, this, &palette_widget_t::import_terrain);
+    connect(ui->btn_remove_terrain, &QPushButton::pressed, this, &palette_widget_t::remove_selected_terrain);
 }
 
 palette_widget_t::~palette_widget_t()
 {
     delete ui;
+}
+
+QModelIndex palette_widget_t::selected_index() const
+{
+    auto indices = ui->listView->selectionModel()->selectedIndexes();
+
+    if(indices.size() == 0)
+        return QModelIndex();
+    else
+        return indices.at(0);
 }
 
 void palette_widget_t::build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const& terrain)
@@ -80,9 +99,14 @@ void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_b
 
     for(size_t i = 0; i < terrain.saved_textures.size(); ++i)
     {
+        std::string filepath_str = terrain.saved_textures[i].filesystem_location.string();
+
+        QImage thumb(QString(filepath_str.c_str()));
+        thumb = thumb.scaled(thumbnail_dimm_px,thumbnail_dimm_px);
+
         palette_item_model_t::entry_t entry {
               terrain.asset_names[i].c_str()
-            , QImage(terrain.saved_textures[i].filesystem_location.c_str())
+            , std::move(thumb)
         };
 
         entries.append(std::move(entry));
@@ -113,6 +137,34 @@ void palette_item_model_t::build_from_atlas(asdf::data::texture_atlas_t const& a
         entries.append(std::move(entry));
     }
 }
+
+void palette_widget_t::import_terrain()
+{
+    QStringList terrain_filepaths = QFileDialog::getOpenFileNames(this,
+        tr("Select one or more images to import"), default_texture_import_dir, tr("Image Files (*.png)"));
+
+    if(terrain_filepaths.size() > 0)
+    {
+        emit terrain_add(terrain_filepaths);
+    }
+}
+
+void palette_widget_t::remove_selected_terrain()
+{
+    
+}
+
+void palette_widget_t::save_terrain()
+{
+    QString filepath = QFileDialog::getSaveFileName(this, tr("Save Terrain Palette"), default_texture_save_dir, tr("Hexmap Files (*.json)"));
+
+    if(filepath.length() > 0)
+    {
+        //TODO
+    }
+}
+
+
 
 int palette_item_model_t::rowCount(const QModelIndex &parent) const
 {

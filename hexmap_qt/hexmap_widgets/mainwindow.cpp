@@ -12,6 +12,7 @@
 
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/data/content_manager.h>
+#include <hexmap/data/hex_grid.h>
 #include <hexmap/data/spline.h>
 #include <hexmap/ui/hex_map.h>
 
@@ -24,6 +25,7 @@
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
+#include "minimap_widget.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -32,6 +34,10 @@ using namespace std;
 namespace
 {
     constexpr int scroll_sub_ticks = 10;
+    constexpr float scroll_padding_units = 1.0f;
+    constexpr int status_message_timeout_ms = 5000;
+
+    constexpr int zoom_exponent_tick_per_press = 1;
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -55,6 +61,60 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::undo);
         connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::redo);
+
+        /// Render Flag Toggles
+        {
+            using rflags = asdf::hexmap::ui::hex_map_t::render_flags_e;
+
+            ui->actionGrid->setChecked((editor->map_render_flags & rflags::grid_outline));
+            ui->actionHex_Coords->setChecked((editor->map_render_flags & rflags::hex_coords));
+        
+            auto connect_thing = [this](QAction* thing, rflags flag)
+            {
+                connect(thing, &QAction::triggered, [this, flag](bool chk)
+                {
+                    uint32_t temp = static_cast<uint32_t>(ui->hexmap_widget->editor.map_render_flags);
+                    temp |= (flag * chk);
+                    temp &= ~(flag * !chk);
+                    ui->hexmap_widget->editor.map_render_flags = static_cast<rflags>(temp);
+                });
+            };
+
+            connect_thing(ui->actionGrid, rflags::grid_outline);
+            connect_thing(ui->actionHex_Coords, rflags::hex_coords);
+        }
+
+        /// Zoom
+        {
+            auto zoom_tick = [this](int num_ticks)
+            {
+                auto cur_zoom = ui->hexmap_widget->camera_zoom_exponent();
+                ui->hexmap_widget->camera_zoom_exponent(cur_zoom + zoom_exponent_tick_per_press * num_ticks);
+            };
+
+            connect(ui->actionZoom_In,  &QAction::triggered, [&zoom_tick](){zoom_tick(1);});
+            connect(ui->actionZoom_Out, &QAction::triggered, [&zoom_tick](){zoom_tick(-1);});
+
+            connect(ui->actionZoom_to_Selection, &QAction::triggered, ui->hexmap_widget, &hexmap_widget_t::zoom_to_selection);
+            connect(ui->actionZoom_to_Extents,   &QAction::triggered, ui->hexmap_widget, &hexmap_widget_t::zoom_extents);
+        }
+    }
+
+    {
+        zoom_spinbox = new QSpinBox();
+        zoom_spinbox->setMinimum(10);
+        zoom_spinbox->setMaximum(1600);
+
+        //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed, [this](asdf::camera_t const& camera){zoom_spinbox->setValue(camera.position.z * 100);});
+        connect(zoom_spinbox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
+        {
+            float z = sqrt(v / 100.0f);
+            ui->hexmap_widget->camera_zoom_exponent(z);
+        });
+
+        auto* zoomform = new QFormLayout();
+        zoomform->addRow("Zoom:", zoom_spinbox);
+        statusBar()->addWidget(zoomform->widget());
     }
 
 
@@ -73,21 +133,8 @@ MainWindow::MainWindow(QWidget *parent) :
                             this, &MainWindow::hex_map_initialized);
         connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
                              this, &MainWindow::editor_tool_changed);
-        connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
-                             this, &MainWindow::set_scrollbar_stuff);
-
-        //FIXME cleanup and/or optimize
-        connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
-                [this](tool_type_e tool){
-                    switch(tool)
-                    {
-                        case editor_t::select: ui->right_dock->setWidget(object_properties); return;
-                        case editor_t::terrain_paint: [[FALLTHROUGH]]
-                        case editor_t::place_objects: ui->right_dock->setWidget(palette_widget); return;
-                        case editor_t::place_splines: ui->right_dock->setWidget(spline_settings_widget); return;
-                    }
-                }
-        );
+        //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
+        //                     this, &MainWindow::set_scrollbar_stuff);
     }
 
     {
@@ -119,6 +166,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
                         ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
+
+        connect(palette_widget, &palette_widget_t::terrain_add, ui->hexmap_widget, &hexmap_widget_t::add_terrain);
 
 
         ui->right_dock->setWidget(palette_widget);
@@ -186,13 +235,7 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     ///    "viewable_rect"  the rectangle of viewable area in world units
 
     hexmap_widget_t* hxm_wgt = ui->hexmap_widget;
-
-    ///MAP SIZE
-    auto const& map_size_cells = hxm_wgt->map_size(); //array size
-    vec2 hex_size(asdf::hexmap::hex_width, asdf::hexmap::hex_height);
-    vec2 map_size_units = vec2(map_size_cells) * hex_size; //total map width in units. Width is not equal to array width because hexagons overlap, and hexagons aren't one unit tall
-    map_size_units.x -= (map_size_units.x - 1) * asdf::hexmap::hex_width_d4; //handle horizontal overlap
-    map_size_units.y += asdf::hexmap::hex_height_d2; //add room for the offset
+    vec2 map_size_units = hxm_wgt->map_size_units();
 
     ///VIEWABLE RECT
     ///convert the screen coords of the lower-bound and upper-bound of the hexmap rect into world coords
@@ -210,29 +253,39 @@ void MainWindow::set_scrollbar_stuff(asdf::camera_t const& camera)
     vec2 scroll_max = scroll_min + scroll_range;
     vec2 page_step = glm::min(viewable_rect_size, map_size_units);
 
+    scroll_min -= scroll_padding_units;
+    scroll_max += scroll_padding_units;
+
     auto* h_scr = ui->hexmap_hscroll;
+    auto prev = h_scr->blockSignals(true);
     h_scr->setMinimum(scroll_min.x * scroll_sub_ticks);
     h_scr->setMaximum(scroll_max.x * scroll_sub_ticks);
     h_scr->setPageStep(page_step.x * scroll_sub_ticks);
+    h_scr->blockSignals(prev);
 
     auto* v_scr = ui->hexmap_vscroll;
+    prev = v_scr->blockSignals(true);
     v_scr->setMinimum(scroll_min.y * scroll_sub_ticks);
     v_scr->setMaximum(scroll_max.y * scroll_sub_ticks);
     v_scr->setPageStep(page_step.y * scroll_sub_ticks);
+    v_scr->blockSignals(prev);
+
+    scrollbar_changed();
 }
 
 
 void MainWindow::scrollbar_changed()
 {
-    //LOG("scrollbar changed;  x:%d  y%d", ui->hexmap_hscroll->value(), ui->hexmap_vscroll->value());
-
     glm::vec2 p(ui->hexmap_hscroll->value());
-
-    auto docheight = ui->hexmap_vscroll->maximum() + ui->hexmap_vscroll->pageStep();
+    auto scroll_range = ui->hexmap_vscroll->maximum() - ui->hexmap_vscroll->minimum();
+    auto docheight = scroll_range + ui->hexmap_vscroll->pageStep();
     p.y = docheight - ui->hexmap_vscroll->value(); //since a higher camera pos moves up, but larger scrollbar value should go downward
 
     p /= scroll_sub_ticks;
     p.x -= asdf::hexmap::hex_width_d2; //since 0,0 is the center of a hex
+    p.y -= asdf::hexmap::hex_height;
+
+    p.y -= scroll_padding_units;
 
     ui->hexmap_widget->camera_pos(p, false);
     ui->hexmap_widget->update();
@@ -240,6 +293,8 @@ void MainWindow::scrollbar_changed()
 
 void MainWindow::new_map()
 {
+    ASSERT(editor, "Can't create a new map before the editor object is created");
+
     if(editor->map_is_dirty)
     {
         QMessageBox msgBox;
@@ -264,11 +319,20 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
+    nm.set_base_tiles(editor->rendered_map->terrain_bank);
+
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
     } else {
+        std::string name(nm.ui->txt_mapName->displayText().toUtf8().constData());
         glm::uvec2 map_size(nm.ui->spb_width->value(), nm.ui->spb_height->value());
-        ui->hexmap_widget->editor.new_map_action(map_size);
+
+        asdf::hexmap::data::hex_grid_cell_t cell;
+        cell.tile_id = nm.selected_base_tile_index();
+
+        ui->hexmap_widget->editor.new_map_action(name, map_size, cell);
+        ui->hexmap_widget->camera_pos(glm::vec2(map_size) / 2.0f);
+        set_scrollbar_stuff(ui->hexmap_widget->editor.rendered_map->camera);
     }
 }
 
@@ -294,6 +358,7 @@ void MainWindow::save_map()
     else
     {
         ui->hexmap_widget->editor.save_action();
+        save_status_message();
     }
 }
 
@@ -305,6 +370,7 @@ void MainWindow::save_map_as()
     if(filepath.size() > 0)
     {
         editor->save_action( std::string(filepath.toUtf8().constData()) );
+        save_status_message();
     }
 }
 
@@ -322,45 +388,88 @@ void MainWindow::redo()
 
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
-
+    Q_UNUSED(event);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
 {
-
+    Q_UNUSED(event);
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
+    Q_UNUSED(event);
+}
 
+void MainWindow::save_status_message()
+{
+    QString save_str = "Map Saved to \"";
+    save_str.append(ui->hexmap_widget->editor.map_filepath.c_str());
+    statusBar()->showMessage(save_str, status_message_timeout_ms);
 }
 
 
 void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
 {
+    minimap = new minimap_widget_t(editor);
+    minimap->setMinimumSize(200, 200);
+    minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
+    minimapdock->setWidget(minimap);
+
+    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+        [this](){
+            minimap->is_dirty = true;
+            minimap->update();
+        });
+
+    using qd = QDockWidget;
+    minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+    addDockWidget(Qt::RightDockWidgetArea, minimapdock);
+
     terrain_palette_model = new palette_item_model_t();
     objects_palette_model = new palette_item_model_t();
 
     terrain_palette_model->build_from_terrain_bank(editor.rendered_map->terrain_bank);
     objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 
+    //lazy rebuild
+    connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
+
     editor_tool_changed(editor.current_tool);
 }
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
+    auto* dock = ui->right_dock;
+
     switch(new_tool)
     {
-        case tool_type_e::terrain_paint:
-            palette_widget->list_view->setModel(terrain_palette_model);
-            break;
-        case tool_type_e::place_objects:
-            palette_widget->list_view->setModel(objects_palette_model);
+        case tool_type_e::select:
+            dock->setWidget(object_properties);
             break;
 
-    default:
-        palette_widget->list_view->setModel(nullptr);
-        break;
+        case tool_type_e::terrain_paint:
+            palette_widget->list_view->setModel(terrain_palette_model);
+            dock->setWidget(palette_widget);
+            dock->setWindowTitle(tr("Terrain"));
+            break;
+
+        case tool_type_e::place_objects:
+            palette_widget->list_view->setModel(objects_palette_model);
+            dock->setWidget(palette_widget);
+            dock->setWindowTitle(tr("Objects"));
+            break;
+
+        case tool_type_e::place_splines:
+            dock->setWidget(spline_settings_widget);
+            break;
+
+        default:
+            dock->setWidget(nullptr);
+            //palette_widget->list_view->setModel(nullptr);
+            break;
     }
 }
 

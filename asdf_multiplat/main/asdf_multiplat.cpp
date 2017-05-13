@@ -28,8 +28,13 @@ namespace asdf {
         signal(SIGINT,util::interrupt_handler);
     }
 
-    // asdf_specific_t::~asdf_specific_t()
-    // {}
+    asdf_multiplat_t::~asdf_multiplat_t()
+    {
+        SDL_FreeSurface(main_surface);
+        SDL_GL_DeleteContext(gl_context);
+        SDL_DestroyWindow(main_window);
+        SDL_Quit();
+    }
 
     void asdf_multiplat_t::init(std::string _exec_dir) {
         LOG("--- Initializing This Crazy Contraption ---");
@@ -46,24 +51,29 @@ namespace asdf {
         init_SDL();
         in_focus = true;
 
-        renderer = make_unique<asdf_renderer_t>();
+        renderer = make_unique<asdf_renderer_t>(gl_context);
+        GL_State.current_state_machine = &(renderer->gl_state);
         renderer->init();
 
         Content.init();
         spritebatch = make_shared<spritebatch_t>();
         spritebatch->spritebatch_shader = Content.shaders["spritebatch"];
-
-        //main_view = make_shared<ui_view_t>(glm::vec2(0, 0), glm::vec2(settings.resolution_width, settings.resolution_height));
     }
 
-    asdf_multiplat_t::~asdf_multiplat_t()
+    void asdf_multiplat_t::resize(uint32_t w, uint32_t h)
     {
-        SDL_FreeSurface(main_surface);
-        SDL_GL_DeleteContext(gl_context);
-        SDL_DestroyWindow(main_window);
-        SDL_Quit();
-    }
+        ASSERT(settings.resizable, "Why is a window being resized when settings say it can't be");
 
+        surface_width = w;
+        surface_height = h;
+
+        //for now the rendered resolution will always match the surface size
+        settings.resolution_width = w;
+        settings.resolution_width = h;
+
+        renderer->resize(w, h);
+        specific->resize(w, h);
+    }
 
     void asdf_multiplat_t::update() {
         uint32_t currentTicks = SDL_GetTicks();
@@ -178,21 +188,33 @@ namespace asdf {
                 break;
 
             case SDL_MOUSEMOTION:
-                event->motion.x -= settings.resolution_width  / 2;
-                event->motion.y = settings.resolution_height / 2 - event->motion.y;
+                event->motion.x -= surface_width  / 2;
+                event->motion.y = surface_height / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                event->button.x -= settings.resolution_width / 2;
-                event->motion.y = settings.resolution_height / 2 - event->motion.y;
+                event->button.x -= surface_width / 2;
+                event->motion.y = surface_height / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEWHEEL:
                 break;
 
             case SDL_WINDOWEVENT:
+            {
+                switch(event->window.event)
+                {
+                    case SDL_WINDOWEVENT_RESIZED: [[FALLTHROUGH]]
+                    case SDL_WINDOWEVENT_SIZE_CHANGED:
+                    {
+                        resize(event->window.data1, event->window.data2);
+                        break;
+                    }
+                };
+
                 break;
+            }
         }
 
 
@@ -226,10 +248,9 @@ namespace asdf {
         //create window
         uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-        if (settings.fullscreen)
-            flags |= SDL_WINDOW_FULLSCREEN;
-        if (settings.borderless)
-            flags |= SDL_WINDOW_BORDERLESS;
+        flags |= SDL_WINDOW_FULLSCREEN * settings.fullscreen;
+        flags |= SDL_WINDOW_BORDERLESS * settings.borderless;
+        flags |= SDL_WINDOW_RESIZABLE  * settings.resizable;
 
         main_window = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -237,6 +258,9 @@ namespace asdf {
                                         flags);
         checkSDLError(__LINE__);
         ASSERT(main_window != 0, "Unable to create window");
+
+        surface_width = settings.resolution_width;
+        surface_height = settings.resolution_height;
 
         //create OpenGL context
         gl_context = SDL_GL_CreateContext(main_window);
@@ -249,7 +273,7 @@ namespace asdf {
 
         SDL_GL_SetSwapInterval(1);
         LOG("SDL Initialized");
-        LOG("Window Size: %d x %d", settings.resolution_width, settings.resolution_height);
+        LOG("Window Size: %d x %d", surface_width, surface_height);
     }
 
 
@@ -268,14 +292,14 @@ namespace asdf {
         (
             file_path.c_str(),
             SOIL_SAVE_TYPE_BMP,
-            0, 0, settings.resolution_width, settings.resolution_height
+            0, 0, surface_width, surface_height
         );
 
         //soil returns 0 for failure apparently
         if(save_result == 0)
         {
             LOG("ERROR: SOIL failed saving screenshot {%zu,%zu} \"%s\""
-                , settings.resolution_width, settings.resolution_height, file_path.c_str());
+                , surface_width, surface_height, file_path.c_str());
             LOG(" SOIL: %s", SOIL_last_result());
         }
         else
@@ -284,14 +308,29 @@ namespace asdf {
         }
     }
 
+    gl_viewport_t asdf_multiplat_t::screen_viewport() const
+    {
+        gl_viewport_t v;
+        v.bottom_left = -ivec2(surface_width, surface_height) / 2;
+        v.size = uvec2(surface_width, surface_height);
 
+        return v;
+    }
+
+
+
+    ///
+    /// Asdf Renderer
+    ///
 
     gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
 
 
-    asdf_renderer_t::asdf_renderer_t()
-    : render_target("asdf main render target", nullptr, app.settings.resolution_width, app.settings.resolution_height)
+    asdf_renderer_t::asdf_renderer_t(void* _gl_context)
+    : gl_state(_gl_context)
+    , render_target(app.settings.resolution_width, app.settings.resolution_height) //use settings resolution, which can differ from surface size
     {   
+        render_target.texture.name = "asdf main render target texture";
     }
 
     /// Putting this in an init func, since it relies on app.renderer being fully constructed for the 
@@ -300,18 +339,8 @@ namespace asdf {
     {
         ASSERT(!CheckGLError(), "Error before asdf_renderer_t::init()");
 
-        gl_state.bind(framebuffer);
-        //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_target.texture_id, 0);  /// GL 3.2+
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_target.texture_id, 0);
-
-        GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-        glDrawBuffers(1, DrawBuffers);
-        ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Error creating main app framebuffer");
-
-
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
-        ASSERT(!CheckGLError(), "");
-
+        render_target.init();
+        GL_State->bind(render_target); //push this on as the base of the fbo stack. It'll sit there
 
         auto shader_path = find_folder("shaders");
         screen_shader = Content.create_shader_highest_supported(shader_path, "passthrough", "textured");
@@ -354,13 +383,21 @@ namespace asdf {
         ASSERT(!CheckGLError(), "Error initializing renderer");
     }
 
+    void asdf_renderer_t::resize(uint32_t w, uint32_t h)
+    {
+        render_target.texture.write(nullptr, w, h);
+
+        //rebind render target fbo so the correct gl viewport is set
+        //easier than holding onto the bottom-most stack element and changing the vp
+        GL_State->unbind_fbo();
+        GL_State->bind(render_target);
+    }
+
     void asdf_renderer_t::pre_render()
     {
         // Render to to frameBuffer
-        GL_State->bind(framebuffer);
+        
         //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
-
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
 
 
         glClearColor(gl_clear_color.r
@@ -378,7 +415,10 @@ namespace asdf {
 
     void asdf_renderer_t::post_render()
     {
-        GL_State->unbind_fbo();
+        ASSERT(GL_State->current_framebuffer() == render_target.fbo.id, "There shouldn't be any leftover FBOs in the stack");
+        
+        scoped_fbo_t scoped(0,  0,0, app.surface_width, app.surface_height);
+
         GL_State->bind(screen_shader);
         glUniform4f(screen_shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -389,7 +429,7 @@ namespace asdf {
         screen_shader->projection_matrix = glm::ortho<float>(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, 1.0f);
         screen_shader->update_wvp_uniform();
 
-        glViewport(0,0,app.settings.resolution_width,app.settings.resolution_height);
+        
 
         glClearColor(0.0f
                    , 0.0f
@@ -399,7 +439,7 @@ namespace asdf {
 
 
         //glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, render_target.texture_id);
+        glBindTexture(GL_TEXTURE_2D, render_target.texture.texture_id);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //glDisable(GL_CULL_FACE);
 

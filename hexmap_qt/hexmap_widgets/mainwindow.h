@@ -12,10 +12,13 @@ namespace Ui {
 class MainWindow;
 }
 
+class QSpinBox;
+
 class palette_widget_t;
 class palette_item_model_t;
 class spline_settings_widget_t;
 class object_properties_widget_t;
+class minimap_widget_t;
 
 class MainWindow : public QMainWindow
 {
@@ -45,6 +48,9 @@ protected:
     void mousePressEvent(QMouseEvent *) override;
     void mouseReleaseEvent(QMouseEvent *) override;
 
+private:
+    void save_status_message();
+
 private slots:
     void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
@@ -53,11 +59,15 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    QSpinBox* zoom_spinbox = nullptr;
+
     asdf::hexmap::editor::editor_t* editor = nullptr;
 
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
+
+    minimap_widget_t* minimap = nullptr;
     object_properties_widget_t* object_properties = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;

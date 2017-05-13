@@ -82,6 +82,17 @@ namespace ui
 
     struct hex_map_t
     {
+        enum render_flags_e : uint32_t
+        {
+              nothing      = 0
+            , terrain      = 1
+            , grid_outline = 2
+            , hex_coords   = 4
+            , map_objects  = 8
+            , splines      = 16
+            , everything   = 0xFFFFFFFF
+        };
+
         data::hex_map_t& map_data;
 
         asdf::camera_t camera;
@@ -108,15 +119,16 @@ namespace ui
         void load_terrain_assets(std::string const& data_dir);
         
         void update(float dt);
-        void render();
+        void render(render_flags_e = everything);
         void on_event(SDL_Event* event);
 
-        void render_chunk(data::hex_grid_chunk_t const&);
-        void render_grid_overlay_instanced(glm::uvec2 grid_size);
-        void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode);
+        void render_chunk(data::hex_grid_chunk_t const&, render_flags_e = everything);
+        void render_grid_overlay_instanced(glm::uvec2 grid_size) const;
+        void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode) const;
         void render_map_objects();
-        void render_splines();
+        void render_splines() const;
     };
+
 }
 }
 }

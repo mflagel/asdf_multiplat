@@ -16,6 +16,19 @@ namespace asdf
         
         glGenTextures(1, &texture_id);
 
+        ASSERT(!CheckGLError(), "GL Error allocating texture");
+        ASSERT(texture_id != 9001, "texture_id not initialized");
+
+        /// bind texture and give it some default sampler stuff
+        /// setting min_filter is REQUIRED to be considered a 'complete' texture.
+        /// Without it, glCopyImageSubData will fail (among other things)
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+        glBindTexture(GL_TEXTURE_2D, 0);
+
         if(CheckGLError() == 0)
         {
             LOG("Created blank texture with id: %u", texture_id);

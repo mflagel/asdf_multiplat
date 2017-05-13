@@ -9,6 +9,7 @@
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
 
+#include "ui/minimap.h"
 
 namespace asdf {
 namespace hexmap {
@@ -108,13 +109,21 @@ namespace editor
         ///
         std::string map_filepath;
         bool map_is_dirty = false;
+        std::function<void()> map_changed_callback;
+
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
-        action_stack_t action_stack;
+        std::shared_ptr<ui::minimap_t> test_minimap;
 
+    private:
+        action_stack_t action_stack; //private to ensure signal_data_changed() gets called
+
+
+    public:
         editor_t();
         void init() override;
+        void resize(uint32_t w, uint32_t h) override;
 
         void render() override;
         void render_selection();
@@ -141,6 +150,10 @@ namespace editor
 
         bool select_object_at(glm::vec2 position);
         bool is_object_selected(size_t obj_index) const;
+
+        void signal_data_changed();
+        void push_action(std::unique_ptr<editor_action_t>&&);
+        void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

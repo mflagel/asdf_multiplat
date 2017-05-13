@@ -32,6 +32,13 @@ namespace data
         hex_tile_id_t tile_id;
     };
 
+    //FIXME see if something like this exists already
+    struct bbox_units_t
+    {
+        glm::vec2 lower;
+        glm::vec2 upper;
+    };
+
     
     using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>; //row of columns
 
@@ -64,7 +71,7 @@ namespace data
 
     struct hex_grid_t
     {
-        glm::uvec2 size;
+        glm::uvec2 size; //size in number of cells (ie: the size of the grid)
         hex_chunks_t chunks;
 
         size_t num_chunks() const { return size.x * size.y; }
@@ -102,6 +109,11 @@ namespace data
         void add_rows(size_t num_rows, resize_y_direction_e = resize_upwards);
 
         bool is_in_bounds(glm::ivec2 hex_coords) const;
+        bbox_units_t bounding_box_units() const;
+
+        inline glm::uvec2 size_cells() const { return size; }
+        glm::vec2 size_units() const;
+        glm::uvec2 size_chunks() const;
 
         glm::uvec2 chunk_size() const;
         hex_grid_cell_t& cell_at(glm::ivec2 hex_coord);
