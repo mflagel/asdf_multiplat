@@ -206,13 +206,15 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
-    ///TEST
+    ///Brush Settings
     {
-        auto* test_thing = new QDockWidget(this);
-        test_thing->setWidget(new terrain_brush_selector_t());
+        auto brush_setings_dock = new QDockWidget(this);
 
-        addDockWidget(Qt::DockWidgetArea::NoDockWidgetArea, test_thing);
-        test_thing->setFloating(true);
+        brush_settings = new terrain_brush_selector_t();
+        brush_setings_dock->setWidget(brush_settings);
+
+        addDockWidget(Qt::DockWidgetArea::NoDockWidgetArea, brush_setings_dock);
+        brush_setings_dock->setFloating(true);
     }
 
 }
@@ -455,7 +457,6 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
 void MainWindow::minimap_initialized()
 {
     minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
-    //minimap->
 }
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
