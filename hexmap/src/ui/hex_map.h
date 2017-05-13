@@ -10,6 +10,7 @@
 
 #include "data/hex_map.h"
 #include "data/terrain_bank.h"
+#include "ui/hex_map.h"
 #include "ui/spline_renderer.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
@@ -25,93 +26,19 @@ namespace asdf
 {
 namespace hexmap
 {
-
-    constexpr float hex_width    = 1.0f;
-    constexpr float hex_width_d2 = hex_width / 2.0f;
-    constexpr float hex_width_d4 = hex_width_d2 / 2.0f;
-
-    constexpr float hex_height    = 0.86602540378f; //sin(pi/3)
-    constexpr float hex_height_d2 = hex_height / 2.0f;
-    constexpr float hex_height_d4 = hex_height_d2 / 2.0f;
-
-    constexpr float hex_edge_length = hex_width * 0.52359877559f;  //width * sin(pi/6)
-
-    constexpr float px_per_unit = 128.0f;
-    constexpr float units_per_px = 1.0f / px_per_unit;
-
-    constexpr std::array<float, 18> hexagon_points =
-    {
-           hex_width_d2,   0.0f,           0.0f   // mid right
-        ,  hex_width_d4,  -hex_height_d2,  0.0f   // bottom right
-        , -hex_width_d4,  -hex_height_d2,  0.0f   // bottom left
-        , -hex_width_d2,   0.0f,           0.0f   // middle left
-        , -hex_width_d4,   hex_height_d2,  0.0f   // top left
-        ,  hex_width_d4,   hex_height_d2,  0.0f   // top right
-    };
-
 namespace ui
 {
-    constexpr size_t num_tile_colors = 10;
-
-
-    struct  hexagon_vertex_t
+    struct hex_map_t : hex_grid_t
     {
-        static gl_vertex_spec_<vertex_attrib::position3_t/*, vertex_attrib::color_t*/> vertex_spec;
-
-        glm::vec3   position;
-        //glm::vec4   color;
-    };
-
-
-    struct hex_buffer_data_t : vbo_t //ubo_t  switching to vbo and using glVertexAttribDivisor
-    {
-        hex_buffer_data_t()
-        {
-            usage = GL_STREAM_DRAW;  //using stream since I change data every frame. Will probably optimize to setting once later
-        }
-
-        hex_buffer_data_t(data::hex_grid_chunk_t const& _chunk)
-        : hex_buffer_data_t()
-        {
-            set_data(_chunk);
-        }
-
-        void set_data(data::hex_grid_chunk_t const&);
-        void set_data_instanced(data::hex_grid_chunk_t const&);
-    };
-
-    struct hex_map_t
-    {
-        enum render_flags_e : uint32_t
-        {
-              nothing      = 0
-            , terrain      = 1
-            , grid_outline = 2
-            , hex_coords   = 4
-            , map_objects  = 8
-            , splines      = 16
-            , everything   = 0xFFFFFFFF
-        };
-
         data::hex_map_t& map_data;
 
         asdf::camera_t camera;
         asdf::input_handler_sdl2_t camera_controller;
 
-        std::shared_ptr<shader_t> shader;
-        //rendered_polygon_<hexagon_vertex_t> hexagon;
-        rendered_multi_polygon_<hexagon_vertex_t> hexagon;  //multi-polyogn because we need to track info for non-instanced rendering
-
-        data::terrain_bank_t terrain_bank;
         std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
         spline_renderer_t spline_renderer;
-
-        vao_t hexagons_vao; //used for instancing the hex tiles
-        hex_buffer_data_t hex_gl_data;
+        
         spritebatch_t spritebatch; //used to render map objects
-
-    private:
-        bool are_hexagons_instanced = false;
 
     public:
         hex_map_t(data::hex_map_t& _map_data);
@@ -121,10 +48,7 @@ namespace ui
         void update(float dt);
         void render(render_flags_e = everything);
         void on_event(SDL_Event* event);
-
-        void render_chunk(data::hex_grid_chunk_t const&, render_flags_e = everything);
-        void render_grid_overlay_instanced(glm::uvec2 grid_size) const;
-        void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode) const;
+        
         void render_map_objects();
         void render_splines() const;
     };
