@@ -26,6 +26,7 @@
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
 #include "minimap_widget.h"
+#include "terrain_brush_selector.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -205,6 +206,14 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
+    ///TEST
+    {
+        auto* test_thing = new QDockWidget(this);
+        test_thing->setWidget(new terrain_brush_selector_t());
+
+        addDockWidget(Qt::DockWidgetArea::NoDockWidgetArea, test_thing);
+        test_thing->setFloating(true);
+    }
 
 }
 
