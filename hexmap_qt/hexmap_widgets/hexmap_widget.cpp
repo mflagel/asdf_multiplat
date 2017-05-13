@@ -290,6 +290,21 @@ void hexmap_widget_t::set_palette_item(QModelIndex const& index)
     }
 }
 
+
+void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
+{
+    if(terrain_filepaths.size() > 0)
+    {
+        for(auto const& filepath : terrain_filepaths)
+        {
+            std::string filepath_str{filepath.toUtf8().constData()};
+            editor.rendered_map->terrain_bank.add_texture(filepath_str);
+        }
+
+        emit terrain_added();
+    }
+}
+
 void hexmap_widget_t::zoom_to_selection()
 {
 
