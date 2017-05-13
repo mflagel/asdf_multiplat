@@ -2,6 +2,7 @@
 #include "ui_palette_widget.h"
 
 #include <QPainter>
+#include <QFileDialog>
 
 #include "mainwindow.h"
 
@@ -14,11 +15,24 @@ palette_widget_t::palette_widget_t(QWidget* parent)
 {
     ui->setupUi(this);
     list_view = ui->listView;
+
+    connect(ui->btn_add_terrain,    &QPushButton::pressed, this, &palette_widget_t::import_terrain);
+    connect(ui->btn_remove_terrain, &QPushButton::pressed, this, &palette_widget_t::remove_selected_terrain);
 }
 
 palette_widget_t::~palette_widget_t()
 {
     delete ui;
+}
+
+QModelIndex palette_widget_t::selected_index() const
+{
+    auto indices = ui->listView->selectionModel()->selectedIndexes();
+
+    if(indices.size() == 0)
+        return QModelIndex();
+    else
+        return indices.at(0);
 }
 
 void palette_widget_t::build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const& terrain)
@@ -114,15 +128,33 @@ void palette_item_model_t::build_from_atlas(asdf::data::texture_atlas_t const& a
     }
 }
 
-QModelIndex palette_widget_t::selected_index() const
+void palette_widget_t::import_terrain()
 {
-    auto indices = ui->listView->selectionModel()->selectedIndexes();
+    QStringList terrain_filepath = QFileDialog::getOpenFileNames(this,
+        tr("Select one or more images to import"), default_texture_import_dir, tr("Image Files (*.png)"));
 
-    if(indices.size() == 0)
-        return QModelIndex();
-    else
-        return indices.at(0);
+    if(terrain_filepath.size() > 0)
+    {
+        emit terrain_add(terrain_filepath);
+    }
 }
+
+void palette_widget_t::remove_selected_terrain()
+{
+    
+}
+
+void palette_widget_t::save_terrain()
+{
+    QString filepath = QFileDialog::getSaveFileName(this, tr("Save Terrain Palette"), default_texture_save_dir, tr("Hexmap Files (*.json)"));
+
+    if(filepath.length() > 0)
+    {
+        //TODO
+    }
+}
+
+
 
 int palette_item_model_t::rowCount(const QModelIndex &parent) const
 {
