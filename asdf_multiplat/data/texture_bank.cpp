@@ -12,6 +12,8 @@
 using namespace std;
 using namespace glm;
 
+using namespace std::experimental::filesystem;
+
 namespace asdf
 {
     using namespace util;
@@ -30,24 +32,11 @@ namespace data
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
 
-    void texture_bank_t::load_from_list_file(std::string const& filepath)
+    void texture_bank_t::add_texture(path const& texture_path)
     {
-        std::string json_str = read_text_file(filepath);
-        cJSON* root = cJSON_Parse(json_str.c_str());
-        ASSERT(root, "Error loading imported textures json file");
+        ASSERT(is_regular_file(texture_path), "File not found %s", texture_path.c_str());
 
-        vector<const char*> textures;
-        CJSON_GET_STR_VECTOR(textures);
-
-        add_textures(textures);
-        
-        cJSON_Delete(root);
-    }
-
-    void texture_bank_t::add_texture(std::string const& filepath)
-    {
-        ASSERT(is_file(filepath), "File not found %s", filepath.c_str());
-        texture_t new_texture(filepath, SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
+        texture_t new_texture(texture_path.string(), SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
 
         //ASSERT(new_texture.format == atlas_texture.format, "Color format of texture must match the atlas (GL_RGBA)   %s", filepath.c_str());
         //ASSERT(new_texture.types[0] == atlas_texture.types[0], "");
@@ -79,28 +68,38 @@ namespace data
         app.renderer->quad.render_without_vao(screen_shader);
 
 
-        saved_textures.push_back(saved_texture_t{filepath});
-        LOG("Added texture '%s' to '%s'", filepath.c_str(), atlas_texture.name.c_str());
+        saved_textures.push_back(saved_texture_t{texture_path});
+        LOG("Added texture '%s' to '%s'", texture_path.c_str(), atlas_texture.name.c_str());
 
-        ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", filepath.c_str());
+        ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", texture_path.c_str());
     }
 
-    /// FIXME: somehow indicate that this takes a list of local filepaths?
-    ///        currently this prepends Content.asset_path to the tex_filepath
-    void texture_bank_t::add_textures(std::vector<const char*> const& filepaths)
+    void texture_bank_t::add_textures(std::vector<path> const& filepaths, path const& relative_dir)
     {
-        for(auto const& tex_filepath : filepaths)
+        ASSERT(relative_dir.empty() || is_directory(relative_dir), "relative directory is not a directory at all!");
+
+        for(path p : filepaths)
         {
-            string asset_tex_path = Content.asset_path + "/" + tex_filepath;
-            if(is_file(asset_tex_path))
+            if(!relative_dir.empty())
             {
-                add_texture(asset_tex_path);
+                ASSERT(p.is_relative(), "Texture path is absolute, even though it should be relative to %s", relative_dir.c_str());
+                p = relative_dir / p;
+            }
+
+            if(is_regular_file(p))
+            {
+                add_texture(p);
             }
             else
             {
-                LOG("Texture not found: %s", tex_filepath);
+                LOG("Texture not found: %s", p.c_str());
             }
         }
+    }
+
+    void texture_bank_t::add_textures_from_asset_dir(std::vector<path> const& filepaths)
+    {
+        add_textures(filepaths, path(Content.asset_path));
     }
 
 }
