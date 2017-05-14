@@ -13,7 +13,7 @@ namespace hexmap
 {
 namespace data
 {
-    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size)
+    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size, hex_grid_cell_t const& default_cell_style)
     : size(_size)
     , allocated_size(_size)
     {
@@ -21,7 +21,7 @@ namespace data
 
         for(auto& grid_y : cells)
         {
-            grid_y.resize(size.y);
+            grid_y.resize(size.y, default_cell_style);
         }
     }
 
