@@ -40,7 +40,11 @@ namespace data
     };
 
     
-    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>; //row of columns
+    // row of columns ( accessed [x,y] )
+    // iterated for(each row in cells){ 
+    //              for(each x in row)
+    //              { ...stuff... }
+    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>;
 
     struct hex_grid_chunk_t
     {
@@ -50,9 +54,10 @@ namespace data
 
         hex_cells_t cells;
 
-        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(new_chunk_width, new_chunk_height));
+        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(new_chunk_width, new_chunk_height), hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{0});
 
-        hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
+        inline hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
+        inline hex_grid_cell_t& cell_at_local_coord(int x, int y) {return cells[x][y];}
     };
 
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>; // row of columns
