@@ -48,6 +48,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\data\hex_grid.h" />
     <ClInclude Include="..\src\data\hex_map.h" />
+    <ClInclude Include="..\src\data\hex_util.hpp" />
     <ClInclude Include="..\src\data\map_objects.h" />
     <ClInclude Include="..\src\data\spline.h" />
     <ClInclude Include="..\src\data\terrain_bank.h" />
