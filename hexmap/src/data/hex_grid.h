@@ -58,6 +58,9 @@ namespace data
 
         inline hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
         inline hex_grid_cell_t& cell_at_local_coord(int x, int y) {return cells[x][y];}
+
+        inline hex_grid_cell_t const& cell_at_local_coord(glm::ivec2 c) const {return cells[c.x][c.y];}
+        inline hex_grid_cell_t const& cell_at_local_coord(int x, int y) const {return cells[x][y];}
     };
 
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>; // row of columns
