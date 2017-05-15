@@ -3,6 +3,7 @@
 #include "asdf_multiplat/main/asdf_defs.h"
 
 #include "data/hex_util.hpp"
+#include "ui/hex_grid.h"
 
 using namespace std;
 using namespace glm;
@@ -65,12 +66,50 @@ namespace data
         return brush;
     }
 
-    //terrain_brush_t terrain_brush_from_bitmap(std::string const& filepath)
-    //{
-    //    EXPLODE("TODO");
-    //    return terrain_brush_t();
-    //}
+    size_t terrain_brush_t::num_empty_hexes() const
+    {
+        size_t num_empty = 0;
 
+        for(int y = 0; y < size().y; ++y)
+        {
+            for(int x = 0; x < size().x; ++x)
+            {
+                num_empty += cell_is_empty(x,y);
+            }
+        }
+
+        return num_empty;
+    }
+}
+
+namespace ui
+{
+    polygon_<terrain_brush_vertex_t> verts_for_terrain_brush(data::terrain_brush_t const& brush)
+    {
+        polygon_<terrain_brush_vertex_t> brush_verts;
+        brush_verts.resize(brush.num_hexes() * 6);
+
+        size_t hex_count = 0;
+
+        for(int y = 0; y < brush.size().y; ++y)
+        {
+            for(int x = 0; x < brush.size().x; ++x)
+            {
+                if(!brush.cell_is_empty(x,y))
+                {
+                    auto* verts = brush_verts.data() + (hex_count * 6);
+
+                    verts[hex_count].position.x = hexagon_points[hex_count*6 + 0];
+                    verts[hex_count].position.y = hexagon_points[hex_count*6 + 1];
+                    verts[hex_count].position.z = hexagon_points[hex_count*6 + 2];
+
+                    ++hex_count;
+                }
+            }
+        }
+
+        return brush_verts;
+    }
 }
 }
 }
