@@ -26,14 +26,19 @@ namespace data
 
         inline size_t num_hexes() const { return size().x * size().y; }
         size_t num_empty_hexes() const;
-        inline size_t num_non_empty_hexes() const { num_hexes() - num_empty_hexes(); }
+        inline size_t num_non_empty_hexes() const { return num_hexes() - num_empty_hexes(); }
     };
 
+    terrain_brush_t terrain_brush_rectangle(int w, int y);
     terrain_brush_t terrain_brush_circle(float radius);
-    terrain_brush_t terrain_brush_hexagon(float radius);
+    terrain_brush_t terrain_brush_hexagon(int radius);
     //terrain_brush_t terrain_brush_from_bitmap(std::string const& filepath);
+
+
+    std::vector<glm::ivec2> get_brush_grid_overlap(terrain_brush_t const& brush, hex_grid_t const& grid, glm::ivec2 grid_coord);
 }
 
+//TODO: move this to its own file
 namespace ui
 {
     struct terrain_brush_vertex_t
