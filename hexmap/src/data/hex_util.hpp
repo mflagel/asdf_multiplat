@@ -107,6 +107,24 @@ namespace hexmap
     }
 
 
+    /// Ranges
+    std::vector<cube_coord_t> cube_range(cube_coord_t center, int range)
+    {
+        std::vector<cube_coord_t> results;
+
+        for(int dx = -range; dx <= range; ++dx)
+        {
+            for(int dy = glm::max(-range, -dx - range); dy <= glm::min(range, -dx + range); ++dy)
+            {
+                auto dz = -dx - dy;
+                results.push_back(center + cube_coord_t(dx, dy, dz));
+            }
+        }
+
+        return results;
+    }
+
+
     /// Other
     std::vector<cube_coord_t> cube_ring(cube_coord_t center, int radius)
     {
