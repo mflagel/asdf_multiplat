@@ -73,6 +73,22 @@ namespace editor
         app.mouse_state.receiver = input.get();
 
         test_minimap = make_shared<ui::minimap_t>(*rendered_map);
+
+
+        using namespace data;
+        terrain_brushes.push_back(terrain_brush_t(uvec2(1,1)));   //default point brush
+        //terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+        //terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+        //terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+        //terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+        //terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+        //terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+        terrain_brushes.push_back(terrain_brush_hexagon(1.0f));
+        terrain_brushes.push_back(terrain_brush_hexagon(2.0f));
+        terrain_brushes.push_back(terrain_brush_hexagon(3.0f));
+        terrain_brushes.push_back(terrain_brush_hexagon(5.0f));
+
+        current_terrain_brush_index = 2;
     }
 
     void editor_t::resize(uint32_t w, uint32_t h)
@@ -95,6 +111,8 @@ namespace editor
 
         test_minimap->rebuild(); ///OPTIMIZE: only re-render if map data has changed
         //test_minimap->render();
+
+
 
         ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
@@ -379,13 +397,28 @@ namespace editor
     /// and then paint it with the editor's current_tile_id
     bool editor_t::paint_terrain_at_coord(glm::ivec2 coord)
     {
-        if(map_data.hex_grid.is_in_bounds(coord))
+        //test
+        auto overlap_coords = data::get_brush_grid_overlap(current_terrain_brush(), map_data.hex_grid, coord);
+
+        for(auto const& coord: overlap_coords)
         {
+            ASSERT(map_data.hex_grid.is_in_bounds(coord), "overlap coord OOB");
+
             auto& cell = map_data.hex_grid.cell_at(coord);
             painted_terrain_coords.insert({coord, cell.tile_id});
             cell.tile_id = current_tile_id;
-            return true;
         }
+
+        return overlap_coords.size() > 0;
+        //
+
+        //if(map_data.hex_grid.is_in_bounds(coord))
+        //{
+        //    auto& cell = map_data.hex_grid.cell_at(coord);
+        //    painted_terrain_coords.insert({coord, cell.tile_id});
+        //    cell.tile_id = current_tile_id;
+        //    return true;
+        //}
 
         return false;
     }

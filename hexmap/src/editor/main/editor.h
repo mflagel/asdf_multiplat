@@ -6,6 +6,7 @@
 
 #include "main/hexmap.h"
 #include "data/hex_map.h"
+#include "data/terrain_brush.h"
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
 
@@ -94,6 +95,9 @@ namespace editor
         uint64_t current_tile_id = 0;
         tile_coord_dict_t painted_terrain_coords;
 
+        std::vector<data::terrain_brush_t> terrain_brushes;
+        size_t current_terrain_brush_index;
+
         //objects
         uint64_t current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
@@ -154,6 +158,8 @@ namespace editor
         void signal_data_changed();
         void push_action(std::unique_ptr<editor_action_t>&&);
         void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
+
+        inline data::terrain_brush_t const& current_terrain_brush() const { return terrain_brushes[current_terrain_brush_index]; }
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);
