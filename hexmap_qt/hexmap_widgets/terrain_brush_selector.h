@@ -21,8 +21,9 @@ class terrain_brush_selector_t : public QWidget
 
     enum brush_types_e
     {
-          circular = 0
+          hexagonal = 0
         , rectangular
+        , circular
         , bitmap
     };
 
@@ -37,6 +38,7 @@ private:
     void set_brush_tab(tabs_e);
     void set_brush(brush_types_e);
 
+    int hexagon_brush_radius() const;
     float circular_brush_radius() const;
     glm::uvec2 rect_brush_size() const;
 
