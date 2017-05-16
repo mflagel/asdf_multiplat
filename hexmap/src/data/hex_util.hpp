@@ -15,6 +15,7 @@ namespace hexmap
     using cube_coord_t  = glm::ivec3;
     using axial_coord_t = glm::ivec2;
     using hex_coord_t   = glm::ivec2;
+    using grid_coord_t  = hex_coord_t;
 
 
     /// Coord Translations
