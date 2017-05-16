@@ -77,18 +77,16 @@ namespace editor
 
         using namespace data;
         terrain_brushes.push_back(terrain_brush_t(uvec2(1,1)));   //default point brush
-        //terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
-        //terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
-        //terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
-        //terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
-        //terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
-        //terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+        terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+        terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+        terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+        // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+        // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+        // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
         terrain_brushes.push_back(terrain_brush_hexagon(1.0f));
         terrain_brushes.push_back(terrain_brush_hexagon(2.0f));
         terrain_brushes.push_back(terrain_brush_hexagon(3.0f));
         terrain_brushes.push_back(terrain_brush_hexagon(5.0f));
-
-        current_terrain_brush_index = 2;
     }
 
     void editor_t::resize(uint32_t w, uint32_t h)
