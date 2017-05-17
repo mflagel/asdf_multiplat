@@ -386,6 +386,23 @@ namespace editor
 
 
     /// Terrain
+    void editor_t::set_custom_terrain_brush(data::terrain_brush_t const& new_brush)
+    {
+        //0th brush is custom brush
+        
+        if(terrain_brushes.size() == 0)
+        {
+            terrain_brushes.push_back(new_brush);
+        }
+        else
+        {
+            terrain_brushes[0] = new_brush;
+        }
+
+        current_terrain_brush_index = 0;
+    }
+
+
     void editor_t::paint_terrain_start()
     {
         painted_terrain_coords.clear();

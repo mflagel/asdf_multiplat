@@ -159,6 +159,7 @@ namespace editor
         void push_action(std::unique_ptr<editor_action_t>&&);
         void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
 
+        void set_custom_terrain_brush(data::terrain_brush_t const& new_brush);
         inline data::terrain_brush_t const& current_terrain_brush() const { return terrain_brushes[current_terrain_brush_index]; }
 
         void paint_terrain_start();
