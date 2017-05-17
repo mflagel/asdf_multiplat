@@ -57,6 +57,7 @@ private slots:
     void minimap_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);
+    void custom_terrain_brush_changed(asdf::hexmap::data::terrain_brush_t const&);
 
 private:
     Ui::MainWindow *ui;
@@ -64,6 +65,9 @@ private:
     QSpinBox* zoom_spinbox = nullptr;
 
     asdf::hexmap::editor::editor_t* editor = nullptr;
+
+    QDockWidget* palette_dock = nullptr;
+    QDockWidget* minimap_dock = nullptr;
 
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
