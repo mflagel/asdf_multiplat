@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ext\cJSON\cJSON.c" />
+    <ClCompile Include="..\src\data\hex_util.cpp" />
     <ClCompile Include="..\src\data\spline.cpp" />
     <ClCompile Include="..\src\data\terrain_bank.cpp" />
     <ClCompile Include="..\src\data\terrain_brush.cpp" />
@@ -44,11 +45,12 @@
     <ClCompile Include="..\src\ui\hex_tile.cpp" />
     <ClCompile Include="..\src\ui\minimap.cpp" />
     <ClCompile Include="..\src\ui\spline_renderer.cpp" />
+    <ClCompile Include="..\src\ui\terrain_brush_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\data\hex_grid.h" />
     <ClInclude Include="..\src\data\hex_map.h" />
-    <ClInclude Include="..\src\data\hex_util.hpp" />
+    <ClInclude Include="..\src\data\hex_util.h" />
     <ClInclude Include="..\src\data\map_objects.h" />
     <ClInclude Include="..\src\data\spline.h" />
     <ClInclude Include="..\src\data\terrain_bank.h" />
@@ -62,6 +64,7 @@
     <ClInclude Include="..\src\ui\hex_tile.h" />
     <ClInclude Include="..\src\ui\minimap.h" />
     <ClInclude Include="..\src\ui\spline_renderer.h" />
+    <ClInclude Include="..\src\ui\terrain_brush_renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{379181A8-C1E5-4B27-8679-551DABDCB435}</ProjectGuid>
