@@ -1,4 +1,4 @@
-#pragma once
+#include "hex_util.h"
 
 #include <array>
 #include <glm/glm.hpp>
@@ -8,14 +8,8 @@ namespace asdf
 {
 namespace hexmap
 {
-
     //big collection of util functions from
     //http://www.redblobgames.com/grids/hexagons/
-
-    using cube_coord_t  = glm::ivec3;
-    using axial_coord_t = glm::ivec2;
-    using hex_coord_t   = glm::ivec2;
-    using grid_coord_t  = hex_coord_t;
 
 
     /// Coord Translations
@@ -50,15 +44,15 @@ namespace hexmap
         return cube_coord_t{x, y, z};
     }
 
-    //alias func
-    inline cube_coord_t hex_to_cube(hex_coord_t hex_coord)
-    {
-        return oddq_to_cube(hex_coord);
-    }
-    inline hex_coord_t cube_to_hex(cube_coord_t cube_coord)
-    {
-        return cube_to_oddq(cube_coord);
-    }
+    // //alias func
+    // inline cube_coord_t hex_to_cube(hex_coord_t hex_coord)
+    // {
+    //     return oddq_to_cube(hex_coord);
+    // }
+    // inline hex_coord_t cube_to_hex(cube_coord_t cube_coord)
+    // {
+    //     return cube_to_oddq(cube_coord);
+    // }
 
 
     /// Distance
@@ -82,30 +76,10 @@ namespace hexmap
     }
 
     /// Direction
-    enum hexagon_direction_e
-    {
-        hex_dir_down_right = 0
-      , hex_dir_up_right
-      , hex_dir_up
-      , hex_dir_up_left
-      , hex_dir_down_left
-      , hex_dir_down
-    };
-
-    /*constexpr*/ std::array<cube_coord_t, 6> hexagon_cube_directions =
-    {
-        cube_coord_t{+1, -1,  0} //down right
-      , cube_coord_t{+1,  0, -1} //up right
-      , cube_coord_t{ 0, +1, -1} //up
-      , cube_coord_t{-1, +1,  0} //up left
-      , cube_coord_t{-1,  0, +1} //down left
-      , cube_coord_t{ 0, -1, +1} //down
-    };
-
-    cube_coord_t cube_neighbor(cube_coord_t coord, hexagon_direction_e direction)
-    {
-        return coord + hexagon_cube_directions[direction];
-    }
+    // cube_coord_t cube_neighbor(cube_coord_t coord, hexagon_direction_e direction)
+    // {
+    //     return coord + hexagon_cube_directions[direction];
+    // }
 
 
     /// Ranges
