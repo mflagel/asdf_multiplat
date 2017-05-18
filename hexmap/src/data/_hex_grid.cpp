@@ -36,9 +36,12 @@ namespace data
 
     bool hex_grid_chunk_t::contents_equal(hex_grid_chunk_t const& rhs) const
     {
+        if(size != rhs.size)
+            return false;
+
         for(size_t y = 0; y < size.y; ++y)
         {
-            for(size_t x = 0; y < size.x; ++x)
+            for(size_t x = 0; x < size.x; ++x)
             {
                 if(cells[x][y] != rhs.cells[x][y])
                     return false;
