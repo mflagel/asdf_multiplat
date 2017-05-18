@@ -30,11 +30,12 @@ namespace ui
             {
                 if(!brush.cell_is_empty(x,y))
                 {
-                    auto* verts = brush_verts.data() + (hex_count * 6);
-
-                    verts[hex_count].position.x = hexagon_points[hex_count*6 + 0];
-                    verts[hex_count].position.y = hexagon_points[hex_count*6 + 1];
-                    verts[hex_count].position.z = hexagon_points[hex_count*6 + 2];
+                    for(size_t vert_ind = 0; vert_ind < 6; ++vert_ind)
+                    {
+                        brush_verts[hex_count].position.x = hexagon_points[vert_ind*3 + 0];
+                        brush_verts[hex_count].position.y = hexagon_points[vert_ind*3 + 1];
+                        brush_verts[hex_count].position.z = hexagon_points[vert_ind*3 + 2];
+                    }
 
                     ++hex_count;
                 }
