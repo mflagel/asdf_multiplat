@@ -25,6 +25,29 @@ namespace data
         }
     }
 
+    bool hex_grid_chunk_t::operator==(hex_grid_chunk_t const& rhs) const
+    {
+
+        return position       == rhs.position
+            && size           == rhs.size
+            && allocated_size == rhs.allocated_size
+            && contents_equal(rhs);
+    }
+
+    bool hex_grid_chunk_t::contents_equal(hex_grid_chunk_t const& rhs) const
+    {
+        for(size_t y = 0; y < size.y; ++y)
+        {
+            for(size_t x = 0; y < size.x; ++x)
+            {
+                if(cells[x][y] != rhs.cells[x][y])
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
 
     /* --Save Format--
         For each chunk
