@@ -32,9 +32,13 @@ namespace ui
                 {
                     for(size_t vert_ind = 0; vert_ind < 6; ++vert_ind)
                     {
-                        brush_verts[hex_count].position.x = hexagon_points[vert_ind*3 + 0];
-                        brush_verts[hex_count].position.y = hexagon_points[vert_ind*3 + 1];
-                        brush_verts[hex_count].position.z = hexagon_points[vert_ind*3 + 2];
+                        auto& vert = brush_verts[hex_count+vert_ind];
+                        vert.position.x = hexagon_points[vert_ind*3 + 0];
+                        vert.position.y = hexagon_points[vert_ind*3 + 1];
+                        vert.position.z = hexagon_points[vert_ind*3 + 2];
+
+                        vert.position.x += x * (hex_width_d2 + hex_width_d4);
+                        vert.position.y += y * hex_height;
                     }
 
                     ++hex_count;
@@ -88,7 +92,11 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        brush_geometry.render(GL_TRIANGLE_STRIP);
+        glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+
+        glBindTexture(GL_TEXTURE_2D, 0); //TEST (making sure I'm not drawing fully transparent polygons
+
+        brush_geometry.render(GL_TRIANGLE_FAN);
 
         ASSERT(!CheckGLError(), "Error in terrain_brush_renderer_t::render()");
     }
