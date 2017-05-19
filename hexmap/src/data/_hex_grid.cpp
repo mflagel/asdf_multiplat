@@ -319,6 +319,7 @@ namespace data
         bb.upper += vec2(hex_width_d2, hex_height_d2);
 
         return bb;
+        
     }
 
     glm::vec2 hex_grid_t::size_units() const
@@ -448,6 +449,18 @@ world  0,0  /
         }
 
         return ivec2(column, row);
+    }
+
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord)
+    {
+        vec2 world_coord{hex_coord};
+
+        world_coord.x -= hex_width_d4 * hex_coord.x; //horizontal overlap
+        world_coord.y *= hex_height; //scale vertically since hexes aren't one unit tall
+
+        world_coord.y -= hex_height_d2 * (hex_coord.x & 1); //vertical offset for even hexes
+
+        return world_coord;
     }
 
 }
