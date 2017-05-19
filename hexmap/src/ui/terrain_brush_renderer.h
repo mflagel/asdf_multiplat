@@ -22,12 +22,12 @@ namespace ui
         glm::vec3 position;
     };
 
-    polygon_<terrain_brush_vertex_t> verts_for_terrain_brush(data::terrain_brush_t const&);
+    std::vector<polygon_<terrain_brush_vertex_t>> verts_for_terrain_brush(data::terrain_brush_t const&);
 
     struct terrain_brush_renderer_t
     {
         std::shared_ptr<shader_t> shader;
-        rendered_polygon_<terrain_brush_vertex_t> brush_geometry;
+        rendered_multi_polygon_<terrain_brush_vertex_t> brush_geometry;
 
         data::terrain_brush_t* brush = nullptr;
 

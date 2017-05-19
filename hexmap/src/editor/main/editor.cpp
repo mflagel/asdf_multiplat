@@ -176,6 +176,7 @@ namespace editor
                 auto& shader = terrain_brush_renderer->shader;
 
                 shader->world_matrix = glm::mat4();
+
                 shader->world_matrix[3][0] = brush_pos.x;
                 shader->world_matrix[3][1] = brush_pos.y;
 
