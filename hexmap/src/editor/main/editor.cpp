@@ -72,21 +72,25 @@ namespace editor
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
 
-        test_minimap = make_shared<ui::minimap_t>(*rendered_map);
 
+        {
+            using namespace data;
+            terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
+            terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+            terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+            terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+            // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+            // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+            // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+            terrain_brushes.push_back(terrain_brush_hexagon(1));
+            terrain_brushes.push_back(terrain_brush_hexagon(2));
+            terrain_brushes.push_back(terrain_brush_hexagon(3));
+            terrain_brushes.push_back(terrain_brush_hexagon(5));
 
-        using namespace data;
-        terrain_brushes.push_back(terrain_brush_t(uvec2(1,1)));   //default point brush
-        terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
-        terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
-        terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
-        // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
-        // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
-        // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
-        terrain_brushes.push_back(terrain_brush_hexagon(1.0f));
-        terrain_brushes.push_back(terrain_brush_hexagon(2.0f));
-        terrain_brushes.push_back(terrain_brush_hexagon(3.0f));
-        terrain_brushes.push_back(terrain_brush_hexagon(5.0f));
+            terrain_brush_renderer = std::make_unique<ui::terrain_brush_renderer_t>();
+            terrain_brush_renderer->init(Content.create_shader_highest_supported("passthrough"));
+            terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+        }
     }
 
     void editor_t::resize(uint32_t w, uint32_t h)
@@ -97,6 +101,8 @@ namespace editor
     void editor_t::render()
     {
         hexmap_t::render();
+
+        render_current_brush();
 
         if(wip_spline)
         {
@@ -156,6 +162,33 @@ namespace editor
             box.render(GL_LINE_LOOP);
         }
     }
+
+    void editor_t::render_current_brush()
+    {
+        switch(current_tool)
+        {
+            case terrain_paint:
+            {
+                ASSERT(terrain_brush_renderer, "cannot render terrain brush without a terrain_brush_renderer");
+                ASSERT(terrain_brush_renderer->shader, "terrain_brush_renderer has no shader");
+
+                //TODO: setup terrain brush shader WVP
+                auto& shader = terrain_brush_renderer->shader;
+
+                shader->world_matrix = glm::mat4();
+                shader->world_matrix[3][0] = brush_pos.x;
+                shader->world_matrix[3][1] = brush_pos.y;
+
+                shader->view_matrix       = rendered_map->shader->view_matrix ;
+                shader->projection_matrix = rendered_map->shader->projection_matrix;
+
+                terrain_brush_renderer->render();
+
+                break;
+            }
+        };
+    }
+
 
     void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
@@ -384,7 +417,6 @@ namespace editor
     void editor_t::set_custom_terrain_brush(data::terrain_brush_t const& new_brush)
     {
         //0th brush is custom brush
-        
         if(terrain_brushes.size() == 0)
         {
             terrain_brushes.push_back(new_brush);
@@ -395,6 +427,8 @@ namespace editor
         }
 
         current_terrain_brush_index = 0;
+        
+        terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
     }
 
 
