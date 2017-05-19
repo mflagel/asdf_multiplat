@@ -17,10 +17,10 @@ namespace ui
     gl_vertex_spec_<vertex_attrib::position3_t> terrain_brush_vertex_t::vertex_spec;
 
 
-    polygon_<terrain_brush_vertex_t> verts_for_terrain_brush(data::terrain_brush_t const& brush)
+    std::vector<polygon_<terrain_brush_vertex_t>> verts_for_terrain_brush(data::terrain_brush_t const& brush)
     {
-        polygon_<terrain_brush_vertex_t> brush_verts;
-        brush_verts.resize(brush.num_hexes() * 6);
+        std::vector<polygon_<terrain_brush_vertex_t>> brush_verts;
+        brush_verts.resize(brush.num_hexes());
 
         size_t hex_count = 0;
 
@@ -30,15 +30,20 @@ namespace ui
             {
                 if(!brush.cell_is_empty(x,y))
                 {
+                    brush_verts[hex_count].resize(6);
+                    auto* verts = brush_verts[hex_count].data();
+
                     for(size_t vert_ind = 0; vert_ind < 6; ++vert_ind)
                     {
-                        auto& vert = brush_verts[hex_count+vert_ind];
+                        auto& vert = verts[vert_ind];
                         vert.position.x = hexagon_points[vert_ind*3 + 0];
                         vert.position.y = hexagon_points[vert_ind*3 + 1];
                         vert.position.z = hexagon_points[vert_ind*3 + 2];
 
-                        vert.position.x += x * (hex_width_d2 + hex_width_d4);
-                        vert.position.y += y * hex_height;
+                        auto coord = ivec2(x - brush.size().x/2, y -brush.size().y/2);
+                        auto pos = hex_to_world_coord(coord);
+                        vert.position.x += pos.x;
+                        vert.position.y += pos.y;
                     }
 
                     ++hex_count;
@@ -84,7 +89,7 @@ namespace ui
         ASSERT(shader, "cannot render terrain brush without a shader");
 
         //if after rebuilding, there is nothing to render, don't bother with anything below
-        if(brush_geometry.num_verts == 0)
+        if(brush_geometry.total_vertex_count == 0)
         {
             return;
         }
@@ -92,7 +97,7 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 0.5f);
 
         glBindTexture(GL_TEXTURE_2D, 0); //TEST (making sure I'm not drawing fully transparent polygons
 
