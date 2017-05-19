@@ -107,11 +107,6 @@ namespace editor
 
         render_selection();
 
-        test_minimap->rebuild(); ///OPTIMIZE: only re-render if map data has changed
-        //test_minimap->render();
-
-
-
         ASSERT(!CheckGLError(), "GL Error in editor_t::render()");
     }
 
