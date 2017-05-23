@@ -1,0 +1,80 @@
+--- Plant Generator ---
+Plant Generator is a tool that takes a collection of categorized data and procedurally builds the description of a plant.
+
+PlantMeshGen uses the same methodology to generate a 3D mesh
+
+
+-- Inspiration --
+PlantGen is inspired by the insane variety of plants. In particular, the varieties between different types of mushrooms, flowers, and cacti are what inspired this project
+
+
+-- Data Design --
+A generatable plant is made up of categorized components
+
+Effectively just a tree of categories where each leaf is a random table with optional weights
+
+Weights:
+    Weights can be floating point or integer values
+    Weights will be normalized (so you can enter a percent chance for each entry, or a set of ratios)
+    If no weights are specified, every entry has equal probability
+
+Ranges:
+    Ranges will return normalized percentages for values in the range
+    A simple two-value range will return how much of each value has been generated
+        ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
+    Three value ranges will similarily split between three values
+
+
+
+-- Syntax --
+Undecided. Might use YAML, since it seems a bit cleaner and easier to read / write than JSON or XML
+Could also do something custom, but using something that already exists gives the benefit of syntax highlighting
+
+
+-- Examples --
+--- # Mushroom
+Name: Mushroom
+  Stem:
+    Length:
+      Range:
+        - Short
+        - Long
+      Shelf
+    Thickness:
+      Range:
+        Thin
+        Thick
+  Gills:
+    - "%1 Covered"
+    - "%20 Frilly"
+    - "%20 Sparse"
+  Cap:
+    Shape:
+      - Button
+      - Flat
+      - Spherical
+      - Coral
+      - Web
+    Thickness:
+      Range:
+        - Small
+        - Wide
+    Color:
+      Range:
+        - White
+        - Black
+        - Brown
+    Pattern:
+      2from:
+        - Flat
+        - Spotted
+        - Fan Lines
+        - Curvy Lines
+        - Pustule-Covered
+
+
+--- # Flower
+Name: Flower
+  Bud Size:
+    - Small
+    - Large
