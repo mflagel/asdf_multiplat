@@ -14,7 +14,7 @@ namespace hexmap
 {
 
     glm::ivec2 world_to_hex_coord(glm::vec2 world_pos);
-    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord);
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q = false);
 
 namespace data
 {

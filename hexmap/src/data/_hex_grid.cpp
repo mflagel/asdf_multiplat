@@ -451,14 +451,15 @@ world  0,0  /
         return ivec2(column, row);
     }
 
-    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord)
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q)
     {
         vec2 world_coord{hex_coord};
 
         world_coord.x -= hex_width_d4 * hex_coord.x; //horizontal overlap
         world_coord.y *= hex_height; //scale vertically since hexes aren't one unit tall
 
-        world_coord.y -= hex_height_d2 * (hex_coord.x & 1); //vertical offset for even hexes
+        world_coord.y -= hex_height_d2 * !odd_q * (hex_coord.x & 1); //vertical offset for even hexes
+        world_coord.y -= hex_height_d2 *  odd_q * (hex_coord.x+1 & 1); //vertical offset for odd hexes
 
         return world_coord;
     }
