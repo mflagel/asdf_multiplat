@@ -41,7 +41,8 @@ namespace ui
                         vert.position.z = hexagon_points[vert_ind*3 + 2];
 
                         auto coord = ivec2(x - brush.size().x/2, y -brush.size().y/2);
-                        auto pos = hex_to_world_coord(coord);
+                        bool odd_q = brush.size().x & 1;
+                        auto pos = hex_to_world_coord(coord, odd_q);
                         vert.position.x += pos.x;
                         vert.position.y += pos.y;
                     }
