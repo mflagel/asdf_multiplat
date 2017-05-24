@@ -1,0 +1,73 @@
+{
+    "Name": "Mushroom",
+    "Properties": [
+        {
+            "Name": "Cap",
+            "Properties":[
+                {
+                    "Name": "Shape",
+                    "Values":[
+                        "Button"
+                        ,"Flat"
+                        ,"Spherical"
+                        ,"Coral"
+                        ,"Web"
+                    ]
+                },
+                {
+                    "Name": "Thickness",
+                    "Values": [
+                        "Small",
+                        "Wide"
+                    ]
+                },
+                {
+                    "Name": "Color",
+                    "Values": [
+                        "White",
+                        "Black",
+                        "Brown"
+                    ]
+                },
+                {
+                    "Name": "Pattern",
+                    "Values": [
+                        "Flat",
+                        "Spotted",
+                        "Fan Lines",
+                        "Curvy Lines",
+                        "Pustule-Covered"
+                    ]
+                },
+                {
+                    "Name": "Gills",
+                    "Values": [
+                        "Covered",
+                        "Frilly",
+                        "Sparse"
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Stem",
+            "Properties": [
+                {
+                    "Name": "Length",
+                    "Values": [
+                        "Short",
+                        "Long",
+                        "Shelf"
+                    ]
+                },
+                {
+                    "Name": "Thickness",
+                    "Values": [
+                        "Thin",
+                        "Thick"
+                    ]
+                }
+            ]
+        }
+    ]
+}
