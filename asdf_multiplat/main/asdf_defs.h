@@ -17,7 +17,7 @@
 
 
 // Color Stuff
-#if USING_GLM
+#ifdef glm_core_type
 using color_t = glm::vec4;
 
 #define COLOR_CLEAR     color_t(0.0f, 0.0f, 0.0f, 1.0f)
