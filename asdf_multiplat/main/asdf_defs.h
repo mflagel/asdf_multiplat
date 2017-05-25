@@ -17,6 +17,7 @@
 
 
 // Color Stuff
+#if USING_GLM
 using color_t = glm::vec4;
 
 #define COLOR_CLEAR     color_t(0.0f, 0.0f, 0.0f, 1.0f)
@@ -40,6 +41,7 @@ using color_t = glm::vec4;
 #define COLOR_ORANGE          color_t(1.0f, 0.5f, 0.0f, 1.0f)
 #define COLOR_CORNFLOWER_BLUE color_t(0.5f, 0.75f, 0.9f, 1.0f)
 
+#endif
 
 //Assertion code shamelessly copymodified from: 
 //http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
