@@ -1,0 +1,20 @@
+{
+    "Name": "Small Plant",
+    "Properties": [
+        {
+            "Name": "Root",
+            "Include": "small_plant_root.json"
+        },
+        {
+            "Name": "Body",
+            "Values": [
+                "Fern",
+                "Shrub"
+                "Bush"
+                "Thorns"
+                "Gourd"
+                "Creeping Vine"
+            ]
+        }
+    ]
+}
