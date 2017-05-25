@@ -1,52 +1,22 @@
 #include "plant_generator.h"
 
-#include <array>
+#include <algorithm>
 #include <chrono>
 #include <functional>
+#include <iostream>
+#include <numeric>
 #include <random>
+#include <type_traits>
 
-#include <asdf_multiplat/utilities/utilities.h>
-#include <asdf_multiplat/utilities/cjson_utils.hpp>
+#include <asdf_multiplat/main/asdf_defs.h>
 
-using namespace asdf;
-using namespace asdf::util;
-
-namespace tired_of_build_issues
-{
-    std::string read_text_file(std::string const& filepath) {
-        //if(!is_file(filepath))
-        //{
-        //    //throw file_open_exception(filepath);
-        //    EXPLODE("C'est une probleme");
-        //}
-
-        std::string outputstring;
-        std::ifstream ifs(filepath, std::ifstream::in);
-        ifs.exceptions( std::ios::failbit );
-
-        // ASSERT(ifs.good(), "Error loading text file %s", filepath.c_str());
-        if(!ifs.good())
-        {
-            //throw file_open_exception(filepath);
-            EXPLODE("C'est une probleme");
-        }
-
-        ifs.seekg(0, std::ios::end);		//seek to the end to get the size the output string should be
-        outputstring.reserve(size_t(ifs.tellg()));	//reserve necessary memory up front
-        ifs.seekg(0, std::ios::beg);		//seek back to the start
-
-        outputstring.assign((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-
-        ifs.close();
-
-        return outputstring;
-    }
-}
-
-
+#include "from_json.h"
 
 namespace plantgen
 {
+    //std::vector<std::string> roll_multi_value(multi_value_t const& m);
+
+
     std::mt19937 mt_rand( std::chrono::high_resolution_clock::now().time_since_epoch().count() );
 
     int random_int(size_t min, size_t max)
@@ -61,98 +31,100 @@ namespace plantgen
     }
 
 
-    node_t::node_t(std::string _name)
-    : name(std::move(_name))
+
+    std::vector<std::string> roll_multi_value(multi_value_t const& m)
     {
+        if(m.num_to_pick >= m.values.size())
+            return m.values;
+
+        std::vector<size_t> inds(m.values.size());
+        std::iota(inds.begin(), inds.end(), size_t(0)); //0, 1, 2, 3, ..., size-1
+        std::shuffle(inds.begin(), inds.end(), std::mt19937{std::random_device{}()});
+
+        std::vector<std::string> output;
+        output.reserve(m.num_to_pick);
+        
+        for(size_t i = 0; i < m.num_to_pick; ++i)
+            output.push_back(m.values[inds[i]]);
+
+        return output;
     }
 
-    bool str_eq(char const* a, char const* b)
+    /// Runtime version (compile-time visitor pattern doesn't compile in msvc)
+    std::vector<std::string> roll_value(variant_value_t const& variant_val)
     {
-        return strcmp(a, b) == 0;
-    }
+        std::vector<std::string> output;
 
-    node_t node_from_json(cJSON* json_node)
-    {
-        node_t node(std::string(CJSON_STR(json_node, Name)));
-
-        cJSON* cur_child = json_node->child;
-        while(cur_child)
+        if(auto* s = std::get_if<std::string>(&variant_val))
         {
-            if(str_eq(cur_child->string, "Properties"))
+            output.push_back(*s);
+        }
+        else if(auto* r = std::get_if<value_range_t>(&variant_val))
+        {
+            for(auto& e : r->entries)
             {
-                cJSON* property_json = cur_child->child;
-                while(property_json)
-                {
-                    node.children.push_back(node_from_json(property_json));
-                    node.children.back().parent = &node;
-                    property_json = property_json->next;
-                }
-            }
-            else if(str_eq(cur_child->string, "Values"))
-            {
-                cJSON* value_json = cur_child->child;
-                while(value_json)
-                {
-                    node.values.emplace_back(std::string(value_json->valuestring));
-                    value_json = value_json->next;
-                }
-            }
+                char buf[100];
+                snprintf(buf, 100, "%0.2f", e.weight);
 
-            cur_child = cur_child->next;
+                output.emplace_back(std::string(buf) + " " + e.name);
+            }
+        }
+        else if(auto* m = std::get_if<multi_value_t>(&variant_val))
+        {
+            auto rolled_multi = roll_multi_value(*m);
+            output.insert(output.end(), rolled_multi.begin(), rolled_multi.end());
+        }
+        else
+        {
+            EXPLODE("unexpected variant sub-type");
         }
 
-        return node;
+        return output;
     }
 
-
-    node_t load_params(std::string const& filepath)
+    std::vector<std::string> roll_values(value_list_t const& variant_values)
     {
-        //std::string json_str = asdf::util::read_text_file(filepath);
-        std::string json_str = tired_of_build_issues::read_text_file(filepath);
-        cJSON* json_root = cJSON_Parse(json_str.c_str());
-
-        if(!json_root)
-        {
-            EXPLODE( "Error parsing JSON");
-            return node_t("ERROR");
-        }
-
-        node_t root = node_from_json(json_root);
-
-        cJSON_Delete(json_root);
-
-        return root;
+        auto rand_ind = random_int(variant_values.size() - 1);
+        return roll_value(variant_values[rand_ind]);
     }
 
-    
-    //collapses the value list into one randomly chosen value
-    //uses uniform distribution
-    void roll_values(node_t& node)
+
+    void generate_node(node_t& node)
     {
         for(auto& child : node.children)
-            roll_values(child);
+            generate_node(child);
 
-        if(node.values.size() > 1)
+        if(node.values.empty())
         {
-            auto rand_ind = random_int(node.values.size() - 1);
-            node.values[0] = node.values[rand_ind];
-            node.values.resize(1);
+            return;
+        }
+
+        
+        node.generated_values = roll_values(node.values);
+    }
+
+
+    node_t generate_plant_from_file(std::string const& filepath)
+    {
+        using namespace std;
+
+        auto dot_marker = filepath.find_last_of('.');
+        auto ext = filepath.substr(dot_marker+1);
+        if(ext == "json" || ext == "jsn")
+        {
+            return generate_plant_from_json(filepath);
+        }
+        else if(ext == "yaml" || ext == "yml")
+        {
+            cout << "TODO: yaml support";
+        }
+        else
+        {
+            cout << "Filetype not recognized";
         }
     }
 
 
-    /*
-    A generated plant is basically a collection of random tables
-    Each random table can itself contain random tables
-    
-    For each child
-    */
-    node_t generate_plant(std::string const& filepath)
-    {
-        node_t plant = load_params(filepath);
-        roll_values(plant);
-        return plant;
-    }
 
     constexpr size_t indent_amt = 2;
 
@@ -161,11 +133,11 @@ namespace plantgen
         using namespace std;
 
         string indent(" ", level * indent_amt);
-        cout << indent << node.name << endl;
+        cout << indent << node.name << "\n";
         
-        if(node.values.size() > 0)
+        for(auto const& v : node.generated_values)
         {
-            cout << indent << "  " << node.values[0] << endl;
+            cout << indent << "  " << v << "\n";
         }
 
         if(node.children.size() > 0)
@@ -175,9 +147,9 @@ namespace plantgen
         }
     }
 
-    void print_tree(node_t& tree)
+    void print_plant(node_t& plant)
     {
-        print_node(tree, 0);
+        print_node(plant, 0);
     }
 }
 
@@ -197,9 +169,18 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    auto plant = generate_plant(argv[1]);
-    print_tree(plant);
-    std::cout << std::endl;
+    std::string filepath;
+
+    if(argc > 1)
+        filepath = std::string(argv[1]);
+    else
+        filepath = std::string("../data/mushroom.json");
+
+
+    for(size_t i = 0; i < 100; ++i)
+    {
+        print_plant(generate_plant_from_file(filepath));
+    }
 
     return 0;
 }
