@@ -9,18 +9,16 @@ CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros");
 // I dont think namespace matters for macros but whatever
 namespace asdf
 {
-    #define CJSON_GET_INT(int_name)    int_name = cJSON_GetObjectItem(root, #int_name)->valueint;
-    #define CJSON_GET_FLOAT(float_name) float_name = static_cast<float>(cJSON_GetObjectItem(root, #float_name)->valuedouble);
-    #define CJSON_GET_DOUBLE(int_name) int_name = cJSON_GetObjectItem(root, #int_name)->valuedouble;
-    #define CJSON_GET_STR(str_name)    str_name = cJSON_GetObjectItem(root, #str_name)->valuestring;
-    #define CJSON_GET_ITEM(obj_name) obj_name.from_JSON(cJSON_GetObjectItem(root, #obj_name));
+    #define CJSON_OBJ(node_name, obj_name) cJSON_GetObjectItem(node_name, #obj_name)
+    #define CJSON_INT(node_name, int_name) CJSON_OBJ(node_name, int_name)->valueint
+    #define CJSON_FLOAT(node_name, float_name) static_cast<float>(CJSON_OBJ(node_name, float_name)->valuedouble)
+    #define CJSON_DOUBLE(node_name, double_name) CJSON_OBJ(node_name, double_name)->valuedouble
+    #define CJSON_STR(node_name, str_name) CJSON_OBJ(node_name, str_name)->valuestring
+    #define CJSON_ENUM(node_name, int_name, enum_type) static_cast<enum_type>(CJSON_INT(node_name, int_name))
 
-    #define CJSON_GET_ENUM_INT(int_name, enum_type) int_name = static_cast<enum_type>(cJSON_GetObjectItem(root, #int_name)->valueint);
-
-    #define CJSON_GET_VALUE_ARRAY(container, valuetype, resize_container)     \
+    #define CJSON_VALUE_ARRAY(container_node, container, valuetype, resize_container)     \
         {                                                                     \
-            cJSON* container##_json = cJSON_GetObjectItem(root, #container);  \
-            size_t len = cJSON_GetArraySize(container##_json);                \
+            size_t len = cJSON_GetArraySize(container_node);                  \
                                                                               \
             if(resize_container)                                              \
             {                                                                 \
@@ -34,9 +32,26 @@ namespace asdf
                                                                               \
             for(size_t i = 0; i < len; ++i)                                   \
             {                                                                 \
-                cJSON* json = cJSON_GetArrayItem(container##_json, i);        \
+                cJSON* json = cJSON_GetArrayItem(container_node, i);          \
                 container[i] = json->valuetype;                               \
             }                                                                 \
+        }
+    //---
+
+
+
+    #define CJSON_GET_INT(int_name)    int_name = CJSON_INT(root, int_name)
+    #define CJSON_GET_FLOAT(float_name) float_name = CJSON_FLOAT(root, float_name)
+    #define CJSON_GET_DOUBLE(double_name) int_name = CJSON_DOUBLE(root, double_name)
+    #define CJSON_GET_STR(str_name)    str_name = CJSON_STR(root, str_name)
+    #define CJSON_GET_ITEM(obj_name) obj_name.from_JSON(cJSON_GetObjectItem(root, #obj_name));
+
+    #define CJSON_GET_ENUM_INT(int_name, enum_type) int_name = CJSON_ENUM(int_name, enum_type);
+
+    #define CJSON_GET_VALUE_ARRAY(container, valuetype, resize_container)     \
+        {                                                                     \
+            cJSON* container_json = cJSON_GetObjectItem(root, #container);  \
+            CJSON_VALUE_ARRAY(container_json, container, valuetype, resize_container) \
         }
     //---
 
