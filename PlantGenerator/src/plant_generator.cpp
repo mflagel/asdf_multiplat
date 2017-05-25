@@ -19,13 +19,13 @@ namespace plantgen
 
     std::mt19937 mt_rand( std::chrono::high_resolution_clock::now().time_since_epoch().count() );
 
-    int random_int(size_t min, size_t max)
+    int random_int(uint32_t min, uint32_t max)
     {
         std::uniform_int_distribution<int> dis(min,max);
         return dis(mt_rand);
     }
 
-    int random_int(size_t max)
+    int random_int(uint32_t max)
     {
         return random_int(0, max);
     }
@@ -55,13 +55,13 @@ namespace plantgen
         std::vector<std::string> output;
         output.reserve(r.size());
 
-        size_t counter = 0;
+        uint32_t counter = 0;
         for(size_t i = 0; i < r.size(); ++i)
         {
             int roll = 0;
 
             if(counter < 100)
-                random_int(100 - counter);
+                roll = random_int(100 - counter);
 
             counter += roll;
             output.push_back(std::to_string(roll) + "% " + r[i]);
@@ -120,23 +120,24 @@ namespace plantgen
     }
 
 
-    node_t generate_plant_from_file(std::string const& filepath)
+    node_t generate_plant_from_file(stdfs::path const& filepath)
     {
         using namespace std;
 
-        auto dot_marker = filepath.find_last_of('.');
-        auto ext = filepath.substr(dot_marker+1);
-        if(ext == "json" || ext == "jsn")
+        auto ext = filepath.extension();
+        if(ext == ".json")
         {
             return generate_plant_from_json(filepath);
         }
-        else if(ext == "yaml" || ext == "yml")
+        else if(ext == ".yaml" || ext == ".yml")
         {
             cout << "TODO: yaml support";
+            return node_t();
         }
         else
         {
             cout << "Filetype not recognized";
+            return node_t();
         }
     }
 
@@ -148,7 +149,7 @@ namespace plantgen
     {
         using namespace std;
 
-        string indent(" ", level * indent_amt);
+        string indent(" ",0, level * indent_amt);
         cout << indent << node.name << "\n";
         
         for(auto const& v : node.generated_values)
@@ -190,7 +191,7 @@ int main(int argc, char* argv[])
     if(argc > 1)
         filepath = std::string(argv[1]);
     else
-        filepath = std::string("../data/mushroom.json");
+        filepath = std::string("../data/small_plant.json");
 
 
     print_plant(generate_plant_from_file(filepath));

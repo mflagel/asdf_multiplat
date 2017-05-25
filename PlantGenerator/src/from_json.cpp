@@ -1,4 +1,4 @@
-#include "plant_generator.h"
+#include "from_json.h"
 
 #include <asdf_multiplat/utilities/utilities.h>
 #include <asdf_multiplat/utilities/cjson_utils.hpp>
@@ -39,6 +39,8 @@ namespace tired_of_build_issues
 }
 
 
+stdfs::path root_json_dir;
+
 
 namespace plantgen
 {
@@ -57,6 +59,7 @@ namespace plantgen
         cJSON* j = json_array->child;
         while(j)
         {
+            ASSERT(j->type == cJSON_String, "Expected a JSON string");
             values.emplace_back(j->valuestring);
             j = j->next;
         }
@@ -108,7 +111,6 @@ namespace plantgen
         }
     }
 
-
     node_t node_from_json(cJSON* json_node)
     {
         node_t node(std::string(CJSON_STR(json_node, Name)));
@@ -135,6 +137,17 @@ namespace plantgen
                     value_json = value_json->next;
                 }
             }
+            else if(str_eq(cur_child->string, "Include"))
+            {
+                ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
+                stdfs::path relpath(cur_child->valuestring);
+
+                //get path relative to this executable by using parent path
+                //of the original json doc
+                stdfs::path fullpath = root_json_dir.parent_path() / relpath;
+
+                node.children.push_back(node_from_json(fullpath));
+            }
 
             cur_child = cur_child->next;
         }
@@ -143,13 +156,10 @@ namespace plantgen
     }
 
 
-
-    ///
-
-    node_t load_params_json(std::string const& filepath)
+    node_t node_from_json(stdfs::path const& filepath)
     {
         //std::string json_str = asdf::util::read_text_file(filepath);
-        std::string json_str = tired_of_build_issues::read_text_file(filepath);
+        std::string json_str = tired_of_build_issues::read_text_file(filepath.string());
         cJSON* json_root = cJSON_Parse(json_str.c_str());
 
         if(!json_root)
@@ -165,15 +175,11 @@ namespace plantgen
         return root;
     }
 
-    /*
-    A generated plant is basically a collection of random tables
-    Each random table can itself contain random tables
-    
-    For each child
-    */
-    node_t generate_plant_from_json(std::string const& filepath)
+    node_t generate_plant_from_json(stdfs::path const& filepath)
     {
-        node_t plant = load_params_json(filepath);
+        root_json_dir = filepath;
+
+        node_t plant = node_from_json(filepath);
         generate_node(plant);
         return plant;
     }
