@@ -50,6 +50,27 @@ namespace plantgen
         return output;
     }
 
+    std::vector<std::string> roll_range_value(range_value_t const& r)
+    {
+        std::vector<std::string> output;
+        output.reserve(r.size());
+
+        size_t counter = 0;
+        for(size_t i = 0; i < r.size(); ++i)
+        {
+            int roll = 0;
+
+            if(counter < 100)
+                random_int(100 - counter);
+
+            counter += roll;
+            output.push_back(std::to_string(roll) + "% " + r[i]);
+        }
+
+        return output;
+    }
+
+
     /// Runtime version (compile-time visitor pattern doesn't compile in msvc)
     std::vector<std::string> roll_value(variant_value_t const& variant_val)
     {
@@ -59,15 +80,10 @@ namespace plantgen
         {
             output.push_back(*s);
         }
-        else if(auto* r = std::get_if<value_range_t>(&variant_val))
+        else if(auto* r = std::get_if<range_value_t>(&variant_val))
         {
-            for(auto& e : r->entries)
-            {
-                char buf[100];
-                snprintf(buf, 100, "%0.2f", e.weight);
-
-                output.emplace_back(std::string(buf) + " " + e.name);
-            }
+            auto rolled_range = roll_range_value(*r);
+            output.insert(output.end(), rolled_range.begin(), rolled_range.end());
         }
         else if(auto* m = std::get_if<multi_value_t>(&variant_val))
         {
@@ -177,10 +193,7 @@ int main(int argc, char* argv[])
         filepath = std::string("../data/mushroom.json");
 
 
-    for(size_t i = 0; i < 100; ++i)
-    {
-        print_plant(generate_plant_from_file(filepath));
-    }
+    print_plant(generate_plant_from_file(filepath));
 
     return 0;
 }

@@ -76,21 +76,10 @@ namespace plantgen
         return v;
     }
 
-    value_range_t value_range_from_json(cJSON* json)
+    range_value_t range_value_from_json(cJSON* json)
     {
         ASSERT(str_eq(json->string, "Range"), "Expected a \"Range\" json_obj");
-
-        auto str_vals = value_string_list_from_json_array(json);
-        float weight = 1.0f / static_cast<float>(str_vals.size()); //just do normalized weights for now
-
-
-        value_range_t v;
-        for(size_t i = 0; i < str_vals.size(); ++i)
-        {
-            v.entries.push_back( value_range_t::entry_t{weight, std::move(str_vals[i])} );
-        }
-
-        return v;
+        return value_string_list_from_json_array(json);
     }
 
     variant_value_t value_type_from_json(cJSON* json)
@@ -110,7 +99,7 @@ namespace plantgen
         }
         else if(str_eq(json->child->string, "Range"))
         {
-            return value_range_from_json(json->child);
+            return range_value_from_json(json->child);
         }
         else
         {

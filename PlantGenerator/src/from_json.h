@@ -10,7 +10,7 @@ namespace plantgen
 
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array);
     multi_value_t multi_value_from_json(cJSON* json);
-    value_range_t value_range_from_json(cJSON* json);
+    range_value_t range_value_from_json(cJSON* json);
     variant_value_t value_type_from_json(cJSON* json);
     node_t node_from_json(cJSON* json_node);
 
