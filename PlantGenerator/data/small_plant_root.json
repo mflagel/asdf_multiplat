@@ -1,0 +1,67 @@
+{
+    "Name": "Small Plant Root",
+    "Properties": [
+        {
+            "Name": "Taste",
+            "Properties": [
+                {
+                    "Name": "Edibility",
+                    "Values": [
+                        "Poisonous",
+                        "Inedible"
+                    ]
+                }
+            ],
+            "Values":[
+                {
+                    "Range":[
+                        "Bland",
+                        "Tasteful"
+                    ]
+                },
+                {
+                    "Range":[
+                        "Bitter"
+                        ,"Sweet"
+                        ,"Sour"
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Color",
+            "Properties":[
+                {
+                    "Name" : "Lightness",
+                    "Values":[
+                        "Light"
+                        ,"Dark"
+                    ]
+                },
+                {
+                    "Name": "Hue",
+                    "Values":[
+                        {
+                            "Range": [
+                                "Red",
+                                "Purple",
+                                "Yellow"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Shape",
+            "Values": [
+                "Traditional Web",
+                "Stubby Tubor",
+                "Bulbous",
+                "Taproot",
+                "Single Root",
+                "Legume"
+            ]
+        }
+    ]
+}
