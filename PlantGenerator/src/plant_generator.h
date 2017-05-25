@@ -1,10 +1,13 @@
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 #include <variant>
+
+namespace stdfs = std::experimental::filesystem;
 
 namespace plantgen
 {
@@ -40,7 +43,7 @@ namespace plantgen
     };
 
     void generate_node(node_t& node);
-    node_t generate_plant_from_file(std::string const& filepath);
+    node_t generate_plant_from_file(stdfs::path const& filepath);
 
     void print_node(node_t const& node, size_t level);
     void print_plant(node_t& plant);

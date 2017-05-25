@@ -13,7 +13,6 @@ namespace plantgen
     range_value_t range_value_from_json(cJSON* json);
     variant_value_t value_type_from_json(cJSON* json);
     node_t node_from_json(cJSON* json_node);
-
-    node_t load_params_json(std::string const& filepath);
-    node_t generate_plant_from_json(std::string const& filepath);
+    node_t node_from_json(stdfs::path const& filepath);
+    node_t generate_plant_from_json(stdfs::path const& filepath);
 }
