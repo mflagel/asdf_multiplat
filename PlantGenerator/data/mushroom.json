@@ -24,19 +24,29 @@
                 {
                     "Name": "Color",
                     "Values": [
-                        "White",
-                        "Black",
-                        "Brown"
+                        {
+                            "Range": [
+                                "White",
+                                "Black",
+                                "Brown"
+                            ]
+                        },
+                        "Rainbow"
                     ]
                 },
                 {
                     "Name": "Pattern",
                     "Values": [
-                        "Flat",
-                        "Spotted",
-                        "Fan Lines",
-                        "Curvy Lines",
-                        "Pustule-Covered"
+                        "Plain",
+                        {
+                            "Multi": 2,
+                            "Values":[
+                                "Spotted",
+                                "Fan Lines",
+                                "Curvy Lines",
+                                "Pustule-Covered"
+                            ]
+                        }
                     ]
                 },
                 {
