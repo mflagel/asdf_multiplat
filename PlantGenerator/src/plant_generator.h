@@ -8,17 +8,7 @@
 
 namespace plantgen
 {
-    struct value_range_t
-    {
-        struct entry_t
-        {
-            float weight;
-            std::string name;
-        };
-
-        std::vector<entry_t> entries;
-    };
-
+    
     struct multi_value_t
     {
         size_t num_to_pick;
@@ -28,7 +18,8 @@ namespace plantgen
 
 
     using null_value_t = int;
-    using variant_value_t = std::variant<std::string, value_range_t, multi_value_t, null_value_t>;
+    using range_value_t = std::vector<std::string>;
+    using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
     using value_list_t = std::vector<variant_value_t>;
 
     struct node_t
@@ -46,8 +37,6 @@ namespace plantgen
         {}
 
         inline bool is_leaf() const { return children.empty(); }
-
-        //void add_entry(node_t&&);
     };
 
     void generate_node(node_t& node);
