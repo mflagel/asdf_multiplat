@@ -1,7 +1,7 @@
 --- Plant Generator ---
-Plant Generator is a tool that takes a collection of categorized data and procedurally builds the description of a plant.
+PlantGenerator is a tool that takes a collection of categorized data and procedurally builds the description of a plant.
 
-PlantMeshGen uses the same methodology to generate a 3D mesh
+Despite the name, the PlantGenerator is general enough that it could generate anything out of a random set of properties (ex: a random Taste for a given plant)
 
 
 -- Inspiration --
@@ -24,11 +24,26 @@ Ranges:
         ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
     Three value ranges will similarily split between three values
 
+Composite Plants:
+  Plants can contain an entire generated plant as a property
+    ex: a small plant might generate a root, grass, and flower from three separate data files
+
+  This allows the user to factor out reusable components into their own file.
+
+  Not sure which keyword to use. Probably "Include"
+    ex:
+      "Properties": [
+          {
+              "Name": "Root"
+              "Include": "some/filepath/plant_root.json"
+          }
+      ]
+
 
 
 -- Syntax --
-Undecided. Might use YAML, since it seems a bit cleaner and easier to read / write than JSON or XML
-Could also do something custom, but using something that already exists gives the benefit of syntax highlighting
+I want to use YAML, but yaml-cpp refuesd to work in MSVC
+Went with JSON for now, but I'll probably support both
 
 
 -- Examples --
@@ -71,10 +86,3 @@ Name: Mushroom
         - Fan Lines
         - Curvy Lines
         - Pustule-Covered
-
-
---- # Flower
-Name: Flower
-  Bud Size:
-    - Small
-    - Large
