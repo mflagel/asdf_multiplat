@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef _MSC_VER
 #include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
+
 #include <map>
 #include <memory>
 #include <string>
