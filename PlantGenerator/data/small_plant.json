@@ -9,11 +9,20 @@
             "Name": "Body",
             "Values": [
                 "Fern",
-                "Shrub"
-                "Bush"
-                "Thorns"
-                "Gourd"
-                "Creeping Vine"
+                "Shrub",
+                "Bush",
+                "Thorns",
+                "Gourd",
+                "Creeping Vine",
+                {
+                    "Name": "Gourd Values Test",
+                    "Values": [
+                        "Pumpkin",
+                        "Acorn",
+                        "Long Ovoid",
+                        "Cucumberoid"
+                    ]
+                }
             ]
         }
     ]
