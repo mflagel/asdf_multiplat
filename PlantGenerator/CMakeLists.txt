@@ -26,12 +26,12 @@ add_executable(PlantGenerator ${sources})
 # add_library(libplantgen STATIC ${sources})
 # add_library(libplantgen SHARED ${sources})
 
-# set_property(TARGET PlantGenerator PROPERTY CXX_STANDARD 17)
-# set (CMAKE_CXX_STANDARD 17)
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
 else(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
 endif(MSVC)
 
 
@@ -39,3 +39,6 @@ if(WIN32)
     # target_link_libraries(PlantGenerator ${CMAKE_SOURCE_DIR}/../lib/win32/x64/AsdfMultiplat_static_D.lib)
     target_link_libraries(PlantGenerator C:/Users/Mathias/Documents/Programming/AsdfMultiplat/lib/win32/x64/AsdfMultiplat_static_D.lib)
 endif(WIN32)
+
+
+target_link_libraries(PlantGenerator stdc++fs)
