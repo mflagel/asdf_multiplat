@@ -1,2 +1,13 @@
 {
+    "folders":
+    [
+        {
+            "path": ".",
+            "folder_exclude_patterns":["bin","obj","build"]
+        },
+        {
+            "path": "../asdf_multiplat",
+            "folder_exclude_patterns":["bin","obj"]
+        }
+    ]
 }
