@@ -149,14 +149,25 @@ namespace ui
                 verts[3].position = end_node.position;
 
                 /// extrusion vector  TODO: support joints
-                vec2 segment_vector = end_node.position - start_node.position;
+                vec2 segment_vector = end_node.position - start_node.position; //start with line vector
+                
+                /// TEMP (this doesn't do line segment joins properly
+                // rotate 90 degrees
+                segment_vector = vec2(segment_vector.y, -segment_vector.x);
+                ///
+
+                //normalize (I'll mult by line thickness later)
                 segment_vector.x += 0.0000001f * (segment_vector.x == 0.0f && segment_vector.y == 0.0f);
                 segment_vector = glm::normalize(segment_vector);
 
-                verts[0].extrusion = vec2(segment_vector.y, -segment_vector.x); //rotate seg_vec forward  90 degrees
-                verts[1].extrusion = vec2(-segment_vector.y, segment_vector.x); //rotate seg_vec backward 90 degrees
+                //set to segment vector (ie: unit vector) for now
+                //I'll use it later when creating the actual extrusion vector
+                verts[0].extrusion = segment_vector;
+                verts[1].extrusion = -segment_vector;
+
                 verts[2].extrusion = verts[0].extrusion;
                 verts[3].extrusion = verts[1].extrusion;
+
 
                 // bake thickness into extrusion vector
                 auto s_thc = start_node.thickness / 2.0f;
@@ -166,23 +177,29 @@ namespace ui
                 verts[2].extrusion *= e_thc;
                 verts[3].extrusion *= e_thc;
 
+                /// FIXME
                 //handle edge joints with previous segment
-                if(segment_index > 0)
-                {
-                    auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
+                // if(segment_index > 0)
+                // {
+                //     auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
 
-                    //TODO: implement miter limit
+                //     //TODO: implement miter limit
 
-                    //just add verts together to get correct direciton
-                    auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
-                    auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
+                //     // actual extrusion vector is gained by just adding
+                //     // the unit vectors of the two segments
+                //     auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
+                //     auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
                     
-                    prev_verts[3].extrusion = top_extr;
-                    verts[1].extrusion = top_extr;
+                //     prev_verts[3].extrusion = top_extr;
+                //     verts[1].extrusion = top_extr;
 
-                    prev_verts[2].extrusion = btm_extr;
-                    verts[0].extrusion = btm_extr;
-                }
+                //     prev_verts[2].extrusion = btm_extr;
+                //     verts[0].extrusion = btm_extr;
+                // }
+                // else
+                // {
+                //     //handle 0th segment
+                // }
 
                 /// normal (1 or -1, used to interpolate in fragment shader and get distance to the line center
                 verts[0].normal = -1.0f;
