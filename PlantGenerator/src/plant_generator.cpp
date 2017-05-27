@@ -98,10 +98,34 @@ namespace plantgen
         return output;
     }
 
-    std::vector<std::string> roll_values(value_list_t const& variant_values)
+    std::vector<std::string> roll_values(value_list_t const& variant_values, std::vector<node_t> const& value_nodes)
     {
-        auto rand_ind = random_int(variant_values.size() - 1);
-        return roll_value(variant_values[rand_ind]);
+        size_t max_variant_inds = variant_values.size() - int(!variant_values.empty());
+        size_t max_node_inds = value_nodes.size() - int(!value_nodes.empty());
+
+
+        size_t num_rollables = variant_values.size() + value_nodes.size();
+
+        if(num_rollables == 0)
+            return std::vector<std::string>();
+
+
+        auto rand_ind = random_int(num_rollables - 1);
+
+        if(rand_ind > max_variant_inds)
+        {
+            node_t const& node = value_nodes[rand_ind - variant_values.size()];
+            return roll_values(node);
+        }
+        else
+        {
+            return roll_value(variant_values[rand_ind]);
+        }
+    }
+
+    std::vector<std::string> roll_values(node_t const& node)
+    {
+        return roll_values(node.values, node.value_nodes);
     }
 
 
@@ -116,7 +140,7 @@ namespace plantgen
         }
 
         
-        node.generated_values = roll_values(node.values);
+        node.generated_values = roll_values(node);
     }
 
 
@@ -134,16 +158,14 @@ namespace plantgen
             cout << "TODO: yaml support";
             return node_t();
         }
-        else
-        {
-            cout << "Filetype not recognized";
-            return node_t();
-        }
+
+        cout << "Filetype not recognized";
+        return node_t();
     }
 
 
 
-    constexpr size_t indent_amt = 2;
+    constexpr size_t indent_amt = 4;
 
     void print_node(node_t const& node, size_t level)
     {
@@ -194,7 +216,8 @@ int main(int argc, char* argv[])
         filepath = std::string("../data/small_plant.json");
 
 
-    print_plant(generate_plant_from_file(filepath));
+    node_t plant = generate_plant_from_file(filepath);
+    print_plant(plant);
 
     return 0;
 }
