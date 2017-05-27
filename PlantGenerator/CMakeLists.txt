@@ -2,6 +2,9 @@
 
 cmake_minimum_required (VERSION 3.0.2)
 
+set(CMAKE_C_COMPILER /usr/local/bin/gcc)
+set(CMAKE_CXX_COMPILER /usr/local/bin/g++)
+
 
 project(plantgen)
 set(CMAKE_BUILD_TYPE Debug)
@@ -25,7 +28,12 @@ add_executable(PlantGenerator ${sources})
 
 # set_property(TARGET PlantGenerator PROPERTY CXX_STANDARD 17)
 # set (CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
+else(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+endif(MSVC)
+
 
 if(WIN32)
     # target_link_libraries(PlantGenerator ${CMAKE_SOURCE_DIR}/../lib/win32/x64/AsdfMultiplat_static_D.lib)
