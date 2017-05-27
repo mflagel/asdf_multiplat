@@ -133,7 +133,21 @@ namespace plantgen
                 cJSON* value_json = cur_child->child;
                 while(value_json)
                 {
-                    node.values.push_back(value_type_from_json(value_json));
+                    // if the value is a node, load it differently
+                    // since we can't return a node as part of the variant
+
+                    //if the value is an object starting with a child named "Name", it's a node
+                    if(value_json->type == cJSON_Object 
+                    && value_json->child
+                    && str_eq(value_json->child->string, "Name"))
+                    {
+                        node.value_nodes.push_back(std::move(node_from_json(value_json)));
+                    }
+                    else
+                    {
+                        node.values.push_back(std::move(value_type_from_json(value_json)));
+                    }
+
                     value_json = value_json->next;
                 }
             }
