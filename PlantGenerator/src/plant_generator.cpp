@@ -138,6 +138,7 @@ namespace plantgen
     generated_node_t generate_node(pregen_node_t& pre_node)
     {
         generated_node_t node;
+        node.name = pre_node.name;
 
         for(auto& child : pre_node.children)
         {
@@ -145,7 +146,7 @@ namespace plantgen
         }
 
         node.generated_values = roll_values(pre_node);
-        
+
         return node;
     }
 
