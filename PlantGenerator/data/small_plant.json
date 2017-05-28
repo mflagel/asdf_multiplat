@@ -12,28 +12,12 @@
                 "Shrub",
                 "Bush",
                 "Thorns",
-                "Gourd",
-                "Creeping Vine",
-                {
-                    "Name": "Gourd Values Test",
-                    "Properties":[
-                        {
-                            "Name":"Skin Texture",
-                            "Values":[
-                                "Bumpy",
-                                "Smooth",
-                                "Ridged"
-                            ]
-                        }
-                    ],
-                    "Values": [
-                        "Pumpkin",
-                        "Acorn",
-                        "Long Ovoid",
-                        "Cucumberoid"
-                    ]
-                }
+                "Creeping Vine"
             ]
+        },
+        {
+            "Name":"Fruit",
+            "Include":"fruit/gourd.json"
         }
     ]
 }

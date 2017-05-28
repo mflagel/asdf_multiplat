@@ -3,30 +3,7 @@
     "Properties": [
         {
             "Name": "Taste",
-            "Properties": [
-                {
-                    "Name": "Edibility",
-                    "Values": [
-                        "Poisonous",
-                        "Inedible"
-                    ]
-                }
-            ],
-            "Values":[
-                {
-                    "Range":[
-                        "Bland",
-                        "Tasteful"
-                    ]
-                },
-                {
-                    "Range":[
-                        "Bitter"
-                        ,"Sweet"
-                        ,"Sour"
-                    ]
-                }
-            ]
+            "Include":"properties/taste.json"
         },
         {
             "Name": "Color",
