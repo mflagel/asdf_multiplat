@@ -112,9 +112,15 @@ namespace plantgen
 
         auto rand_ind = random_int(num_rollables - 1);
 
-        if(rand_ind > max_variant_inds)
+
+        /// FIXME this it not a particularily elegant method of
+        /// figuring out which list to index into
+        if(rand_ind > max_variant_inds || variant_values.empty())
         {
             node_t const& node = value_nodes[rand_ind - variant_values.size()];
+
+            ///TODO: handle node children
+
             return roll_values(node);
         }
         else
@@ -134,7 +140,7 @@ namespace plantgen
         for(auto& child : node.children)
             generate_node(child);
 
-        if(node.values.empty())
+        if(node.values.empty() && node.value_nodes.empty())
         {
             return;
         }
