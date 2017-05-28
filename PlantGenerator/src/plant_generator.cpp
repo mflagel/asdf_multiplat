@@ -143,6 +143,7 @@ namespace plantgen
         for(auto& child : pre_node.children)
         {
             node.children.push_back(generate_node(child));
+            node.children.back().parent = &node;
         }
 
         node.generated_values = roll_values(pre_node);
