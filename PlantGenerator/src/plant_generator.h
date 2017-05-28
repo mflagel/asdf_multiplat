@@ -30,7 +30,7 @@ namespace plantgen
     using value_list_t = std::vector<variant_value_t>;
 
 
-    /// curiously recurring template pattern
+    /// curiously recurring template pattern (sort-of)
     template <typename T>
     struct base_node_t
     {
