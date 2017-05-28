@@ -24,7 +24,7 @@ Ranges:
         ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
     Three value ranges will similarily split between three values
 
-Composite Plants:
+Include:
   Plants can contain an entire generated plant as a property
     ex: a small plant might generate a root, grass, and flower from three separate data files
 
@@ -38,6 +38,61 @@ Composite Plants:
               "Include": "some/filepath/plant_root.json"
           }
       ]
+
+  TODO:
+    Cache included nodes by absolute filename, rather than reloading them every time
+
+
+Tree Merging:
+  In cases where the user wants a slightly different version of a given generator definition file, the user could specify two generator trees and merge them. This could be done by merging two files, or by merging one file with an inline definition.
+
+  ex:
+  SomePlant.json:
+  {
+    "Name":"Some Plant"
+    "Properties":[
+      {
+        "Name":"Some Property",
+        "Values":[
+          "Normal Value",
+          "Another Normal Value",
+          "ValueValue"
+        ]
+    ]
+  }
+
+  WeirdPlant.json:
+  {
+    "Name":"Some Plant"
+    "Properties":[
+      {
+        "Name":"Some Property",
+        "Values":[
+          "Weird Value",
+          "WeirderValue",
+          "WeirdWeirdWeird"
+        ]
+    ]
+  }
+
+  CombinedPlant.json:
+  {
+    "Merge":["SomePlant.json", "WierdPlant.json"]
+  }
+
+
+  Merging these two files would result in a plant with a single property "Some Property" and with a combined value list from both files.
+
+
+Tree Overrides:
+  Overrides could be similar to merge, but with an Override keyword ex: "Override":"some/file/path.json"
+
+  OverridePlant.json:
+  {
+    "Override":["SomePlant.json", "WierdPlant.json"]
+  }
+
+  This would a result in a plant with name "Some Plant", and a single property of "Some Property" but only the values in WeirdPlant.json
 
 
 
