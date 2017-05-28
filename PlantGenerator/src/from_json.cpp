@@ -129,8 +129,7 @@ namespace plantgen
                 cJSON* property_json = cur_child->child;
                 while(property_json)
                 {
-                    node.children.push_back(node_from_json(property_json));
-                    node.children.back().parent = &node;
+                    node.add_child(node_from_json(property_json));
                     property_json = property_json->next;
                 }
             }
@@ -166,7 +165,7 @@ namespace plantgen
                 //of the original json doc
                 stdfs::path fullpath = root_json_dir.parent_path() / relpath;
 
-                node.children.push_back(node_from_json(fullpath));
+                node.add_child(node_from_json(fullpath));
             }
 
             cur_child = cur_child->next;

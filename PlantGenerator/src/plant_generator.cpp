@@ -98,7 +98,7 @@ namespace plantgen
         return output;
     }
 
-    std::vector<std::string> roll_values(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
+    generated_node_t roll_values(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
     {
         size_t max_variant_inds = variant_values.size() - int(!variant_values.empty());
         size_t max_node_inds = value_nodes.size() - int(!value_nodes.empty());
@@ -107,9 +107,10 @@ namespace plantgen
         size_t num_rollables = variant_values.size() + value_nodes.size();
 
         if(num_rollables == 0)
-            return std::vector<std::string>();
+            return generated_node_t();
 
 
+        generated_node_t rolled_node;
         auto rand_ind = random_int(num_rollables - 1);
 
 
@@ -117,36 +118,37 @@ namespace plantgen
         /// figuring out which list to index into
         if(rand_ind > max_variant_inds || variant_values.empty())
         {
-            auto const& node = value_nodes[rand_ind - variant_values.size()];
+            auto const& value_node = value_nodes[rand_ind - variant_values.size()];
 
-            ///TODO: handle node children
-
-            return roll_values(node);
+            rolled_node = generate_node(value_node);
         }
         else
         {
-            return roll_value(variant_values[rand_ind]);
+            rolled_node.generated_values = roll_value(variant_values[rand_ind]);
         }
+
+        return rolled_node;
     }
 
-    std::vector<std::string> roll_values(pregen_node_t const& node)
+    generated_node_t roll_values(pregen_node_t const& node)
     {
         return roll_values(node.values, node.value_nodes);
     }
 
 
-    generated_node_t generate_node(pregen_node_t& pre_node)
+    generated_node_t generate_node(pregen_node_t const& pre_node)
     {
         generated_node_t node;
         node.name = pre_node.name;
 
-        for(auto& child : pre_node.children)
+        for(auto const& child : pre_node.children)
         {
-            node.children.push_back(generate_node(child));
-            node.children.back().parent = &node;
+            node.add_child(generate_node(child));
         }
 
-        node.generated_values = roll_values(pre_node);
+        generated_node_t rolled = roll_values(pre_node);
+        node.children.insert(node.children.end(), rolled.children.begin(), rolled.children.end());
+        node.generated_values = std::move(rolled.generated_values);
 
         return node;
     }

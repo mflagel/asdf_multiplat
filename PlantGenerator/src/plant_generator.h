@@ -37,6 +37,12 @@ namespace plantgen
         T* parent = nullptr;
         std::vector<T> children;
         std::string name;
+
+        void add_child(T&& c)
+        {
+            children.push_back(std::move(c));
+            children.back().parent = static_cast<T*>(this);
+        }
     };
 
 
@@ -56,10 +62,10 @@ namespace plantgen
     };
 
 
-    generated_node_t generate_node(pregen_node_t& node);
+    generated_node_t generate_node(pregen_node_t const& node);
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
 
-    std::vector<std::string> roll_values(pregen_node_t const& node);
+    generated_node_t roll_values(pregen_node_t const& node);
 
     void print_node(generated_node_t const& node, size_t level = 0);
 }
