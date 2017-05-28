@@ -39,6 +39,11 @@ namespace tired_of_build_issues
 }
 
 
+// global root_json_dir is used for resolving relative filepaths
+// when including other json files as node properties / values
+// I should probably devise a better method of doing this, since
+// I don't think this will handle more than one level of inclusion
+// if the JSON files are not all in the same directory
 stdfs::path root_json_dir;
 
 
@@ -111,9 +116,10 @@ namespace plantgen
         }
     }
 
-    node_t node_from_json(cJSON* json_node)
+    pregen_node_t node_from_json(cJSON* json_node)
     {
-        node_t node(std::string(CJSON_STR(json_node, Name)));
+        pregen_node_t node;
+        node.name = std::string(CJSON_STR(json_node, Name));
 
         cJSON* cur_child = json_node->child;
         while(cur_child)
@@ -169,8 +175,7 @@ namespace plantgen
         return node;
     }
 
-
-    node_t node_from_json(stdfs::path const& filepath)
+    pregen_node_t node_from_json(stdfs::path const& filepath)
     {
         //std::string json_str = asdf::util::read_text_file(filepath);
         std::string json_str = tired_of_build_issues::read_text_file(filepath.string());
@@ -179,23 +184,23 @@ namespace plantgen
         if(!json_root)
         {
             EXPLODE( "Error parsing JSON");
-            return node_t("ERROR");
+            return pregen_node_t{};
         }
 
-        node_t root = node_from_json(json_root);
+        auto root = node_from_json(json_root);
 
         cJSON_Delete(json_root);
 
         return root;
     }
 
-    node_t generate_plant_from_json(stdfs::path const& filepath)
+    generated_node_t generate_node_from_json(stdfs::path const& filepath)
     {
+        // global root_json_dir is used for resolving relative filepaths
+        // when including other json files as node properties / values
         root_json_dir = filepath;
-
-        node_t plant = node_from_json(filepath);
-        generate_node(plant);
-        return plant;
+        auto node = node_from_json(filepath);
+        return generate_node(node);
     }
 
 }

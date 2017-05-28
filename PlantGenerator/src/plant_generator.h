@@ -29,38 +29,37 @@ namespace plantgen
     using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
     using value_list_t = std::vector<variant_value_t>;
 
-    struct node_t
+
+    /// curiously recurring template pattern
+    template <typename T>
+    struct base_node_t
     {
-        node_t* parent = nullptr;
-        std::vector<node_t> children;
-
+        T* parent = nullptr;
+        std::vector<T> children;
         std::string name;
-        value_list_t values;
-
-        // store these separately, since I can't store nodes in the variant
-        // without them being heap-allocated (since AFAIK if the variant
-        // stores a node, which stores the variant, it can lead to an
-        // infinite size)
-        std::vector<node_t> value_nodes;
-        std::vector<std::string> generated_values;
-
-        node_t() = default;
-        node_t(std::string _name)
-        : name(std::move(_name))
-        {}
-
-        inline bool is_leaf() const { return children.empty(); }
-
-        inline size_t total_randomable_values() const {
-            return values.size() + value_nodes.size();
-        }
     };
 
-    std::vector<std::string> roll_values(node_t const& node);
 
-    void generate_node(node_t& node);
-    node_t generate_plant_from_file(stdfs::path const& filepath);
+    // store value nodeas separately, since I can't store nodes in
+    // the variant without them being heap-allocated
+    // (since AFAIK if the variant stores a node, which stores the
+    // variant, it can lead to an infinite size)
+    struct pregen_node_t : base_node_t<pregen_node_t>
+    {
+        value_list_t values;
+        std::vector<pregen_node_t> value_nodes;
+    };
 
-    void print_node(node_t const& node, size_t level);
-    void print_plant(node_t const& plant);
+    struct generated_node_t : base_node_t<generated_node_t>
+    {
+        std::vector<std::string> generated_values;
+    };
+
+
+    generated_node_t generate_node(pregen_node_t& node);
+    generated_node_t generate_node_from_file(stdfs::path const& filepath);
+
+    std::vector<std::string> roll_values(pregen_node_t const& node);
+
+    void print_node(generated_node_t const& node, size_t level = 0);
 }
