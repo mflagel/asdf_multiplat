@@ -16,6 +16,16 @@
                 "Creeping Vine",
                 {
                     "Name": "Gourd Values Test",
+                    "Properties":[
+                        {
+                            "Name":"Skin Texture",
+                            "Values":[
+                                "Bumpy",
+                                "Smooth",
+                                "Ridged"
+                            ]
+                        }
+                    ],
                     "Values": [
                         "Pumpkin",
                         "Acorn",
