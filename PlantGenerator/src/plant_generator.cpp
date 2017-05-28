@@ -98,7 +98,7 @@ namespace plantgen
         return output;
     }
 
-    std::vector<std::string> roll_values(value_list_t const& variant_values, std::vector<node_t> const& value_nodes)
+    std::vector<std::string> roll_values(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
     {
         size_t max_variant_inds = variant_values.size() - int(!variant_values.empty());
         size_t max_node_inds = value_nodes.size() - int(!value_nodes.empty());
@@ -117,7 +117,7 @@ namespace plantgen
         /// figuring out which list to index into
         if(rand_ind > max_variant_inds || variant_values.empty())
         {
-            node_t const& node = value_nodes[rand_ind - variant_values.size()];
+            auto const& node = value_nodes[rand_ind - variant_values.size()];
 
             ///TODO: handle node children
 
@@ -129,51 +129,51 @@ namespace plantgen
         }
     }
 
-    std::vector<std::string> roll_values(node_t const& node)
+    std::vector<std::string> roll_values(pregen_node_t const& node)
     {
         return roll_values(node.values, node.value_nodes);
     }
 
 
-    void generate_node(node_t& node)
+    generated_node_t generate_node(pregen_node_t& pre_node)
     {
-        for(auto& child : node.children)
-            generate_node(child);
+        generated_node_t node;
 
-        if(node.values.empty() && node.value_nodes.empty())
+        for(auto& child : pre_node.children)
         {
-            return;
+            node.children.push_back(generate_node(child));
         }
 
+        node.generated_values = roll_values(pre_node);
         
-        node.generated_values = roll_values(node);
+        return node;
     }
 
 
-    node_t generate_plant_from_file(stdfs::path const& filepath)
+    generated_node_t generate_node_from_file(stdfs::path const& filepath)
     {
         using namespace std;
 
         auto ext = filepath.extension();
         if(ext == ".json")
         {
-            return generate_plant_from_json(filepath);
+            return generate_node_from_json(filepath);
         }
         else if(ext == ".yaml" || ext == ".yml")
         {
             cout << "TODO: yaml support";
-            return node_t();
+            return generated_node_t();
         }
 
         cout << "Filetype not recognized";
-        return node_t();
+        return generated_node_t();
     }
 
 
 
     constexpr size_t indent_amt = 4;
 
-    void print_node(node_t const& node, size_t level)
+    void print_node(generated_node_t const& node, size_t level)
     {
         using namespace std;
 
@@ -190,11 +190,6 @@ namespace plantgen
             for(auto& child : node.children)
                 print_node(child, level + 1);
         }
-    }
-
-    void print_plant(node_t& plant)
-    {
-        print_node(plant, 0);
     }
 }
 
@@ -222,8 +217,8 @@ int main(int argc, char* argv[])
         filepath = std::string("../data/small_plant.json");
 
 
-    node_t plant = generate_plant_from_file(filepath);
-    print_plant(plant);
+    generated_node_t plant = generate_node_from_file(filepath);
+    print_node(plant);
 
     return 0;
 }
