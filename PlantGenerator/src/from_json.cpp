@@ -1,5 +1,6 @@
 #include "from_json.h"
 
+#include <unordered_map>
 #include <stack>
 
 #include <asdf_multiplat/utilities/utilities.h>
@@ -41,18 +42,34 @@ namespace tired_of_build_issues
 }
 
 
-// global stack used for resolving relative filepaths
-// when including other json files as node properties / values
-// I should probably devise a better method of doing this, since
-// I don't think this will handle more than one level of inclusion
-// if the JSON files are not all in the same directory
+// custom hash function for std::path so that I can use it as
+// a key in unordered_map
+namespace std
+{
+template<>
+struct hash<stdfs::path> {
+    size_t operator()(const stdfs::path &p) const {
+        return std::hash<std::string>()(canonical(p));
+    }
+};
+}
 
-//FIXME make this not global
-std::stack<stdfs::path> include_dir_stack;
 
 
 namespace plantgen
 {
+    // global stack used for resolving relative filepaths
+    // when including other json files as node properties / values
+    // I should probably devise a better method of doing this, since
+    // I don't think this will handle more than one level of inclusion
+    // if the JSON files are not all in the same directory
+
+    //FIXME make this not global
+    std::stack<stdfs::path> include_dir_stack;
+    std::unordered_map<stdfs::path, pregen_node_t> include_cache;
+
+
+
     bool str_eq(char const* a, char const* b)
     {
         return strcmp(a, b) == 0;
@@ -165,12 +182,9 @@ namespace plantgen
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
                 stdfs::path relpath(cur_child->valuestring);
 
-                // get path relative to this executable by using parent path
-                // of the current json doc
-                auto TEST = include_dir_stack.top();
                 auto parent_path = include_dir_stack.top().parent_path();
                 stdfs::path fullpath = parent_path / relpath;
-
+                
                 node.add_child(node_from_json(fullpath));
             }
 
@@ -182,24 +196,34 @@ namespace plantgen
 
     pregen_node_t node_from_json(stdfs::path const& filepath)
     {
-        //std::string json_str = asdf::util::read_text_file(filepath);
-        std::string json_str = tired_of_build_issues::read_text_file(filepath.string());
-        cJSON* json_root = cJSON_Parse(json_str.c_str());
+        auto canonical_path = stdfs::canonical(filepath);
 
-        if(!json_root)
+        auto cached_node_entry = include_cache.find(canonical_path);
+        if(cached_node_entry != include_cache.end())
         {
-            EXPLODE( "Error parsing JSON");
-            return pregen_node_t{};
+            return cached_node_entry->second;
         }
+        else
+        {
+            //std::string json_str = asdf::util::read_text_file(filepath);
+            std::string json_str = tired_of_build_issues::read_text_file(canonical_path.string());
+            cJSON* json_root = cJSON_Parse(json_str.c_str());
 
+            if(!json_root)
+            {
+                EXPLODE( "Error parsing JSON");
+                return pregen_node_t{};
+            }
 
-        include_dir_stack.push(filepath);
-        auto root = node_from_json(json_root);
-        include_dir_stack.pop();
+            include_dir_stack.push(canonical_path);
+            auto node = node_from_json(json_root);
+            cJSON_Delete(json_root);
+            include_dir_stack.pop();
 
-        cJSON_Delete(json_root);
+            include_cache.insert({canonical_path, node});
 
-        return root;
+            return node;
+        }
     }
 
     generated_node_t generate_node_from_json(stdfs::path const& filepath)
