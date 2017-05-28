@@ -50,6 +50,10 @@ namespace plantgen
         {}
 
         inline bool is_leaf() const { return children.empty(); }
+
+        inline size_t total_randomable_values() const {
+            return values.size() + value_nodes.size();
+        }
     };
 
     std::vector<std::string> roll_values(node_t const& node);
