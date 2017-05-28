@@ -1,5 +1,7 @@
 #include "from_json.h"
 
+#include <stack>
+
 #include <asdf_multiplat/utilities/utilities.h>
 #include <asdf_multiplat/utilities/cjson_utils.hpp>
 
@@ -39,12 +41,14 @@ namespace tired_of_build_issues
 }
 
 
-// global root_json_dir is used for resolving relative filepaths
+// global stack used for resolving relative filepaths
 // when including other json files as node properties / values
 // I should probably devise a better method of doing this, since
 // I don't think this will handle more than one level of inclusion
 // if the JSON files are not all in the same directory
-stdfs::path root_json_dir;
+
+//FIXME make this not global
+std::stack<stdfs::path> include_dir_stack;
 
 
 namespace plantgen
@@ -161,9 +165,11 @@ namespace plantgen
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
                 stdfs::path relpath(cur_child->valuestring);
 
-                //get path relative to this executable by using parent path
-                //of the original json doc
-                stdfs::path fullpath = root_json_dir.parent_path() / relpath;
+                // get path relative to this executable by using parent path
+                // of the current json doc
+                auto TEST = include_dir_stack.top();
+                auto parent_path = include_dir_stack.top().parent_path();
+                stdfs::path fullpath = parent_path / relpath;
 
                 node.add_child(node_from_json(fullpath));
             }
@@ -186,7 +192,10 @@ namespace plantgen
             return pregen_node_t{};
         }
 
+
+        include_dir_stack.push(filepath);
         auto root = node_from_json(json_root);
+        include_dir_stack.pop();
 
         cJSON_Delete(json_root);
 
@@ -195,9 +204,6 @@ namespace plantgen
 
     generated_node_t generate_node_from_json(stdfs::path const& filepath)
     {
-        // global root_json_dir is used for resolving relative filepaths
-        // when including other json files as node properties / values
-        root_json_dir = filepath;
         auto node = node_from_json(filepath);
         return generate_node(node);
     }
