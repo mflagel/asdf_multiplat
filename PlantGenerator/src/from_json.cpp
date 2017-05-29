@@ -184,9 +184,18 @@ namespace plantgen
 
                 auto parent_path = include_dir_stack.top().parent_path();
                 stdfs::path fullpath = parent_path / relpath;
-                
+
                 try{
-                    node.add_child(node_from_json(fullpath));
+                    auto included_node = node_from_json(fullpath);
+
+                    if(included_node.name == node.name)
+                    {
+                        node.merge_with(std::move(included_node));
+                    }
+                    else
+                    {
+                        node.add_child(std::move(included_node));
+                    }
                 }
                 catch(file_not_found_exception const&)
                 {

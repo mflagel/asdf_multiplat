@@ -43,6 +43,15 @@ namespace plantgen
             children.push_back(std::move(c));
             children.back().parent = static_cast<T*>(this);
         }
+
+        void add_children(std::vector<T> const& new_children)
+        {
+            children.insert(children.end(), new_children.begin(), new_children.end());
+            for(size_t i = children.size() - new_children.size(); i < children.size(); ++i)
+            {
+                children[i].parent = static_cast<T*>(this);
+            }
+        }
     };
 
 
@@ -54,11 +63,23 @@ namespace plantgen
     {
         value_list_t values;
         std::vector<pregen_node_t> value_nodes;
+
+        void merge_with(pregen_node_t&& n)
+        {
+            add_children(n.children);
+            values.insert(values.end(), n.values.begin(), n.values.end());
+            value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
+        }
     };
 
     struct generated_node_t : base_node_t<generated_node_t>
     {
         std::vector<std::string> generated_values;
+
+        inline void merge_with(generated_node_t&& n)
+        {
+            generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
+        }
     };
 
 
