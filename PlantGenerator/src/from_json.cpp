@@ -185,7 +185,13 @@ namespace plantgen
                 auto parent_path = include_dir_stack.top().parent_path();
                 stdfs::path fullpath = parent_path / relpath;
                 
-                node.add_child(node_from_json(fullpath));
+                try{
+                    node.add_child(node_from_json(fullpath));
+                }
+                catch(file_not_found_exception const&)
+                {
+                    throw include_exception{include_dir_stack.top(), fullpath};
+                }
             }
 
             cur_child = cur_child->next;
@@ -196,6 +202,9 @@ namespace plantgen
 
     pregen_node_t node_from_json(stdfs::path const& filepath)
     {
+        if(!stdfs::is_regular_file(filepath))
+            throw file_not_found_exception{filepath};
+
         auto canonical_path = stdfs::canonical(filepath);
 
         auto cached_node_entry = include_cache.find(canonical_path);
@@ -211,8 +220,7 @@ namespace plantgen
 
             if(!json_root)
             {
-                EXPLODE( "Error parsing JSON");
-                return pregen_node_t{};
+                throw json_parse_exception(filepath, cJSON_GetErrorPtr());
             }
 
             include_dir_stack.push(canonical_path);

@@ -169,7 +169,7 @@ namespace plantgen
             return generated_node_t();
         }
 
-        cout << "Filetype not recognized";
+        cout << "Filetype " << ext << " not recognized";
         return generated_node_t();
     }
 
@@ -220,9 +220,14 @@ int main(int argc, char* argv[])
     else
         filepath = std::string("../data/small_plant.json");
 
-
-    generated_node_t plant = generate_node_from_file(filepath);
-    print_node(plant);
+    try{
+        generated_node_t plant = generate_node_from_file(filepath);
+        print_node(plant);
+    }
+    catch(std::runtime_error const& e)
+    {
+        cout << e.what() << "\n";
+    }
 
     return 0;
 }
