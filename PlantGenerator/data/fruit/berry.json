@@ -3,20 +3,7 @@
     "Properties":[
         {
             "Name":"Taste",
-            "Values":[
-                {
-                    "Range":[
-                        "Bland",
-                        "Sour"
-                    ]
-                },
-                {
-                    "Range":[
-                        "Bland",
-                        "Bitter"
-                    ]
-                }
-            ]
+            "Include":"../properties/taste.json"
         },
         {
             "Name":"Shape",
@@ -47,7 +34,8 @@
                             ]
                         }
                     ]
-                }
+                },
+                "Spherical"
             ]
         }
     ]
