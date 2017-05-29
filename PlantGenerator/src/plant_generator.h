@@ -36,7 +36,7 @@ namespace plantgen
     {
         using variant_value_t::variant_value_t;
 
-        size_t weight = 1;
+        uint32_t weight = 1;
     };
 
     using value_list_t = std::vector<weighted_value_t>;
@@ -49,6 +49,11 @@ namespace plantgen
         T* parent = nullptr;
         std::vector<T> children;
         std::string name;
+
+        base_node_t() = default;
+        base_node_t(std::string const& _name)
+        : name(_name)
+        {}
 
         void add_child(T&& c)
         {
@@ -75,7 +80,9 @@ namespace plantgen
     {
         value_list_t values;
         std::vector<pregen_node_t> value_nodes;
-        size_t weight = 1;
+        uint32_t weight = 1;
+
+        using base_node_t::base_node_t;
 
         void merge_with(pregen_node_t&& n)
         {
@@ -89,6 +96,8 @@ namespace plantgen
     {
         std::vector<std::string> generated_values;
 
+        using base_node_t::base_node_t;
+
         inline void merge_with(generated_node_t&& n)
         {
             generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
@@ -98,9 +107,8 @@ namespace plantgen
 
     /// Functions
 
-    size_t total_weight(value_list_t const& values);
-    size_t total_weight(pregen_node_t const& n);
-    size_t total_weight(std::vector<pregen_node_t> const& nodes);
+    template <typename L>
+    uint32_t total_weight(L const& list);
 
     generated_node_t generate_node(pregen_node_t const& node);
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
@@ -108,7 +116,6 @@ namespace plantgen
     generated_node_t roll_values(pregen_node_t const& node);
 
     void print_node(generated_node_t const& node, size_t level = 0);
-
 
 
     /// Exceptions
