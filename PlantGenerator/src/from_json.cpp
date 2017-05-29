@@ -4,7 +4,6 @@
 #include <stack>
 
 #include <asdf_multiplat/utilities/utilities.h>
-#include <asdf_multiplat/utilities/cjson_utils.hpp>
 
 using namespace asdf;
 using namespace asdf::util;
@@ -111,7 +110,7 @@ namespace plantgen
         return value_string_list_from_json_array(json);
     }
 
-    variant_value_t value_type_from_json(cJSON* json)
+    weighted_value_t value_type_from_json(cJSON* json)
     {
         if(json->type == cJSON_String)
         {
@@ -133,7 +132,7 @@ namespace plantgen
         else
         {
             EXPLODE("unrecognized value object %s", json->child->string);
-            return variant_value_t(null_value_t());
+            return weighted_value_t(null_value_t());
         }
     }
 
@@ -201,6 +200,17 @@ namespace plantgen
                 {
                     throw include_exception{include_dir_stack.top(), fullpath};
                 }
+            }
+            else if(str_eq(cur_child->string, "Weight"))
+            {
+                if(cur_child->type != cJSON_Number)
+                    throw json_type_exception(include_dir_stack.top(), cur_child, cJSON_Number);
+                
+                node.weight = cur_child->valueint;
+            }
+            else
+            {
+                // LOG("Unrecognized tag '%s' in node '%s'", cur_child->string, json_node->string);
             }
 
             cur_child = cur_child->next;
