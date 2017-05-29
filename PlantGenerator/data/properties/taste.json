@@ -13,14 +13,31 @@
         {
             "Range":[
                 "Bland",
-                "Tasteful"
+                "Sweet"
             ]
         },
         {
             "Range":[
+                "Bland",
+                "Sour"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
                 "Bitter"
-                ,"Sweet"
-                ,"Sour"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Salty"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Spicy"
             ]
         }
     ]
