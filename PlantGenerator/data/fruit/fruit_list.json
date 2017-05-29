@@ -1,0 +1,32 @@
+{
+    "Name":"Fruit",
+    "Values":[
+        {
+            "Name":"Gourd",
+            "Include":"gourd.json"
+        },
+        {
+            "Name":"Citrus",
+            "Values":[
+                "Tangerine",
+                "Orange",
+                "Lemon",
+                "Lime"
+            ]
+        },
+        {
+            "Name":"Berries",
+            "Values":[
+                "Blueberry",
+                "Raspberry",
+                "Blackberry",
+                "Salmonberry",
+                "Cranberry"
+            ]
+        },
+        "Apple",
+        "Pear",
+        "Grape",
+        "Peach"
+    ]
+}

@@ -17,7 +17,7 @@
         },
         {
             "Name":"Fruit",
-            "Include":"fruit/gourd.json"
+            "Include":"fruit/fruit_list.json"
         }
     ]
 }
