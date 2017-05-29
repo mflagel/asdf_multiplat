@@ -31,31 +31,16 @@ namespace plantgen
     }
 
 
-    size_t total_weight(value_list_t const& values)
+    template <typename L>
+    uint32_t total_weight(L const& list)
     {
-        size_t total = 0;
+        uint32_t total = 0;
 
-        for(auto const& v : values)
+        for(auto const& v : list)
             total += v.weight;
 
         return total;
     }
-
-    size_t total_weight(pregen_node_t const& n)
-    {
-        return n.weight + total_weight(n.values);
-    }
-
-    size_t total_weight(std::vector<pregen_node_t> const& nodes)
-    {
-        size_t total = 0;
-
-        for(auto const& n : nodes)
-            total += total_weight(n);
-
-        return total;
-    }
-
 
     std::vector<std::string> roll_multi_value(multi_value_t const& m)
     {
@@ -123,43 +108,42 @@ namespace plantgen
         return output;
     }
 
-    generated_node_t __roll_values_OLD(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
-    {
-        size_t max_variant_inds = variant_values.size() - int(!variant_values.empty());
-        size_t max_node_inds = value_nodes.size() - int(!value_nodes.empty());
-
-
-        size_t num_rollables = variant_values.size() + value_nodes.size();
-
-        if(num_rollables == 0)
-            return generated_node_t();
-
-
-        generated_node_t rolled_node;
-        auto rand_ind = random_int(num_rollables - 1);
-
-
-        /// FIXME this it not a particularily elegant method of
-        /// figuring out which list to index into
-        if(rand_ind > max_variant_inds || variant_values.empty())
-        {
-            auto const& value_node = value_nodes[rand_ind - variant_values.size()];
-
-            rolled_node.name = value_node.name;
-            rolled_node.add_child(generate_node(value_node));
-        }
-        else
-        {
-            rolled_node.generated_values = roll_value(variant_values[rand_ind]);
-        }
-
-        return rolled_node;
-    }
-
-
     generated_node_t roll_values(value_list_t const& values, std::vector<pregen_node_t> const& value_nodes)
     {
-        size_t total_weight = 
+        if(values.empty() && value_nodes.empty())
+            return generated_node_t();
+
+        uint32_t total = total_weight(values) + total_weight(value_nodes);
+
+        int roll = random_int(total);
+
+        for(size_t i = 0; i < values.size(); ++i)
+        {
+            if(roll <= values[i].weight)
+            {
+                generated_node_t node;
+                node.generated_values = std::move(roll_value(values[i]));
+                return node;
+            }
+
+            roll -= values[i].weight;
+        }
+
+        //if no value from the value list has been hit yet, continue onward into value_nodes
+        for(size_t i = 0; i < value_nodes.size(); ++i)
+        {
+            if(roll <= value_nodes[i].weight)
+            {
+                generated_node_t node(value_nodes[i].name);
+                node.add_child(generate_node(value_nodes[i]));
+                return node;
+            }
+
+            roll -= value_nodes[i].weight;
+        }
+
+        EXPLODE("Random roll was too large, ran out of values and value_nodes");
+        return generated_node_t("ERROR");
     }
 
 
