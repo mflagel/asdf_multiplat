@@ -120,7 +120,8 @@ namespace plantgen
         {
             auto const& value_node = value_nodes[rand_ind - variant_values.size()];
 
-            rolled_node = generate_node(value_node);
+            rolled_node.name = value_node.name;
+            rolled_node.add_child(generate_node(value_node));
         }
         else
         {
@@ -174,25 +175,44 @@ namespace plantgen
     }
 
 
-
     constexpr size_t indent_amt = 4;
+    // constexpr char indent_char = ' ';
+    // constexpr char indent_tree_marker = ':';
+    constexpr char const* indent_cstr = ":   ";
+
+    std::string indenation_string(size_t indent_level)
+    {
+        if(indent_level == 0)
+            return "";
+
+        // std::string indent_str(indent_level * indent_amt, indent_char);
+        // indent_str[indent_str.size()-indent_amt] = indent_tree_marker;
+
+        std::string indent_str;
+        for(size_t i = 1; i < indent_level; ++i)
+            indent_str.insert(indent_str.end(), indent_cstr, indent_cstr + 4);
+
+        return indent_str;
+    }
 
     void print_node(generated_node_t const& node, size_t level)
     {
         using namespace std;
 
-        string indent(" ",0, level * indent_amt);
+        auto indent = indenation_string(level);
+
         cout << indent << node.name << "\n";
         
-        for(auto const& v : node.generated_values)
-        {
-            cout << indent << "  " << v << "\n";
-        }
-
         if(node.children.size() > 0)
         {
-            for(auto& child : node.children)
+            for(auto const& child : node.children)
                 print_node(child, level + 1);
+        }
+
+        for(auto const& value : node.generated_values)
+        {
+            indent = indenation_string(level+1);
+            cout << indent << value << "\n";
         }
     }
 }
