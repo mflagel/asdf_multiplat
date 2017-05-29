@@ -3,6 +3,7 @@
     "Values":[
         {
             "Name":"Gourd",
+            "Weight": 10,
             "Include":"gourd.json"
         },
         {
