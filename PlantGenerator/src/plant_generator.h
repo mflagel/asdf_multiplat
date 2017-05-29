@@ -68,4 +68,41 @@ namespace plantgen
     generated_node_t roll_values(pregen_node_t const& node);
 
     void print_node(generated_node_t const& node, size_t level = 0);
+
+
+    struct file_not_found_exception : public std::runtime_error
+    {
+        stdfs::path path;
+
+        file_not_found_exception(stdfs::path const& _path)
+        : std::runtime_error("File Not Found: \"" + _path.string() + "\"")
+        , path(_path)
+        {}
+    };
+
+    struct include_exception : public std::runtime_error
+    {
+        stdfs::path include_from_path;
+        stdfs::path include_path;
+
+        include_exception(stdfs::path const& _inc_from, stdfs::path const& _inc)
+        : std::runtime_error("File Not Found: " + _inc.string() + "\n"
+                           + "Included by " + _inc_from.string() + "\n")
+        , include_from_path(_inc_from)
+        , include_path(_inc)
+        {}
+    };
+
+    struct json_parse_exception : public std::runtime_error
+    {
+        stdfs::path json_filepath;
+        const char* cjson_error_cstr;
+
+        json_parse_exception(stdfs::path const& _json_filepath, const char* _cjson_err = nullptr)
+        : std::runtime_error("JSON Parse Error: JSON file is invalid: " + _json_filepath.string()
+                        + "\n--- cJSON Error ---\n" + _cjson_err)
+        , json_filepath(_json_filepath)
+        , cjson_error_cstr(_cjson_err)
+        {}
+    };
 }
