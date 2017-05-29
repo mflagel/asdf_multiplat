@@ -24,6 +24,10 @@
                 "Cranberry"
             ]
         },
+        {
+            "Name":"Berry",
+            "Include":"berry.json"
+        },
         "Apple",
         "Pear",
         "Grape",
