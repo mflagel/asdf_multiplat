@@ -31,6 +31,31 @@ namespace plantgen
     }
 
 
+    size_t total_weight(value_list_t const& values)
+    {
+        size_t total = 0;
+
+        for(auto const& v : values)
+            total += v.weight;
+
+        return total;
+    }
+
+    size_t total_weight(pregen_node_t const& n)
+    {
+        return n.weight + total_weight(n.values);
+    }
+
+    size_t total_weight(std::vector<pregen_node_t> const& nodes)
+    {
+        size_t total = 0;
+
+        for(auto const& n : nodes)
+            total += total_weight(n);
+
+        return total;
+    }
+
 
     std::vector<std::string> roll_multi_value(multi_value_t const& m)
     {
@@ -72,7 +97,7 @@ namespace plantgen
 
 
     /// Runtime version (compile-time visitor pattern doesn't compile in msvc)
-    std::vector<std::string> roll_value(variant_value_t const& variant_val)
+    std::vector<std::string> roll_value(weighted_value_t const& variant_val)
     {
         std::vector<std::string> output;
 
@@ -98,7 +123,7 @@ namespace plantgen
         return output;
     }
 
-    generated_node_t roll_values(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
+    generated_node_t __roll_values_OLD(value_list_t const& variant_values, std::vector<pregen_node_t> const& value_nodes)
     {
         size_t max_variant_inds = variant_values.size() - int(!variant_values.empty());
         size_t max_node_inds = value_nodes.size() - int(!value_nodes.empty());
@@ -130,6 +155,13 @@ namespace plantgen
 
         return rolled_node;
     }
+
+
+    generated_node_t roll_values(value_list_t const& values, std::vector<pregen_node_t> const& value_nodes)
+    {
+        size_t total_weight = 
+    }
+
 
     generated_node_t roll_values(pregen_node_t const& node)
     {

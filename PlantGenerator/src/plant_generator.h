@@ -23,11 +23,23 @@ namespace plantgen
 
         std::vector<std::string> values;
     };
-
-    using null_value_t = int;
     using range_value_t = std::vector<std::string>;
+    using null_value_t = int;
+    
     using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
-    using value_list_t = std::vector<variant_value_t>;
+
+    // The weight value is not a percentage, but rather
+    // a multiplier. A value is 'weight' times more likely
+    // to be picked (as if it was entered into the value list
+    // 'weight' times).
+    struct weighted_value_t : public variant_value_t
+    {
+        using variant_value_t::variant_value_t;
+
+        size_t weight = 1;
+    };
+
+    using value_list_t = std::vector<weighted_value_t>;
 
 
     /// curiously recurring template pattern (sort-of)
@@ -63,6 +75,7 @@ namespace plantgen
     {
         value_list_t values;
         std::vector<pregen_node_t> value_nodes;
+        size_t weight = 1;
 
         void merge_with(pregen_node_t&& n)
         {
@@ -83,6 +96,12 @@ namespace plantgen
     };
 
 
+    /// Functions
+
+    size_t total_weight(value_list_t const& values);
+    size_t total_weight(pregen_node_t const& n);
+    size_t total_weight(std::vector<pregen_node_t> const& nodes);
+
     generated_node_t generate_node(pregen_node_t const& node);
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
 
@@ -90,6 +109,9 @@ namespace plantgen
 
     void print_node(generated_node_t const& node, size_t level = 0);
 
+
+
+    /// Exceptions
 
     struct file_not_found_exception : public std::runtime_error
     {
@@ -111,19 +133,6 @@ namespace plantgen
                            + "Included by " + _inc_from.string() + "\n")
         , include_from_path(_inc_from)
         , include_path(_inc)
-        {}
-    };
-
-    struct json_parse_exception : public std::runtime_error
-    {
-        stdfs::path json_filepath;
-        const char* cjson_error_cstr;
-
-        json_parse_exception(stdfs::path const& _json_filepath, const char* _cjson_err = nullptr)
-        : std::runtime_error("JSON Parse Error: JSON file is invalid: " + _json_filepath.string()
-                        + "\n--- cJSON Error ---\n" + _cjson_err)
-        , json_filepath(_json_filepath)
-        , cjson_error_cstr(_cjson_err)
         {}
     };
 }
