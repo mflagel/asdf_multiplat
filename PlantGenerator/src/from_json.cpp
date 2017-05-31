@@ -48,7 +48,7 @@ namespace std
 template<>
 struct hash<stdfs::path> {
     size_t operator()(const stdfs::path &p) const {
-        return std::hash<std::string>()(canonical(p));
+        return std::hash<std::string>()(canonical(p).string());
     }
 };
 }
