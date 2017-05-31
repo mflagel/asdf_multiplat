@@ -186,7 +186,11 @@ namespace plantgen
             return generated_node_t();
         }
 
-        cout << "Filetype " << ext << " not recognized";
+        if(stdfs::is_directory(filepath))
+            cout << filepath.string() << " is a directory, not a file";
+        else
+            cout << "Filetype " << ext << " not recognized";
+
         return generated_node_t();
     }
 
