@@ -66,7 +66,7 @@ namespace plantgen
         output.reserve(r.size());
 
         uint32_t counter = 0;
-        for(size_t i = 0; i < r.size(); ++i)
+        for(size_t i = 0; i < r.size() - 1; ++i)
         {
             int roll = 0;
 
@@ -76,6 +76,9 @@ namespace plantgen
             counter += roll;
             output.push_back(std::to_string(roll) + "% " + r[i]);
         }
+
+        //push remaining
+        output.push_back(std::to_string(100 - counter) + "% " + r.back());
 
         return output;
     }
