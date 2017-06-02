@@ -6,6 +6,9 @@
             "folder_exclude_patterns":["bin","obj","build"]
         },
         {
+            "path": "../doc"
+        },
+        {
             "path": "../asdf_multiplat",
             "folder_exclude_patterns":["bin","obj"]
         }
