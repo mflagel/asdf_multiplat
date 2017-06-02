@@ -239,38 +239,3 @@ namespace plantgen
         }
     }
 }
-
-
-using namespace plantgen;
-
-// undef main because apparently SDL redefines 'main' as SDL_main
-// which is super obnoxious
-#undef main
-
-int main(int argc, char* argv[])
-{
-    using namespace std;
-    if(argc == 0)
-    {
-        cout << "asdf";
-        return 0;
-    }
-
-    std::string filepath;
-
-    if(argc > 1)
-        filepath = std::string(argv[1]);
-    else
-        filepath = std::string("../data/small_plant.json");
-
-    try{
-        generated_node_t plant = generate_node_from_file(filepath);
-        print_node(plant);
-    }
-    catch(std::runtime_error const& e)
-    {
-        cout << e.what() << "\n";
-    }
-
-    return 0;
-}
