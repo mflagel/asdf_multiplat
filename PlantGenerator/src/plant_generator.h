@@ -12,36 +12,12 @@
 #include <vector>
 #include <variant>
 
+#include "value_types.hpp"
+
 namespace stdfs = std::experimental::filesystem;
 
 namespace plantgen
 {
-    
-    struct multi_value_t
-    {
-        size_t num_to_pick;
-
-        std::vector<std::string> values;
-    };
-    using range_value_t = std::vector<std::string>;
-    using null_value_t = int;
-    
-    using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
-
-    // The weight value is not a percentage, but rather
-    // a multiplier. A value is 'weight' times more likely
-    // to be picked (as if it was entered into the value list
-    // 'weight' times).
-    struct weighted_value_t : public variant_value_t
-    {
-        using variant_value_t::variant_value_t;
-
-        uint32_t weight = 1;
-    };
-
-    using value_list_t = std::vector<weighted_value_t>;
-
-
     /// curiously recurring template pattern (sort-of)
     template <typename T>
     struct base_node_t
