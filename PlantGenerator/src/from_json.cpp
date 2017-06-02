@@ -110,11 +110,34 @@ namespace plantgen
         return value_string_list_from_json_array(json);
     }
 
+    weighted_value_t value_from_string(std::string const& value_string)
+    {
+        weighted_value_t v = value_string;
+
+        if(value_string[0] == '%')
+        {
+            auto space_pos = value_string.find_first_of(' ');
+
+            if(space_pos > 1)
+            {
+                v = value_string.substr(space_pos, std::string::npos);
+                v.weight = std::stoi(value_string.substr(1, space_pos));
+            }
+            else
+            {
+                //TODO: better error message
+                std::cout << "Invalid Weight Specifier for \"" << value_string << "\"\n";
+            }
+        }
+
+        return v;
+    }
+
     weighted_value_t value_type_from_json(cJSON* json)
     {
         if(json->type == cJSON_String)
         {
-            return std::string(json->valuestring);
+            return value_from_string(std::string(json->valuestring));
         }
         else if(!json->child)
         {
@@ -134,6 +157,26 @@ namespace plantgen
             EXPLODE("unrecognized value object %s", json->child->string);
             return weighted_value_t(null_value_t());
         }
+    }
+
+    int weight_from_string(std::string const& weight_str)
+    {
+        if(weight_str[0] == '%')
+        {
+            auto space_pos = weight_str.find_first_of(' ');
+
+            if(space_pos > 1)
+            {
+                return std::stoi(weight_str.substr(1, space_pos));
+            }
+            else
+            {
+                //TODO: better error message
+                std::cout << "Invalid Weight Specifier for \"" << weight_str << "\"\n";
+            }
+        }
+
+        return -1;
     }
 
     pregen_node_t node_from_json(cJSON* json_node)
@@ -203,10 +246,26 @@ namespace plantgen
             }
             else if(str_eq(cur_child->string, "Weight"))
             {
-                if(cur_child->type != cJSON_Number)
-                    throw json_type_exception(include_dir_stack.top(), cur_child, cJSON_Number);
-                
-                node.weight = cur_child->valueint;
+                switch(cur_child->type)
+                {
+                case cJSON_Number:
+                    node.weight = cur_child->valueint;
+                    break;
+
+                case cJSON_String:
+                {
+                    int weight = weight_from_string(std::string(cur_child->valuestring));
+                    if(weight >= 0)
+                        node.weight = weight;
+                    else
+                        std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
+
+                    break;
+                }
+
+                default:
+                    throw json_type_exception(include_dir_stack.top(), cur_child, cur_child->type);
+                }
             }
             else
             {
