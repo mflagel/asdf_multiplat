@@ -1,0 +1,23 @@
+{
+    "Name":"Test All",
+    "Properties":[
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"Fancy Node",
+            "Include":"fancy_node.json"
+        },
+        {
+            "Name":"Range Value",
+            "Include":"range_value.json"
+        },
+        {
+            "Name":"Multi Value",
+            "Include":"multi_value.json"
+        }
+    ],
+    "Values":[
+    ]
+}
