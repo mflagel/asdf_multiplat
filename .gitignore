@@ -53,6 +53,12 @@ ext/glm/doc
 /hexmap/assets/*
 /hexmap/data/*
 
+#plantgen
+/PlantGenerator/build
+/PlantGenerator/test/build
+/PlantGenerator/test/Win32
+/PlantGenerator/test/PlantGenerator__Tests.dir/
+
 
 #windows
 .vs/
