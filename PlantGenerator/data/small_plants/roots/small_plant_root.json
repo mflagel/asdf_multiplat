@@ -3,7 +3,7 @@
     "Properties": [
         {
             "Name": "Taste",
-            "Include":"properties/taste.json"
+            "Include":"../../properties/taste.json"
         },
         {
             "Name": "Color",

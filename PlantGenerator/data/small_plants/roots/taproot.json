@@ -1,0 +1,64 @@
+{
+    "Name": "Taproot",
+    "Properties":[
+        {
+            "Name":"Color",
+            "Values":[
+                {
+                    "Range":[
+                        "White",
+                        "Orange",
+                        "Brown"
+                    ],
+                    "Weight":4
+                },
+                {
+                    "Range":[
+                        "White",
+                        "Red",
+                        "Purple"
+                    ],
+                    "Weight":4
+                },
+                "Green-White Gradient",
+                "Brownish Black"
+            ]
+        },
+        {
+            "Name":"Shape",
+            "Values":[
+                "%5 Tapered Stick",
+                "%2 Spheroid",
+                "%2 Stick-Shaped",
+                "Capsule-Shaped",
+                "Turnip-Shaped",
+                "Curved",
+                "Spiral"
+            ]
+        },
+        {
+            "Name":"Length",
+            "Values":[
+                "Thumb-Length",
+                "Finger-Length",
+                "Hand-Length",
+                "Forearm-Length",
+                "Arm-Length",
+                "Leg-Length",
+                "Human-Length"
+            ]
+        },
+        {
+            "Name":"Thickness",
+            "Values":[
+                "Skinny",
+                "Medium",
+                "Thick"
+            ]
+        },
+        {
+            "Name":"Taste",
+            "Include":"../../properties/taste.json"
+        }
+    ]
+}
