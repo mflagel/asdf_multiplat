@@ -8,7 +8,7 @@ CLANG_DIAGNOSTIC_PUSH;
 CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros");
 
 
-constexpr std::array<char const*, cJSON_Object+1> cJSON_type_strings =
+constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
 {
     "cJSON_False"
   , "cJSON_True"
@@ -17,6 +17,7 @@ constexpr std::array<char const*, cJSON_Object+1> cJSON_type_strings =
   , "cJSON_String"
   , "cJSON_Array"
   , "cJSON_Object"
+  , "Invalid cJSON Type"
 };
 
 #define CJSON_OBJ(node_name, obj_name) cJSON_GetObjectItem(node_name, #obj_name)
