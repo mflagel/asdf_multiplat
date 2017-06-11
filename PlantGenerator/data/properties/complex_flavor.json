@@ -1,0 +1,32 @@
+{
+    "Name": "Complex Taste",
+    "Properties":[
+        {
+            "Name":"Main Flavor",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        },
+        {
+            "Name":"Undertones",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        },
+        {
+            "Name":"Aftertaste",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        }
+    ]
+}
