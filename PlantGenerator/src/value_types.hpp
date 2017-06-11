@@ -20,6 +20,8 @@ namespace plantgen
     
     using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
 
+    using user_value_t = std::variant<bool, double, std::string>; //ie: random json data
+
     // This is where C++ gets kind of weird....  SFINAE
     // enable_if T is not a variant_value
     // (otherwise the compiler complains that this overlaps with the std default variant-vs-variant comparator)
@@ -28,34 +30,77 @@ namespace plantgen
                                   std::is_same<T, std::string>::value
                                || std::is_same<T, range_value_t>::value
                                || std::is_same<T, multi_value_t>::value
-                               || std::is_same<T, null_value_t>::value>
+                               || std::is_same<T, null_value_t>::value >
                                {};
 
+    template <typename T>
+    struct is_variant_value_comparable : std::integral_constant<bool,
+                                           is_variant_subtype<T>::value
+                                        || std::is_same<std::remove_const<T>, char*>::value >
+                                        {};
 
-    template <typename T, typename = std::enable_if_t<is_variant_subtype<T>::value> >
+
+    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
     bool operator==(variant_value_t const& v, T const& t)
     {
         return std::get<T>(v) == t;
     }
-    template <typename T, typename = std::enable_if_t<is_variant_subtype<T>::value> >
+    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
     bool operator==(T const& t, variant_value_t const& v)
     {
         return std::get<T>(v) == t;
     }
     
-    template <typename T, typename = std::enable_if_t<is_variant_subtype<T>::value> >
+    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
     bool operator!=(variant_value_t const& v, T const& t)
     {
         return std::get<T>(v) != t;
     }
     
     /* Compiler complains about having two overloads for this function
-    template <typename T, typename = std::enable_if_t<is_variant_subtype<T>::value && !std::is_void<T>::value>>
+    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<T>::value && !std::is_void<T>::value>>
     bool operator!=(T const& t, variant_value_t const& v)
     {
         return std::get<T>(v) != t;
     }
     */
+
+
+    /// SFINAE is terribly obnoxious
+    /*template <typename T, typename = std::enable_if_t<std::is_same<std::decay<T>, variant_value_t>::value
+                                                   || std::is_same<std::decay<T>, user_value_t>::value >>
+    std::ostream& operator<<(std::ostream& os, T const& obj)
+    {
+        std::visit( [&os](auto const& arg)
+            {
+                os << arg;
+            }
+        , obj);
+        
+        return os;
+    }*/
+
+    inline std::ostream& operator<<(std::ostream& os, variant_value_t const& obj)
+    {
+        std::visit( [&os](auto const& arg)
+            {
+                os << arg;
+            }
+        , obj);
+        
+        return os;
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, user_value_t const& obj)
+    {
+        std::visit( [&os](auto const& arg)
+            {
+                os << arg;
+            }
+        , obj);
+        
+        return os;
+    }
     
     
 
@@ -78,10 +123,22 @@ namespace plantgen
         if(value_list.size() != comp_list.size())
             return false;
 
-        for(size_t i = 0; i < value_list.size(); ++i)
+        /*for(size_t i = 0; i < value_list.size(); ++i)
         {
             if(value_list[i] != comp_list[i])
                 return false;
+        }*/
+
+        // use range based for so that this function can take an
+        // initializer list which has no operator[] but has
+        // begin/end iterators
+        size_t i = 0;
+        for(auto const& c : comp_list)
+        {
+            if(value_list[i] != c)
+                return false;
+
+            ++i;
         }
 
         return true;

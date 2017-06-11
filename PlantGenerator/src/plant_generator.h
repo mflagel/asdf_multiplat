@@ -58,6 +58,8 @@ namespace plantgen
         std::vector<pregen_node_t> value_nodes;
         uint32_t weight = 1;
 
+        std::vector<user_value_t> user_data;
+
         using base_node_t::base_node_t;
 
         void merge_with(pregen_node_t&& n)
@@ -91,6 +93,7 @@ namespace plantgen
 
     generated_node_t roll_values(pregen_node_t const& node);
 
+    void print_node(pregen_node_t const& node, size_t level = 0);
     void print_node(generated_node_t const& node, size_t level = 0);
 
 
