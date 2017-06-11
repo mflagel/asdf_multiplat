@@ -27,6 +27,7 @@
         },
         {
             "Name":"Berry",
+            "Weight":5,
             "Include":"berry.json"
         },
         "Apple",
