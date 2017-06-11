@@ -1,44 +1,43 @@
 {
     "Name": "Taste",
-    "Properties": [
-        {
-            "Name": "Edibility",
-            "Values": [
-                "Poisonous",
-                "Inedible"
-            ]
-        }
-    ],
     "Values":[
         {
-            "Range":[
-                "Bland",
-                "Sweet"
+            "Name":"Dangerous Taste",
+            "Weight":1,
+            "Properties": [
+                {
+                    "Name": "Edibility",
+                    "Values": [
+                        "%2 Poisonous",
+                        "%3 Inedible",
+                        "%5 Edible"
+                    ]
+                },
+                {
+                    "Name":"Taste",
+                    "Values":[
+                        "%3 Bland",
+                        "%10 Very Bitter",
+                        "%3 Very Spicy",
+                        "%1 Very Sour"
+                    ]
+                }
             ]
         },
         {
-            "Range":[
-                "Bland",
-                "Sour"
+            "Name":"Flavor",
+            "Weight":10,
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
             ]
         },
         {
-            "Range":[
-                "Bland",
-                "Bitter"
-            ]
-        },
-        {
-            "Range":[
-                "Bland",
-                "Salty"
-            ]
-        },
-        {
-            "Range":[
-                "Bland",
-                "Spicy"
-            ]
+            "Name":"Complex Flavor",
+            "Weight":5,
+            "Include":"complex_flavor.json"
         }
     ]
 }
