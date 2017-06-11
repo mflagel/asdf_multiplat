@@ -218,6 +218,29 @@ namespace plantgen
         return indent_str;
     }
 
+    void print_node(pregen_node_t const& node, size_t level)
+    {
+        using namespace std;
+
+        auto indent = indenation_string(level);
+
+        cout << indent << node.name << "\n";
+
+        for(auto const& child : node.children)
+            print_node(child, level + 1);
+
+        indent.append(indenation_string(1));
+
+        for(auto const& value : node.values)
+            cout << indent << value << "\n";
+
+        for(auto const& vnode : node.value_nodes)
+            print_node(vnode, level + 1);
+
+        for(auto const& user_val : node.user_data)
+            cout << indent << user_val << "\n";
+    }
+
     void print_node(generated_node_t const& node, size_t level)
     {
         using namespace std;
@@ -226,15 +249,13 @@ namespace plantgen
 
         cout << indent << node.name << "\n";
         
-        if(node.children.size() > 0)
-        {
-            for(auto const& child : node.children)
-                print_node(child, level + 1);
-        }
+        for(auto const& child : node.children)
+            print_node(child, level + 1);
+
+        indent.append(indenation_string(1));
 
         for(auto const& value : node.generated_values)
         {
-            indent = indenation_string(level+1);
             cout << indent << value << "\n";
         }
     }

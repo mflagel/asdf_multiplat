@@ -8,6 +8,13 @@
 using namespace asdf;
 using namespace asdf::util;
 
+
+namespace
+{
+    int weight_inherit_code = -9001;
+}
+
+
 namespace tired_of_build_issues
 {
     std::string read_text_file(std::string const& filepath) {
@@ -159,10 +166,69 @@ namespace plantgen
         }
     }
 
+    user_value_t user_value_from_json(cJSON const& json)
+    {
+        switch(json.type)
+        {
+            case cJSON_True:
+                return user_value_t(bool(true));
+
+            case cJSON_False:
+                return user_value_t(bool(false));
+
+            case cJSON_Number:
+                return user_value_t(json.valuedouble);
+
+            case cJSON_String:
+                return user_value_t(std::string(json.valuestring));
+
+            default:
+                break;
+        };
+
+        throw json_type_exception(include_dir_stack.top(), json,
+            {cJSON_True, cJSON_False, cJSON_Number, cJSON_String});
+
+        return bool(false); //placating compiler
+    }
+
+    std::vector<user_value_t> user_values_from_json(cJSON const& json)
+    {
+        std::vector<user_value_t> values;
+
+        switch(json.type)
+        {
+            case cJSON_Array:
+            {
+                cJSON* cur_child = json.child;
+                while(cur_child)
+                {
+                    auto child_vals = user_values_from_json(*cur_child);
+                    values.insert(values.end(), child_vals.begin(), child_vals.end());
+
+                    cur_child = cur_child->next;
+                }
+
+                break;
+            }
+
+            default:
+                values.push_back(user_value_from_json(json));
+                break;
+        }
+
+        return values;
+    }
+
     int weight_from_string(std::string const& weight_str)
     {
         if(weight_str[0] == '%')
         {
+            if(weight_str.size() == 1)
+            {
+                return weight_inherit_code;
+            }
+
             auto space_pos = weight_str.find_first_of(' ');
 
             if(space_pos > 1)
@@ -222,6 +288,11 @@ namespace plantgen
             else if(str_eq(cur_child->string, "Include"))
             {
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
+
+                // if(str_eq(cur_child->valuestring, "")
+                // {
+                // }
+
                 stdfs::path relpath(cur_child->valuestring);
 
                 auto parent_path = include_dir_stack.top().parent_path();
@@ -255,7 +326,7 @@ namespace plantgen
                 case cJSON_String:
                 {
                     int weight = weight_from_string(std::string(cur_child->valuestring));
-                    if(weight >= 0)
+                    if(weight >= 0 && weight != weight_inherit_code)
                         node.weight = weight;
                     else
                         std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
@@ -264,15 +335,23 @@ namespace plantgen
                 }
 
                 default:
-                    throw json_type_exception(include_dir_stack.top(), cur_child, cur_child->type);
+                    throw json_type_exception(include_dir_stack.top(), *cur_child,
+                        {cJSON_Number, cJSON_String});
                 }
             }
             else
             {
-                // LOG("Unrecognized tag '%s' in node '%s'", cur_child->string, json_node->string);
+                node.user_data = user_values_from_json(*cur_child);
             }
 
             cur_child = cur_child->next;
+        }
+
+        //handle weight inhereit
+        if(node.weight == weight_inherit_code)
+        {
+            node.weight = + total_weight(node.values)
+                          + total_weight(node.value_nodes);
         }
 
         return node;
