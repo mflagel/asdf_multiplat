@@ -201,4 +201,106 @@ TEST_CASE("Testing the Test Framework")
             REQUIRE(all_range_rng_passed);
         }
     }
+
+    SECTION("Multi Value")
+    {
+        //TODO
+    }
+
+    /*
+    SECTION("Weights")
+    {
+        pregen_node_t node = node_from_json("data/weights.json");
+
+        REQUIRE(node.name == "Weights");
+
+        REQUIRE(node.children.size() == 4);
+
+        REQUIRE(node.values.size() == 5);
+        CHECK(node.values[0].weight == 100);
+        CHECK(node.values[0] == "A");
+        CHECK(node.values[1].weight == 20);
+        CHECK(node.values[1] == "B");
+        CHECK(node.values[2].weight == 1);
+        CHECK(node.values[2] == "C");
+        CHECK(node.values[3].weight == 1);
+        CHECK(node.values[3] == "D");
+        CHECK(node.values[4].weight == 0);
+        CHECK(node.values[4] == "E");
+
+        CHECK(node.value_nodes[0].name == "ValueNode A");
+        CHECK(node.value_nodes[0].weight == 25);
+        CHECK(node.value_nodes[1].name == "ValueNode B");
+        CHECK(node.value_nodes[1].weight == 250);
+        CHECK(node.value_nodes[2].name == "ValueNode C");
+        CHECK(node.value_nodes[2].weight == 4);
+        CHECK(node.value_nodes[2].values.size() == 4);
+
+        SECTION("Normal Weights")
+        {
+            auto const& n = node.children[0];
+            REQUIRE(n.name == "Normal Weights");
+            REQUIRE(n.values.size() == 0);
+            REQUIRE(n.values_nodes.size() == 3);
+
+            CHECK(n.values_nodes[0].name == "Normal A");
+            CHECK(n.values_nodes[0].weight == 123)
+            CHECK(n.values_nodes[1].name == "Normal B");
+            CHECK(n.values_nodes[1].weight == 456)
+            CHECK(n.values_nodes[2].name == "Normal C");
+            CHECK(n.values_nodes[2].weight == 789)
+        }
+
+        SECTION("Inline Weights")
+        {
+            auto const& n = node.children[1];
+            REQUIRE(n.name == "Inline Weights");
+            REQUIRE(n.values.size() == 3);
+            REQUIRE(n.values_nodes.size() == 0);
+
+            CHECK(n.values_nodes[0].name == "Inline A");
+            CHECK(n.values_nodes[0].weight == 123)
+            CHECK(n.values_nodes[1].name == "Inline B");
+            CHECK(n.values_nodes[1].weight == 456)
+            CHECK(n.values_nodes[2].name == "Inline C");
+            CHECK(n.values_nodes[2].weight == 789)
+        }
+
+        SECTION("Inline Normal Mix")
+        {
+            auto const& n = node.children[2];
+            REQUIRE(n.name == "Inline Normal Mix");
+            REQUIRE(n.values.size() == 3);
+            REQUIRE(n.values_nodes.size() == 3);
+
+            //lazy copypaste
+            CHECK(n.values_nodes[0].name == "Normal A");
+            CHECK(n.values_nodes[0].weight == 123)
+            CHECK(n.values_nodes[1].name == "Normal B");
+            CHECK(n.values_nodes[1].weight == 456)
+            CHECK(n.values_nodes[2].name == "Normal C");
+            CHECK(n.values_nodes[2].weight == 789)
+
+            //lazy copypaste
+            CHECK(n.values_nodes[0].name == "Inline A");
+            CHECK(n.values_nodes[0].weight == 123)
+            CHECK(n.values_nodes[1].name == "Inline B");
+            CHECK(n.values_nodes[1].weight == 456)
+            CHECK(n.values_nodes[2].name == "Inline C");
+            CHECK(n.values_nodes[2].weight == 789)
+        }
+
+        SECTION("Weight of Values")
+        {
+            auto const& n = node.children[3];
+            REQUIRE(n.name == "Weight of Values");
+            REQUIRE(n.values.size() == 0);
+            REQUIRE(n.values_nodes.size() == 1);
+
+            auto const& vn = node.value_nodes[0];
+            auto sum = total_weight(vn);
+            REQUIRE(vn.weight == sum);
+        }
+    }
+    */
 }
