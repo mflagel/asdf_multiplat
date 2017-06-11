@@ -1,0 +1,95 @@
+{
+    "Name":"User Data",
+    "Properties":[
+        {
+            "Name":"Bool Test",
+            "TrueTest": true,
+            "FalseTest": false,
+            "Bool Array":[true, false, false, true, true, false],
+            "Values":[
+                "A",
+                "B",
+                "C",
+                "D"
+            ]
+        },
+        {
+            "Name":"Number Test",
+            "Integer 1": 5,
+            "Integer 2": 3463456,
+            "Double 1": 981209.687678,
+            "Double 2": 123456789.912987123,
+            "Integer Array":[1, 2, 3, 4, 5, 6, 7, 8, 9, 9001, 6182638, 973979238],
+            "Double Array":[
+                900.1,
+                9372598.52342,
+                12312.457567,
+                385893.988123
+            ],
+            "Mixed Array":[
+                123,
+                456,
+                789.123454,
+                1209313.46456,
+                9001,
+                84929487.0218218
+            ],
+            "Weight": 9001,
+            "Values":
+            [
+                "A",
+                "B",
+                "C",
+                "D"
+            ]
+        },
+        {
+            "Name":"String Test",
+            "String 1": "Test String A",
+            "String 2": "Test String B",
+            "String 3": "",
+            "String Array": [
+                "Array String A",
+                "Array String B",
+                "Array String C",
+                "Array String D"
+            ],
+            "String Array 2":[
+                "Array 2 A",
+                "Array 2 B",
+                "",
+                "Test"
+            ]
+        },
+        {
+            "Name":"Mixed Types",
+            "Bool 1": true,
+            "Bool 2": false,
+            "Int 1": 9001,
+            "Int 2": 123456,
+            "Double 1": 12345.6789,
+            "Double 2": 84350943805.3498573495,
+            "String 1": "This is a test string",
+            "String 2": "This is a longer string. I'm not sure how long it should be, but it's certainly longer than other strings in this document",
+            "Mixed Array":[
+                true,
+                false,
+                false,
+                true,
+                9876,
+                5969609,
+                9879834.987349,
+                12369.957346,
+                "Mixed Array String A",
+                "Mixed Array String B",
+                [
+                    "Do arrays in arrays work?",
+                    [
+                        "What about arrays in arrays in arrays?"
+                    ],
+                    74938
+                ]
+            ]
+        }
+    ]
+}
