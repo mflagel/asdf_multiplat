@@ -1,0 +1,19 @@
+{
+  "Name":"Mental Status Effect",
+  "Values":[
+    "Alcohol-like",
+    "Halucinogen",
+    "Euphoria",
+    "Sleep Aid",
+    "Anasthetic",
+    "Concentration",
+    "Aphrodesiac",
+    "Astral Projection",
+    "Phantom Voices",
+    "Language-Break",
+    "Color Shift (Vision)",
+    "Olfactory Shift",
+    "Amnesia",
+    "Distraction"
+  ]
+}
