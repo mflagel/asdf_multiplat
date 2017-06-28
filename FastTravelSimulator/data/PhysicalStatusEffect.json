@@ -1,0 +1,31 @@
+{
+  "Name":"Physical Status Effect",
+  "Values":[
+    "Sedative",
+    "Pain Relief",
+    "Healing",
+    "Energy Boost",
+    "Muscle Relaxant",
+    "Contraceptive",
+    "Antiseptic",
+    "Anti-venom",
+    "Plant Vision",
+    "Ethereal",
+    "Waterbreathing",
+    "Fire Resistance",
+    "Poisonous",
+    "Laxitive",
+    "Rash-causing",
+    "Blindness",
+    "Disorient Limbs",
+    "Swollen Tongue",
+    "Numb Limb(s) (Foot, leg, arm, hand)",
+    "Hair Falling Out",
+    "Stiffness",
+    "Impotence",
+    "Bio-luminecent Blood",
+    "Eye Color Change",
+    "Colored Tongue",
+    "lignification (turn into a tree)"
+  ]
+}
