@@ -9,12 +9,11 @@
                     "Name": "Edibility",
                     "Values": [
                         "%2 Poisonous",
-                        "%3 Inedible",
-                        "%5 Edible"
+                        "%3 Inedible"
                     ]
                 },
                 {
-                    "Name":"Taste",
+                    "Name":"Flavor",
                     "Values":[
                         "%3 Bland",
                         "%10 Very Bitter",
