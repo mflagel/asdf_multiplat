@@ -1,5 +1,8 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
+#include <string>
+
+#include "asdf_multiplat/main/asdf_defs.h"
 
 #include "plant_generator.h"
 
@@ -17,17 +20,18 @@ using namespace plantgen;
 
 
 using arg_t = std::pair<std::string, std::string>;
-using args_t = std::unordered_map<std::string, std::string>
+using args_t = std::unordered_map<std::string, std::string>;
 
 arg_t load_arg(int argc, char* argv[], size_t index)
 {
-    ASSRT(index < argc, "arg index beyond argument count");
+    ASSERT(index < argc, "arg index beyond argument count");
     ASSERT(argv[index][0] == '-', "expecting flag specifier to be a dash");
     arg_t arg;
 
-    arg.first = std::string(argv[index][1]); //skip the '-' character
+    char asdf_ = argv[index][1];
+    arg.first = std::string(asdf_,1); //skip the '-' character
 
-    if(index+1 < argc && argv[index+1][0] != "-")
+    if(index+1 < argc && argv[index+1][0] != '-')
         arg.second = argv[index+1];
 
     return arg;
@@ -69,13 +73,14 @@ int main(int argc, char* argv[])
         cout << e.what() << "\n";
     }
 
-    if(flags.contains("p"))
+    auto search = args.find("p");
+    if(search != args.end())
     {
-        print(
+        //print(
     }
-    if(!flags.contains("q"))
+    if(args.find("q") == args.end())
     {
-        print(plant);
+        // print(plant);
     }
 
     return 0;
