@@ -5,8 +5,10 @@
 #include "asdf_multiplat/main/asdf_defs.h"
 
 #include "plant_generator.h"
+#include "plant_printer.h"
 
 using namespace plantgen;
+using namespace plant_printer;
 
 // undef main because apparently SDL redefines 'main' as SDL_main
 // which is super obnoxious
@@ -82,6 +84,11 @@ int main(int argc, char* argv[])
     {
         // print(plant);
     }
+
+    //TEST
+    auto plant_string = print_plant(plant);
+    cout << plant_string;
+    //
 
     return 0;
 }
