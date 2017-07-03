@@ -138,40 +138,6 @@ namespace plant_printer
         return property_string;
     }
 
-    // string print_flavor(generated_node_t const& node)
-    // {
-    //     if(node.children.size() > 1)
-    //     {
-    //         return print_complex_flavor(node);
-    //     }
-    //     else
-    //     {
-    //         return print_simple_flavor(node.value_nodes[0]);
-    //     }
-    // }
-    
-    // string print_taste(generated_node_t const& node)
-    // {
-    //     ASSERT(node.value_nodes.size() > 0, "");
-    //     if(node.value_nodes[0].name == "Dangerous Taste")
-    //     {
-    //         auto const& dangerous_taste = node.value_nodes[0];
-    //         auto const& edibility = dangerous_taste.children[0].generated_values[0];
-    //         auto const& flavor = dangerous_taste.children[1].generated_values[0];
-    //         return "is " + edibility
-    //             + " but tastes " + flavor;
-    //     }
-    //     else
-    //     {
-    //         return print_flavor(node.value_nodes[0]);
-    //     }
-    // }
-
-    string print_color(generated_node_t const& node)
-    {
-        return node.generated_values[0];
-    }
-
     string print_basic_property(generated_node_t const& node)
     {
         ASSERT(node.children.empty(), "");
@@ -197,10 +163,9 @@ namespace plant_printer
         return "";
     }
 
-    string print_sub_property(generated_node_t const& node)
+    string print_sub_property(generated_node_t const& node, size_t level)
     {
         std::string summary;
-
 
         if(node.print_string.size() > 0)
         {
@@ -209,34 +174,19 @@ namespace plant_printer
         else
         {
             if(node.children.empty() && node.value_nodes.empty())
-                return print_basic_property(node);
-
-            if(node.value_nodes.size() > 0)
             {
-                //summary = "A " + node.name + /*" is a " + child.name +*/ " that is ";
-
-                for(auto const& vn : node.value_nodes)
-                {
-                    summary += print_sub_property(vn);
-                }
-
-                // if(node.children.size() > 0)
-                //     summary += " and has:\n";
+                return print_basic_property(node);
             }
             else
             {
-                //summary = "A " + node.name + /*" is a " + child.name +*/ " that has:\n";
-            }
+                summary += to_string(node, level + 1, level); // depth of level + 1 (ie: only print this node, not its subnodes)
 
-            for(auto const& child : node.children)
-            {
-                summary += print_sub_property(child) + ", ";
+                for(auto const& child : node.children)
+                    summary += print_sub_property(child, level + 1) + "\n";
+                for(auto const& vn : node.value_nodes)
+                    summary += print_sub_property(vn, level + 1) + "\n";
             }
-
-            //summary.pop_back(); //pop trailing newline
         }
-
-
 
         return summary;
     }
@@ -314,6 +264,6 @@ namespace plant_printer
 
     string print_plant(generated_node_t const& plant_node)
     {
-        return "This " + plant_node.name + print_sub_property(plant_node);
+        return "This " + plant_node.name + " " + print_sub_property(plant_node);
     }
 }
