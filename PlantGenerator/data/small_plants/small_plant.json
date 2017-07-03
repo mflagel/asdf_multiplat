@@ -1,5 +1,6 @@
 {
     "Name": "Small Plant",
+    "PrintString":"has a root that is %Root%. The body is %Body% shaped and bears a fruit that is %Fruit%",
     "Properties": [
         {
             "Name": "Root",
