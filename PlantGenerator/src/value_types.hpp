@@ -110,6 +110,20 @@ namespace plantgen
         return os;
     }
 
+    inline std::ostream& operator<<(std::ostream& os, multi_value_t const& obj)
+    {
+        std::string s = std::to_string(obj.num_to_pick) + " from {";
+
+        for(auto const& val : obj.values)
+            s += val + ", ";
+
+        s.resize(s.size() - 1);
+        s.back() = '}';
+
+        os << s;
+        return os;
+    }
+
     inline std::ostream& operator<<(std::ostream& os, variant_value_t const& obj)
     {
         std::visit( [&os](auto const& arg)
