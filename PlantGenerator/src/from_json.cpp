@@ -192,9 +192,9 @@ namespace plantgen
         return bool(false); //placating compiler
     }
 
-    std::vector<user_value_t> user_values_from_json(cJSON const& json)
+    user_data_t user_values_from_json(cJSON const& json)
     {
-        std::vector<user_value_t> values;
+        user_data_t values;
 
         switch(json.type)
         {
@@ -204,7 +204,8 @@ namespace plantgen
                 while(cur_child)
                 {
                     auto child_vals = user_values_from_json(*cur_child);
-                    values.insert(values.end(), child_vals.begin(), child_vals.end());
+                    /// FIXME
+                    //values.insert(values.end(), child_vals.begin(), child_vals.end());
 
                     cur_child = cur_child->next;
                 }
@@ -213,7 +214,7 @@ namespace plantgen
             }
 
             default:
-                values.push_back(user_value_from_json(json));
+                values.insert({std::string(json.string), user_value_from_json(json)});
                 break;
         }
 
@@ -289,10 +290,6 @@ namespace plantgen
             {
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
 
-                // if(str_eq(cur_child->valuestring, "")
-                // {
-                // }
-
                 stdfs::path relpath(cur_child->valuestring);
 
                 auto parent_path = include_dir_stack.top().parent_path();
@@ -301,14 +298,14 @@ namespace plantgen
                 try{
                     auto included_node = node_from_json(fullpath);
 
-                    if(included_node.name == node.name)
-                    {
+                    // if(included_node.name == node.name)
+                    // {
                         node.merge_with(std::move(included_node));
-                    }
-                    else
-                    {
-                        node.add_child(std::move(included_node));
-                    }
+                    // }
+                    // else
+                    // {
+                    //     node.add_child(std::move(included_node));
+                    // }
                 }
                 catch(file_not_found_exception const&)
                 {
