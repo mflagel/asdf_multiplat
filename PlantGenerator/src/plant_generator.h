@@ -6,6 +6,7 @@
 #include <experimental/filesystem>
 #endif
 
+#include <limits>
 #include <map>
 #include <memory>
 #include <string>
@@ -134,6 +135,8 @@ namespace plantgen
     template <typename L>
     uint32_t total_weight(L const& list);
 
+    std::string indenation_string(size_t indent_level);
+
 
     pregen_node_t    node_from_file(stdfs::path const& filepath);
     generated_node_t generate_node(pregen_node_t const& node);
@@ -141,11 +144,13 @@ namespace plantgen
 
     generated_node_t roll_values(pregen_node_t const& node);
 
-    std::string to_string(pregen_node_t const& node, size_t depth = 0, size_t level = 0);
-    std::string to_string(generated_node_t const& node, size_t depth = 0, size_t level = 0);
+    using sz = std::numeric_limits<size_t>;
 
-    void print_node(pregen_node_t const& node, size_t depth = 0, size_t level = 0);
-    void print_node(generated_node_t const& node, size_t depth = 0, size_t level = 0);
+    std::string to_string(pregen_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+    std::string to_string(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+
+    void print_node(pregen_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+    void print_node(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
 
 
     /// Exceptions
