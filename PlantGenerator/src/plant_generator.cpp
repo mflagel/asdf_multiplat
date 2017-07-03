@@ -12,6 +12,8 @@
 
 #include "from_json.h"
 
+using namespace std;
+
 namespace plantgen
 {
     //std::vector<std::string> roll_multi_value(multi_value_t const& m);
@@ -233,46 +235,67 @@ namespace plantgen
         return indent_str;
     }
 
-    void print_node(pregen_node_t const& node, size_t level)
+
+    string to_string(pregen_node_t const& node, size_t depth, size_t level)
     {
-        using namespace std;
+        if(depth > 0 && level > depth)
+            return "";
+
+        stringstream s;
 
         auto indent = indenation_string(level);
 
-        cout << indent << node.name << "\n";
+        s << indent << node.name << "\n";
 
         for(auto const& child : node.children)
-            print_node(child, level + 1);
+            s << to_string(child, depth, level + 1);
 
         indent.append(indenation_string(1));
 
         for(auto const& value : node.values)
-            cout << indent << value << "\n";
+            s << indent << value << "\n";
 
         for(auto const& vnode : node.value_nodes)
-            print_node(vnode, level + 1);
+            s << to_string(vnode, depth, level + 1);
 
         for(auto const& user_vals : node.user_data)
-            cout << indent << user_vals.first << ": " << user_vals.second << "\n";
+            s << indent << user_vals.first << ": " << user_vals.second << "\n";
+
+        return s.str();
     }
 
-    void print_node(generated_node_t const& node, size_t level)
+    string to_string(generated_node_t const& node, size_t depth, size_t level)
     {
-        using namespace std;
+        if(depth > 0 && level > depth)
+            return "";
+
+        stringstream s;
 
         auto indent = indenation_string(level);
 
-        cout << indent << node.name << "\n";
+        s << indent << node.name << "\n";
         
         for(auto const& child : node.children)
-            print_node(child, level + 1);
+            s << to_string(child, depth, level + 1);
 
         indent.append(indenation_string(1));
 
         for(auto const& value : node.generated_values)
-            cout << indent << value << "\n";
+            s << indent << value << "\n";
 
         for(auto const& vn : node.value_nodes)
-            print_node(vn, level + 1);
+            s << to_string(vn, depth, level + 1);
+
+        return s.str();
+    }
+
+    void print_node(pregen_node_t const& node, size_t depth, size_t level)
+    {
+        cout << to_string(node, depth, level);
+    }
+
+    void print_node(generated_node_t const& node, size_t depth, size_t level)
+    {
+        cout << to_string(node, depth, level);
     }
 }

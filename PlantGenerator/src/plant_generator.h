@@ -21,7 +21,7 @@ namespace plantgen
 {
     /// curiously recurring template pattern (sort-of)
     template <typename T>
-    struct base_node_t
+    struct base_node_
     {
         std::string name;
         std::string sub_name; //used for includes
@@ -30,8 +30,8 @@ namespace plantgen
         std::vector<T> children;
         std::vector<T> value_nodes;
 
-        base_node_t() = default;
-        base_node_t(std::string const& _name)
+        base_node_() = default;
+        base_node_(std::string const& _name)
         : name(_name)
         {}
 
@@ -71,32 +71,32 @@ namespace plantgen
     // the variant without them being heap-allocated
     // (since AFAIK if the variant stores a node, which stores the
     // variant, it can lead to an infinite size)
-    struct pregen_node_t : base_node_t<pregen_node_t>
+    struct pregen_node_t : base_node_<pregen_node_t>
     {
         value_list_t values;
         uint32_t weight = 1;
 
         user_data_t user_data;
 
-        using base_node_t::base_node_t;
+        using base_node_::base_node_;
 
         void merge_with(pregen_node_t const& n)
         {
-            base_node_t::merge_with(n);
+            base_node_::merge_with(n);
             values.insert(values.end(), n.values.begin(), n.values.end());
         }
     };
 
-    struct generated_node_t : base_node_t<generated_node_t>
+    struct generated_node_t : base_node_<generated_node_t>
     {
         std::vector<std::string> generated_values;
         std::string print_string;
 
-        using base_node_t::base_node_t;
+        using base_node_::base_node_;
 
         inline void merge_with(generated_node_t const& n)
         {
-            base_node_t::merge_with(n);
+            base_node_::merge_with(n);
             generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
             //value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
         }
@@ -115,8 +115,11 @@ namespace plantgen
 
     generated_node_t roll_values(pregen_node_t const& node);
 
-    void print_node(pregen_node_t const& node, size_t level = 0);
-    void print_node(generated_node_t const& node, size_t level = 0);
+    std::string to_string(pregen_node_t const& node, size_t depth = 0, size_t level = 0);
+    std::string to_string(generated_node_t const& node, size_t depth = 0, size_t level = 0);
+
+    void print_node(pregen_node_t const& node, size_t depth = 0, size_t level = 0);
+    void print_node(generated_node_t const& node, size_t depth = 0, size_t level = 0);
 
 
     /// Exceptions
