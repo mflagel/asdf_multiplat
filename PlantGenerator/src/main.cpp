@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
     try{
         pregen_node = node_from_file(filepath);
         generated_node = generate_node(pregen_node);
+
+        generated_node.simplify();
     }
     catch(std::runtime_error const& e)
     {
