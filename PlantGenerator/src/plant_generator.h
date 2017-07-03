@@ -35,6 +35,15 @@ namespace plantgen
         : name(_name)
         {}
 
+        std::string name_string() const
+        {
+            std::string s = name;
+            if(sub_name.size() > 0)
+                s += " (" + sub_name + ")";
+
+            return s;
+        }
+
         void add_child(T&& c)
         {
             children.push_back(std::move(c));

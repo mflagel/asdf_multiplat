@@ -245,7 +245,7 @@ namespace plantgen
 
         auto indent = indenation_string(level);
 
-        s << indent << node.name << "\n";
+        s << indent << node.name_string() << "\n";
 
         for(auto const& child : node.children)
             s << to_string(child, depth, level + 1);
@@ -273,7 +273,7 @@ namespace plantgen
 
         auto indent = indenation_string(level);
 
-        s << indent << node.name << "\n";
+        s << indent << node.name_string() << "\n";
         
         for(auto const& child : node.children)
             s << to_string(child, depth, level + 1);
