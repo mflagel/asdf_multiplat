@@ -236,16 +236,19 @@ namespace plantgen
     }
 
 
-    string to_string(pregen_node_t const& node, size_t depth, size_t level)
+    /// TODO: factor out similarities with below?
+    string to_string(pregen_node_t const& node, size_t const depth, size_t level)
     {
-        if(depth > 0 && level > depth)
+        if(level > depth)
             return "";
 
         stringstream s;
 
         auto indent = indenation_string(level);
-
         s << indent << node.name_string() << "\n";
+
+        if(level + 1 > depth)
+            return s.str();
 
         for(auto const& child : node.children)
             s << to_string(child, depth, level + 1);
@@ -266,14 +269,16 @@ namespace plantgen
 
     string to_string(generated_node_t const& node, size_t depth, size_t level)
     {
-        if(depth > 0 && level > depth)
+        if(level > depth)
             return "";
 
         stringstream s;
 
         auto indent = indenation_string(level);
-
         s << indent << node.name_string() << "\n";
+
+        if(level + 1 > depth)
+            return s.str();
         
         for(auto const& child : node.children)
             s << to_string(child, depth, level + 1);
