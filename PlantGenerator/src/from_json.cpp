@@ -249,12 +249,15 @@ namespace plantgen
     pregen_node_t node_from_json(cJSON* json_node)
     {
         pregen_node_t node;
-        node.name = std::string(CJSON_STR(json_node, Name));
 
         cJSON* cur_child = json_node->child;
         while(cur_child)
         {
-            if(str_eq(cur_child->string, "Properties"))
+            if(str_eq(cur_child->string, "Name"))
+            {
+                node.name = cur_child->valuestring;
+            }
+            else if(str_eq(cur_child->string, "Properties"))
             {
                 cJSON* property_json = cur_child->child;
                 while(property_json)
