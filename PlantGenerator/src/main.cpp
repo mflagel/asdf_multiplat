@@ -72,8 +72,6 @@ int main(int argc, char* argv[])
     try{
         pregen_node = node_from_file(filepath);
         generated_node = generate_node(pregen_node);
-
-        generated_node.simplify();
     }
     catch(std::runtime_error const& e)
     {
@@ -97,6 +95,7 @@ int main(int argc, char* argv[])
 
         if(!output_pregen && !output_postgen)
         {
+            generated_node.simplify();
             auto plant_string = print_plant(generated_node);
             cout << plant_string;
         }
