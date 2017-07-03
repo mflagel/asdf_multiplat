@@ -18,6 +18,7 @@ using namespace plant_printer;
 /*  Possible Args *
 -q  : print nothing
 -p  : print pregen nodes
+-g  : print generated nodes
 */
 
 
@@ -30,9 +31,9 @@ arg_t load_arg(int argc, char* argv[], size_t index)
     ASSERT(argv[index][0] == '-', "expecting flag specifier to be a dash");
     arg_t arg;
 
-    char asdf_ = argv[index][1];
-    arg.first = std::string(asdf_,1); //skip the '-' character
+    arg.first = std::string(argv[index]);
 
+    //if the next argv doesnt start with a dash
     if(index+1 < argc && argv[index+1][0] != '-')
         arg.second = argv[index+1];
 
