@@ -21,6 +21,7 @@ namespace plantgen
     using variant_value_t = std::variant<std::string, range_value_t, multi_value_t, null_value_t>;
 
     using user_value_t = std::variant<bool, double, std::string>; //ie: random json data
+    using user_data_t = std::unordered_map<std::string, user_value_t>;
 
     // This is where C++ gets kind of weird....  SFINAE
     // enable_if T is not a variant_value
