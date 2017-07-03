@@ -66,30 +66,41 @@ int main(int argc, char* argv[])
 
     std::string filepath = std::string(argv[argc-1]);
 
-    generated_node_t plant;
+    pregen_node_t pregen_node;
+    generated_node_t generated_node;
 
     try{
-        plant = generate_node_from_file(filepath);
+        pregen_node = node_from_file(filepath);
+        generated_node = generate_node(pregen_node);
     }
     catch(std::runtime_error const& e)
     {
         cout << e.what() << "\n";
     }
 
-    auto search = args.find("p");
-    if(search != args.end())
+    //if no quiet flag
+    if(args.find("-q") == args.end())
     {
-        //print(
-    }
-    if(args.find("q") == args.end())
-    {
-        // print(plant);
-    }
+        bool output_pregen  = args.find("-p") != args.end();
+        bool output_postgen = args.find("-g") != args.end();
 
-    //TEST
-    auto plant_string = print_plant(plant);
-    cout << plant_string;
-    //
+        if(output_pregen)
+        {
+            print_node(pregen_node);
+        }
+        if(output_postgen)
+        {
+            print_node(generated_node);
+        }
+
+        if(!output_pregen && !output_postgen)
+        {
+            auto plant_string = print_plant(generated_node);
+            cout << plant_string;
+        }
+
+        cout << "\n";
+    }
 
     return 0;
 }
