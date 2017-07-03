@@ -64,6 +64,23 @@ namespace plantgen
             add_children(n.children);
             value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
         }
+
+        void simplify(size_t depth = 0, size_t level = 0)
+        {
+            if(depth > 0 && level > depth)
+                return;
+
+            if(children.empty() && value_nodes.size() == 1)
+            {
+                merge_with(value_nodes[0]);
+                value_nodes.clear();
+            }
+
+            for(auto& child : children)
+                child.simplify(depth, level + 1);
+            for(auto& vn : value_nodes)
+                vn.simplify(depth, level + 1);
+        }
     };
 
 
