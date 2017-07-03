@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <variant>
 
@@ -22,9 +23,12 @@ namespace plantgen
     template <typename T>
     struct base_node_t
     {
+        std::string name;
+        std::string sub_name; //used for includes
+
         T* parent = nullptr;
         std::vector<T> children;
-        std::string name;
+        std::vector<T> value_nodes;
 
         base_node_t() = default;
         base_node_t(std::string const& _name)
@@ -45,6 +49,21 @@ namespace plantgen
                 children[i].parent = static_cast<T*>(this);
             }
         }
+
+        void add_value_node(T&& vn)
+        {
+            value_nodes.push_back(std::move(vn));
+            value_nodes.back().parent = static_cast<T*>(this);
+        }
+
+        void merge_with(T const& n)
+        {
+            if(name != n.name)
+                sub_name = n.name;
+
+            add_children(n.children);
+            value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
+        }
     };
 
 
@@ -55,30 +74,31 @@ namespace plantgen
     struct pregen_node_t : base_node_t<pregen_node_t>
     {
         value_list_t values;
-        std::vector<pregen_node_t> value_nodes;
         uint32_t weight = 1;
 
-        std::vector<user_value_t> user_data;
+        user_data_t user_data;
 
         using base_node_t::base_node_t;
 
-        void merge_with(pregen_node_t&& n)
+        void merge_with(pregen_node_t const& n)
         {
-            add_children(n.children);
+            base_node_t::merge_with(n);
             values.insert(values.end(), n.values.begin(), n.values.end());
-            value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
         }
     };
 
     struct generated_node_t : base_node_t<generated_node_t>
     {
         std::vector<std::string> generated_values;
+        std::string print_string;
 
         using base_node_t::base_node_t;
 
-        inline void merge_with(generated_node_t&& n)
+        inline void merge_with(generated_node_t const& n)
         {
+            base_node_t::merge_with(n);
             generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
+            //value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
         }
     };
 
@@ -88,6 +108,8 @@ namespace plantgen
     template <typename L>
     uint32_t total_weight(L const& list);
 
+
+    pregen_node_t    node_from_file(stdfs::path const& filepath);
     generated_node_t generate_node(pregen_node_t const& node);
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
 
