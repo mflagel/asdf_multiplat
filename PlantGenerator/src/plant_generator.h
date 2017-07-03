@@ -81,7 +81,7 @@ namespace plantgen
 
             if(children.empty() && value_nodes.size() == 1)
             {
-                merge_with(value_nodes[0]);
+                static_cast<T*>(this)->merge_with(value_nodes[0]);
                 value_nodes.clear();
             }
 
