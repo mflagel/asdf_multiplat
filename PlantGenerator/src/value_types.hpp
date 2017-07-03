@@ -64,6 +64,22 @@ namespace plantgen
         return std::get<T>(v) != t;
     }
     */
+    
+    
+
+    // The weight value is not a percentage, but rather
+    // a multiplier. A value is 'weight' times more likely
+    // to be picked (as if it was entered into the value list
+    // 'weight' times).
+    struct weighted_value_t : public variant_value_t
+    {
+        using variant_value_t::variant_value_t;
+
+        uint32_t weight = 1;
+    };
+
+    using value_list_t = std::vector<weighted_value_t>;
+
 
 
     /// SFINAE is terribly obnoxious
@@ -80,6 +96,19 @@ namespace plantgen
         return os;
     }*/
 
+    inline std::ostream& operator<<(std::ostream& os, range_value_t const& obj)
+    {
+        std::string s = "{";
+        for(auto const& val : obj)
+            s += val + ", ";
+
+        s.resize(s.size() - 1);
+        s.back() = '}';
+
+        os << s;
+        return os;
+    }
+
     inline std::ostream& operator<<(std::ostream& os, variant_value_t const& obj)
     {
         std::visit( [&os](auto const& arg)
@@ -88,6 +117,15 @@ namespace plantgen
             }
         , obj);
         
+        return os;
+    }
+
+    inline std::ostream& operator<<(std::ostream& os, weighted_value_t const& obj)
+    {
+        if(obj.weight > 1)
+            os << "%" << obj.weight << " ";
+
+        os << static_cast<variant_value_t const&>(obj);
         return os;
     }
 
@@ -101,21 +139,10 @@ namespace plantgen
         
         return os;
     }
-    
-    
 
-    // The weight value is not a percentage, but rather
-    // a multiplier. A value is 'weight' times more likely
-    // to be picked (as if it was entered into the value list
-    // 'weight' times).
-    struct weighted_value_t : public variant_value_t
-    {
-        using variant_value_t::variant_value_t;
 
-        uint32_t weight = 1;
-    };
 
-    using value_list_t = std::vector<weighted_value_t>;
+
 
     template <typename L>
     bool operator==(value_list_t const& value_list, L const& comp_list)
