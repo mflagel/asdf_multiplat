@@ -100,7 +100,27 @@ namespace plant_printer
 
         size_t div = 100 / sorted_values.size();
 
-        if(sorted_values[0].percentage >= 95)
+
+        int largest_diff = 0;
+        for(auto const& sorted : sorted_values)
+        {
+            int diff = sorted.percentage - sorted_values[0].percentage;
+            largest_diff = std::max(abs(diff), largest_diff);
+        }
+
+
+        if(largest_diff <= 4)
+        {
+            vector<string> strs;
+            strs.reserve(sorted_values.size());
+            for(auto const& sorted : sorted_values)
+            {
+                strs.push_back(sorted.range_string);
+            }
+
+            return "equal parts " + combine_strings_with_comma_and(strs);
+        }
+        else if(sorted_values[0].percentage >= 95)
         {
             return "completely " + sorted_values[0].range_string;
         }
@@ -118,17 +138,6 @@ namespace plant_printer
             }
 
             return ret;
-        }
-        else if(sorted_values[0].percentage >= div + 2)
-        {
-            vector<string> strs;
-            strs.reserve(sorted_values.size());
-            for(auto const& sorted : sorted_values)
-            {
-                strs.push_back(sorted.range_string);
-            }
-
-            return "equal parts " + combine_strings_with_comma_and(strs);
         }
         else
         {
@@ -183,10 +192,8 @@ namespace plant_printer
         return "";
     }
 
-    // string to_string(generated_node_t const& node, size_t depth = std::numeric_limits<size_t>::max, size_t level = 0)
-
     
-    string print_sub_property(generated_node_t const& node, size_t level)
+    string print_sub_property(generated_node_t const& node, size_t level, print_flags_t print_flags)
     {
         std::string summary = indenation_string(level);
 
@@ -196,7 +203,9 @@ namespace plant_printer
         }
         else
         {
-            summary += node.name_string() + ": ";
+            //if not flagged to skip the name, print it
+            if((print_flags & print_flags_skip_name) == 0)
+                summary += node.name_string() + ": ";
 
             if(node.children.empty() && node.value_nodes.empty())
             {
@@ -276,8 +285,7 @@ namespace plant_printer
                 {
                     if(var_loc.second == child.name)
                     {
-                        //string str = str_for_var(child);
-                        string str = print_sub_property(child);
+                        string str = print_sub_property(child, 0, print_flags_skip_name);
                         final_string.replace(var_loc.first + adjust, var_loc.second.size()+2, str);
                         break;
                     }
