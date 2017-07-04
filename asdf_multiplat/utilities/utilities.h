@@ -1,15 +1,16 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include <vector>
-#include <csignal>
 #include <algorithm>
+#include <csignal>
 #include <cstddef>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <string>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/uniform_int_distribution.hpp>
@@ -59,6 +60,11 @@ namespace asdf {
     std::string combine_strings_with_comma_and(L const& strings)
     {
         return combine_strings_with(strings, ", ", " and ");
+    }
+
+    inline bool str_eq(char const* a, char const* b)
+    {
+        return strcmp(a, b) == 0;
     }
 
     /************************************************************************/

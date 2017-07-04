@@ -75,13 +75,6 @@ namespace plantgen
     std::unordered_map<stdfs::path, pregen_node_t> include_cache;
 
 
-
-    bool str_eq(char const* a, char const* b)
-    {
-        return strcmp(a, b) == 0;
-    }
-
-
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array)
     {
         ASSERT(json_array, "");
