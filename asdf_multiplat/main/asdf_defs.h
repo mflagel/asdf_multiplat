@@ -54,6 +54,28 @@ using color_t = glm::vec4;
 #endif
 
 
+#define PRAGMA(x) _Pragma(#x)
+#ifdef __clang__
+#define DIAGNOSTIC_PUSH _Pragma("clang diagnostic push");
+#define DIAGNOSTIC_POP _Pragma("clang diagnostic pop");
+#define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(clang diagnostic ignored #to_ignore);
+#define DIAGNOSTIC_ERROR(to_error) PRAGMA(clang diagnostic error #to_error);
+#elif __GNUC_
+#define DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push");
+#define DIAGNOSTIC_POP _Pragma("GCC diagnostic pop");
+#define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(GCC diagnostic ignored #to_ignore);
+#define DIAGNOSTIC_ERROR(to_error) PRAGMA(GCC diagnostic error #to_error);
+#else
+#define DIAGNOSTIC_PUSH 
+#define DIAGNOSTIC_POP
+#define DIAGNOSTIC_IGNORE(to_ignore)
+#define DIAGNOSTIC_ERROR(to_error)
+#endif
+
+
+
+
+
 #define ASSERTS_ENABLED
 
 //void asdf_fail(char const* condition, char const* file, int line, char const* msg, ...);

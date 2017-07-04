@@ -72,21 +72,3 @@
 #define STRERROR(errno, buffer, buffsize) strerror_s(buffer, buffsize, errno); //MSVC
 #define SNPRINTF(str, size, msg, ...) sprintf_s(str, size, msg, __VA_ARGS__);
 #endif
-
-
-#ifdef __clang__
-#define PRAGMA(x) _Pragma(#x)
-#define CLANG_DIAGNOSTIC_PUSH _Pragma("clang diagnostic push");
-#define CLANG_DIAGNOSTIC_POP _Pragma("clang diagnostic pop");
-#define CLANG_DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(clang diagnostic ignored to_ignore);
-#else
-#define CLANG_DIAGNOSTIC_PUSH 
-#define CLANG_DIAGNOSTIC_POP
-#define CLANG_DIAGNOSTIC_IGNORE(to_ignore)
-#endif
-
-#ifdef __clang__
-#define FALLTHROUGH [[clang::fallthrough]]
-#else
-#define FALLTHROUGH
-#endif
