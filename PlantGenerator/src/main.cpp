@@ -8,6 +8,7 @@
 
 #include "plant_generator.h"
 #include "plant_printer.h"
+#include "stress_test.h"
 
 using namespace plantgen;
 using namespace plant_printer;
@@ -23,6 +24,7 @@ using namespace asdf::util;
 -p  : print pregen nodes
 -g  : print generated nodes
 -s  : print simplified (ie a plain-english description using PlantPrinter)
+-t  : stress test
 */
 
 enum flag_e
@@ -32,6 +34,7 @@ enum flag_e
   , flag_print_pregen      = 2
   , flag_print_generated   = 4
   , flag_print_simplified  = 8
+  , flag_stress_test       = 16
   , flag_all               = 0xFFFFFFFF
 };
 
@@ -43,6 +46,7 @@ constexpr std::initializer_list<str_lit_vec> flag_string_sets =
     , str_lit_vec{"-p", "--print-pregen"}
     , str_lit_vec{"-g", "--print-generated"}
     , str_lit_vec{"-s", "--print-simplified"}
+    , str_lit_vec{"-t", "--stress_test"}
 };
 
 
@@ -104,6 +108,9 @@ flags_t load_flags(args_t const& args)
     return flags;
 }
 
+
+
+
 int main(int argc, char* argv[])
 {
     using namespace std;
@@ -128,7 +135,7 @@ int main(int argc, char* argv[])
     catch(std::runtime_error const& e)
     {
         cout << e.what() << "\n";
-        return 0;
+        return 1;
     }
 
     
@@ -141,6 +148,27 @@ int main(int argc, char* argv[])
     {
         return (flags & _flags) > 0;
     };
+
+    if(has_flag(flag_stress_test))
+    {
+        cout << "testing...";
+        size_t num_iterations = 1000;
+        for(size_t i = 0; i < num_iterations; ++i)
+        {
+            cout << "\rtesting  [" << i << "/" << num_iterations << "]" << std::flush;
+            // int test_result = stress_test(generated_node, 1);
+            // int test_result = stress_test(pregen_node, 1);
+            int test_result = stress_test(filepath, 1);
+
+            if(test_result > 0)
+            {
+                cout << "\n";
+                return test_result;
+            }
+        }
+
+        cout << "\rtesting  [100/100]\nno exceptions\n";
+    }
 
 
     if(!has_flag(flag_quiet))
