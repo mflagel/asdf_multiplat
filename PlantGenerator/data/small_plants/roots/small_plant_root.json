@@ -1,6 +1,6 @@
 {
     "Name": "Small Plant Root",
-    "PrintString":"is a %Color% and %Shape% shaped root tastes %Taste%",
+    "PrintString":"a %Color%, %Shape% shaped small root that tastes %Taste%",
     "Properties": [
         {
             "Name": "Taste",
