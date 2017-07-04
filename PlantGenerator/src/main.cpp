@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        cout << "\rtesting  [100/100]\nno exceptions\n";
+        cout << "\rtesting  [" << num_iterations << "/" << num_iterations << "]\nno exceptions\n";
     }
 
 
