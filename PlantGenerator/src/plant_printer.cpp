@@ -175,9 +175,12 @@ namespace plant_printer
         return "";
     }
 
+    // string to_string(generated_node_t const& node, size_t depth = std::numeric_limits<size_t>::max, size_t level = 0)
+
+    
     string print_sub_property(generated_node_t const& node, size_t level)
     {
-        std::string summary;
+        std::string summary = indenation_string(level);
 
         if(node.print_string.size() > 0)
         {
@@ -185,21 +188,24 @@ namespace plant_printer
         }
         else
         {
+            summary += node.name_string() + ": ";
+
             if(node.children.empty() && node.value_nodes.empty())
             {
-                return print_basic_property(node);
+                summary += print_basic_property(node);
             }
             else
             {
-                summary += node.name_string() + "\n";
+                //change trailing space to a newline if we are printing a sub-property of node
+                ASSERT(summary.back() == ' ', "");
+                summary.back() = '\n';
 
                 for(auto const& child : node.children)
-                    summary += print_sub_property(child, level + 1) + "; ";
+                    summary += print_sub_property(child, level + 1) + "\n";
                 for(auto const& vn : node.value_nodes)
-                    summary += print_sub_property(vn, level + 1) + "; ";
+                    summary += print_sub_property(vn, level + 1) + "\n";
 
                 summary.resize(summary.size() - 1);
-                summary.back() = '\n';
             }
         }
 
