@@ -113,6 +113,7 @@ namespace plantgen
         {
             base_node_::merge_with(n);
             values.insert(values.end(), n.values.begin(), n.values.end());
+            user_data.insert(n.user_data.begin(), n.user_data.end());
         }
     };
 
