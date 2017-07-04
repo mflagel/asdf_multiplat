@@ -178,13 +178,7 @@ namespace plant_printer
         if(node.generated_values.size() == 1)
             return node.generated_values[0];
 
-        for(size_t i = 0; i < node.generated_values.size() - 1; ++i)
-        {
-            property_string += node.generated_values[i] + ", ";
-        }
-
-        property_string.resize(property_string.size() - 2);
-        property_string += " and " + node.generated_values.back();
+        property_string += combine_strings_with_comma_and(node.generated_values);
 
         return property_string;
     }
