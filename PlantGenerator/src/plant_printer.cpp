@@ -96,7 +96,11 @@ namespace plant_printer
 
         ASSERT(sorted_values.size() > 0, "");
 
-        if(sorted_values[0].percentage >= 90)
+        if(sorted_values[0].percentage >= 95)
+        {
+            return "completely " + sorted_values[0].range_string;
+        }
+        else if(sorted_values[0].percentage >= 90)
         {
             return "very " + sorted_values[0].range_string;
         }
@@ -127,14 +131,22 @@ namespace plant_printer
 
     string print_multi_value(generated_node_t const& node)
     {
+        if(node.generated_values.empty())
+            return "";
+
         string property_string;// =  node.name + " that is ";
+
+        if(node.generated_values.size() == 1)
+            return node.generated_values[0];
 
         for(size_t i = 0; i < node.generated_values.size() - 1; ++i)
         {
             property_string += node.generated_values[i] + ", ";
         }
 
-        property_string += "and " + node.generated_values.back();
+        property_string.resize(property_string.size() - 2);
+        property_string += " and " + node.generated_values.back();
+
         return property_string;
     }
 
