@@ -91,7 +91,11 @@ namespace plantgen
         cJSON* j = json_array->child;
         while(j)
         {
-            ASSERT(j->type == cJSON_String, "Expected a JSON string");
+            if(j->type != cJSON_String)
+            {
+                throw json_type_exception(include_dir_stack.top(), *j, cJSON_String);
+            }
+
             values.emplace_back(j->valuestring);
             j = j->next;
         }
@@ -106,7 +110,16 @@ namespace plantgen
 
         multi_value_t v;
         v.num_to_pick = json->child->valueint;
-        v.values = std::move(value_string_list_from_json_array(json->child->next));   
+
+        try {
+            v.values = std::move(value_string_list_from_json_array(json->child->next));
+        }
+        catch (json_type_exception& je)
+        {
+
+            std::string s = "json type error: \"Multi\" only supports a value list of strings, not " + std::string(cJSON_type_strings[je.json_type_found]);
+            throw std::runtime_error(std::move(s));
+        }
 
         return v;
     }
