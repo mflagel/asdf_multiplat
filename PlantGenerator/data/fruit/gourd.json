@@ -1,7 +1,7 @@
 {
     "Name": "Gourd",
     "PrintString":"a %Size%, %Shape%-shaped gourd with skin that is %Skin%.
-The flesh of the gourd is %Flesh%, and the seeds are %Seeds%",
+The flesh of the gourd is %Flesh%. The seeds are %Seeds%",
     "Properties":[
         {
             "Name":"Skin",
