@@ -191,12 +191,15 @@ namespace plant_printer
             }
             else
             {
-                summary += to_string(node, level + 1, level); // depth of level + 1 (ie: only print this node, not its subnodes)
+                summary += node.name_string() + "\n";
 
                 for(auto const& child : node.children)
-                    summary += print_sub_property(child, level + 1) + "\n";
+                    summary += print_sub_property(child, level + 1) + "; ";
                 for(auto const& vn : node.value_nodes)
-                    summary += print_sub_property(vn, level + 1) + "\n";
+                    summary += print_sub_property(vn, level + 1) + "; ";
+
+                summary.resize(summary.size() - 1);
+                summary.back() = '\n';
             }
         }
 
