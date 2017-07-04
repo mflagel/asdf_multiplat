@@ -214,8 +214,8 @@ namespace plant_printer
             else
             {
                 //change trailing space to a newline if we are printing a sub-property of node
-                ASSERT(summary.back() == ' ', "");
-                summary.back() = '\n';
+                if(summary.size() > 0 && summary.back() == ' ')
+                    summary.back() = '\n';
 
                 for(auto const& child : node.children)
                     summary += print_sub_property(child, level + 1) + "\n";
