@@ -1,6 +1,6 @@
 {
     "Name": "Taproot",
-    "PrintString":"is a %Thickness%, %Length%, %Shape% shaped root that is %Color% in color and tastes %Taste%.",
+    "PrintString":"a %Thickness%, %Length%, %Shape% shaped root that is %Color% in color and tastes %Taste%.",
     "Properties":[
         {
             "Name":"Color",
