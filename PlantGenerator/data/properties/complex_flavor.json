@@ -1,6 +1,6 @@
 {
     "Name": "Complex Flavor",
-    "PrintString":"mostly of %MainFlavor% with undertones of %Undertones% and a %Aftertaste% aftertaste",
+    "PrintString":"mostly of %Main Flavor% with undertones of %Undertones% and a %Aftertaste% aftertaste",
     "Properties":[
         {
             "Name":"Main Flavor",
