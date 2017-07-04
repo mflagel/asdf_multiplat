@@ -123,6 +123,8 @@ namespace plant_printer
 
         ASSERT(sorted_values.size() > 0, "");
 
+        size_t div = 100 / sorted_values.size();
+
         if(sorted_values[0].percentage >= 95)
         {
             return "completely " + sorted_values[0].range_string;
@@ -142,7 +144,17 @@ namespace plant_printer
 
             return ret;
         }
-        //else if(sorted_values[0].percentage >= 50)
+        else if(sorted_values[0].percentage >= div + 2)
+        {
+            vector<string> strs;
+            strs.reserve(sorted_values.size());
+            for(auto const& sorted : sorted_values)
+            {
+                strs.push_back(sorted.range_string);
+            }
+
+            return "equal parts " + combine_strings_with_comma_and(strs);
+        }
         else
         {
             std::string ret = "somewhat " + sorted_values[0].range_string;
