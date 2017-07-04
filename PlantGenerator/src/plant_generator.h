@@ -14,6 +14,8 @@
 #include <vector>
 #include <variant>
 
+#include <asdf_multiplat/main/asdf_defs.h>
+
 #include "value_types.hpp"
 
 namespace stdfs = std::experimental::filesystem;
@@ -126,6 +128,10 @@ namespace plantgen
             base_node_::merge_with(n);
             generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
             //value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
+
+            WARN_IF(print_string.size() > 0 && n.print_string.size() > 0, "generated node merge collision (both nodes have a print string) (%s and %s)", name, n.name);
+            if(print_string.empty())
+                print_string = n.print_string;
         }
     };
 
