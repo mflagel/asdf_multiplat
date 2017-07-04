@@ -15,6 +15,33 @@ namespace plant_printer
         constexpr char string_var_delimiter = '%';
     }
 
+    template<typename L>
+    string combine_strings_with(L const& strings, string const& spacer, string const& final_spacer)
+    {
+        string s;
+
+        for(size_t i = 0; i < strings.size() - 1; ++i)
+        {
+            s += strings[i] + spacer;
+        }
+
+        s.resize(s.size() - 2);
+        s += final_spacer + strings.back();
+
+        return s;
+    }
+
+    string combine_strings_with(vector<string> const& strings, string const& spacer)
+    {
+        return combine_strings_with(strings, spacer, spacer);
+    }
+
+    //the most common usage of combine_strings_with gets its own func
+    string combine_strings_with_comma_and(vector<string> const& strings)
+    {
+        return combine_strings_with(strings, ", ", " and ");
+    }
+
 
     string_var_locations_t parse_print_string(string const& print_string)
     {
