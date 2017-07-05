@@ -113,15 +113,15 @@ endif
 all: $(PROJNAME)
 	@echo -e '\e[1;32m'----- $(PROJNAME) End ------- $(ENDCOLOR)
 
+
+
 debug: CPPFLAGS += -DDEBUG -g
 debug: CFLAGS   += -DDEBUG -g
 debug: all
 
 #release: CPPFLAGS += TODO release flags
 #release:   CFLAGS += TODO release flags
-#release: all
-
-
+release: all
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
@@ -179,10 +179,11 @@ clean:
 	@-\rm -rv $(OBJPATH)/*
 
 clean-deps:
+	@echo cleaning dependancies
 	@-\rm -rv $(OBJPATH)/*.d
 
 
-.PHONY: all intro rebuild clean
+.PHONY: all intro rebuild clean clean-deps
 
 ###############################
 define BUILD_SHIT
