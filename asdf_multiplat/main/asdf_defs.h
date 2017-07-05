@@ -60,11 +60,17 @@ using color_t = glm::vec4;
 #define DIAGNOSTIC_POP _Pragma("clang diagnostic pop");
 #define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(clang diagnostic ignored #to_ignore);
 #define DIAGNOSTIC_ERROR(to_error) PRAGMA(clang diagnostic error #to_error);
-#elif __GNUC_
-#define DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push");
-#define DIAGNOSTIC_POP _Pragma("GCC diagnostic pop");
-#define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(GCC diagnostic ignored #to_ignore);
-#define DIAGNOSTIC_ERROR(to_error) PRAGMA(GCC diagnostic error #to_error);
+
+// #elif __GNUC_
+/// Apparently pragma diagnostics don't actually work in GCC when
+/// compiling C++. This has been a bug for a long time...
+/// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53431
+
+// #define DIAGNOSTIC_PUSH _Pragma("GCC diagnostic push");
+// #define DIAGNOSTIC_POP _Pragma("GCC diagnostic pop");
+// #define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(GCC diagnostic ignored #to_ignore);
+// #define DIAGNOSTIC_ERROR(to_error) PRAGMA(GCC diagnostic error #to_error);
+
 #else
 #define DIAGNOSTIC_PUSH 
 #define DIAGNOSTIC_POP
