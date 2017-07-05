@@ -1,35 +1,38 @@
 #Compiler Stuff
 
 ifndef TRAVIS
-# CC 	    := clang
-# CXX 	:= clang++
-CC  := x86_64-pc-linux-gnu-gcc
-CXX := x86_64-pc-linux-gnu-g++
+CC  := clang
+CXX := clang++
+# CC  := gcc
+# CXX := g++
 endif
+
 LINK    := $(CXX)
 
 
 WARNING_FLAGS_CLANG := -Wall \
 				-Weverything \
+				-Werror-uninitialized \
 				-Wno-c++98-compat-pedantic \
 				-Wno-gnu \
 				-Wno-padded \
 				-Wno-shadow \
 				-Wno-comment \
 				-Wno-undef \
-				-Wno-extra-semi \
-				-Werror-uninitialized
+				-Wno-extra-semi
 
+# gcc pragma warning ignores don't work, so a few of the
+# disabled flags are ones I would rather keep on
 WARNING_FLAGS_GCC :=  -Wall \
-					  # -Weverything \
-					  -Wno-c++98-compat-pedantic \
-					  -Wno-gnu \
+					  -Wextra \
 					  -Wno-padded \
 					  -Wno-shadow \
-					  -Wno-comment \
 					  -Wno-undef \
-					  -Wno-extra-semi \
-					  # -Werror-uninitialized
+					  -Wno-format-zero-length \
+					  -Wno-format \
+					  -Wno-comment \
+					  -Wno-write-strings \
+					  -Wno-implicit-fallthrough
 
 
 # Warning Flags that I think I can safely turn off
