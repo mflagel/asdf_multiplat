@@ -1,7 +1,7 @@
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 #include "stdafx.h"
 #include "asdf_multiplat.h"
+
+DIAGNOSTIC_IGNORE(-Wunused-parameter)
 
 using namespace asdf;
 
