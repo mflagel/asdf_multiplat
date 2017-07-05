@@ -27,14 +27,15 @@ namespace asdf
         return ("Unable to load content file: " + filepath + "\nLoad Error:" + loadError + "\n").c_str();
     }
 
-    resource_not_found_exception::resource_not_found_exception(std::string resourceName)
-        : resourceName(resourceName)
+    resource_not_found_exception::resource_not_found_exception(std::string _resourceName)
+        : std::runtime_error(std::string("Could not find resource: ") + _resourceName)
+        , resourceName(_resourceName)
     {}
 
-    const char* resource_not_found_exception::what() const 
-    {
-        return ("Could not find resource: " + resourceName).c_str();
-    }
+    // const char* resource_not_found_exception::what() const 
+    // {
+    //     return ("Could not find resource: " + resourceName).c_str();
+    // }
 
 
     content_manager_t::content_manager_t()
