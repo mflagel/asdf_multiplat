@@ -64,7 +64,7 @@ WARNING_FLAGS += -Werror=return-type
 
 ifeq ($(CC),clang)
 WARNING_FLAGS := $(WARNING_FLAGS_CLANG)
-else ifeq($$CC),x86_64-pc-linux-gnu-gcc)
+else ifeq($$CC),gcc)
 WARNING_FLAGS := $(WARNING_FLAGS_GCC)
 endif
 
