@@ -1,11 +1,12 @@
 #pragma once
+#include "asdf_defs.h"
 #include "stdafx.h"
 #include "cJSON/cJSON.h"
 
 #include <array>
 
-CLANG_DIAGNOSTIC_PUSH;
-CLANG_DIAGNOSTIC_IGNORE("-Wunused-macros");
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE("-Wunused-macros");
 
 
 constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
@@ -129,4 +130,4 @@ constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
 //---
 
 
-CLANG_DIAGNOSTIC_POP
+DIAGNOSTIC_POP

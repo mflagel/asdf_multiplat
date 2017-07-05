@@ -4,9 +4,13 @@
 
 #include <gl/glew.h>
 
+#include "asdf_defs.h"
 #include "stdafx.h"
 #include "utilities/utilities.h"
 #include "shader.h"
+
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wwrite-strings)
 
 namespace asdf
 {
@@ -133,3 +137,5 @@ namespace asdf
         }
     };
 }
+
+DIAGNOSTIC_POP
