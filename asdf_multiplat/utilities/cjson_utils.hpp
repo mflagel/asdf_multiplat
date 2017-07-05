@@ -6,7 +6,7 @@
 #include <array>
 
 DIAGNOSTIC_PUSH
-DIAGNOSTIC_IGNORE("-Wunused-macros");
+DIAGNOSTIC_IGNORE(-Wunused-macros);
 
 
 constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
