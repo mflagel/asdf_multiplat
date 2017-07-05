@@ -18,6 +18,8 @@
 #include <dirent.h>
 #endif
 
+DIAGNOSTIC_IGNORE(-Wcomment)
+
 // using namespace rapidjson;
 
 namespace asdf {

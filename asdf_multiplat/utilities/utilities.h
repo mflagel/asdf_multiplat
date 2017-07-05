@@ -17,6 +17,12 @@
 
 // #include "rapidjson/document.h"
 
+#include "asdf_defs.h"
+
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wcomment)
+
+
 #ifdef _MSC_VER
     #include <direct.h>
     #define GetCurrentDir _getcwd
@@ -230,3 +236,5 @@ namespace asdf {
     // }
 
 }
+
+DIAGNOSTIC_POP
