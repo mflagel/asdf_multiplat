@@ -205,7 +205,7 @@ namespace asdf {
             {
                 switch(event->window.event)
                 {
-                    case SDL_WINDOWEVENT_RESIZED: [[FALLTHROUGH]]
+                    case SDL_WINDOWEVENT_RESIZED:// [[FALLTHROUGH]]
                     case SDL_WINDOWEVENT_SIZE_CHANGED:
                     {
                         resize(event->window.data1, event->window.data2);

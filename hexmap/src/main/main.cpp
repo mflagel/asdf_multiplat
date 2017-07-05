@@ -1,11 +1,11 @@
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 #include "stdafx.h"
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <asdf_multiplat/utilities/utilities.h>
 
 #include "hexmap.h"
 #include "editor/main/editor.h"
+
+DIAGNOSTIC_IGNORE(-Wunused-parameter);
 
 using namespace asdf;
 using namespace hexmap;

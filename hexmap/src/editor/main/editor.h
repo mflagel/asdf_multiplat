@@ -6,10 +6,12 @@
 
 #include "main/hexmap.h"
 #include "data/hex_map.h"
+#include "data/terrain_brush.h"
+#include "ui/minimap.h"
+#include "ui/terrain_brush_renderer.h"
+
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
-
-#include "ui/minimap.h"
 
 namespace asdf {
 namespace hexmap {
@@ -94,6 +96,11 @@ namespace editor
         uint64_t current_tile_id = 0;
         tile_coord_dict_t painted_terrain_coords;
 
+        std::vector<data::terrain_brush_t> terrain_brushes;
+        size_t current_terrain_brush_index = 0;
+        std::unique_ptr<ui::terrain_brush_renderer_t> terrain_brush_renderer;
+        glm::vec2 brush_pos;
+
         //objects
         uint64_t current_object_id = 0;
         hex_region_e current_snap_point = hex_no_region;
@@ -114,7 +121,6 @@ namespace editor
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
-        std::shared_ptr<ui::minimap_t> test_minimap;
 
     private:
         action_stack_t action_stack; //private to ensure signal_data_changed() gets called
@@ -127,6 +133,7 @@ namespace editor
 
         void render() override;
         void render_selection();
+        void render_current_brush();
 
         void on_event(SDL_Event*) override;
 
@@ -154,6 +161,12 @@ namespace editor
         void signal_data_changed();
         void push_action(std::unique_ptr<editor_action_t>&&);
         void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
+
+        void set_custom_terrain_brush(data::terrain_brush_t const& new_brush);
+        inline data::terrain_brush_t const& current_terrain_brush() const { 
+            ASSERT(terrain_brushes.size() > 0, "Cannot get current terrain brushes when there are no brushes");
+            return terrain_brushes[current_terrain_brush_index]; 
+        }
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

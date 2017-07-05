@@ -1,27 +1,26 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <map>
-#include <vector>
-#include <csignal>
 #include <algorithm>
+#include <csignal>
 #include <cstddef>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <string>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/uniform_int_distribution.hpp>
 
 // #include "rapidjson/document.h"
 
-//#define FOR_EACH(type, objName, container) std::for_each(container.begin(), container.end(), [&](type objName)
-#define FOR_EACH(type, objName, container) std::for_each(std::begin(container), std::end(container), [&](type objName)
-#define MEMBER_FUNCTION_PREDICATE(class, func) std::bind1st(std::mem_fun(&class::func),this)
-#define DELETE_VECTOR_POINTERS(vector) for(size_t i = 0; i < vector.size(); i++){delete vector[i];}
+#include "asdf_defs.h"
 
-#define OBJ_AS(objName, asType) ((asType) objAs = (asType)objName); objAs
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wcomment)
 
 
 #ifdef _MSC_VER
@@ -38,8 +37,45 @@
 namespace asdf {
     namespace util {
     /************************************************************************/
+    /* String
+    /************************************************************************/
+    template<typename L>
+    std::string combine_strings_with(L const& strings, std::string const& spacer, std::string const& final_spacer)
+    {
+        std::string s;
+
+        for(size_t i = 0; i < strings.size() - 1; ++i)
+        {
+            s += strings[i] + spacer;
+        }
+
+        s.resize(s.size() - 2);
+        s += final_spacer + strings.back();
+
+        return s;
+    }
+
+    template<typename L>
+    std::string combine_strings_with(L const& strings, std::string const& spacer)
+    {
+        return combine_strings_with(strings, spacer, spacer);
+    }
+
+    //the most common usage of combine_strings_with gets its own func
+    template<typename L>
+    std::string combine_strings_with_comma_and(L const& strings)
+    {
+        return combine_strings_with(strings, ", ", " and ");
+    }
+
+    inline bool str_eq(char const* a, char const* b)
+    {
+        return strcmp(a, b) == 0;
+    }
+
+    /************************************************************************/
     /* Misc
-    /************************************************************************/        
+    /************************************************************************/
     template<class C, class T>
     inline auto contains_impl(const C& c, const T& x, int)
     -> decltype(c.find(x), true)
@@ -200,3 +236,5 @@ namespace asdf {
     // }
 
 }
+
+DIAGNOSTIC_POP

@@ -10,10 +10,11 @@
 
 namespace asdf {
 
-struct resource_not_found_exception : std::exception {
+struct resource_not_found_exception : std::runtime_error
+{
 	std::string resourceName;
 	resource_not_found_exception(std::string resourceName);
-	const char* what() const;
+	//const char* what() const noexcept override;
 };
 
 template <class T>

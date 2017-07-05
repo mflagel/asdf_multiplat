@@ -1,5 +1,3 @@
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 #include "stdafx.h"
 
 #include "ui_base.h"
@@ -13,6 +11,8 @@
 using namespace glm;
 using namespace std;
 using namespace asdf::util;
+
+DIAGNOSTIC_IGNORE(-Wunused-parameter)
 
 namespace asdf
 {

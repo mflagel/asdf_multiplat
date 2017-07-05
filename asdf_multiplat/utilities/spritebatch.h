@@ -6,6 +6,9 @@
 
 //#include "asdf_multiplat/data/gl_resources.h"
 
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wcomment)
+
 class FTFont;
 
 namespace asdf {
@@ -118,3 +121,5 @@ namespace asdf {
     };
 
 }
+
+DIAGNOSTIC_POP

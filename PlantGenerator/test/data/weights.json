@@ -1,0 +1,97 @@
+{
+    "Name":"Weights",
+    "Properties":[
+        {
+            "Name":"Normal Weights",
+            "Values":[
+                {
+                    "Name":"Normal A",
+                    "Weight":123
+                },
+                {
+                    "Name":"Normal B",
+                    "Weight":456
+                },
+                {
+                    "Name":"Normal C",
+                    "Weight":789
+                }
+            ]
+        },
+        {
+            "Name":"Inline Weights",
+            "Values":[
+                "%123 Inline A",
+                "%456 Inline B",
+                "%789 Inline C"
+            ]
+        },
+        {
+            "Name":"Inline Normal Mix",
+            "Values":[
+                "%123 Inline A",
+                "%456 Inline B",
+                "%789 Inline C",
+                {
+                    "Name":"Normal A",
+                    "Weight":123
+                },
+                {
+                    "Name":"Normal B",
+                    "Weight":456
+                },
+                {
+                    "Name":"Normal C",
+                    "Weight":789
+                }
+            ]
+        }
+        {
+            "Name":"Weight of Values",
+            "Values":[
+                {
+                    "Name":"Weight of Values Value Node",
+                    "Weight":"%"
+                    "Values"[
+                        "%123 WoV VN A",
+                        "%456 WoV VN B",
+                        "%789 WoV VN C",
+                        {
+                            "Name": "WoV VN NodeA",
+                            "Weight":32
+                        },
+                        {
+                            "Name": "WoV VN NodeB",
+                            "Weight":64
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Values":[
+        "%100 A",
+        "%20 B",
+        "%1 C",
+        "D",
+        "%0 E",
+        {
+            "Name":"ValueNode A",
+            "Weight":25
+        },
+        {
+            "Name":"ValueNode B",
+            "Weight":250
+        },
+        {
+            "Name":"ValueNode C",
+            "Weight":"%",
+            "Values":[
+                "VN C  A",
+                "VN C  B",
+                "VN C  C",
+                "VN C  D"
+            ]
+        }
+    ]
+}

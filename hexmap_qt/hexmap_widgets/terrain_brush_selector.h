@@ -13,16 +13,11 @@ class terrain_brush_selector_t : public QWidget
 {
     Q_OBJECT
 
-    enum tabs_e
-    {
-          brush_settings = 0
-        , brush_palette
-    };
-
     enum brush_types_e
     {
-          circular = 0
+          hexagonal = 0
         , rectangular
+        , circular
         , bitmap
     };
 
@@ -33,10 +28,13 @@ public:
 public slots:
     void brush_type_changed(int tab_index);
 
+signals:
+    void custom_brush_changed(asdf::hexmap::data::terrain_brush_t const& brush);
+
 private:
-    void set_brush_tab(tabs_e);
     void set_brush(brush_types_e);
 
+    int hexagon_brush_radius() const;
     float circular_brush_radius() const;
     glm::uvec2 rect_brush_size() const;
 

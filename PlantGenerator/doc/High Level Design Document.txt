@@ -1,0 +1,143 @@
+--- Plant Generator ---
+PlantGenerator is a tool that takes a collection of categorized data and procedurally builds the description of a plant.
+
+Despite the name, the PlantGenerator is general enough that it could generate anything out of a random set of properties (ex: a random Taste for a given plant)
+
+
+-- Inspiration --
+PlantGen is inspired by the insane variety of plants. In particular, the varieties between different types of mushrooms, flowers, and cacti are what inspired this project
+
+
+-- Data Design --
+A generatable plant is made up of categorized components
+
+Effectively just a tree of categories where each leaf is a random table with optional weights
+
+Weights:
+    Weights can be floating point or integer values
+    Weights will be normalized (so you can enter a percent chance for each entry, or a set of ratios)
+    If no weights are specified, every entry has equal probability
+
+Ranges:
+    Ranges will return normalized percentages for values in the range
+    A simple two-value range will return how much of each value has been generated
+        ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
+    Three value ranges will similarily split between three values
+
+Include:
+  Plants can contain an entire generated plant as a property
+    ex: a small plant might generate a root, grass, and flower from three separate data files
+
+  This allows the user to factor out reusable components into their own file.
+
+  Not sure which keyword to use. Probably "Include"
+    ex:
+      "Properties": [
+          {
+              "Name": "Root"
+              "Include": "some/filepath/plant_root.json"
+          }
+      ]
+
+  TODO:
+    Cache included nodes by absolute filename, rather than reloading them every time
+
+
+Tree Merging:
+  In cases where the user wants a slightly different version of a given generator definition file, the user could specify two generator trees and merge them. This could be done by merging two files, or by merging one file with an inline definition.
+
+  ex:
+  SomePlant.json:
+  {
+    "Name":"Some Plant"
+    "Properties":[
+      {
+        "Name":"Some Property",
+        "Values":[
+          "Normal Value",
+          "Another Normal Value",
+          "ValueValue"
+        ]
+    ]
+  }
+
+  WeirdPlant.json:
+  {
+    "Name":"Some Plant"
+    "Properties":[
+      {
+        "Name":"Some Property",
+        "Values":[
+          "Weird Value",
+          "WeirderValue",
+          "WeirdWeirdWeird"
+        ]
+    ]
+  }
+
+  CombinedPlant.json:
+  {
+    "Merge":["SomePlant.json", "WierdPlant.json"]
+  }
+
+
+  Merging these two files would result in a plant with a single property "Some Property" and with a combined value list from both files.
+
+
+Tree Overrides:
+  Overrides could be similar to merge, but with an Override keyword ex: "Override":"some/file/path.json"
+
+  OverridePlant.json:
+  {
+    "Override":["SomePlant.json", "WierdPlant.json"]
+  }
+
+  This would a result in a plant with name "Some Plant", and a single property of "Some Property" but only the values in WeirdPlant.json
+
+
+
+-- Syntax --
+I want to use YAML, but yaml-cpp refuesd to work in MSVC
+Went with JSON for now, but I'll probably support both
+
+
+-- Examples --
+--- # Mushroom
+Name: Mushroom
+  Stem:
+    Length:
+      Range:
+        - Short
+        - Long
+      Shelf
+    Thickness:
+      Range:
+        Thin
+        Thick
+  Gills:
+    - "%1 Covered"
+    - "%20 Frilly"
+    - "%20 Sparse"
+  Cap:
+    Shape:
+      - Button
+      - Flat
+      - Spherical
+      - Coral
+      - Web
+    Thickness:
+      Range:
+        - Small
+        - Wide
+    Color:
+      Range:
+        - White
+        - Black
+        - Brown
+    Pattern:
+      2from:
+        - Flat
+        - Spotted
+        - Fan Lines
+        - Curvy Lines
+        - Pustule-Covered

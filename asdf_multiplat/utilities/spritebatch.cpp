@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "asdf_defs.h"
 #include "asdf_multiplat.h"
 #include "spritebatch.h"
 #include "content_manager.h"
@@ -10,6 +11,8 @@
 using namespace std;
 using namespace glm;
 using namespace asdf::util;
+
+DIAGNOSTIC_IGNORE(-Wcomment)
 
 namespace asdf {
 

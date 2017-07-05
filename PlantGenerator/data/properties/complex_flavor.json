@@ -1,0 +1,33 @@
+{
+    "Name": "Complex Flavor",
+    "PrintString":"mostly of %Main Flavor% with undertones of %Undertones% and a %Aftertaste% aftertaste",
+    "Properties":[
+        {
+            "Name":"Main Flavor",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        },
+        {
+            "Name":"Undertones",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        },
+        {
+            "Name":"Aftertaste",
+            "Values":[
+                {
+                    "Name":"Flavor",
+                    "Include":"flavor.json"
+                }
+            ]
+        }
+    ]
+}

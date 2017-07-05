@@ -1,12 +1,12 @@
 {
   "terrain" : [
         {
-            "name" : "Dirt",
-            "filepath" : "../assets/Terrain_Tiles/dirt.png"
-        },
-        {
             "name" : "Grass",
             "filepath" : "../assets/Terrain_Tiles/grass.png"
+        },
+        {
+            "name" : "Dirt",
+            "filepath" : "../assets/Terrain_Tiles/dirt.png"
         },
         {
             "name" : "Stone",

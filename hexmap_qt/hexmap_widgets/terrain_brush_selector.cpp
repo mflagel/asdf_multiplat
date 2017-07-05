@@ -6,6 +6,8 @@
 namespace
 {
     double circle_radius_slider_divisor = 10.0; //divide the slider amount by this to get the current circle radius
+    int max_hex_radius_slider = 10;
+    int max_hex_radius = 999;
 }
 
 terrain_brush_selector_t::terrain_brush_selector_t(QWidget *parent) :
@@ -14,27 +16,23 @@ terrain_brush_selector_t::terrain_brush_selector_t(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    set_brush_tab(brush_settings);
 
-    auto connect_tab_btn = [this](QPushButton* btn, tabs_e tab)
+    //hide/disable buttons for unfinished features
+    ui->brush_builder_tabs->removeTab(3); //bitmap
+    ui->brush_builder_tabs->removeTab(2); //circular
+
+    /// Hexagonal Brush
+    ui->sld_hexagon_radius->setMinimum(1);
+    ui->sld_hexagon_radius->setMaximum(max_hex_radius_slider);
+    ui->sb_hexagon_radius->setMinimum(1);
+    ui->sb_hexagon_radius->setMaximum(max_hex_radius);
+    connect(ui->sld_hexagon_radius, &QSlider::valueChanged, ui->sb_hexagon_radius, &QSpinBox::setValue);
+    connect(ui->sb_hexagon_radius, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
     {
-        connect(btn, &QPushButton::pressed, [this, tab](){set_brush_tab(tab);});
-    };
+        set_brush(hexagonal);
+    });
 
-    connect_tab_btn(ui->btn_brush_settings, brush_settings);
-    connect_tab_btn(ui->btn_brush_palette, brush_palette);
-
-
-    connect(ui->sld_circle_radius, &QSlider::valueChanged, [this](int v){
-            ui->dsb_circle_radius->setValue(static_cast<double>(v) / circle_radius_slider_divisor);
-        });
-
-    connect(ui->dsb_circle_radius, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-        [this](double value)
-        {
-            set_brush(circular); //will update circular brush
-        });
-
+    /// Rectangular Brush
     connect(ui->sb_brush_width, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
     {
         set_brush(rectangular); //will update rectangular brush
@@ -44,6 +42,18 @@ terrain_brush_selector_t::terrain_brush_selector_t(QWidget *parent) :
     {
         set_brush(rectangular); //will update rectangular brush
     });
+
+    /// Circular Brush
+    /*connect(ui->sld_circle_radius, &QSlider::valueChanged, [this](int v){
+            ui->dsb_circle_radius->setValue(static_cast<double>(v) / circle_radius_slider_divisor);
+        });
+
+    connect(ui->dsb_circle_radius, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+        [this](double value)
+        {
+            set_brush(circular); //will update circular brush
+        });
+        */
 }
 
 terrain_brush_selector_t::~terrain_brush_selector_t()
@@ -69,11 +79,14 @@ void terrain_brush_selector_t::set_brush(brush_types_e brush_type)
 
     switch(brush_type)
     {
-    case circular:
-        terrain_brush = terrain_brush_circle(circular_brush_radius());
+    case hexagonal:
+        terrain_brush = terrain_brush_hexagon(hexagon_brush_radius());
         break;
     case rectangular:
         terrain_brush = terrain_brush_t(rect_brush_size());
+        break;
+    case circular:
+        terrain_brush = terrain_brush_circle(circular_brush_radius());
         break;
     case bitmap:
         //TODO
@@ -81,25 +94,22 @@ void terrain_brush_selector_t::set_brush(brush_types_e brush_type)
     default:
         EXPLODE("invalid brush type");
     }
+
+    emit custom_brush_changed(terrain_brush);
 }
 
 
-
-void terrain_brush_selector_t::set_brush_tab(tabs_e tab)
+int terrain_brush_selector_t::hexagon_brush_radius() const
 {
-    ui->brush_builder_frame->setVisible(tab == brush_settings);
-    ui->btn_brush_settings->setChecked(tab == brush_settings);
-
-    ui->brush_list->setVisible(tab == brush_palette);
-    ui->btn_brush_palette->setChecked(tab == brush_palette);
-}
-
-float terrain_brush_selector_t::circular_brush_radius() const
-{
-    return ui->sld_circle_radius->value();
+    return ui->sb_hexagon_radius->value() - 1;
 }
 
 glm::uvec2 terrain_brush_selector_t::rect_brush_size() const
 {
     return glm::uvec2(ui->sb_brush_width->value(), ui->sb_brush_height->value());
+}
+
+float terrain_brush_selector_t::circular_brush_radius() const
+{
+    return ui->dsb_circle_radius->value();
 }

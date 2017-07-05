@@ -13,7 +13,7 @@ namespace hexmap
 {
 namespace data
 {
-    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size)
+    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size, hex_grid_cell_t const& default_cell_style)
     : size(_size)
     , allocated_size(_size)
     {
@@ -21,8 +21,34 @@ namespace data
 
         for(auto& grid_y : cells)
         {
-            grid_y.resize(size.y);
+            grid_y.resize(size.y, default_cell_style);
         }
+    }
+
+    bool hex_grid_chunk_t::operator==(hex_grid_chunk_t const& rhs) const
+    {
+
+        return position       == rhs.position
+            && size           == rhs.size
+            && allocated_size == rhs.allocated_size
+            && contents_equal(rhs);
+    }
+
+    bool hex_grid_chunk_t::contents_equal(hex_grid_chunk_t const& rhs) const
+    {
+        if(size != rhs.size)
+            return false;
+
+        for(size_t y = 0; y < size.y; ++y)
+        {
+            for(size_t x = 0; x < size.x; ++x)
+            {
+                if(cells[x][y] != rhs.cells[x][y])
+                    return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -293,6 +319,7 @@ namespace data
         bb.upper += vec2(hex_width_d2, hex_height_d2);
 
         return bb;
+        
     }
 
     glm::vec2 hex_grid_t::size_units() const
@@ -422,6 +449,19 @@ world  0,0  /
         }
 
         return ivec2(column, row);
+    }
+
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q)
+    {
+        vec2 world_coord{hex_coord};
+
+        world_coord.x -= hex_width_d4 * hex_coord.x; //horizontal overlap
+        world_coord.y *= hex_height; //scale vertically since hexes aren't one unit tall
+
+        world_coord.y -= hex_height_d2 * !odd_q * (hex_coord.x & 1); //vertical offset for even hexes
+        world_coord.y -= hex_height_d2 *  odd_q * (hex_coord.x+1 & 1); //vertical offset for odd hexes
+
+        return world_coord;
     }
 
 }

@@ -158,8 +158,28 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
+    /// Minimap Dock
+    minimap_dock = new QDockWidget(tr("Minimap"));
+    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, minimap_dock);
+
+    ///Brush Settings
     {
-        palette_widget = new palette_widget_t(this);
+        auto brush_setings_dock = new QDockWidget(tr("Brush Settings"));
+
+        brush_settings = new terrain_brush_selector_t();
+        brush_setings_dock->setWidget(brush_settings);
+
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, brush_setings_dock);
+
+        connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
+    }
+    
+    /// Terrain / Object Palette
+    {
+        palette_dock = new QDockWidget();
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
+
+        palette_widget = new palette_widget_t();
 
         palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         //palette_widget->setMinimumSize(200, 300);
@@ -171,7 +191,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(palette_widget, &palette_widget_t::terrain_add, ui->hexmap_widget, &hexmap_widget_t::add_terrain);
 
 
-        ui->right_dock->setWidget(palette_widget);
+        palette_dock->setWidget(palette_widget);
     }
 
 
@@ -205,18 +225,6 @@ MainWindow::MainWindow(QWidget *parent) :
                     ui->hexmap_widget->editor.set_spline_node_style(node_style);
                 });
     }
-
-    ///Brush Settings
-    {
-        auto brush_setings_dock = new QDockWidget(this);
-
-        brush_settings = new terrain_brush_selector_t();
-        brush_setings_dock->setWidget(brush_settings);
-
-        addDockWidget(Qt::DockWidgetArea::NoDockWidgetArea, brush_setings_dock);
-        brush_setings_dock->setFloating(true);
-    }
-
 }
 
 MainWindow::~MainWindow()
@@ -435,12 +443,9 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
             minimap->update();
         });
 
-    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
-    minimapdock->setWidget(minimap);
-
-    using qd = QDockWidget;
-    minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
-    addDockWidget(Qt::RightDockWidgetArea, minimapdock);
+    
+    minimap_dock->setWidget(minimap);
+    minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
 
     terrain_palette_model = new palette_item_model_t();
     objects_palette_model = new palette_item_model_t();
@@ -461,7 +466,7 @@ void MainWindow::minimap_initialized()
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
-    auto* dock = ui->right_dock;
+    auto* dock = palette_dock;
 
     switch(new_tool)
     {
@@ -495,4 +500,9 @@ void MainWindow::editor_tool_changed(tool_type_e new_tool)
 void MainWindow::object_selection_changed(asdf::hexmap::editor::editor_t& editor)
 {
     object_properties->set_from_object_selection(editor.object_selection, editor.map_data.objects);
+}
+
+void MainWindow::custom_terrain_brush_changed(asdf::hexmap::data::terrain_brush_t const& brush)
+{
+    editor->set_custom_terrain_brush(brush);
 }
