@@ -175,7 +175,7 @@ namespace asdf {
         return out_keyList;
     }
 
-    std::vector<std::string> tokenize(char* const str, char* const delimiters);
+    std::vector<std::string> tokenize(const char* str, const char* delimiters);
 
     /************************************************************************/
     /* SDL Utilities

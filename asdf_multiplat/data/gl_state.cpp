@@ -44,7 +44,8 @@ namespace asdf
         LOG("OpenGL Initialized");
         LOG("--Supported OpenGL Extensions--")
 
-        gl_extensions = tokenize((char*)(glGetString(GL_EXTENSIONS)), " ");
+        const char* ext_cstr = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+        gl_extensions = tokenize(ext_cstr, " ");
 
         for(auto const& ext : gl_extensions)
         {
