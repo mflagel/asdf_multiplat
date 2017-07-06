@@ -1,12 +1,12 @@
 #pragma once
 #include "asdf_defs.h"
-#include "stdafx.h"
 
-
-#define DIAGNOSTIC_IGNORE_CJSON_WARNINGS DIAGNOSTIC_IGNORE(-Wsign-conversion -Wshorten-64-to-32)
 
 DIAGNOSTIC_PUSH
-DIAGNOSTIC_IGNORE_CJSON_WARNINGS
+DIAGNOSTIC_IGNORE(-Wsign-conversion)
+DIAGNOSTIC_IGNORE(-Wshorten-64-to-32)
+DIAGNOSTIC_IGNORE(-Wsign-conversion)
+DIAGNOSTIC_IGNORE(-Wdouble-promotion)
 #include "cJSON/cJSON.h"
 DIAGNOSTIC_POP
 
