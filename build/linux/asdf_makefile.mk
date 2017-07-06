@@ -166,9 +166,9 @@ $(PROJNAME): $(OBJECTS)
 		echo "Archiving Target $(BIN_OUT)";                  \
 		ar rcsv $(BIN_OUT) $(OBJECTS) ;                      \
 	else                                                     \
-		echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);  \
-		printf "\nErrors:\n";                \
-		$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);       \
+		echo $(CXX) $(OBJECTS) $(LINK_FLAGS) -o $(BIN_OUT);  \
+		printf "\nErrors:\n";                                \
+		$(CXX) $(OBJECTS) $(LINK_FLAGS) -o $(BIN_OUT);       \
 	fi
 
 	@echo -e $(YELLOW)------------------- $(ENDCOLOR)
