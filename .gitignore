@@ -18,6 +18,10 @@ bin
 *.cproject
 *.pro.user
 
+CMakeCache.txt
+CMakeFiles
+*.cmake
+
 /docs/
 
 asdf_multiplat/obj
@@ -55,6 +59,7 @@ ext/glm/doc
 
 #plantgen
 /PlantGenerator/build
+/PlantGenerator/Makefile
 /PlantGenerator/test/build
 /PlantGenerator/test/Win32
 /PlantGenerator/test/PlantGenerator__Tests.dir/

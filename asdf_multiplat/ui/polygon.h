@@ -89,7 +89,7 @@ namespace asdf
             if(num_verts > 0)
             {
                 GL_State->bind(vao);
-                glDrawArrays(_draw_mode, 0, num_verts);
+                glDrawArrays(_draw_mode, 0, convert_integer<size_t,GLsizei>(num_verts));
                 GL_State->unbind_vao();
             }
         }
@@ -108,7 +108,7 @@ namespace asdf
                 GL_State->bind(vbo);
                 VertexType::vertex_spec.set_vertex_attribs(shader);
 
-                glDrawArrays(_draw_mode, 0, num_verts);
+                glDrawArrays(_draw_mode, 0, convert_integer<size_t,GLsizei>(num_verts));
 
                 GL_State->unbind_vbo();
             }

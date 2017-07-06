@@ -13,17 +13,32 @@ LINK    := $(CXX)
 WARNING_FLAGS_CLANG := -Wall \
 				-Weverything \
 				-Werror-uninitialized \
+				-Werror=return-type \
 				-Wno-c++98-compat-pedantic \
+				-Wno-microsoft \
 				-Wno-gnu \
 				-Wno-padded \
-				-Wno-shadow \
-				-Wno-comment \
 				-Wno-undef \
-				-Wno-extra-semi
+				-Wno-extra-semi \
+				-Wno-weak-vtables \
+				-Wno-global-constructors
+
+# WARNING_FLAGS_THAT_I_SHOULDNT_TURN_OFF
+WARNING_FLAGS_CLANG += \
+				 -Wno-invalid-token-paste \
+				 -Wno-exit-time-destructors \
+				 -Wno-extra-tokens \
+				 -Wno-reorder \
+				 -Wno-missing-prototypes \
+				 -Wno-newline-eof \
+				 -Wno-missing-braces
+
 
 # gcc pragma warning ignores don't work, so a few of the
 # disabled flags are ones I would rather keep on
 WARNING_FLAGS_GCC :=  -Wall \
+					  -Werror-uninitialized \
+					  -Werror=return-type \
 					  -Wextra \
 					  -Wno-padded \
 					  -Wno-shadow \
@@ -35,43 +50,19 @@ WARNING_FLAGS_GCC :=  -Wall \
 					  -Wno-implicit-fallthrough
 
 
-# Warning Flags that I think I can safely turn off
-WARNING_FLAGS_CLANG += -Wno-weak-vtables
-
-
-# WARNING_FLAGS_THAT_I_SHOULDNT_TURN_OFF
-WARNING_FLAGS_CLANG += -Wno-microsoft \
-				 -Wno-invalid-token-paste \
-				 -Wno-shorten-64-to-32 \
-				 -Wno-sign-conversion \
-				 -Wno-float-equal \
-				 -Wno-unused-variable \
-				 -Wno-format-security \
-				 -Wno-global-constructors \
-				 -Wno-exit-time-destructors \
-				 -Wno-extra-tokens \
-				 -Wno-reorder \
-				 -Wno-missing-prototypes \
-				 -Wno-newline-eof \
-				 -Wno-switch-enum \
-				 -Wno-missing-braces \
-				 -Wno-writable-strings \
-				 -Wno-comment
-
 # # Promote some warnings to errors
-WARNING_FLAGS += -Werror=return-type
+WARNING_FLAGS += 
 
 
 ifeq ($(CC),clang)
-WARNING_FLAGS := $(WARNING_FLAGS_CLANG)
+WARNING_FLAGS = $(WARNING_FLAGS_CLANG)
 else ifeq ($$CC),gcc)
-WARNING_FLAGS := $(WARNING_FLAGS_GCC)
+WARNING_FLAGS = $(WARNING_FLAGS_GCC)
 endif
 
 
 
 CLANG_EXTENSIONS := -fms-extensions
-# DAS_FLAGS        := -g -pedantic -fmacro-backtrace-limit=20
 DAS_FLAGS        := -g
 CFLAGS  		 := $(DAS_FLAGS) $(WARNING_FLAGS) $(CLANG_EXTENSIONS)
 CPP_SPECIFIC_FLAGS := -std=c++1z

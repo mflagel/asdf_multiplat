@@ -1,7 +1,14 @@
 #pragma once
 #include "asdf_defs.h"
-#include "stdafx.h"
+
+
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wsign-conversion)
+DIAGNOSTIC_IGNORE(-Wshorten-64-to-32)
+DIAGNOSTIC_IGNORE(-Wsign-conversion)
+DIAGNOSTIC_IGNORE(-Wdouble-promotion)
 #include "cJSON/cJSON.h"
+DIAGNOSTIC_POP
 
 #include <array>
 

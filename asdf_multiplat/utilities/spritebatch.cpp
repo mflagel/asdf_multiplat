@@ -65,7 +65,10 @@ namespace asdf {
     }
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
-        rect_t rect(0, 0, texture->get_width(), texture->get_height());
+
+        int32_t width = unsigned_to_signed(texture->get_width());
+        int32_t height = unsigned_to_signed(texture->get_height());
+        rect_t rect(0, 0, width, height);
         draw(texture, position, rect, color, scale, rotation);
     }
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
@@ -136,7 +139,7 @@ namespace asdf {
             //don't render things we can't see
             if(ftfont_pos.x < (screen_halfw * 2) && ftfont_pos.y > 0)
             {
-                text.font->FaceSize(text.face_size);
+                // text.font->FaceSize(text.face_size);
                 //text.font->Render(text.str.c_str(), -1, FTPoint(ftfont_pos.x, ftfont_pos.y));  /// FIXME
             }
         }

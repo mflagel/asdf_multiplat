@@ -7,7 +7,7 @@ namespace asdf
     using namespace util;
 
 
-    render_target_t::render_target_t(int width, int height)
+    render_target_t::render_target_t(uint32_t width, uint32_t height)
     : fbo{}
     , texture{"render_target_t texture", nullptr, width, height}
     {
@@ -37,7 +37,9 @@ namespace asdf
             GLint error_length = 0;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &error_length);
 
-            std::string gl_error_str(error_length, '\n');
+            ASSERT(error_length >= 0, "Invalid GL Error Length");
+
+            std::string gl_error_str(size_t(error_length), '\n');
             glGetShaderInfoLog(shader, error_length, nullptr, &(gl_error_str[0]));
 
             fprintf(stderr, "Failed to compile shader!\n%s\n", gl_error_str.data());
