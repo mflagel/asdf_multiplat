@@ -18,8 +18,9 @@ namespace asdf
     content_manager_t Content;
     ///
 
-    content_load_exception::content_load_exception(std::string const& filepath, std::string const& loadError) 
-        : filepath(filepath), loadError(loadError) 
+    content_load_exception::content_load_exception(std::string const& _filepath, std::string const& _loadError) 
+        : filepath(_filepath)
+        , loadError(_loadError) 
     {}
 
     const char* content_load_exception::what() const noexcept
@@ -103,12 +104,12 @@ namespace asdf
         return create_shader(shader_path, vs_name, fs_name, glsl_ver);
     }
 
-    std::shared_ptr<shader_t> content_manager_t::create_shader(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name, size_t glsl_ver)
+    std::shared_ptr<shader_t> content_manager_t::create_shader(std::string const& _shader_path, std::string const& vs_name, std::string const& fs_name, size_t glsl_ver)
     {
-        ASSERT(shader_path.length() > 0, "Loading shader before shader path is set");
+        ASSERT(_shader_path.length() > 0, "Loading shader before shader path is set");
 
         string ver_str = to_string(glsl_ver);
-        auto ver_path = string(shader_path + "/" + ver_str);                    // ex: ".../shaders/330"
+        auto ver_path = string(_shader_path + "/" + ver_str);                    // ex: ".../shaders/330"
 
         auto vshd_path = string(ver_path + "/" + vs_name + "_" + ver_str + ".vert");   // .../shaders/330/shadername_330
         auto fshd_path = string(ver_path + "/" + fs_name + "_" + ver_str + ".frag");
@@ -133,9 +134,9 @@ namespace asdf
         return create_shader(vs_name, fs_name, GL_State->highest_glsl_version);
     }
 
-    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& shader_path, std::string const& vs_name, std::string const& fs_name)
+    std::shared_ptr<shader_t> content_manager_t::create_shader_highest_supported(std::string const& _shader_path, std::string const& vs_name, std::string const& fs_name)
     {
-        return create_shader(shader_path, vs_name, fs_name, GL_State->highest_glsl_version);
+        return create_shader(_shader_path, vs_name, fs_name, GL_State->highest_glsl_version);
     }
 
     //int content_manager_t::AddTexturesFromFolder(string folderPath) {

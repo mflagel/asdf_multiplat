@@ -42,7 +42,7 @@ namespace asdf {
         texture_t(std::string const& name, std::string const& filepath);
         texture_t(std::string const& name, const GLuint texture_index);
         //FIXME: replace {ptr, len} with array_view_<T>
-        texture_t(std::string const& _name, color_t* color_data, int _width, int _height, bool generate_mipmaps = false);
+        texture_t(std::string const& _name, color_t* color_data, uint32_t _width, uint32_t _height, bool generate_mipmaps = false);
 
         ~texture_t();
 
@@ -50,7 +50,7 @@ namespace asdf {
         void load_texture(std::string const& filepath, int force_channels = SOIL_LOAD_AUTO);
         
         void write(const color_t* color_data);
-        void write(const color_t* color_data, const size_t _width, const size_t _height);
+        void write(const color_t* color_data, const uint32_t _width, const uint32_t _height);
 
         glm::ivec2 texture_to_screen_space(glm::ivec2 const& texture_pos) const;
         glm::ivec2 screen_to_texture_space(glm::ivec2 const& screen_pos) const;
