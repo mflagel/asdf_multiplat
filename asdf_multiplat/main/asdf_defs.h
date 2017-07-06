@@ -112,6 +112,29 @@ using color_t = glm::vec4;
 #endif
 
 
+// #include <type_traits>
+
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wsign-compare)
+
+template <typename A, typename B>
+B convert_integer(A value)
+{
+    ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
+    ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
+
+    return static_cast<B>(value);
+}
+
+DIAGNOSTIC_POP
 
 
+inline int32_t unsigned_to_signed(uint32_t u)
+{
+    return convert_integer<uint32_t,int32_t>(u);
+}
 
+inline uint32_t signed_to_unsigned(int32_t i)
+{
+    return convert_integer<int32_t,uint32_t>(i);
+}
