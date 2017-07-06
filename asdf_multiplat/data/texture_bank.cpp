@@ -41,8 +41,8 @@ namespace data
         //ASSERT(new_texture.format == atlas_texture.format, "Color format of texture must match the atlas (GL_RGBA)   %s", filepath.c_str());
         //ASSERT(new_texture.types[0] == atlas_texture.types[0], "");
 
-        int dest_loc_x = (saved_textures.size() % max_saved_textures_1d) * saved_texture_dim;
-        int dest_loc_y = (saved_textures.size() / max_saved_textures_1d) * saved_texture_dim;
+        int64_t dest_loc_x = (saved_textures.size() % max_saved_textures_1d) * saved_texture_dim;
+        int64_t dest_loc_y = (saved_textures.size() / max_saved_textures_1d) * saved_texture_dim;
 
         dest_loc_x += saved_texture_dim_d2;
         //dest_loc_y += saved_texture_dim_d2;

@@ -33,7 +33,6 @@ namespace data
         auto atlas_texture_filename = cJSON_GetObjectItem(meta_json, "image")->valuestring;
 
         //atlas texture is in the same folder, so just chop off the data filename from its path and append the texture filename
-        texture_filepath;
         auto last_slash_index = filepath.find_last_of("/\\");
         if(last_slash_index == std::string::npos)
         {
@@ -48,8 +47,8 @@ namespace data
 
 
         auto frames_json = cJSON_GetObjectItem(root, "frames"); //array of entries ('frames')
-        size_t len = cJSON_GetArraySize(frames_json);
-        for(size_t i = 0; i < len; ++i)
+        int len = cJSON_GetArraySize(frames_json);
+        for(int i = 0; i < len; ++i)
         {
             auto entry_json = cJSON_GetArrayItem(frames_json, i);
 

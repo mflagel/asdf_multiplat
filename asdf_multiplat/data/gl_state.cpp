@@ -188,6 +188,21 @@ namespace asdf
         push_fbo(fbo.id, x, y, width, height);
     }
 
+    void gl_state_t::push_fbo(GLuint fbo_id, GLint x, GLint y, uint32_t width, uint32_t height)
+    {
+        push_fbo(fbo_id, x, y
+            , unsigned_to_signed(width)
+            , unsigned_to_signed(height)
+            );
+    }
+    void gl_state_t::push_fbo(framebuffer_t const& fbo, GLint x, GLint y, uint32_t width, uint32_t height)
+    {
+        push_fbo(fbo.id, x, y
+            , unsigned_to_signed(width)
+            , unsigned_to_signed(height)
+            );
+    }
+
     void gl_state_t::pop_fbo()
     {
         ASSERT(!fbo_stack.empty(), "");
@@ -217,6 +232,11 @@ namespace asdf
         ASSERT(!CheckGLError(), "error sending data to buffer");
     }
 
+    void gl_state_t::buffer_data(gl_buffer_object_t const& buffer, size_t size, const GLvoid * data)
+    {
+        buffer_data(buffer, convert_integer<size_t,GLsizeiptr>(size), data);
+    }
+
     void gl_state_t::init_render_target(framebuffer_t const& fbo, texture_t const& texture)
     {
         scoped_fbo_t scoped(fbo, 0, 0, texture.width, texture.height);
@@ -231,7 +251,7 @@ namespace asdf
         GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
         glDrawBuffers(1, &draw_buffers);
 
-        auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        GLenum gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "Broken FBO %i  Status: 0x%0x\nError: %s", fbo.id, gl_fbo_status, get_fbo_status_string(gl_fbo_status));
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -281,7 +301,7 @@ namespace asdf
 
 
     /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCheckFramebufferStatus.xhtml
-    const/*expr*/ char* get_fbo_status_string(GLint status_code)
+    const/*expr*/ char* get_fbo_status_string(GLenum status_code)
     {
         switch(status_code)
         {

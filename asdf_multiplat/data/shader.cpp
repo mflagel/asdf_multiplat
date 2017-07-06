@@ -48,7 +48,7 @@ namespace asdf {
                 , &name_len, &num, &type, name_buffer);
 
             name_buffer[name_len] = 0;
-            GLuint location = glGetUniformLocation(shader_program_id, name_buffer);
+            GLint location = glGetUniformLocation(shader_program_id, name_buffer);
 
             uniforms[name_buffer] = location;
         }
@@ -58,11 +58,11 @@ namespace asdf {
 
         for (int i = 0; i < total; i++)
         {
-            glGetActiveAttrib(shader_program_id, (GLuint)i, sizeof(name_buffer)-1
+            glGetActiveAttrib(shader_program_id, GLuint(i), sizeof(name_buffer)-1
                 , &name_len, &num, &type, name_buffer);
 
             name_buffer[name_len] = 0;
-            GLuint location = glGetAttribLocation(shader_program_id, name_buffer);
+            GLint location = glGetAttribLocation(shader_program_id, name_buffer);
 
             attributes[name_buffer] = location;
         }
@@ -117,7 +117,7 @@ namespace asdf {
     /*static*/GLuint shader_t::create_shader_program(const GLuint vs, const GLuint fs) 
     {
         //create
-        int shader_program = glCreateProgram();
+        GLuint shader_program = glCreateProgram();
         ASSERT(CheckGLError() == 0, "Error creating shader program");
 
         //attach
