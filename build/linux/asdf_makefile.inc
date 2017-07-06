@@ -74,11 +74,10 @@ CLANG_EXTENSIONS := -fms-extensions
 # DAS_FLAGS        := -g -pedantic -fmacro-backtrace-limit=20
 DAS_FLAGS        := -g
 CFLAGS  		 := $(DAS_FLAGS) $(WARNING_FLAGS) $(CLANG_EXTENSIONS)
-# use deffered assignment for CPPFLAGS so it will include anything CFLAGS gets later
-# CPP_SPECIFIC_FLAGS := -stdlib=libstdc++ -std=c++1z
 CPP_SPECIFIC_FLAGS := -std=c++1z
+# use defered assignment for CPPFLAGS so it will include anything CFLAGS gets later
 CPPFLAGS 		  = $(CFLAGS) $(CPP_SPECIFIC_FLAGS)
-LINK_FLAGS       := -L/usr/lib
+LINK_FLAGS       += -L/usr/lib
 
 ifndef PROJNAME
 $(error PROJNAME not defined)
