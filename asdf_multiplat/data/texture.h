@@ -21,20 +21,20 @@ namespace asdf {
     struct texture_t 
     {
         std::string name = "";
-        GLuint texture_id = 9001;
-        int width = -1;
-        int height = -1;
-        int halfwidth = -1;
-        int halfheight = -1;
-        int format = -1;
+        GLuint texture_id   = UINT32_MAX;
+        uint32_t width      = UINT32_MAX;
+        uint32_t height     = UINT32_MAX;
+        uint32_t halfwidth  = UINT32_MAX;
+        uint32_t halfheight = UINT32_MAX;
+        GLenum format       = UINT32_MAX;
         //int numChannels = 0;
         bool is_compressed = false;
         GLint types[5];
 
-        inline GLuint    get_textureID() const { return texture_id; }
-        inline size_t    get_width()     const { return width;      }
-        inline size_t    get_height()    const { return height;     }
-        inline glm::vec2 get_size()      const { return glm::vec2(width, height); }
+        inline GLuint     get_textureID() const { return texture_id; }
+        inline uint       get_width()     const { return width;      }
+        inline uint       get_height()    const { return height;     }
+        inline glm::uvec2 get_size()      const { return glm::uvec2(width, height); }
 
         texture_t();
 
