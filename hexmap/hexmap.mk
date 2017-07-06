@@ -1,9 +1,7 @@
 ###############################
 PROJNAME = hexmap
-# BIN_OUT = $(BINPATH)/$(PROJNAME)
 
 # INVOCATION = 1
-DEBUG = 1
 
 SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
 
@@ -17,11 +15,7 @@ BINPATH = $(PROJPATH)/$(PROJNAME)/bin/linux/x86
 ############ LIBS #############
 LIBS += sdl2 gl glew ftgl
 
-LINK_FLAGS_CLANG += -L$(LIBPATH) -rpath $(LIBPATH) -lasdfm -lSOIL
-LINK_FLAGS_GCC += -L$(LIBPATH) -Wl,-rpath,$(LIBPATH) -lasdfm -lSOIL
-
-LINK_FLAGS += $(LINK_FLAGS_GCC)
-
+LINK_FLAGS += -L$(LIBPATH) -Wl,-rpath,$(LIBPATH) -lasdfm -lSOIL -lstdc++fs
 ###############################
 
 ########## INCLUDES ###########
@@ -57,13 +51,17 @@ SRCPATH		= $(PROJPATH)/$(PROJNAME)/src
 SOURCES = $(SRCPATH)/main/main.cpp \
 		  $(SRCPATH)/main/stdafx.cpp \
 		  $(SRCPATH)/main/hexmap.cpp \
-          $(SRCPATH)/data/hex_grid.cpp \
+          $(SRCPATH)/data/_hex_grid.cpp \
           $(SRCPATH)/data/_hex_map.cpp \
+          $(SRCPATH)/data/hex_util.cpp \
           $(SRCPATH)/data/spline.cpp \
           $(SRCPATH)/data/terrain_bank.cpp \
+          $(SRCPATH)/data/terrain_brush.cpp \
           $(SRCPATH)/ui/hex_map.cpp \
+          $(SRCPATH)/ui/hex_grid.cpp \
           $(SRCPATH)/ui/hex_tile.cpp \
           $(SRCPATH)/ui/spline_renderer.cpp \
+          $(SRCPATH)/ui/terrain_brush_renderer.cpp \
           $(SRCPATH)/ui/minimap.cpp \
           $(SRCPATH)/editor/main/editor.cpp \
           $(SRCPATH)/editor/main/input.cpp \
