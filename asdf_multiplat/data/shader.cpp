@@ -11,17 +11,18 @@ using namespace asdf::util;
 
 namespace asdf {
 
-    shader_t::shader_t(std::string const& name, std::string vshader_filepath, std::string fshader_filepath)
-    : shader_t(name, vshader_filepath.c_str(), fshader_filepath.c_str())
+    shader_t::shader_t(std::string const& _name, std::string _vshader_filepath, std::string _fshader_filepath)
+    : shader_t(_name, _vshader_filepath.c_str(), _fshader_filepath.c_str())
     {
     }
 
-    shader_t::shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath)
-        : name(name)
-        , vertex_shader_id(load_shader(vshader_filepath, GL_VERTEX_SHADER))
-        , fragment_shader_id(load_shader(fshader_filepath, GL_FRAGMENT_SHADER))
-        , shader_program_id(create_shader_program(vertex_shader_id, fragment_shader_id))
+    shader_t::shader_t(std::string const& _name, const char* _vshader_filepath, const char* _fshader_filepath)
+        : name(_name)
+        , vertex_shader_id(load_shader(_vshader_filepath, GL_VERTEX_SHADER))
+        , fragment_shader_id(load_shader(_fshader_filepath, GL_FRAGMENT_SHADER))
+        , shader_program_id(UINT32_MAX)
     {
+        create_shader_program(vertex_shader_id, fragment_shader_id);
         load_uniforms_and_attributes();
         ASSERT(!CheckGLError(), "Error creating shader \'%s\'", name.c_str());
     }
@@ -99,7 +100,7 @@ namespace asdf {
         bool shader_error = CheckGLError(shader);
         if (shader_error) {
             LOG("--------Error in shader source:\n");
-            LOG(shader_src);
+            LOG("%s", shader_src);
 
 #ifdef _DEBUG
             int asdfa;

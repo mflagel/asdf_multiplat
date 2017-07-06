@@ -57,7 +57,7 @@ namespace asdf
     }
 
 
-    texture_t::texture_t(std::string const& _name, color_t* color_data, int _width, int _height, bool generate_mipmaps)
+    texture_t::texture_t(std::string const& _name, color_t* color_data, uint32_t _width, uint32_t _height, bool generate_mipmaps)
     : name{_name}
     , width{_width}
     , height{_height}
@@ -84,7 +84,7 @@ namespace asdf
             ASSERT(!CheckGLError(), "Error loading mipmaps for texture \"%s\" after loading from color_t array", name.c_str());
         }
 
-        LOG_IF(!CheckGLError(), "successfully created texture \"%s\" size {%zu, %zu} from color_t array", name.c_str(), width, height);
+        LOG_IF(!CheckGLError(), "successfully created texture \"%s\" size {%u, %u} from color_t array", name.c_str(), width, height);
     }
 
     texture_t::~texture_t()
