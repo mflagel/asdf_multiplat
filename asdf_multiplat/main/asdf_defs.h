@@ -81,7 +81,6 @@ using color_t = glm::vec4;
 
 
 
-
 #define ASSERTS_ENABLED
 
 //void asdf_fail(char const* condition, char const* file, int line, char const* msg, ...);
