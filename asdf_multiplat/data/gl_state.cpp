@@ -55,15 +55,15 @@ namespace asdf
 
         //TODO: store an enum and array of relevant gl info?
 
-        GLint max_uniform_components = 0;
+        max_uniform_components = 0;
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_uniform_components);
         LOG("Max Uniform Components: %i", max_uniform_components);
 
-        GLint max_texture_size = 0;
+        max_texture_size = 0;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
         LOG("Max Texture Size: %i", max_texture_size);
 
-        GLint max_texture_units = 0;
+        max_texture_units = 0;
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture_units);
         LOG("Max Texture Units: %i", max_texture_units);
 
@@ -169,8 +169,8 @@ namespace asdf
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
 
         ASSERT(!CheckGLError(), "GL Error binding framebuffer %i", fbo_id);
-        glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
-        ASSERT(!CheckGLError(), "GL Error setting viewport to %i,%i %i,%i", v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+        set_viewport(v);
+        ASSERT(!CheckGLError(), "GL Error setting viewport to %i,%i %u,%u", v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
     }
 
     void gl_state_t::push_fbo(framebuffer_t const& fbo, gl_viewport_t const& v)
@@ -196,7 +196,7 @@ namespace asdf
         if(!fbo_stack.empty())
         {
             auto const& v = fbo_stack.top().second;
-            glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+            set_viewport(v);
             ASSERT(!CheckGLError(), "GL Error setting viewport");
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_stack.top().first);
 
@@ -236,6 +236,13 @@ namespace asdf
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void gl_state_t::set_viewport(gl_viewport_t const& v)
+    {
+        glViewport(v.bottom_left.x, v.bottom_left.y
+                 , unsigned_to_signed(v.size.x)
+                 , unsigned_to_signed(v.size.y));
     }
 
 

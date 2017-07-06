@@ -25,6 +25,8 @@ namespace asdf
 
         std::vector<std::string> gl_extensions;
         GLint max_uniform_components = 0;
+        GLint max_texture_size = 0;
+        GLint max_texture_units = 0;
         size_t highest_glsl_version = 0;
 
         GLuint current_vao = 0;
@@ -63,6 +65,8 @@ namespace asdf
 
         void buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data);
         void init_render_target(framebuffer_t const&, texture_t const&);
+
+        void set_viewport(gl_viewport_t const& v);
 
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
