@@ -138,14 +138,16 @@ namespace asdf {
             int maxLength = 0;
             int length = 0;
             glGetProgramiv(shader_program, GL_INFO_LOG_LENGTH, &maxLength);
-            char* log = new char[maxLength];
+            maxLength = std::max(0, maxLength);
+            char* log = new char[size_t(maxLength)];
             glGetProgramInfoLog(shader_program, maxLength, &length, log);
 
             LOG("--- GL_INFO_LOG ---");
             LOG("%s", log);
             LOG("-------------------");
 
-            return GLuint(nullindex);
+            delete[] log;
+            return GLuint(UINT32_MAX);
         }
 
         return shader_program;
