@@ -1,8 +1,8 @@
 #pragma once
 
-#include "stdafx.h"
 #include <array>
-#include "cJSON/cJSON.h"
+
+#include "utilities/cjson_utils.h"
 
 namespace asdf
 {
