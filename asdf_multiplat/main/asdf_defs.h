@@ -5,14 +5,52 @@
 
 #define ASDF_UNUSED(x) (void)x
 
-#define ENDOF(container) container[container.size() - 1]
-
 
 //LOGGING MACROS     ## before VA_ARGS required by clang/gcc
 #define LOG(msg, ...) do{printf(msg, ##__VA_ARGS__); printf("\n");} while(0);
 #define LOG_IF(condition, msg, ...) do{ if(condition){LOG(msg, ##__VA_ARGS__);} }while(0);
 
 #define WARN_IF(condition, msg, ...) LOG_IF(condition, msg, ##__VA_ARGS__)
+
+
+
+#define ASSERTS_ENABLED
+
+#ifdef _MSC_VER
+#define DEBUG_BREAK __debugbreak()
+#else
+#include <signal.h>
+#define DEBUG_BREAK raise(SIGTRAP);
+#endif
+
+//Assertion code shamelessly copymodified from: 
+//http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
+
+//void asdf_fail(char const* condition, char const* file, int line, char const* msg, ...);
+void asdf_fail(char const* condition, char const* file, int line, ...);
+
+#ifdef ASSERTS_ENABLED  
+    #define ASSERT(cond, ...) \
+    do { \
+        if (!(cond)) { \
+            LOG("ASSERT FAILED: %s, %s, %i", #cond, __FILE__, __LINE__) \
+            LOG(__VA_ARGS__); \
+            DEBUG_BREAK; \
+        } \
+    } while(0)
+
+    //like assert(false, ...)
+    #define EXPLODE(...) \
+        do \
+        { \
+            LOG("EXPLOSION: %s, %i", __FILE__, __LINE__); \
+            LOG(__VA_ARGS__);\
+            DEBUG_BREAK; \
+        } while(0)
+#else  
+    #define ASSERT(condition) do { POW2_UNUSED(condition); } while (0)
+    #define EXPLODE(message, ...) do { POW2_UNUSED(condition); } while (0)
+#endif 
 
 
 
@@ -43,16 +81,6 @@ using color_t = glm::vec4;
 
 #endif
 
-//Assertion code shamelessly copymodified from: 
-//http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
-
-#ifdef _MSC_VER
-#define DEBUG_BREAK __debugbreak()
-#else
-#include <signal.h>
-#define DEBUG_BREAK raise(SIGTRAP);
-#endif
-
 
 #define PRAGMA(x) _Pragma(#x)
 #ifdef __clang__
@@ -79,32 +107,11 @@ using color_t = glm::vec4;
 #endif
 
 
+#ifndef UINT32_MAX
+#define UINT32_MAX = 4294967295U;
+#endif
 
 
-#define ASSERTS_ENABLED
 
-//void asdf_fail(char const* condition, char const* file, int line, char const* msg, ...);
-void asdf_fail(char const* condition, char const* file, int line, ...);
 
-#ifdef ASSERTS_ENABLED  
-    #define ASSERT(cond, ...) \
-    do { \
-        if (!(cond)) { \
-            LOG("ASSERT FAILED: %s, %s, %i", #cond, __FILE__, __LINE__) \
-            LOG(__VA_ARGS__); \
-            DEBUG_BREAK; \
-        } \
-    } while(0)
 
-    //like assert(false, ...)
-    #define EXPLODE(...) \
-        do \
-        { \
-            LOG("EXPLOSION: %s, %i", __FILE__, __LINE__); \
-            LOG(__VA_ARGS__);\
-            DEBUG_BREAK; \
-        } while(0)
-#else  
-    #define ASSERT(condition) do { POW2_UNUSED(condition); } while (0)
-    #define EXPLODE(message, ...) do { POW2_UNUSED(condition); } while (0)
-#endif 
