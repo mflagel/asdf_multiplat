@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "asdf_defs.h"
 #include "asdf_multiplat.h"
 #include "spritebatch.h"
 #include "content_manager.h"
@@ -10,6 +11,8 @@
 using namespace std;
 using namespace glm;
 using namespace asdf::util;
+
+DIAGNOSTIC_IGNORE(-Wcomment)
 
 namespace asdf {
 
@@ -30,8 +33,8 @@ namespace asdf {
     /* Initializes a batch with an optional view and/or proj matrix
     /************************************************************************/
     void spritebatch_t::begin(glm::mat4 const& view_matrix/*mat4()*/) {
-        float halfwidth = app.settings.resolution_width / 2.0f;
-        float halfheight = app.settings.resolution_height / 2.0f;
+        float halfwidth = app.render_target_size().x / 2.0f;
+        float halfheight = app.render_target_size().y / 2.0f;
 
         mat4 proj = ortho<float>(-halfwidth, halfwidth,
                             -halfheight, halfheight,
@@ -53,6 +56,7 @@ namespace asdf {
     /************************************************************************/
     /* Spritebatch Draw
     /* Add a sprite to a map indexed by texture used
+    /* src_rect is relative to the bottom_left of the texture (since that's the openGL {0,0} point)
     /************************************************************************/    
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, rectf_t dest_rect, color_t const& color/*vec4(1.0f)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
@@ -61,7 +65,10 @@ namespace asdf {
     }
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
         ASSERT(texture != nullptr, "Drawing a sprite with a null texture");
-        rect_t rect(0, 0, texture->get_width(), texture->get_height());
+
+        int32_t width = unsigned_to_signed(texture->get_width());
+        int32_t height = unsigned_to_signed(texture->get_height());
+        rect_t rect(0, 0, width, height);
         draw(texture, position, rect, color, scale, rotation);
     }
     void spritebatch_t::draw(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t const& color/*vec4(1.0f)*/, glm::vec2 const& scale/*vec2(1,1)*/, float rotation/*0*/) {
@@ -132,7 +139,7 @@ namespace asdf {
             //don't render things we can't see
             if(ftfont_pos.x < (screen_halfw * 2) && ftfont_pos.y > 0)
             {
-                text.font->FaceSize(text.face_size);
+                // text.font->FaceSize(text.face_size);
                 //text.font->Render(text.str.c_str(), -1, FTPoint(ftfont_pos.x, ftfont_pos.y));  /// FIXME
             }
         }

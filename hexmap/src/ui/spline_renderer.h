@@ -66,9 +66,9 @@ namespace ui
         void rebuild_all();
         bool rebuild_if_dirty();
 
-        void render();
-        void render_handles();
-        void render_some_spline_handles(std::vector<size_t> spline_indices);
+        void render() const;
+        void render_handles() const;
+        void render_some_spline_handles(std::vector<size_t> spline_indices) const;
 
 
     };

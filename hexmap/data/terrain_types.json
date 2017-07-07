@@ -1,32 +1,36 @@
 {
   "terrain" : [
-      {
-          "name" : "Dirt",
-          "asset" : "Terrain_Tiles/dirt.png"
-      },
-      {
-          "name" : "Grass",
-          "asset" : "Terrain_Tiles/grass.png"
-      },
-      {
-          "name" : "Stone",
-          "asset" : "Terrain_Tiles/stone.png"
-      },
-      {
-          "name" : "Sand",
-          "asset" : "Terrain_Tiles/sand.png"
-      },
-      {
-          "name" : "Water",
-          "asset" : "Terrain_Tiles/water.png"
-      },
-      {
-          "name" : "Water2",
-          "asset" : "Terrain_Tiles/water2.png"
-      },
-      {
-          "name" : "Ice",
-          "asset" : "Terrain_Tiles/ice.png"
-      }
+        {
+            "name" : "Grass",
+            "filepath" : "../assets/Terrain_Tiles/grass.png"
+        },
+        {
+            "name" : "Dirt",
+            "filepath" : "../assets/Terrain_Tiles/dirt.png"
+        },
+        {
+            "name" : "Stone",
+            "filepath" : "../assets/Terrain_Tiles/stone.png"
+        },
+        {
+            "name" : "Sand",
+            "filepath" : "../assets/Terrain_Tiles/sand.png"
+        },
+        {
+            "name" : "Water",
+            "filepath" : "../assets/Terrain_Tiles/water.png"
+        },
+        {
+            "name" : "Water2",
+            "filepath" : "../assets/Terrain_Tiles/water2.png"
+        },
+        {
+            "name" : "Ice",
+            "filepath" : "../assets/Terrain_Tiles/ice.png"
+        },
+        {
+            "name" : "Test",
+            "filepath" : "C:\\Users\\Mathias\\Documents\\Programming\\AsdfMultiplat\\assets\\textures\\debug_purple.png"
+        }
   ]
 }

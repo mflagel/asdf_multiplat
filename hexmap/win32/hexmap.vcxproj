@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_NoQt|Win32">
+      <Configuration>Debug_NoQt</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_NoQt|x64">
+      <Configuration>Debug_NoQt</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug_Static|Win32">
       <Configuration>Debug_Static</Configuration>
       <Platform>Win32</Platform>
@@ -28,9 +36,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ext\cJSON\cJSON.c" />
-    <ClCompile Include="..\src\data\hex_grid.cpp" />
+    <ClCompile Include="..\src\data\hex_util.cpp" />
     <ClCompile Include="..\src\data\spline.cpp" />
     <ClCompile Include="..\src\data\terrain_bank.cpp" />
+    <ClCompile Include="..\src\data\terrain_brush.cpp" />
+    <ClCompile Include="..\src\data\_hex_grid.cpp" />
     <ClCompile Include="..\src\data\_hex_map.cpp" />
     <ClCompile Include="..\src\editor\command_actions\command_actions.cpp" />
     <ClCompile Include="..\src\editor\main\editor.cpp" />
@@ -38,16 +48,21 @@
     <ClCompile Include="..\src\main\hexmap.cpp" />
     <ClCompile Include="..\src\main\main.cpp" />
     <ClCompile Include="..\src\main\stdafx.cpp" />
+    <ClCompile Include="..\src\ui\hex_grid.cpp" />
     <ClCompile Include="..\src\ui\hex_map.cpp" />
     <ClCompile Include="..\src\ui\hex_tile.cpp" />
+    <ClCompile Include="..\src\ui\minimap.cpp" />
     <ClCompile Include="..\src\ui\spline_renderer.cpp" />
+    <ClCompile Include="..\src\ui\terrain_brush_renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\data\hex_grid.h" />
     <ClInclude Include="..\src\data\hex_map.h" />
+    <ClInclude Include="..\src\data\hex_util.h" />
     <ClInclude Include="..\src\data\map_objects.h" />
     <ClInclude Include="..\src\data\spline.h" />
     <ClInclude Include="..\src\data\terrain_bank.h" />
+    <ClInclude Include="..\src\data\terrain_brush.h" />
     <ClInclude Include="..\src\editor\command_actions\command_actions.h" />
     <ClInclude Include="..\src\editor\main\editor.h" />
     <ClInclude Include="..\src\editor\main\input.h" />
@@ -55,7 +70,9 @@
     <ClInclude Include="..\src\main\stdafx.h" />
     <ClInclude Include="..\src\ui\hex_map.h" />
     <ClInclude Include="..\src\ui\hex_tile.h" />
+    <ClInclude Include="..\src\ui\minimap.h" />
     <ClInclude Include="..\src\ui\spline_renderer.h" />
+    <ClInclude Include="..\src\ui\terrain_brush_renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{379181A8-C1E5-4B27-8679-551DABDCB435}</ProjectGuid>
@@ -71,6 +88,12 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -95,6 +118,12 @@
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -113,6 +142,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -120,6 +152,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,6 +179,15 @@
     <TargetName>$(ProjectName)_static_D</TargetName>
     <IntDir>../obj/win32/$(PlatformShortName)/$(Configuration)/</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../src/main;../src;../../;../../asdf_multiplat;../../include/;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>../../lib;../../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <SourcePath>../;../../ext/;/main;/data;/ui;/utilities;$(VC_SourcePath)</SourcePath>
+    <OutDir>../../lib/win32/$(PlatformShortName)/</OutDir>
+    <TargetName>$(ProjectName)_static_D</TargetName>
+    <IntDir>../obj/win32/$(PlatformShortName)/$(Configuration)/</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../src/main;../src;../../;../../asdf_multiplat;../../include/;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -153,6 +197,15 @@
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>../src/main;../src;../../;../../asdf_multiplat;../../include/;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>../../lib;../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <OutDir>../../lib/win32/$(PlatformShortName)/</OutDir>
+    <IntDir>../obj/win32/$(PlatformShortName)/$(Configuration)/</IntDir>
+    <TargetName>$(ProjectName)_static_D</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../src/main;../src;../../;../../asdf_multiplat;../../include/;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>../../lib;../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
@@ -193,6 +246,19 @@
       <AdditionalDependencies>legacy_stdio_definitions.lib;AsdfMultiplat_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;AsdfMultiplat_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -207,6 +273,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_NoQt|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>

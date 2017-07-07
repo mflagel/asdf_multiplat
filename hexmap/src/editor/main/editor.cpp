@@ -6,10 +6,16 @@
 
 #include "asdf_multiplat/data/content_manager.h"
 
+#include "data/spline.h"
+
 using namespace std;
 using namespace glm;
 
-namespace asdf {
+namespace asdf
+{
+    using namespace util;
+    using namespace data;
+
 namespace hexmap {
 
     using spline_t = data::spline_t;
@@ -17,7 +23,9 @@ namespace hexmap {
 namespace editor
 {
     const/*expr*/ color_t selection_overlay_color = color_t(1.0, 1.0, 1.0, 0.5f);
-    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 10.0f); // zoom is camera.position.z ^ 2
+    const/*expr*/ glm::vec3 default_camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    constexpr char terrain_types_json_filename[] = "terrain_types.json";
 
     const/*expr*/ data::line_node_t default_spline_style = {
           vec2{0.0f,0.0f}                   //pos
@@ -50,31 +58,57 @@ namespace editor
     {
         hexmap_t::init();
 
+        //load default terrain and map objects
+        auto data_dir = find_folder("data");
+        rendered_map->load_terrain_assets(data_dir + "/" + string(terrain_types_json_filename));
+        rendered_map->objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
+
 #ifdef DEBUG
-        new_map_action(uvec2(16,16));
+        new_map_action("", uvec2(16,16));
 #else
-        new_map_action(uvec2(1,1));
+        new_map_action("", uvec2(1,1));
 #endif
 
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
+
+
+        {
+            using namespace data;
+            terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
+            terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+            terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+            terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+            // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+            // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+            // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+            terrain_brushes.push_back(terrain_brush_hexagon(1));
+            terrain_brushes.push_back(terrain_brush_hexagon(2));
+            terrain_brushes.push_back(terrain_brush_hexagon(3));
+            terrain_brushes.push_back(terrain_brush_hexagon(5));
+
+            terrain_brush_renderer = std::make_unique<ui::terrain_brush_renderer_t>();
+            terrain_brush_renderer->init(Content.create_shader_highest_supported("passthrough"));
+            terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+        }
+    }
+
+    void editor_t::resize(uint32_t w, uint32_t h)
+    {
+        hexmap_t::resize(w, h);
     }
 
     void editor_t::render()
     {
         hexmap_t::render();
 
-        //rendered_map->spline_renderer.render_handles();
+        render_current_brush();
 
-        //testing   render_some_spline_handles()
         if(wip_spline)
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-
-            /// temp disabled while I work on line thickness.
-            /// was causing a GL error
-            // rendered_map->spline_renderer.render_some_spline_handles(inds);
+            rendered_map->spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
@@ -106,32 +140,71 @@ namespace editor
         //render selection box
         if(object_selection.object_indices.size() > 0)
         {
-            auto const& quad = app.renderer->quad; //no sense making a new one
+            auto const& box = app.renderer->box; //no sense making a new one
 
             auto& shader = rendered_map->shader;
 
             glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
             glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
 
-            shader->world_matrix = glm::mat4();
-            shader->world_matrix *= glm::scale(glm::mat4(), vec3(bbox_size, 0.0f));
-            shader->world_matrix *= glm::translate(glm::mat4(), vec3(trans, 0.0f));
+            shader->world_matrix = mat4{};
+            shader->world_matrix = glm::translate(shader->world_matrix, vec3(trans, 0.0f));
+            shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
+            
 
-            quad.render(GL_LINE_LOOP);
+            auto const& camera = rendered_map->camera;
+            shader->view_matrix       = camera.view_matrix();
+            shader->projection_matrix = camera.projection_ortho();
+
+            GL_State->bind(shader);
+            shader->update_wvp_uniform();
+
+            box.render(GL_LINE_LOOP);
         }
     }
 
-    void editor_t::new_map_action(glm::uvec2 const& size)
+    void editor_t::render_current_brush()
     {
-        map_data = data::hex_map_t(size);
+        switch(current_tool)
+        {
+            case terrain_paint:
+            {
+                ASSERT(terrain_brush_renderer, "cannot render terrain brush without a terrain_brush_renderer");
+                ASSERT(terrain_brush_renderer->shader, "terrain_brush_renderer has no shader");
+
+                //TODO: setup terrain brush shader WVP
+                auto& shader = terrain_brush_renderer->shader;
+
+                shader->world_matrix = glm::mat4();
+
+                shader->world_matrix[3][0] = brush_pos.x;
+                shader->world_matrix[3][1] = brush_pos.y;
+
+                shader->view_matrix       = rendered_map->shader->view_matrix ;
+                shader->projection_matrix = rendered_map->shader->projection_matrix;
+
+                terrain_brush_renderer->render();
+
+                break;
+            }
+        };
+    }
+
+
+    void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
+    {
+        map_data = data::hex_map_t(map_name, size, default_cell_style);
         action_stack.clear();
 
         //reset camera
         rendered_map->camera_controller.position = default_camera_position;
         rendered_map->update(0.0f);
+        rendered_map->camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map->camera.aspect_ratio);
 
         map_filepath = "";
         map_is_dirty = false;
+
+        signal_data_changed();
     }
 
     void editor_t::save_action()
@@ -154,6 +227,8 @@ namespace editor
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
+
+        signal_data_changed();
     }
 
     bool editor_t::undo()
@@ -161,6 +236,7 @@ namespace editor
         if(action_stack.can_undo())
         {
             action_stack.undo();
+            signal_data_changed();
             return true;
         }
 
@@ -172,6 +248,7 @@ namespace editor
         if(action_stack.can_redo())
         {
             action_stack.redo();
+            signal_data_changed();
             return true;
         }
 
@@ -318,7 +395,44 @@ namespace editor
     }
 
 
+    void editor_t::signal_data_changed()
+    {
+        if(map_changed_callback)
+            map_changed_callback();
+    }
+
+    void editor_t::push_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push(move(action));
+        signal_data_changed();
+    }
+
+    void editor_t::push_and_execute_action(std::unique_ptr<editor_action_t>&& action)
+    {
+        action_stack.push_and_execute(move(action));
+        signal_data_changed();
+    }
+
+
     /// Terrain
+    void editor_t::set_custom_terrain_brush(data::terrain_brush_t const& new_brush)
+    {
+        //0th brush is custom brush
+        if(terrain_brushes.size() == 0)
+        {
+            terrain_brushes.push_back(new_brush);
+        }
+        else
+        {
+            terrain_brushes[0] = new_brush;
+        }
+
+        current_terrain_brush_index = 0;
+        
+        terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+    }
+
+
     void editor_t::paint_terrain_start()
     {
         painted_terrain_coords.clear();
@@ -328,13 +442,28 @@ namespace editor
     /// and then paint it with the editor's current_tile_id
     bool editor_t::paint_terrain_at_coord(glm::ivec2 coord)
     {
-        if(map_data.hex_grid.is_in_bounds(coord))
+        //test
+        auto overlap_coords = data::get_brush_grid_overlap(current_terrain_brush(), map_data.hex_grid, coord);
+
+        for(auto const& coord: overlap_coords)
         {
+            ASSERT(map_data.hex_grid.is_in_bounds(coord), "overlap coord OOB");
+
             auto& cell = map_data.hex_grid.cell_at(coord);
             painted_terrain_coords.insert({coord, cell.tile_id});
             cell.tile_id = current_tile_id;
-            return true;
         }
+
+        return overlap_coords.size() > 0;
+        //
+
+        //if(map_data.hex_grid.is_in_bounds(coord))
+        //{
+        //    auto& cell = map_data.hex_grid.cell_at(coord);
+        //    painted_terrain_coords.insert({coord, cell.tile_id});
+        //    cell.tile_id = current_tile_id;
+        //    return true;
+        //}
 
         return false;
     }
@@ -343,6 +472,12 @@ namespace editor
     bool editor_t::paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick)
     {
         auto vec = p2_world - p1_world;
+
+        if(vec.x == 0.0f && vec.y == 0.0f)
+        {
+            return false;
+        }
+
         auto len = glm::length(vec);
         auto unit = glm::normalize(vec);
 
@@ -366,7 +501,7 @@ namespace editor
     {
         if(!painted_terrain_coords.empty())
         {
-            action_stack.push(make_unique<paint_tiles_action_t>
+            push_action(make_unique<paint_tiles_action_t>
                 ( map_data.hex_grid
                 , std::move(painted_terrain_coords)
                 , current_tile_id
@@ -386,15 +521,15 @@ namespace editor
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
 
-        data::map_object_t obj{current_object_id, position, size, glm::vec4(1), glm::vec2(1,1), 0.0f};
+        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
 
-        action_stack.push_and_execute(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+        push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
     void editor_t::delete_object(size_t object_index)
     {
         auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
-        action_stack.push_and_execute(std::move(cmd));
+        push_and_execute_action(std::move(cmd));
     }
 
 
@@ -498,6 +633,7 @@ namespace editor
         }
     }
 
+    ///FIXME: use the new spline_t::loops property
     void editor_t::finish_spline(bool spline_loops)
     {
         ASSERT(wip_spline, "finishing a spline that hasnt even started");
@@ -534,9 +670,8 @@ namespace editor
 
         ASSERT(wip_spline->control_nodes.size() >= 0, "apparently control_nodes might have a negtaive length, which I thought was impossible");
 
-        /// FIXME: bad_alloc when finishing a linear polyline
         auto cmd = make_unique<add_spline_action_t>(map_data, *wip_spline);
-        action_stack.push(std::move(cmd));
+        push_action(std::move(cmd));
 
         wip_spline = nullptr;
         wip_spline_node = nullptr;
@@ -579,8 +714,18 @@ namespace editor
     }
 
     object_selection_t::object_selection_t(editor_t& _e)
-    : editor(_e)
+    : base_selection_t{vec2{}, vec2{},_e}
     {
+    }
+
+    bool object_selection_t::operator ==(object_selection_t const& rhs) const
+    {
+        return object_indices == rhs.object_indices && spline_indices == rhs.spline_indices;
+    }
+
+    bool object_selection_t::operator !=(object_selection_t const& rhs) const
+    {
+        return !(*this == rhs);
     }
 
     bool object_selection_t::add_object_index(size_t obj_ind)
@@ -624,6 +769,79 @@ namespace editor
             lower_bound.x = std::min(lower_bound.x, obj.position.x - obj.size_d2.x);
             lower_bound.y = std::min(lower_bound.y, obj.position.y - obj.size_d2.y);
         }
+    }
+
+    spline_node_selection_t::spline_node_selection_t(editor_t& _editor)
+    : base_selection_t{vec2{}, vec2{},_editor}
+    {
+    }
+
+    bool spline_node_selection_t::add_node_index(spline_index_t _si, spline_node_index_t _ni)
+    {
+        auto x = node_indices[_si].insert(_ni);
+        recalc_bounds();
+        return x.second;
+    }
+
+    bool spline_node_selection_t::remove_node_index(spline_index_t _si, spline_node_index_t _ni)
+    {
+        bool was_removed = false;
+        if(node_indices.count(_si) > 0)
+        {
+            auto n = node_indices[_si].erase(_ni);
+            was_removed = n > 0;
+        }
+        
+        recalc_bounds();
+        return was_removed;
+    }
+
+    bool spline_node_selection_t::add_all_nodes_from_spline(spline_index_t _si)
+    {
+        bool nodes_were_added = false;
+        auto& node_set = node_indices[_si];
+
+        ASSERT(editor.map_data.splines.size() >= _si, "no spline at index %zu", _si);
+        auto const& spline = editor.map_data.splines[_si];
+        for(size_t i = 0; i < spline.nodes.size(); ++i)
+        {
+            auto x = node_set.insert(i);
+            nodes_were_added |= x.second;
+        }
+
+        recalc_bounds();
+        return nodes_were_added;
+    }
+
+    bool spline_node_selection_t::remove_all_nodes_from_spline(spline_index_t _si)
+    {
+        bool was_removed = false;
+
+        if(node_indices.count(_si) > 0)
+        {
+            auto& node_set = node_indices[_si];
+            ASSERT(editor.map_data.splines.size() >= _si, "no spline at index %zu", _si);
+            auto const& spline = editor.map_data.splines[_si];
+            for(size_t i = 0; i < spline.nodes.size(); ++i)
+            {
+                auto n = node_set.erase(i);
+                was_removed |= n > 0;
+            }
+        }
+
+        recalc_bounds();
+        return was_removed;
+    }
+
+    void spline_node_selection_t::clear_selection()
+    {
+        node_indices.clear();
+        recalc_bounds();
+    }
+
+    void spline_node_selection_t::recalc_bounds()
+    {
+        
     }
 
 }

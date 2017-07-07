@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "spline_renderer.h"
 
+#include <algorithm>
 #include <glm/gtx/spline.hpp>
 #include <glm/gtx/compatibility.hpp> //for lerp
 
@@ -148,14 +149,25 @@ namespace ui
                 verts[3].position = end_node.position;
 
                 /// extrusion vector  TODO: support joints
-                vec2 segment_vector = end_node.position - start_node.position;
+                vec2 segment_vector = end_node.position - start_node.position; //start with line vector
+                
+                /// TEMP (this doesn't do line segment joins properly
+                // rotate 90 degrees
+                segment_vector = vec2(segment_vector.y, -segment_vector.x);
+                ///
+
+                //normalize (I'll mult by line thickness later)
                 segment_vector.x += 0.0000001f * (segment_vector.x == 0.0f && segment_vector.y == 0.0f);
                 segment_vector = glm::normalize(segment_vector);
 
-                verts[0].extrusion = vec2(segment_vector.y, -segment_vector.x); //rotate seg_vec forward  90 degrees
-                verts[1].extrusion = vec2(-segment_vector.y, segment_vector.x); //rotate seg_vec backward 90 degrees
+                //set to segment vector (ie: unit vector) for now
+                //I'll use it later when creating the actual extrusion vector
+                verts[0].extrusion = segment_vector;
+                verts[1].extrusion = -segment_vector;
+
                 verts[2].extrusion = verts[0].extrusion;
                 verts[3].extrusion = verts[1].extrusion;
+
 
                 // bake thickness into extrusion vector
                 auto s_thc = start_node.thickness / 2.0f;
@@ -165,23 +177,29 @@ namespace ui
                 verts[2].extrusion *= e_thc;
                 verts[3].extrusion *= e_thc;
 
+                /// FIXME
                 //handle edge joints with previous segment
-                if(segment_index > 0)
-                {
-                    auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
+                // if(segment_index > 0)
+                // {
+                //     auto* prev_verts = rendered_vertex_lists[vert_list_index].data() + ((segment_index - 1) * 4);
 
-                    //TODO: implement miter limit
+                //     //TODO: implement miter limit
 
-                    //just add verts together to get correct direciton
-                    auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
-                    auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
+                //     // actual extrusion vector is gained by just adding
+                //     // the unit vectors of the two segments
+                //     auto top_extr = prev_verts[3].extrusion + verts[1].extrusion;
+                //     auto btm_extr = prev_verts[2].extrusion + verts[0].extrusion;
                     
-                    prev_verts[3].extrusion = top_extr;
-                    verts[1].extrusion = top_extr;
+                //     prev_verts[3].extrusion = top_extr;
+                //     verts[1].extrusion = top_extr;
 
-                    prev_verts[2].extrusion = btm_extr;
-                    verts[0].extrusion = btm_extr;
-                }
+                //     prev_verts[2].extrusion = btm_extr;
+                //     verts[0].extrusion = btm_extr;
+                // }
+                // else
+                // {
+                //     //handle 0th segment
+                // }
 
                 /// normal (1 or -1, used to interpolate in fragment shader and get distance to the line center
                 verts[0].normal = -1.0f;
@@ -262,7 +280,7 @@ namespace ui
         return rebuilt;
     }
 
-    void spline_renderer_t::render()
+    void spline_renderer_t::render() const
     {
         ASSERT(shader, "cannot render splines without a shader");
 
@@ -275,18 +293,13 @@ namespace ui
         GL_State->bind(shader);
         shader->update_wvp_uniform();
 
-        // spline_geometry.render(GL_LINE_STRIP);
-
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         spline_geometry.render(GL_TRIANGLE_STRIP);
 
         ASSERT(!CheckGLError(), "Error in spline_renderer_t::render()");
     }
 
     ///TODO: factor out similarities between this and the above render func?
-    void spline_renderer_t::render_handles()
+    void spline_renderer_t::render_handles() const
     {
         ASSERT(shader, "");
 
@@ -301,30 +314,34 @@ namespace ui
         handles_geometry.render(GL_LINE_STRIP);
     }
 
-    void spline_renderer_t::render_some_spline_handles(std::vector<size_t> spline_indices)
+    void spline_renderer_t::render_some_spline_handles(std::vector<size_t> spline_indices) const
     {
         std::vector<GLint> first_vert_indices;
         std::vector<GLsizei> vert_counts;
 
-        size_t cur_node_count = 0;
-        size_t counting_spline_ind = 0;
+        size_t current_spline_ind = 0;
+        size_t current_primative_index = 0;
 
-        for(auto const& spline_ind : spline_indices)
+        std::sort(spline_indices.begin(), spline_indices.end()); //should I just require the list to be pre-sorted?
+
+        for(auto const& spline_ind_to_render : spline_indices)
         {
-            for(; counting_spline_ind < spline_ind; ++counting_spline_ind)
+            // because each spline has a variable number of nodes, and a variable number of
+            // handle primatives per node, count upwards to get the primative_index of the
+            // spline to be rendered
+            // OPTIMIZE: cache this
+            for(; current_spline_ind < spline_ind_to_render; ++current_spline_ind)
             {
-                cur_node_count += spline_node_count_cache[counting_spline_ind];
+                auto const& cur_spline = (*spline_list)[current_spline_ind];
+                current_primative_index += cur_spline.nodes.size() * handle_primatives_per_node[cur_spline.spline_type];
             }
 
-            auto const& spline = (*spline_list)[spline_ind];
+            auto const& spline = (*spline_list)[spline_ind_to_render];
 
             //grab the subset of handles_geometry.first_vert_indices and .vert_counts corrisponding to this spline
-            //each node in a spline has a handle
-            //each handle has four primatives (square node, two diamond cnodes, and a line connecting the cnodes)
-
-            constexpr size_t primatives_per_node = 4;
-            size_t primatives_subset_index = cur_node_count * primatives_per_node;
-            size_t primatives_subset_end_index = primatives_subset_index + (spline.nodes.size() * primatives_per_node);
+            size_t primatives_subset_index = current_primative_index;
+            size_t num_handle_prims = spline.nodes.size() * handle_primatives_per_node[spline.spline_type];
+            size_t primatives_subset_end_index = current_primative_index + num_handle_prims;
 
             first_vert_indices.insert(first_vert_indices.begin()
                                     , handles_geometry.first_vert_indices.begin() + primatives_subset_index

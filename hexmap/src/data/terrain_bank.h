@@ -15,15 +15,23 @@ namespace data
         struct entry_t
         {
             std::string name;
-            std::string asset;
+            std::experimental::filesystem::path filepath;
 
             void from_JSON(cJSON*);
         };
 
+        using asdf::data::texture_bank_t::texture_bank_t;
 
         std::vector<std::string> asset_names;
+        std::vector<glm::vec4> terrain_colors;
 
-        void load_from_file(std::string const& filepath);
+    private:
+        framebuffer_t colors_fbo;
+
+    public:
+
+        void load_from_file(std::experimental::filesystem::path const& filepath);
+        void rebuild_colors();
     };
 }
 }

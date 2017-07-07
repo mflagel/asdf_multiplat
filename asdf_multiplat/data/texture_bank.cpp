@@ -12,6 +12,8 @@
 using namespace std;
 using namespace glm;
 
+using namespace std::experimental::filesystem;
+
 namespace asdf
 {
     using namespace util;
@@ -19,71 +21,33 @@ namespace asdf
 namespace data
 {
 
-    texture_bank_t::texture_bank_t()
-    : atlas_texture("hex texture atlas", nullptr, atlas_dim, atlas_dim)
+    texture_bank_t::texture_bank_t(string _name)
+    : name(_name)
+    , atlas_texture(_name + string(" atlas"), nullptr, atlas_dim, atlas_dim)
     {
         glBindTexture(GL_TEXTURE_2D, atlas_texture.texture_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-        glBindTexture(GL_TEXTURE_2D, 0);
 
-
-        ASSERT(!CheckGLError(), "GL Error Before Initializing texture_bank_t");
-
-        {
-            GL_State->bind(atlas_fbo);
-            //glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, atlas_texture.texture_id, 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, atlas_texture.texture_id, 0);
-
-            GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
-            glDrawBuffers(1, &draw_buffers);
-            ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "GL Error creating texture bank framebuffer");
-
-            glViewport(0,0,atlas_texture.width, atlas_texture.height);
-
-            glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            GL_State->unbind_fbo();
-        }
-
+        GL_State->init_render_target(atlas_fbo, atlas_texture);
 
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
 
-    void texture_bank_t::load_from_list_file(std::string const& filepath)
+    void texture_bank_t::add_texture(path const& texture_path)
     {
-        std::string json_str = read_text_file(filepath);
-        cJSON* root = cJSON_Parse(json_str.c_str());
-        ASSERT(root, "Error loading imported textures json file");
+        ASSERT(is_regular_file(texture_path), "File not found %s", texture_path.c_str());
 
-        vector<const char*> textures;
-        CJSON_GET_STR_VECTOR(textures);
-
-        add_textures(textures);
-        
-        cJSON_Delete(root);
-    }
-
-    void texture_bank_t::add_texture(std::string const& filepath)
-    {
-        auto prev_fbo = GL_State->current_framebuffer;
-
-        ASSERT(is_file(filepath), "File not found %s", filepath.c_str());
-        texture_t new_texture(filepath, SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
+        texture_t new_texture(texture_path.string(), SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
 
         //ASSERT(new_texture.format == atlas_texture.format, "Color format of texture must match the atlas (GL_RGBA)   %s", filepath.c_str());
         //ASSERT(new_texture.types[0] == atlas_texture.types[0], "");
 
-        int dest_loc_x = (saved_textures.size() % max_saved_textures_1d) * saved_texture_dim;
-        int dest_loc_y = (saved_textures.size() / max_saved_textures_1d) * saved_texture_dim;
+        int64_t dest_loc_x = (saved_textures.size() % max_saved_textures_1d) * saved_texture_dim;
+        int64_t dest_loc_y = (saved_textures.size() / max_saved_textures_1d) * saved_texture_dim;
 
         dest_loc_x += saved_texture_dim_d2;
         //dest_loc_y += saved_texture_dim_d2;
 
-
-        GL_State->bind(atlas_fbo);
-        glViewport(0,0,atlas_texture.width, atlas_texture.height);
+        scoped_fbo_t scoped(atlas_fbo, 0,0,atlas_texture.width, atlas_texture.height);
 
         ASSERT(!CheckGLError(), "");
         auto& screen_shader = app.renderer->screen_shader;
@@ -100,32 +64,42 @@ namespace data
 
         glBindTexture(GL_TEXTURE_2D, new_texture.texture_id);
 
-        app.renderer->quad.render();
-        
-        //re-bind prev fbo
-        glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo);
-        GL_State->current_framebuffer = prev_fbo;
+        // app.renderer->quad.render();
+        app.renderer->quad.render_without_vao(screen_shader);
 
 
-        saved_textures.push_back(saved_texture_t{filepath});
+        saved_textures.push_back(saved_texture_t{texture_path});
+        LOG("Added texture '%s' to '%s'", texture_path.c_str(), atlas_texture.name.c_str());
 
-        ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", filepath.c_str());
+        ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", texture_path.c_str());
     }
 
-    void texture_bank_t::add_textures(std::vector<const char*> const& filepaths)
+    void texture_bank_t::add_textures(std::vector<path> const& filepaths, path const& relative_dir)
     {
-        for(auto const& tex_filepath : filepaths)
+        ASSERT(relative_dir.empty() || is_directory(relative_dir), "relative directory is not a directory at all!");
+
+        for(path p : filepaths)
         {
-            string asset_tex_path = Content.asset_path + "/" + tex_filepath;
-            if(is_file(asset_tex_path))
+            if(!relative_dir.empty())
             {
-                add_texture(asset_tex_path);
+                ASSERT(p.is_relative(), "Texture path is absolute, even though it should be relative to %s", relative_dir.c_str());
+                p = relative_dir / p;
+            }
+
+            if(is_regular_file(p))
+            {
+                add_texture(p);
             }
             else
             {
-                LOG("Texture not found: %s", tex_filepath);
+                LOG("Texture not found: %s", p.c_str());
             }
         }
+    }
+
+    void texture_bank_t::add_textures_from_asset_dir(std::vector<path> const& filepaths)
+    {
+        add_textures(filepaths, path(Content.asset_path));
     }
 
 }

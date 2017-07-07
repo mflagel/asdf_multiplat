@@ -27,7 +27,12 @@ SOURCES += main.cpp\
     tools_panel.cpp \
     palette_widget.cpp \
     dialogs/new_map_dialog.cpp \
-    spline_settings_widget.cpp
+    spline_settings_widget.cpp \
+    object_properties_widget.cpp \
+    minimap_widget.cpp \
+    dialogs/map_properties_dialog.cpp \
+    dialogs/export_image_dialog.cpp \
+    terrain_brush_selector.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -35,14 +40,23 @@ HEADERS  += mainwindow.h \
     tools_panel.h \
     palette_widget.h \
     dialogs/new_map_dialog.h \
-    spline_settings_widget.h
+    spline_settings_widget.h \
+    object_properties_widget.h \
+    minimap_widget.h \
+    dialogs/map_properties_dialog.h \
+    dialogs/export_image_dialog.h \
+    terrain_brush_selector.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
     layers_widget.ui \
     palette_widget.ui \
     dialogs/new_map_dialog.ui \
-    spline_settings_widget.ui
+    spline_settings_widget.ui \
+    object_properties_widget.ui \
+    dialogs/map_properties_dialog.ui \
+    dialogs/export_image_dialog.ui \
+    terrain_brush_selector.ui
 
 
 # hexmap shaders
@@ -99,6 +113,8 @@ unix: PKGCONFIG += glew ftgl sdl2
 # Qt-Color-Widgets
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/release/ -lColorWidgets-qt51
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/debug/ -lColorWidgets-qt51
+
+unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
 
 INCLUDEPATH += $$PWD/../../../Qt-Color-Widgets/include
 DEPENDPATH += $$PWD/../../../Qt-Color-Widgets/include

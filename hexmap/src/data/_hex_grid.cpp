@@ -13,7 +13,7 @@ namespace hexmap
 {
 namespace data
 {
-    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size)
+    hex_grid_chunk_t::hex_grid_chunk_t(glm::uvec2 _size, hex_grid_cell_t const& default_cell_style)
     : size(_size)
     , allocated_size(_size)
     {
@@ -21,8 +21,34 @@ namespace data
 
         for(auto& grid_y : cells)
         {
-            grid_y.resize(size.y);
+            grid_y.resize(size.y, default_cell_style);
         }
+    }
+
+    bool hex_grid_chunk_t::operator==(hex_grid_chunk_t const& rhs) const
+    {
+
+        return position       == rhs.position
+            && size           == rhs.size
+            && allocated_size == rhs.allocated_size
+            && contents_equal(rhs);
+    }
+
+    bool hex_grid_chunk_t::contents_equal(hex_grid_chunk_t const& rhs) const
+    {
+        if(size != rhs.size)
+            return false;
+
+        for(size_t y = 0; y < size.y; ++y)
+        {
+            for(size_t x = 0; x < size.x; ++x)
+            {
+                if(cells[x][y] != rhs.cells[x][y])
+                    return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -80,13 +106,13 @@ namespace data
     }
 
 
-    hex_grid_t::hex_grid_t(glm::uvec2 _size)
+    hex_grid_t::hex_grid_t(glm::uvec2 _size, hex_grid_cell_t const& default_cell_style)
     : size(_size)
     {
-        init(size);
+        init(size, default_cell_style);
     }
 
-    void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size)
+    void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size, hex_grid_cell_t const& default_cell_style)
     {
         auto dv_x = div(long(_size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
         auto dv_y = div(long(_size.y), chunk_size.y); //
@@ -104,18 +130,32 @@ namespace data
             //for each chunk, set position and handle odd edges
             for(size_t y = 0; y < num_chunks_y; ++y)
             {
-                //set position
-                chunks[x][y].position = ivec2(x,y);
+                auto& chunk = chunks[x][y];
 
-                //adjust the size of everything on the furthest column
+                //init cells
+                for(auto& column : chunk.cells)
+                    for(auto& cell : column)
+                        cell = default_cell_style;
+
+                //set position to be used when rendering (acts like an {x,y} offset)
+                chunk.position = ivec2(x,y);
+
+                // adjust the size of the furthest chunks in this **column** if necessary
+                // allows for map sizes that aren't multiples of chunk_size
                 if(dv_x.rem > 0 && x == num_chunks_x - 1)
-                    chunks[x][y].size.x = dv_x.rem;
+                    chunk.size.x = dv_x.rem;
             }
 
-            //adjust the size of the furthest cells of the row if necessary
+            // adjust the size of the furthest chunks in this **row** if necessary
+            // allows for map sizes that aren't multiples of chunk_size
             if(dv_y.rem > 0)
                 chunks[x][chunks[x].size() - 1].size.y = dv_y.rem;
         }
+    }
+
+    void hex_grid_t::init(glm::uvec2 size, hex_grid_cell_t const& default_cell_style)
+    {
+        init(size, glm::uvec2(new_chunk_width, new_chunk_height), default_cell_style);
     }
 
     /// Resize by allocating an entirely new hex-grid and copying the data over
@@ -250,6 +290,56 @@ namespace data
         return hx.x >= 0 && hx.y >= 0 && hx.x < size.x && hx.y < size.y;
     }
 
+    bbox_units_t hex_grid_t::bounding_box_units() const
+    {
+        if(chunks.empty())
+            return bbox_units_t{vec2(0), vec2(0)};
+
+        //start with the bounds of cell positions
+        bbox_units_t bb;
+        bb.lower = chunks[0][0].position * ivec2(chunk_size());
+        bb.upper = chunks.back().back().position * ivec2(chunk_size());
+        bb.upper.x += chunks.back().front().size.x;
+        bb.upper.y += chunks.back().back().size.y;
+
+        //scale vertically since hexes aren't one unit tall
+        bb.lower.y *= hex_height;
+        bb.upper.y *= hex_height;
+
+        //padding to account for column height offset and overlap (if applicable)
+        if(chunks.size() > 1) ///FIXME handle vertical hexes
+        {
+            glm::vec2 size = bb.upper - bb.lower;
+            bb.upper.x -= size.x * hex_width_d4;  //horizontal overlap
+            bb.lower.y -= hex_height_d2; //vertical offset
+        }
+
+        //add padding to account for the fact that cell positions are at their centers
+        bb.lower -= vec2(hex_width_d2, hex_height_d2);
+        bb.upper += vec2(hex_width_d2, hex_height_d2);
+
+        return bb;
+        
+    }
+
+    glm::vec2 hex_grid_t::size_units() const
+    {
+        auto bbox = bounding_box_units();
+        return vec2(bbox.upper - bbox.lower);
+    }
+
+    glm::uvec2 hex_grid_t::size_chunks() const
+    {
+        if(chunks.empty())
+            return glm::uvec2(0);
+
+        glm::uvec2 size;
+        size.x = chunks.size();
+        size.y = chunks[0].size();
+
+        return size;
+    }
+
     glm::uvec2 hex_grid_t::chunk_size() const
     {
         if(chunks.empty())
@@ -359,6 +449,19 @@ world  0,0  /
         }
 
         return ivec2(column, row);
+    }
+
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q)
+    {
+        vec2 world_coord{hex_coord};
+
+        world_coord.x -= hex_width_d4 * hex_coord.x; //horizontal overlap
+        world_coord.y *= hex_height; //scale vertically since hexes aren't one unit tall
+
+        world_coord.y -= hex_height_d2 * !odd_q * (hex_coord.x & 1); //vertical offset for even hexes
+        world_coord.y -= hex_height_d2 *  odd_q * (hex_coord.x+1 & 1); //vertical offset for odd hexes
+
+        return world_coord;
     }
 
 }

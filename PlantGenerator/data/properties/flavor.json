@@ -1,0 +1,37 @@
+{
+    "Name":"Flavor",
+    "Values":[
+        {
+            "Range":[
+                "Bland",
+                "Sweet",
+                "Starchy"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Sour"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Bitter"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Salty"
+            ]
+        },
+        {
+            "Range":[
+                "Bland",
+                "Spicy",
+                "Peppery"
+            ]
+        }
+    ]
+}

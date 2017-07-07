@@ -129,6 +129,8 @@ namespace editor
 
             case editor_t::terrain_paint:
             {
+                editor.brush_pos = hex_to_world_coord(hx);
+
                 /// If the user is dragging the mouse
                 /// paint hexes along the line they have dragged
                 /// otherwise it will only paint one hex per update
@@ -148,6 +150,8 @@ namespace editor
 
             case editor_t::place_objects:
             {
+                editor.brush_pos = mw;
+
                 break;
             }
 
@@ -208,7 +212,7 @@ namespace editor
             switch(key)
             {
                 case SDLK_n:
-                    editor.new_map_action(editor.map_data.hex_grid.size);
+                    editor.new_map_action("", editor.map_data.hex_grid.size);
                     return;
 
                 //save on ctrl+s

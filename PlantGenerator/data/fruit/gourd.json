@@ -1,0 +1,125 @@
+{
+    "Name": "Gourd",
+    "PrintString":"a %Size%, %Shape%-shaped gourd with skin that is %Skin%.
+The flesh of the gourd is %Flesh%. The seeds are %Seeds%",
+    "Properties":[
+        {
+            "Name":"Skin",
+            "PrintString":"%Color% in color with a %Pattern% pattern and feels %Toughness% and %Texture%",
+            "Properties":[
+                {
+                    "Name":"Color",
+                    "Values":[
+                        {
+                            "Multi":2,
+                            "Values":[
+                                "Green",
+                                "Orange",
+                                "Yellow",
+                                "Red",
+                                "White",
+                                "Black"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name":"Pattern",
+                    "Values":[
+                        "Plain",
+                        "Striped",
+                        "Splotchy",
+                        "Spotted"
+                    ]
+                },
+                {
+                    "Name":"Texture",
+                    "Values":[
+                        "Bumpy",
+                        "Smooth",
+                        "Ridged",
+                        "Spiky"
+                    ]
+                },
+                {
+                    "Name":"Toughness",
+                    "Values":[
+                        {
+                            "Range":[
+                                "Soft",
+                                "Hard"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Size",
+            "Values":[
+                "Fist-Sized",
+                "Ball-Sized",
+                "Head-Sized",
+                "Body-Sized",
+                "Absurdly Big"
+            ]
+        },
+        {
+            "Name": "Shape",
+            "Values": [
+                "Spherical",
+                "Ovoid",
+                "Flat Spheroid",
+                "Teardrop",
+                "Long Ovoid",
+                "Cucumberoid",
+                "Sphere with Tail",
+                "Snake-Like"
+            ]
+        },
+        {
+            "Name":"Flesh",
+            "PrintString":"%Color%-colored and tastes %Taste%",
+            "Properties":[
+                {
+                    "Name":"Color",
+                    "Values":[
+                        "Orange",
+                        "Yellow",
+                        "White"
+                    ]
+                },
+                {
+                    "Name":"Taste",
+                    "Include":"../properties/taste.json"
+                }
+            ]
+        },
+        {
+            "Name":"Seeds",
+            "PrintString":"%Size%, %Color%-colored, and taste %Taste%",
+            "Properties":[
+                {
+                    "Name":"Color",
+                    "Values":[
+                        "White",
+                        "Black"
+                    ]
+                },
+                {
+                    "Name":"Size",
+                    "Values":[
+                        "Grain-Sized",
+                        "Pea-Sized",
+                        "Thumbnail-Sized",
+                        "Bumblebee-Sized"
+                    ]
+                },
+                {
+                    "Name":"Taste",
+                    "Include":"../properties/taste.json"
+                }
+            ]
+        }
+    ]
+}

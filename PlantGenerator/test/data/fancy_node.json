@@ -1,0 +1,78 @@
+{
+    "Name":"Fancy Node",
+    "Properties":[
+        {
+            "Name":"Property One",
+            "Values":[
+                "1 A",
+                "1 B",
+                {
+                    "Name":"ValueObj 1 A"
+                },
+                {
+                    "Name":"ValueObj 1 B"
+                }
+            ]
+        },
+        {
+            "Name":"Property Two",
+            "Properties":[
+                {
+                    "Name":"Property Two Alpha",
+                    "Values":[
+                        "2A - A",
+                        "2A - B",
+                        "2A - C",
+                        "2A - D"
+                    ]
+                },
+                {
+                    "Name":"Property Two Beta",
+                    "Properties":[
+                        {
+                            "Name":"Property Two Beta Sub1",
+                            "Values":[
+                                {
+                                    "Name": "P2B_1 Value Node A",
+                                    "Values": [
+                                        "Value Node Value A",
+                                        "Value Node Value B",
+                                        "Value Node Value C",
+                                        "Value Node Value D"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Values":[
+        "ValueString A",
+        "ValueString B",
+        {
+            "Name":"ValueObj A",
+            "Properties":[
+                {
+                    "Name":"ValueObj Property One",
+                    "Values":[
+                        "VObj P1 A",
+                        "VObj P1 B",
+                        "VObj P1 C",
+                        "VObj P1 D"
+                    ]
+                }
+            ],
+            "Values":[
+                {
+                    "Name":"Value Obj Value Obj"
+                },
+                "ValueObj Value A",
+                "ValueObj Value B",
+                "ValueObj Value C",
+                "ValueObj Value D"
+            ]
+        }
+    ]
+}

@@ -17,14 +17,17 @@ using vec2 = glm::vec2;
 
 namespace
 {
-    constexpr float zoom_per_scroll_tick = 0.1f;
+    constexpr float zoom_per_scroll_tick = 0.5f;
+
+    constexpr float min_zoom = -16.0f;
+    constexpr float max_zoom = 128.0f;
 }
 
 using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
 
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
-, data_map(editor.map_data)
+, map_data(editor.map_data)
 {
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
@@ -32,33 +35,50 @@ hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 
 void hexmap_widget_t::initializeGL()
 {
+    using namespace asdf;
     // Set up the rendering context, load shaders and other resources, etc.:
 
-    asdf::app.renderer = make_unique<asdf::asdf_renderer_t>();  //do this before content init. Content needs GL_State to exist
-    asdf::app.renderer->init(); //loads screen shader, among other things
-    asdf::Content.init(); //needed for Content::shader_path
+    void* qt_gl_context = reinterpret_cast<void*>(context());  //this technically isnt the native context pointer, but I don't think I care so long as it's unique
+    app.renderer = make_unique<asdf::asdf_renderer_t>(qt_gl_context);  //do this before content init. Content needs GL_State to exist
+    GL_State.set_current_state_machine(app.renderer->gl_state);
 
-    auto shader = asdf::Content.create_shader_highest_supported("hexmap");
-    asdf::Content.shaders.add_resource(shader);
+    app.renderer->init(); //loads screen shader, among other things
+    Content.init(); //needed for Content::shader_path
+
+    defaultFramebufferObject();
+
+    auto shader = Content.create_shader_highest_supported("hexmap");
+    Content.shaders.add_resource(shader);
 
     editor.init();
     hex_map = editor.rendered_map.get();
 
-    hex_map->camera.position.z = 10;
+    editor.map_changed_callback = [this](){
+        emit map_data_changed(map_data);
+    };
 
-    hex_map_initialized(editor);
+    emit hex_map_initialized(editor);
 }
 
 void hexmap_widget_t::resizeGL(int w, int h)
 {
-    hex_map->camera.viewport.size_d2 = vec2(w,h) / 2.0f;
-    hex_map->camera.viewport.bottom_left = -1.0f * hex_map->camera.viewport.size_d2;
+    using namespace asdf;
 
-    emit camera_changed(hex_map->camera);
+    app.surface_width = w;
+    app.surface_height = h;
+
+    editor.resize(w, h);
+    main_window->set_scrollbar_stuff(hex_map->camera);
+    //emit camera_changed(hex_map->camera);
 }
 
 void hexmap_widget_t::paintGL()
 {
+    using namespace asdf;
+
+    //set global GL_State proxy object to point to this context
+    GL_State.set_current_state_machine(app.renderer->gl_state);
+
     glDisable(GL_DEPTH_TEST);
 
     auto& gl_clear_color = asdf::app.renderer->gl_clear_color;
@@ -66,7 +86,6 @@ void hexmap_widget_t::paintGL()
                        , gl_clear_color.g
                        , gl_clear_color.b
                        , gl_clear_color.a);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glEnable(GL_BLEND);
@@ -78,9 +97,14 @@ void hexmap_widget_t::paintGL()
 }
 
 
-glm::uvec2 hexmap_widget_t::map_size() const
+glm::uvec2 hexmap_widget_t::map_size_cells() const
 {
-    return data_map.hex_grid.size;
+    return map_data.hex_grid.size_cells();
+}
+
+glm::vec2  hexmap_widget_t::map_size_units() const
+{
+    return map_data.hex_grid.size_units();
 }
 
 glm::vec2 hexmap_widget_t::camera_pos() const
@@ -93,8 +117,14 @@ void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
     hex_map->camera.position.x = p.x;
     hex_map->camera.position.y = p.y;
 
-    if(emit_signal)
-        emit camera_changed(hex_map->camera);
+    //if(emit_signal)
+        //emit camera_changed(hex_map->camera);
+}
+
+//final zoom is equal to 2^zoom_exponent
+void hexmap_widget_t::camera_zoom_exponent(float zoom_exponent)
+{
+    hex_map->camera.position.z = zoom_exponent;
 }
 
 
@@ -132,8 +162,6 @@ void hexmap_widget_t::mousePressEvent(QMouseEvent* event)
     , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
-    LOG("x,y: %i, %i", event->x(), event->y());
-
     mouse.mouse_down(asdf_event, adjusted_screen_coords(event->x(), event->y()));
     update();
 }
@@ -148,7 +176,14 @@ void hexmap_widget_t::mouseReleaseEvent(QMouseEvent* event)
     , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
+    auto obj_sel = editor.object_selection;
     mouse.mouse_up(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+
+    if(obj_sel != editor.object_selection)
+    {
+        emit object_selection_changed(editor);
+    }
+
     update();
 }
 
@@ -172,12 +207,23 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     }
     else if(keyboard_mods == Qt::ShiftModifier)
     {
+        // because shift button is held, the hscroll will act as if I'm shift-scrolling the scrollbar
+        // which uses large page-sized jumps instead of regular jumps
+        Qt::KeyboardModifiers mods = event->modifiers();
+        mods.setFlag(Qt::ShiftModifier, false);
+        event->setModifiers(mods);
         main_window->ui->hexmap_hscroll->event(event);
     }
     else if(keyboard_mods == Qt::ControlModifier)
     {
-        float num_steps = event->angleDelta().y() / 15.0f;
-        hex_map->camera.position.z += num_steps * zoom_per_scroll_tick;
+        float num_steps = event->angleDelta().y() / 8.0f / 15.0f;
+
+        auto& zoom = hex_map->camera.position.z;
+
+        zoom += num_steps * zoom_per_scroll_tick;
+        zoom = glm::clamp(zoom, min_zoom, max_zoom);
+
+        main_window->set_scrollbar_stuff(hex_map->camera);
         update();
         emit camera_changed(hex_map->camera);
     }
@@ -242,4 +288,34 @@ void hexmap_widget_t::set_palette_item(QModelIndex const& index)
     default:
         break;
     }
+}
+
+
+void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
+{
+    if(terrain_filepaths.size() > 0)
+    {
+        //ensure this is the current gl context before the terrain bank
+        //does any rendering in add_texture
+        makeCurrent();
+
+        for(auto const& filepath : terrain_filepaths)
+        {
+            std::string filepath_str{filepath.toUtf8().constData()};
+            editor.rendered_map->terrain_bank->add_texture(filepath_str);
+            editor.rendered_map->terrain_bank->asset_names.push_back("TEST");
+        }
+
+        emit terrain_added(*(editor.rendered_map->terrain_bank.get()));
+    }
+}
+
+void hexmap_widget_t::zoom_to_selection()
+{
+
+}
+
+void hexmap_widget_t::zoom_extents()
+{
+
 }

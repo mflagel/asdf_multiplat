@@ -20,10 +20,10 @@ namespace asdf{
         {
             struct terrain_bank_t;
         }
-        namespace editor
-        {
-            struct editor_t;
-        }
+//        namespace editor
+//        {
+//            struct editor_t;
+//        }
     }
 }
 
@@ -77,11 +77,24 @@ public:
     explicit palette_widget_t(QWidget *parent = 0);
     ~palette_widget_t();
 
+    QModelIndex selected_index() const;
+
+    void import_terrain();
+    void remove_selected_terrain();
+    void save_terrain();
+
+
+signals:
+    void terrain_add(QStringList const& terrain_filepaths);
+
+public slots:
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);
     void build_from_atlas(asdf::data::texture_atlas_t const& atlas);
 
-
 public:
+    QString default_texture_import_dir;
+    QString default_texture_save_dir;
+
     QListView* list_view = nullptr; //store this publicly so other things can connect the signals it sends out
 
 private:

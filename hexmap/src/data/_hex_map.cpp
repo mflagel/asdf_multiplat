@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "hex_map.h"
 
+#include <glm/gtx/norm.hpp>
 
 namespace asdf
 {
@@ -8,10 +9,18 @@ namespace hexmap
 {
 namespace data
 {
+    constexpr const char* default_map_name = "unnamed map";
     constexpr size_t hxm_version = 1;
 
+    hex_map_t::hex_map_t(std::string const& _map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style)
+    : map_name(_map_name)
+    , hex_grid(grid_size, default_cell_style)
+    {
+
+    }
+
     hex_map_t::hex_map_t(glm::uvec2 grid_size)
-    : hex_grid(grid_size)
+    : hex_map_t(default_map_name, grid_size)
     {
     }
 
@@ -112,9 +121,22 @@ namespace data
         SDL_RWclose(io);
     }
 
-
-    size_t hex_map_t::object_index_at(glm::vec2 world_pos)
+    ///OPTIMIZE: iterate from end to start and grab the first one that intersects
+    size_t hex_map_t::object_index_at(glm::vec2 const& world_pos) const
     {
+        auto possible_object_indices = object_indices_at(world_pos);
+        
+        if(possible_object_indices.size() > 0)
+            return *possible_object_indices.end(); //just return the last one, since that should be the top-most
+        else
+            return -1;
+    }
+
+    std::vector<object_index_t> hex_map_t::object_indices_at(glm::vec2 const& world_pos) const
+    {
+        std::vector<object_index_t> object_inds;
+
+        //grab every object that intersects the position
         size_t obj_index = 0;
         for(auto const& obj : objects)
         {
@@ -124,13 +146,40 @@ namespace data
             if(world_pos.x >= lb.x && world_pos.x <= ub.x &&
                world_pos.y >= lb.y && world_pos.y <= ub.y)
             {
-                return obj_index;
+                object_inds.push_back(obj_index);
             }
 
             ++obj_index;
         }
 
-        return -1;
+        return object_inds;
+    }
+
+    ///OPTIMIZE: iterate from end to start and grab the first one that intersects
+    spline_index_t hex_map_t::spline_index_at(glm::vec2 const& world_pos) const
+    {
+        auto possible_spline_indices = spline_indices_at(world_pos);
+
+        if(possible_spline_indices.size() > 0)
+            return *possible_spline_indices.end(); //just return the last one, since that should be the top-most
+        else
+            return -1;
+    }
+
+    std::vector<spline_index_t> hex_map_t::spline_indices_at(glm::vec2 const& world_pos) const
+    {
+        std::vector<spline_index_t> spline_inds;
+
+        size_t spline_ind = 0;
+        for(auto const& spline : splines)
+        {
+            if(point_intersects_spline(world_pos, spline))
+                spline_inds.push_back(spline_ind);
+
+            ++spline_ind;
+        }
+
+        return spline_inds;
     }
 
 }

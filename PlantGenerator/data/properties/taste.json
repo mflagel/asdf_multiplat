@@ -1,0 +1,38 @@
+{
+    "Name": "Taste",
+    "Values":[
+        {
+            "Name":"Dangerous Taste",
+            "PrintString":"%Flavor% and is %Edibility%",
+            "Weight":1,
+            "Properties": [
+                {
+                    "Name": "Edibility",
+                    "Values": [
+                        "%2 Poisonous",
+                        "%3 Inedible"
+                    ]
+                },
+                {
+                    "Name":"Flavor",
+                    "Values":[
+                        "%3 Bland",
+                        "%10 Very Bitter",
+                        "%3 Very Spicy",
+                        "%1 Very Sour"
+                    ]
+                }
+            ]
+        },
+        {
+            "Name":"Flavor",
+            "Weight":10,
+            "Include":"flavor.json"
+        },
+        {
+            "Name":"Complex Flavor",
+            "Weight":5,
+            "Include":"complex_flavor.json"
+        }
+    ]
+}

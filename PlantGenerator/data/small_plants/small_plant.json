@@ -1,0 +1,35 @@
+{
+    "Name": "Small Plant",
+    "PrintString":"has a root that is %Root%.\nThe body is %Body% shaped and bears a fruit that is %Fruit%",
+    "Properties": [
+        {
+            "Name": "Root",
+            "Values":[
+                {
+                    "Name":"Small Root",
+                    "Weight":10,
+                    "Include": "roots/small_plant_root.json"
+                },
+                {
+                    "Name":"Taproot",
+                    "Weight":1,
+                    "Include": "roots/taproot.json"
+                }
+            ]
+        },
+        {
+            "Name": "Body",
+            "Values": [
+                "Fern",
+                "Shrub",
+                "Bush",
+                "Thorns",
+                "Creeping Vine"
+            ]
+        },
+        {
+            "Name":"Fruit",
+            "Include":"../fruit/fruit_list.json"
+        }
+    ]
+}
