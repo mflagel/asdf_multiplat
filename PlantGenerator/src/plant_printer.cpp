@@ -85,11 +85,13 @@ namespace plant_printer
         std::sort(sorted_values.begin(), sorted_values.end(),
             [](sorted_range_value_t const& lhs, sorted_range_value_t const& rhs)
             {
+                // return true if the left should be ordered before the second
                 return lhs.percentage > rhs.percentage;
             });
 
         return sorted_values;
     }
+
 
 
     string print_range_value(generated_node_t const& range)
@@ -98,9 +100,13 @@ namespace plant_printer
 
         ASSERT(sorted_values.size() > 0, "");
 
+        if(sorted_values.size() == 1)
+        {
+            return sorted_values[0].range_string;
+        }
+
+
         size_t div = 100 / sorted_values.size();
-
-
         int largest_diff = 0;
         for(auto const& sorted : sorted_values)
         {
@@ -138,6 +144,11 @@ namespace plant_printer
             }
 
             return ret;
+        }
+        else if(sorted_values[0].percentage >= 45
+            && (sorted_values.size() > 0 && sorted_values[1].percentage > 30))
+        {
+            return sorted_values[0].range_string + " and " + sorted_values[1].range_string;
         }
         else
         {

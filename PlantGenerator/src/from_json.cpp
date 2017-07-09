@@ -301,6 +301,11 @@ namespace plantgen
 
                 stdfs::path relpath(cur_child->valuestring);
 
+                if(relpath.empty())
+                {
+                    throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
+                }
+
                 auto parent_path = include_dir_stack.top().parent_path();
                 stdfs::path fullpath = parent_path / relpath;
 
@@ -332,8 +337,10 @@ namespace plantgen
                 case cJSON_String:
                 {
                     int weight = weight_from_string(std::string(cur_child->valuestring));
-                    if(weight >= 0 && weight != weight_inherit_code)
+                    if(weight >= 0 || weight == weight_inherit_code)
+                    {
                         node.weight = weight;
+                    }
                     else
                         std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
 
