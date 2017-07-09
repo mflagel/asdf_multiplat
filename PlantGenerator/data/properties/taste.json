@@ -3,18 +3,18 @@
     "Values":[
         {
             "Name":"Dangerous Taste",
+            "PrintString":"%Flavor% and is %Edibility%",
             "Weight":1,
             "Properties": [
                 {
                     "Name": "Edibility",
                     "Values": [
                         "%2 Poisonous",
-                        "%3 Inedible",
-                        "%5 Edible"
+                        "%3 Inedible"
                     ]
                 },
                 {
-                    "Name":"Taste",
+                    "Name":"Flavor",
                     "Values":[
                         "%3 Bland",
                         "%10 Very Bitter",
@@ -27,12 +27,7 @@
         {
             "Name":"Flavor",
             "Weight":10,
-            "Values":[
-                {
-                    "Name":"Flavor",
-                    "Include":"flavor.json"
-                }
-            ]
+            "Include":"flavor.json"
         },
         {
             "Name":"Complex Flavor",

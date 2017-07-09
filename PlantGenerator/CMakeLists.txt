@@ -36,7 +36,12 @@ endif(MSVC)
 
 # GCC and Clang compiler flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "CLANG")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+        -Wextra \
+        -Werror=return-type \
+        -Werror=empty-body \
+        -Wno-expansion-to-defined \
+        -Wno-sign-compare")
 endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "CLANG")
 
 

@@ -17,6 +17,7 @@ Weights:
     Weights can be floating point or integer values
     Weights will be normalized (so you can enter a percent chance for each entry, or a set of ratios)
     If no weights are specified, every entry has equal probability
+    A weight value of "%" will set the weight equal to the number of values and value nodes
 
 Ranges:
     Ranges will return normalized percentages for values in the range

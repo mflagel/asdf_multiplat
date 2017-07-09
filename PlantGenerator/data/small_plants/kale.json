@@ -19,7 +19,7 @@
                     ]
                 },
                 {
-                    "Name":"Leaft Color",
+                    "Name":"Leaf Color",
                     "Values":[
                         "Greenish White",
                         "Reddish White",
@@ -43,20 +43,10 @@
                     "Name":"Taste",
                     "Values": [
                         {
-                            "Multi":2,
-                            "Values":[
-                                {
-                                    "Range":[
-                                        "Bland",
-                                        "Bitter"
-                                    ]
-                                }
-                                {
-                                    "Range":[
-                                        "Bland",
-                                        "Peppery"
-                                    ]
-                                },
+                            "Range":[
+                                "Bland",
+                                "Bitter",
+                                "Peppery"
                             ]
                         }
                     ]

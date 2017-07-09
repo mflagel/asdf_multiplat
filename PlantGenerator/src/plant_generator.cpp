@@ -12,6 +12,8 @@
 
 #include "from_json.h"
 
+using namespace std;
+
 namespace plantgen
 {
     //std::vector<std::string> roll_multi_value(multi_value_t const& m);
@@ -138,7 +140,9 @@ namespace plantgen
             if(roll <= value_nodes[i].weight)
             {
                 generated_node_t node(value_nodes[i].name);
-                node.add_child(generate_node(value_nodes[i]));
+                //node.add_child(generate_node(value_nodes[i]));
+                auto gend_node = generate_node(value_nodes[i]);
+                node.add_value_node(std::move(gend_node));
                 return node;
             }
 
@@ -155,6 +159,29 @@ namespace plantgen
         return roll_values(node.values, node.value_nodes);
     }
 
+    pregen_node_t node_from_file(stdfs::path const& filepath)
+    {
+        using namespace std;
+
+        auto ext = filepath.extension();
+        if(ext == ".json")
+        {
+            return node_from_json(filepath);
+        }
+        else if(ext == ".yaml" || ext == ".yml")
+        {
+            cout << "TODO: yaml support";
+            return pregen_node_t();
+        }
+
+        //TODO: exception?
+        if(stdfs::is_directory(filepath))
+            cout << filepath.string() << " is a directory, not a file";
+        else
+            cout << "Filetype " << ext << " not recognized";
+
+        return pregen_node_t();
+    }
 
     generated_node_t generate_node(pregen_node_t const& pre_node)
     {
@@ -166,35 +193,25 @@ namespace plantgen
             node.add_child(generate_node(child));
         }
 
-        generated_node_t rolled = roll_values(pre_node);
-        node.children.insert(node.children.end(), rolled.children.begin(), rolled.children.end());
-        node.generated_values = std::move(rolled.generated_values);
+        if(pre_node.values.size() > 0 || pre_node.value_nodes.size() > 0)
+        {
+            generated_node_t rolled = roll_values(pre_node);
+            node.merge_with(rolled);
+        }
+
+        auto search = pre_node.user_data.find("PrintString");
+        if(search != pre_node.user_data.end())
+        {
+            node.print_string = std::get<std::string>(search->second);
+        }
 
         return node;
     }
 
-
     generated_node_t generate_node_from_file(stdfs::path const& filepath)
     {
-        using namespace std;
-
-        auto ext = filepath.extension();
-        if(ext == ".json")
-        {
-            return generate_node_from_json(filepath);
-        }
-        else if(ext == ".yaml" || ext == ".yml")
-        {
-            cout << "TODO: yaml support";
-            return generated_node_t();
-        }
-
-        if(stdfs::is_directory(filepath))
-            cout << filepath.string() << " is a directory, not a file";
-        else
-            cout << "Filetype " << ext << " not recognized";
-
-        return generated_node_t();
+        auto node = node_from_file(filepath);
+        return generate_node(node);
     }
 
 
@@ -212,51 +229,79 @@ namespace plantgen
         // indent_str[indent_str.size()-indent_amt] = indent_tree_marker;
 
         std::string indent_str;
-        for(size_t i = 1; i < indent_level; ++i)
+        for(size_t i = 0; i < indent_level; ++i)
             indent_str.insert(indent_str.end(), indent_cstr, indent_cstr + 4);
 
         return indent_str;
     }
 
-    void print_node(pregen_node_t const& node, size_t level)
+
+    /// TODO: factor out similarities with below?
+    string to_string(pregen_node_t const& node, size_t const depth, size_t level)
     {
-        using namespace std;
+        if(level > depth)
+            return "";
+
+        stringstream s;
 
         auto indent = indenation_string(level);
+        string weight_str = node.weight == 1 ? "" : " (Weight " + std::to_string(node.weight) + ")";
+        s << indent << node.name_string() << weight_str << "\n";
 
-        cout << indent << node.name << "\n";
+        if(level + 1 > depth)
+            return s.str();
 
         for(auto const& child : node.children)
-            print_node(child, level + 1);
+            s << to_string(child, depth, level + 1);
 
         indent.append(indenation_string(1));
 
         for(auto const& value : node.values)
-            cout << indent << value << "\n";
+            s << indent << value << "\n";
 
         for(auto const& vnode : node.value_nodes)
-            print_node(vnode, level + 1);
+            s << to_string(vnode, depth, level + 1);
 
-        for(auto const& user_val : node.user_data)
-            cout << indent << user_val << "\n";
+        for(auto const& user_vals : node.user_data)
+            s << indent << user_vals.first << ": " << user_vals.second << "\n";
+
+        return s.str();
     }
 
-    void print_node(generated_node_t const& node, size_t level)
+    string to_string(generated_node_t const& node, size_t depth, size_t level)
     {
-        using namespace std;
+        if(level > depth)
+            return "";
+
+        stringstream s;
 
         auto indent = indenation_string(level);
+        s << indent << node.name_string() << "\n";
 
-        cout << indent << node.name << "\n";
+        if(level + 1 > depth)
+            return s.str();
         
         for(auto const& child : node.children)
-            print_node(child, level + 1);
+            s << to_string(child, depth, level + 1);
 
         indent.append(indenation_string(1));
 
         for(auto const& value : node.generated_values)
-        {
-            cout << indent << value << "\n";
-        }
+            s << indent << value << "\n";
+
+        for(auto const& vn : node.value_nodes)
+            s << to_string(vn, depth, level + 1);
+
+        return s.str();
+    }
+
+    void print_node(pregen_node_t const& node, size_t depth, size_t level)
+    {
+        cout << to_string(node, depth, level);
+    }
+
+    void print_node(generated_node_t const& node, size_t depth, size_t level)
+    {
+        cout << to_string(node, depth, level);
     }
 }

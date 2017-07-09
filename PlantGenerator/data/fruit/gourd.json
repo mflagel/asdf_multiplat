@@ -1,8 +1,11 @@
 {
     "Name": "Gourd",
+    "PrintString":"a %Size%, %Shape%-shaped gourd with skin that is %Skin%.
+The flesh of the gourd is %Flesh%. The seeds are %Seeds%",
     "Properties":[
         {
             "Name":"Skin",
+            "PrintString":"%Color% in color with a %Pattern% pattern and feels %Toughness% and %Texture%",
             "Properties":[
                 {
                     "Name":"Color",
@@ -76,6 +79,7 @@
         },
         {
             "Name":"Flesh",
+            "PrintString":"%Color%-colored and tastes %Taste%",
             "Properties":[
                 {
                     "Name":"Color",
@@ -88,31 +92,32 @@
                 {
                     "Name":"Taste",
                     "Include":"../properties/taste.json"
+                }
+            ]
+        },
+        {
+            "Name":"Seeds",
+            "PrintString":"%Size%, %Color%-colored, and taste %Taste%",
+            "Properties":[
+                {
+                    "Name":"Color",
+                    "Values":[
+                        "White",
+                        "Black"
+                    ]
                 },
                 {
-                    "Name":"Seeds",
-                    "Properties":[
-                        {
-                            "Name":"Color",
-                            "Values":[
-                                "White",
-                                "Black"
-                            ]
-                        },
-                        {
-                            "Name":"Size",
-                            "Values":[
-                                "Grain-Sized",
-                                "Pea-Sized",
-                                "Thumbnail-Sized",
-                                "Bumblebee-Sized"
-                            ]
-                        },
-                        {
-                            "Name":"Taste",
-                            "Include":"../properties/taste.json"
-                        }
+                    "Name":"Size",
+                    "Values":[
+                        "Grain-Sized",
+                        "Pea-Sized",
+                        "Thumbnail-Sized",
+                        "Bumblebee-Sized"
                     ]
+                },
+                {
+                    "Name":"Taste",
+                    "Include":"../properties/taste.json"
                 }
             ]
         }

@@ -75,13 +75,6 @@ namespace plantgen
     std::unordered_map<stdfs::path, pregen_node_t> include_cache;
 
 
-
-    bool str_eq(char const* a, char const* b)
-    {
-        return strcmp(a, b) == 0;
-    }
-
-
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array)
     {
         ASSERT(json_array, "");
@@ -91,7 +84,11 @@ namespace plantgen
         cJSON* j = json_array->child;
         while(j)
         {
-            ASSERT(j->type == cJSON_String, "Expected a JSON string");
+            if(j->type != cJSON_String)
+            {
+                throw json_type_exception(include_dir_stack.top(), *j, cJSON_String);
+            }
+
             values.emplace_back(j->valuestring);
             j = j->next;
         }
@@ -106,7 +103,16 @@ namespace plantgen
 
         multi_value_t v;
         v.num_to_pick = json->child->valueint;
-        v.values = std::move(value_string_list_from_json_array(json->child->next));   
+
+        try {
+            v.values = std::move(value_string_list_from_json_array(json->child->next));
+        }
+        catch (json_type_exception& je)
+        {
+
+            std::string s = "json type error: \"Multi\" only supports a value list of strings, not " + std::string(cJSON_type_strings[je.json_type_found]);
+            throw std::runtime_error(std::move(s));
+        }
 
         return v;
     }
@@ -192,9 +198,9 @@ namespace plantgen
         return bool(false); //placating compiler
     }
 
-    std::vector<user_value_t> user_values_from_json(cJSON const& json)
+    user_data_t user_values_from_json(cJSON const& json)
     {
-        std::vector<user_value_t> values;
+        user_data_t values;
 
         switch(json.type)
         {
@@ -204,7 +210,8 @@ namespace plantgen
                 while(cur_child)
                 {
                     auto child_vals = user_values_from_json(*cur_child);
-                    values.insert(values.end(), child_vals.begin(), child_vals.end());
+                    /// FIXME
+                    //values.insert(values.end(), child_vals.begin(), child_vals.end());
 
                     cur_child = cur_child->next;
                 }
@@ -213,7 +220,7 @@ namespace plantgen
             }
 
             default:
-                values.push_back(user_value_from_json(json));
+                values.insert({std::string(json.string), user_value_from_json(json)});
                 break;
         }
 
@@ -248,12 +255,15 @@ namespace plantgen
     pregen_node_t node_from_json(cJSON* json_node)
     {
         pregen_node_t node;
-        node.name = std::string(CJSON_STR(json_node, Name));
 
         cJSON* cur_child = json_node->child;
         while(cur_child)
         {
-            if(str_eq(cur_child->string, "Properties"))
+            if(str_eq(cur_child->string, "Name"))
+            {
+                node.name = cur_child->valuestring;
+            }
+            else if(str_eq(cur_child->string, "Properties"))
             {
                 cJSON* property_json = cur_child->child;
                 while(property_json)
@@ -289,11 +299,12 @@ namespace plantgen
             {
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
 
-                // if(str_eq(cur_child->valuestring, "")
-                // {
-                // }
-
                 stdfs::path relpath(cur_child->valuestring);
+
+                if(relpath.empty())
+                {
+                    throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
+                }
 
                 auto parent_path = include_dir_stack.top().parent_path();
                 stdfs::path fullpath = parent_path / relpath;
@@ -301,14 +312,14 @@ namespace plantgen
                 try{
                     auto included_node = node_from_json(fullpath);
 
-                    if(included_node.name == node.name)
-                    {
+                    // if(included_node.name == node.name)
+                    // {
                         node.merge_with(std::move(included_node));
-                    }
-                    else
-                    {
-                        node.add_child(std::move(included_node));
-                    }
+                    // }
+                    // else
+                    // {
+                    //     node.add_child(std::move(included_node));
+                    // }
                 }
                 catch(file_not_found_exception const&)
                 {
@@ -326,8 +337,10 @@ namespace plantgen
                 case cJSON_String:
                 {
                     int weight = weight_from_string(std::string(cur_child->valuestring));
-                    if(weight >= 0 && weight != weight_inherit_code)
+                    if(weight >= 0 || weight == weight_inherit_code)
+                    {
                         node.weight = weight;
+                    }
                     else
                         std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
 

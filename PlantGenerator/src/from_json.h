@@ -8,17 +8,12 @@ struct cJSON;
 
 namespace plantgen
 {
-    
-
-
-    bool str_eq(char const* a, char const* b);
-
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array);
     multi_value_t multi_value_from_json(cJSON* json);
     range_value_t range_value_from_json(cJSON* json);
     weighted_value_t value_type_from_json(cJSON* json);
     user_value_t user_value_from_json(cJSON const& json);
-    std::vector<user_value_t> user_values_from_json(cJSON const& json);
+    user_data_t user_values_from_json(cJSON const& json);
     pregen_node_t node_from_json(cJSON* json_node);
     pregen_node_t node_from_json(stdfs::path const& filepath);
     generated_node_t generate_node_from_json(stdfs::path const& filepath);

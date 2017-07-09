@@ -8,6 +8,7 @@
         },
         {
             "Name":"Citrus",
+            "Weight": "%",
             "Values":[
                 "Tangerine",
                 "Orange",
@@ -17,6 +18,7 @@
         },
         {
             "Name":"Berries",
+            "Weight": "%",
             "Values":[
                 "Blueberry",
                 "Raspberry",
@@ -27,7 +29,7 @@
         },
         {
             "Name":"Berry",
-            "Weight":5,
+            "Weight": 10,
             "Include":"berry.json"
         },
         "Apple",
