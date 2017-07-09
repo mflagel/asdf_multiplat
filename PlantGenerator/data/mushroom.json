@@ -25,11 +25,17 @@
                     "Name": "Color",
                     "Values": [
                         {
-                            "Range": [
-                                "White",
-                                "Black",
-                                "Brown"
-                            ]
+                            "Name":"Color",
+                            "Weight":50,
+                            "Values":[
+                                {
+                                "Range": [
+                                    "White",
+                                    "Black",
+                                    "Brown"
+                                ]
+                               }
+                        ]
                         },
                         "Rainbow"
                     ]
