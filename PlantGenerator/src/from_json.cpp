@@ -337,8 +337,10 @@ namespace plantgen
                 case cJSON_String:
                 {
                     int weight = weight_from_string(std::string(cur_child->valuestring));
-                    if(weight >= 0 && weight != weight_inherit_code)
+                    if(weight >= 0 || weight == weight_inherit_code)
+                    {
                         node.weight = weight;
+                    }
                     else
                         std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
 
