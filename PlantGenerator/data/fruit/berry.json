@@ -37,6 +37,17 @@
                 },
                 "Spherical"
             ]
+        },
+        {
+            "Name":"Size",
+            "Values":[
+                "Miniscule",
+                "Tiny",
+                "Small",
+                "Medium",
+                "Large",
+                "Fist-Sized"
+            ]
         }
     ]
 }
