@@ -10,6 +10,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(..)
 include_directories(../asdf_multiplat)
+include_directories(../asdf_multiplat/main)
 include_directories(../include)
 
 include_directories(src)
@@ -40,8 +41,8 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" ST
 
 # Libraries
 if(WIN32)
-    target_link_libraries(PlantGenerator ${CMAKE_SOURCE_DIR}/../lib/win32/x64/AsdfMultiplat_static_D.lib)
+    target_link_libraries(fast_travel_sim ${CMAKE_SOURCE_DIR}/../lib/win32/x64/AsdfMultiplat_static_D.lib)
     # target_link_libraries(PlantGenerator C:/Users/Mathias/Documents/Programming/AsdfMultiplat/lib/win32/x64/AsdfMultiplat_static_D.lib)
 else()
-    target_link_libraries(PlantGenerator stdc++fs)
+    target_link_libraries(fast_travel_sim stdc++fs)
 endif()
