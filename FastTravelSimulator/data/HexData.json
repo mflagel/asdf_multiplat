@@ -1,21 +1,15 @@
 {
-  "Name": "HexEncounter",
+  "Name": "Hex Data",
   "Properties":[
     {
         "Name":"Location",
         "Values":[
-          "%50 Nothing",
-          {
-            "Name":"Something Interesting",
-            "Values":[
-              "%4 Natural Beauty",
-              "%4 Monument",
-              "%1 Dungeon Entrance",
-              "%2 Remnant of History",
-              "%1 Important Building",
-              "%2 Hideout"
-            ]
-          }
+          "%10 Natural Beauty",
+          "%4 Monument",
+          "%1 Dungeon Entrance",
+          "%2 Remnant of History",
+          "%1 Important Building",
+          "%2 Hideout"
         ]
     },
     {
@@ -25,67 +19,34 @@
           "Name":"Physical Description",
           "Values":[
             "Flower",
-            "Berry",
             "Grass",
             "Fern",
+            "Tree Bark",
+            "Leaf",
             "Medium Plant",
-            "Below-Ground",
-            "Mushroom/Fungus",
-            "Other (pinecone, seed, etc)"
+            "Other (pinecone, seed, etc)",
+            {
+              "Name":"Mushroom",
+              "Include":"PlantGeneratorData/mushroom.json"
+            },
+            {
+              "Name":"Small Plant",
+              "Include":"PlantGeneratorData/small_plants/small_plants.json"
+            },
+            {
+              "Name":"Small Plant Root",
+              "Include":"PlantGeneratorData/small_plants/roots/small_plant_root.json"
+            },
+            {
+              "Name":"Fruit",
+              "Include":"PlantGeneratorData/fruit/fruit_list.json"
+            }
           ]
         },
         {
           "Name":"Status Effect",
-          "Properties":[
-            {
-              "Name":"Effect",
-              "Values":[
-                {
-                  "Name":"Physical Status Effect",
-                  "Include":"PhysicalStatusEffect.json"
-                },
-                {
-                  "Name":"Mental Status Effect",
-                  "Include":"MentalStatusEffect.json"
-                }
-              ]
-            },
-            {
-              "Name":"Duration",
-              "Values":[
-                "%2 Permenant",
-                "%4 Months",
-                "%14 Weeks",
-                "%20 Days",
-                "%30 Minutes",
-                "%30 Seconds"
-              ]
-            }
-          ]
+          "Include":"StatusEffect.json"
         }
-      ]
-    },
-    {
-      "Name":"Monster",
-      "Values":[
-        "%50 No Monster",
-        "%20 Trivial Monster",
-        {
-          "Name":"Mundane Monster",
-          "Weight":20,
-          "Properties":[
-            {
-              "Name": "Fight Result",
-              "Values":[
-                "%2 Crit Fail: PCs expend resources to survive",
-                "%10 Soft Fail: Combat Successful, but spend time to recover and no loot gained (-1 hexes traveled)",
-                "%48 Mild Success: Loot gained, but some time spent recovering (-1 hex traveled)",
-                "%50 Total Success: Loot gained, no time spent recovering"
-              ]
-            }
-          ]
-        },
-        "%10 Difficult Monster. PCs roll attack skills"
       ]
     }
   ]
