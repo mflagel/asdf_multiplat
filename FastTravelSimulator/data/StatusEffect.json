@@ -1,0 +1,50 @@
+{
+  "Name":"Status Effect",
+  "Properties":[
+    {
+      "Name":"Effect",
+      "Values":[
+        {
+          "Name":"Physical Effect",
+          "Weight": 50,
+          "Include":"PhysicalStatusEffect.json"
+        },
+        {
+          "Name":"Mental Effect",
+          "Weight": 10,
+          "Include":"MentalStatusEffect.json"
+        },
+        {
+          "Name":"Spiritual Effect",
+          "Weight": 1,
+          "Include":"SpiritualStatusEffect.json"
+        }
+      ]
+    },
+    {
+      "Name":"Duration",
+      "Values":[
+        "A few Moments",
+        "A few Minutes",
+        "About an Hour",
+        "A few Hours",
+        "Several Hours",
+        "A full Day",
+        "A couple Days",
+        "A few Days",
+        "A handful of Days",
+        "Almost a week"
+      ]
+    },
+    {
+      "Name":"Severity",
+      "Values":[
+        "Very Mild",
+        "%4 Mild",
+        "%10 Medium",
+        "%4 Major",
+        "Extreme"
+      ]
+    }
+  ]
+}
