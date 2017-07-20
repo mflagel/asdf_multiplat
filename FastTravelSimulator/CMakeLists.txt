@@ -18,7 +18,11 @@ include_directories(../ext)
 include_directories(../PlantGenerator/src)
 
 file(GLOB sources "src/*.cpp")
-file(GLOB plantgen_sources "../PlantGenerator/src/*.cpp")
+
+set(PlantgenSrc ../PlantGenerator/src)
+set(plantgen_sources ${PlantgenSrc}/plant_generator.cpp
+                     ${PlantgenSrc}/plant_printer.cpp
+                     ${PlantgenSrc}/from_json.cpp)
 
 set(sources ${sources} ${plantgen_sources} ${CMAKE_SOURCE_DIR}/../ext/cJSON/cJSON.c)
 
@@ -42,7 +46,7 @@ endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" ST
 # Libraries
 if(WIN32)
     target_link_libraries(fast_travel_sim ${CMAKE_SOURCE_DIR}/../lib/win32/x64/AsdfMultiplat_static_D.lib)
-    # target_link_libraries(PlantGenerator C:/Users/Mathias/Documents/Programming/AsdfMultiplat/lib/win32/x64/AsdfMultiplat_static_D.lib)
+    # target_link_libraries(fast_travel_sim C:/Users/Mathias/Documents/Programming/AsdfMultiplat/lib/win32/x64/AsdfMultiplat_static_D.lib)
 else()
     target_link_libraries(fast_travel_sim stdc++fs)
 endif()
