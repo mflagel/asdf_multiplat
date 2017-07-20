@@ -1,0 +1,35 @@
+{
+  "Name": "CreatureEncounter",
+  "Values":[
+    {
+      "Name":"Neutral Creature",
+      "Values":[
+        "Buzzram",
+        "Ram-Bird",
+        "Bullfalo"
+      ]
+    },
+    {
+      "Name":"Hostile Creature",
+      "Values":[
+        "%20 Trivial Monster",
+        {
+          "Name":"Mundane Monster",
+          "Weight":20,
+          "Properties":[
+            {
+              "Name": "Fight Result",
+              "Values":[
+                "%2 Crit Fail: PCs expend resources to survive",
+                "%10 Soft Fail: Combat Successful, but spend time to recover and no loot gained (-1 hexes traveled)",
+                "%48 Mild Success: Loot gained, but some time spent recovering (-1 hex traveled)",
+                "%50 Total Success: Loot gained, no time spent recovering"
+              ]
+            }
+          ]
+        },
+        "%10 Difficult Monster. PCs roll attack skills"
+      ]
+    }
+  ]
+}
