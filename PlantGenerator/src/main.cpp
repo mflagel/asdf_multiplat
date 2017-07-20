@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     using namespace std;
     if(argc < 2)
     {
-        cout << "TODO: output helpful message when there are no arguments";
+        cout << "TODO: output helpful message when there are no arguments\n";
         return 0;
     }
 
