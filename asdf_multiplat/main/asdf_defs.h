@@ -1,5 +1,8 @@
 #pragma once
 
+#include <limits>
+#include <cstdint>
+
 #define PI 3.14159265359f
 #define nullindex 4294967295
 
@@ -112,16 +115,15 @@ using color_t = glm::vec4;
 #endif
 
 
-// #include <type_traits>
-
 DIAGNOSTIC_PUSH
 DIAGNOSTIC_IGNORE(-Wsign-compare)
 
 template <typename A, typename B>
 B convert_integer(A value)
 {
-    ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
-    ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
+    /// FIXME gives error / warning in GCC
+    // ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
+    // ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
 
     return static_cast<B>(value);
 }
