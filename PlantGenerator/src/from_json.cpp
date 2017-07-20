@@ -370,8 +370,10 @@ namespace plantgen
         return node;
     }
 
-    pregen_node_t node_from_json(stdfs::path const& filepath)
+    pregen_node_t node_from_json(stdfs::path const& _filepath)
     {
+        auto filepath = stdfs::canonical(_filepath);
+
         if(!stdfs::is_regular_file(filepath))
             throw file_not_found_exception{filepath};
 
