@@ -4,7 +4,8 @@
 #include <cstdint>
 
 #define PI 3.14159265359f
-#define nullindex 4294967295
+// #define nullindex 4294967295
+#define nullindex std::numeric_limits<size_t>::max()
 
 #define ASDF_UNUSED(x) (void)x
 
