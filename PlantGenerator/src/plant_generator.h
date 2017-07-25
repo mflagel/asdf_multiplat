@@ -130,15 +130,32 @@ namespace plantgen
         std::vector<std::string> generated_values;
         std::string print_string;
 
+        size_t num_rollable_values = nullindex;
+        size_t num_rollable_value_nodes = nullindex;
+        size_t value_index = nullindex;
+
         using base_node_::base_node_;
+
+        size_t num_rollable_values_and_vnodes() const
+        { return num_rollable_values + num_rollable_value_nodes; }
 
         inline void merge_with(generated_node_t const& n)
         {
             base_node_::merge_with(n);
             generated_values.insert(generated_values.end(), n.generated_values.begin(), n.generated_values.end());
-            //value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
 
-            WARN_IF(print_string.size() > 0 && n.print_string.size() > 0, "generated node merge collision (both nodes have a print string) (%s and %s)", name, n.name);
+            if(num_rollable_values == nullindex)
+                num_rollable_values = n.num_rollable_values;
+            if(num_rollable_value_nodes == nullindex)
+                num_rollable_value_nodes = n.num_rollable_value_nodes;
+
+
+            //ASSERT(value_index == nullindex || n.value_index == nullindex, "node merge conflict: value index");
+            WARN_IF(value_index != nullindex && n.value_index != nullindex, "generated node merge conflict (both nodes have a value index) (%zu and %zu)", value_index, n.value_index);
+            if(value_index == nullindex)
+                value_index = n.value_index;
+
+            WARN_IF(print_string.size() > 0 && n.print_string.size() > 0, "generated node merge conflict (both nodes have a print string) (%s and %s)", name, n.name);
             if(print_string.empty())
                 print_string = n.print_string;
         }

@@ -122,12 +122,16 @@ namespace plantgen
 
         int roll = random_int(total);
 
+        generated_node_t node;
+        node.num_rollable_values = values.size();
+        node.num_rollable_value_nodes = value_nodes.size();
+
         for(size_t i = 0; i < values.size(); ++i)
         {
             if(roll <= values[i].weight)
             {
-                generated_node_t node;
                 node.generated_values = std::move(roll_value(values[i]));
+                node.value_index = i;
                 return node;
             }
 
@@ -139,8 +143,9 @@ namespace plantgen
         {
             if(roll <= value_nodes[i].weight)
             {
-                generated_node_t node(value_nodes[i].name);
-                //node.add_child(generate_node(value_nodes[i]));
+                node.name = value_nodes[i].name;
+                node.value_index = values.size() + i;
+
                 auto gend_node = generate_node(value_nodes[i]);
                 node.add_value_node(std::move(gend_node));
                 return node;
