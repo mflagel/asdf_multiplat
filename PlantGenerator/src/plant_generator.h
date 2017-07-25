@@ -22,12 +22,16 @@ namespace stdfs = std::experimental::filesystem;
 
 namespace plantgen
 {
+    constexpr int weight_inherit_code = -9001; //todo: better number?
+
     /// curiously recurring template pattern (sort-of)
     template <typename T>
     struct base_node_
     {
         std::string name;
         std::string sub_name; //used for includes
+
+        uint32_t weight = 1;
 
         T* parent = nullptr;
         std::vector<T> children;
@@ -73,6 +77,11 @@ namespace plantgen
             if(name != n.name)
                 sub_name = n.name;
 
+            if(n.weight == weight_inherit_code)
+                weight = weight_inherit_code;
+            else
+                weight = std::max(weight, n.weight); //not sure if I like this
+
             add_children(n.children);
             value_nodes.insert(value_nodes.end(), n.value_nodes.begin(), n.value_nodes.end());
         }
@@ -103,7 +112,6 @@ namespace plantgen
     struct pregen_node_t : base_node_<pregen_node_t>
     {
         value_list_t values;
-        uint32_t weight = 1;
 
         user_data_t user_data;
 

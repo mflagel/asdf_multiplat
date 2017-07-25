@@ -187,6 +187,7 @@ namespace plantgen
     {
         generated_node_t node;
         node.name = pre_node.name;
+        node.weight = pre_node.weight;
 
         for(auto const& child : pre_node.children)
         {
@@ -197,6 +198,7 @@ namespace plantgen
         {
             generated_node_t rolled = roll_values(pre_node);
             node.merge_with(rolled);
+            ASSERT(node.weight == pre_node.weight, "Node merge affected weight unexpectedly");
         }
 
         auto search = pre_node.user_data.find("PrintString");

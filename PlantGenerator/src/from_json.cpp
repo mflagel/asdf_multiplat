@@ -9,12 +9,6 @@ using namespace asdf;
 using namespace asdf::util;
 
 
-namespace
-{
-    int weight_inherit_code = -9001;
-}
-
-
 namespace tired_of_build_issues
 {
     std::string read_text_file(std::string const& filepath) {
@@ -314,7 +308,9 @@ namespace plantgen
 
                     // if(included_node.name == node.name)
                     // {
+                        auto prev_weight = node.weight;
                         node.merge_with(std::move(included_node));
+                        node.weight = prev_weight;
                     // }
                     // else
                     // {
