@@ -162,7 +162,67 @@ namespace plantgen
     };
 
 
-    /// Functions
+    /// Template Functions ///
+
+
+    /// A lazy breadth-first depth-second hybrid
+    /// TODO: implement a real bfs
+    template <typename T>
+    base_node_<T> const* find(base_node_<T> const& node, std::string name)
+    {
+        for(auto const& child : node.children)
+        {
+            if(child.name == name)
+                return &child;
+        }
+
+        for(auto const& child : node.children)
+        {
+            auto* pn = find(child, name);
+            if(pn)
+                return pn;
+        }
+
+        return nullptr;
+    }
+
+
+    template <typename Node>
+    Node const* leaf_value_node(Node const& node)
+    {
+        if(node.value_nodes.empty())
+            return &node;
+        else
+            return leaf_value_node(node.value_nodes[0]);
+    }
+
+
+    inline std::string const& leaf_value_name(generated_node_t const& node)
+    {
+        auto const* n = leaf_value_node(node);
+        ASSERT(n, "Unexpected null node");
+        ASSERT(n->generated_values.size() > 0, "Expected a generated value");
+        return n->generated_values[0];
+    }
+
+    inline std::string const& value_name(generated_node_t const& node)
+    {
+        if(node.generated_values.size() > 0)
+            return  node.generated_values[0];
+        else if(node.value_nodes.size() > 0)
+            return node.value_nodes[0].name;
+        else
+        {
+            EXPLODE("Expected a generated value or a value node");
+            return node.name;
+        }
+    }
+
+
+    /// Function Declarations ///
+    int32_t random_int(uint32_t min, uint32_t max);
+    int32_t random_int(uint32_t max);
+
 
     template <typename L>
     uint32_t total_weight(L const& list);
