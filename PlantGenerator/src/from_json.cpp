@@ -127,7 +127,7 @@ namespace plantgen
 
             if(space_pos > 1)
             {
-                v = value_string.substr(space_pos, std::string::npos);
+                v = value_string.substr(space_pos+1, std::string::npos);
                 v.weight = std::stoi(value_string.substr(1, space_pos));
             }
             else

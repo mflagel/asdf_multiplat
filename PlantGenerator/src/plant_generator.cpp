@@ -21,13 +21,13 @@ namespace plantgen
 
     std::mt19937 mt_rand( std::chrono::high_resolution_clock::now().time_since_epoch().count() );
 
-    int random_int(uint32_t min, uint32_t max)
+    int32_t random_int(uint32_t min, uint32_t max)
     {
         std::uniform_int_distribution<int> dis(min,max);
         return dis(mt_rand);
     }
 
-    int random_int(uint32_t max)
+    int32_t random_int(uint32_t max)
     {
         return random_int(0, max);
     }
