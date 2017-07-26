@@ -15,6 +15,8 @@ namespace fast_travel_sim
 
     struct journal_entry_t;
 
+    /////////////////////////////////
+
     enum terrain_grade_e
     {
         terrain_flat = 0
@@ -23,11 +25,6 @@ namespace fast_travel_sim
       , terrain_marshland
       , terrain_grade_count
     };
-
-    inline constexpr int32_t travel_rate(terrain_grade_e tg)
-    {
-        return tg - terrain_grade_count;
-    }
 
     enum path_type_e
     {
@@ -53,9 +50,7 @@ namespace fast_travel_sim
     struct hex_t
     {
         hex_coord_t coord;
-
         terrain_grade_e grade = terrain_flat;
-        //path_type_e     path  = path_dirt;
 
         hex_t() = default;
         hex_t(hex_t const&) = default;
@@ -71,11 +66,32 @@ namespace fast_travel_sim
         //return terrain_difficulty(hex.grade, hex.path);
         return int32_t(hex.grade);
     }
-    
 
-    using location_encounter_t = generated_node_t;
-    using    plant_encounter_t = generated_node_t;
-    using creature_encounter_t = generated_node_t;
+    /// Define these as structs instead of just type aliases
+    /// so that I can overload a summarize function for each of these
+    struct location_encounter_t : generated_node_t
+    {
+        location_encounter_t() = default;
+        location_encounter_t(generated_node_t const& g)
+        : generated_node_t(g)
+        {}
+    };
+
+    struct plant_encounter_t : generated_node_t
+    {
+        plant_encounter_t() = default;
+        plant_encounter_t(generated_node_t const& g)
+        : generated_node_t(g)
+        {
+        }
+    };
+    struct creature_encounter_t : generated_node_t
+    {
+        creature_encounter_t() = default;
+        creature_encounter_t(generated_node_t const& g)
+        : generated_node_t(g)
+        {}
+    };
 
     struct generated_hex_t : hex_t
     {
@@ -90,6 +106,7 @@ namespace fast_travel_sim
         /// hash function for hex_coord_t (ie: glm::ivec2) is in hexmap/data/hex_utils.h
         std::unordered_map<hex_coord_t, generated_hex_t> hex_data;
         pregen_node_t hex_rollables;
+        pregen_node_t creature_rollables;
 
         inline generated_hex_t& hex_at(hex_coord_t c)
         {
