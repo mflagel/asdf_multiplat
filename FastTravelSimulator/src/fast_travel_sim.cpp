@@ -216,16 +216,28 @@ namespace fast_travel_sim
     {
         std::string summary;
 
-        summary += "Journey Stats:\n";
-        summary += "    The Journey took " + std::to_string(journal.size()) + " days";
+        summary += "--- Journey Stats ---\n";
+        summary += "The Journey took " + std::to_string(journal.size()) + " days total\n";
+
+        std::vector<plant_encounter_t> all_plants;
 
         uint32_t day_index = 0;
-
         for(auto const& entry : journal)
         {
-            summary += "Day " + std::to_string(day_index + 1) + ":";
+            for(auto const& jseg : entry.segments)
+                all_plants.insert(all_plants.end(), jseg.plants.begin(), jseg.plants.end());
+
+            summary += "-- Day " + std::to_string(day_index + 1) + " --  ";
                 summary += summarize(entry);
+            ++ day_index;
         }
+
+        summary += "\n\n-- Top 3 Noteworthy Plants --\n";
+
+        sort_by_worth(all_plants);
+        for(size_t i = 0; i < 3; ++i)
+            summary += summarize(all_plants[i]) + "\n";
+
 
         return summary;
     }
@@ -233,20 +245,28 @@ namespace fast_travel_sim
 
 using namespace fast_travel_sim;
 
-const std::array<hex_t, 4> test_hexes =
+const std::array<hex_t, 8> test_hexes =
 {
     hex_t{hex_coord_t{0,0}, terrain_flat},
     hex_t{hex_coord_t{1,0}, terrain_flat},
-    hex_t{hex_coord_t{2,0}, terrain_flat},
-    hex_t{hex_coord_t{3,0}, terrain_flat}
+    hex_t{hex_coord_t{2,0}, terrain_hilly},
+    hex_t{hex_coord_t{3,0}, terrain_hilly},
+    hex_t{hex_coord_t{4,0}, terrain_hilly},
+    hex_t{hex_coord_t{5,0}, terrain_mountainous},
+    hex_t{hex_coord_t{6,0}, terrain_mountainous},
+    hex_t{hex_coord_t{7,0}, terrain_mountainous}
 };
 
-const std::array<route_segment_t, 4> test_route =
+const std::array<route_segment_t, 8> test_route =
 {
-    route_segment_t{hex_coord_t{0,0}, path_none, miles_per_hex},
-    route_segment_t{hex_coord_t{1,0}, path_none, miles_per_hex},
-    route_segment_t{hex_coord_t{2,0}, path_none, miles_per_hex},
-    route_segment_t{hex_coord_t{3,0}, path_none, miles_per_hex}
+    route_segment_t{hex_coord_t{0,0}, path_paved,     miles_per_hex},
+    route_segment_t{hex_coord_t{1,0}, path_paved,     miles_per_hex},
+    route_segment_t{hex_coord_t{2,0}, path_dirt,      miles_per_hex},
+    route_segment_t{hex_coord_t{3,0}, path_dirt,      miles_per_hex},
+    route_segment_t{hex_coord_t{4,0}, path_none,      miles_per_hex},
+    route_segment_t{hex_coord_t{5,0}, path_forest,    miles_per_hex},
+    route_segment_t{hex_coord_t{6,0}, path_forest,    miles_per_hex},
+    route_segment_t{hex_coord_t{7,0}, path_difficult, miles_per_hex}
 };
 
 
@@ -256,9 +276,11 @@ int main(int argc, char* argv[])
 
     //TODO: take this as an argument?
     hex_db.hex_rollables = node_from_json(hex_encounter_data_filepath);
+    hex_db.creature_rollables = node_from_json(creature_encounter_data_filepath);
 
     //TODO: load route from file
-    journey_route_t route = build_route(miles_per_hex * 10, hex_t()); //test route
+    journey_route_t route;
+    route.insert(route.begin(), test_route.begin(), test_route.end());
 
     for(auto const& hex : test_hexes)
     {
