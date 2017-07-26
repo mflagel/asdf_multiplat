@@ -86,6 +86,8 @@ Tree Merging:
 
 
 Tree Overrides:
+  NOT YET IMPLEMENTED
+
   Overrides could be similar to merge, but with an Override keyword ex: "Override":"some/file/path.json"
 
   OverridePlant.json:
@@ -95,6 +97,42 @@ Tree Overrides:
 
   This would a result in a plant with name "Some Plant", and a single property of "Some Property" but only the values in WeirdPlant.json
 
+
+
+
+-- Plant Printer --
+A seperate chunk of code that takes the various properties of a plant and constructs a human-readable string
+
+Print Strings:
+  You can define a "PrintString" for a given node. This will be used when printing it out.
+
+  Within the print string you can define variables that match the names of property nodes.
+
+  ex:
+  {
+    "Name":"Some Node",
+    "PrintString":"Some node has %Property A% and a %Property B%",
+    "Properties":[
+      {
+        "Name":"Property A",
+        "Values":[
+          A1,
+          A2,
+          A3
+        ]
+      },
+      {
+        "Name":"Property B",
+        "Values":[
+          B1,
+          B2,
+          B3
+        ]
+      },
+    ]
+  }
+
+  variables that have a '$' at the start will use the first value/value-node found
 
 
 -- Syntax --
