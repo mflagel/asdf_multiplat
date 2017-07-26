@@ -1,10 +1,12 @@
 #include "fast_travel_sim.h"
 
 #include <plantgen/plant_generator.h>
+#include <plantgen/plant_printer.h>
 #include <plantgen/from_json.h>
 
 using namespace std;
 using namespace plantgen;
+using namespace plant_printer;
 
 
 namespace fast_travel_sim
@@ -63,21 +65,92 @@ namespace fast_travel_sim
 
 
 
+    bool is_boring(generated_node_t const& n)
+    {
+        return n.children.empty()
+            && n.generated_values.empty()
+            && n.value_nodes.empty();
+    }
 
-    // bool is_boring(generated_hex_t const& h)
-    // {
-    //     return h.location == ""
-    //         && h.plant == ""
-    //         && h.creature == "";
-    // }
+    bool is_boring(generated_hex_t const& h)
+    {
+        return is_boring(h.location)
+            && is_boring(h.plant);
+    }
 
-    // ///TODO: implement once I have a better understanding of
-    // ///      what a journal_entry_t is going to be 
-    // bool is_boring(journal_entry_t const& e)
-    // {
-    //     //is_boring(e.hex);
-    //     return false;
-    // }
+    bool is_boring(journal_entry_t const& e)
+    {
+        if(e.segments.empty())
+            return true;
+
+        if(e.creatures.size() > 0)
+            return false;
+
+        for(auto const& jseg : e.segments)
+        {
+            for(auto const& loc : jseg.locations)
+                if(!is_boring(loc))
+                    return false;
+
+            for(auto const& plant : jseg.plants)
+                if(!is_boring(plant))
+                    return false;
+        }
+
+        return true;
+    }
+
+
+    /// super verbose names
+    constexpr double status_effect_weight_value_mult = 1000;
+    constexpr double status_effect_subcategory_weight_value_mult = 500;
+    constexpr double status_effect_duration_mult = 2.0;
+    constexpr double status_effect_severity_mult = 5.0;
+
+    int32_t status_effect_worth(generated_node_t const& status_effect)
+    {
+        ASSERT(status_effect.children.size() == 3, "");
+        auto const& effect = status_effect.children[0].value_nodes[0];
+        auto const& duration = status_effect.children[1];
+        auto const& severity = status_effect.children[1];
+
+        // start with something inversely proportional to the effect's weight
+        double value = 1.0 / double(effect.weight) 
+                     * status_effect_weight_value_mult;
+
+        // if the effect has a sub-category, something inversely proportional to its weight
+        if(effect.value_nodes.size() > 0)
+        {
+            value += 1.0 / double(effect.value_nodes[0].weight)
+                   * status_effect_subcategory_weight_value_mult;
+        }
+
+        ASSERT(duration.value_index != nullindex, "duration index is null");
+        ASSERT(severity.value_index != nullindex, "severity index is null");
+
+        // value multipliers for duration and severity are based on
+        // value_index as well as rarity
+        // ie: rarity only matters if the value index is high
+
+        {
+            double percentage = double(duration.value_index) / double(duration.num_rollable_values_and_vnodes());
+            double weight_mult = (1.0 / duration.weight);
+            value *= 1.0 + (weight_mult * percentage) * status_effect_duration_mult;
+        }
+        {
+            double percentage = double(severity.value_index) / double(severity.num_rollable_values_and_vnodes());
+            double weight_mult = (1.0 / severity.weight);
+            value *= 1.0 + (weight_mult * percentage) * status_effect_severity_mult;
+        }
+
+        return static_cast<int>(value); //truncate
+    }
+
+    int32_t plant_worth(generated_node_t const& plant)
+    {
+        return status_effect_worth(plant.children[1]);
+    }
+
 
 
 
@@ -180,19 +253,93 @@ namespace fast_travel_sim
         return journal;
     }
 
+    std::string& indent_in_place(std::string& str, std::string indent_str)
+    {
+        if(str.empty())
+            return str;
+
+        //indent the opening line
+        str.insert(str.begin(), indent_str.begin(), indent_str.end());
+
+        size_t i = 0;
+        while((i = str.find('\n', i)) != std::string::npos)
+        {
+            str.insert(str.begin() + i+1, indent_str.begin(), indent_str.end());
+            ++i; //increment so I don't just find the same newline
+        }
+
+        return str;
+    }
 
 
 
-    std::string summarize(route_segment_t const& seg)
+    void sort_by_worth(std::vector<plant_encounter_t>& plants)//, bool highest_first = true)
+    {
+        // int32_t sort_order_mult = (-2 * (-highest_first)) + 1; // +1 if true; -1 if false
+
+        std::sort(plants.begin(), plants.end(), 
+            [](plant_encounter_t const& lhs, plant_encounter_t const& rhs)
+            {
+                return plant_worth(lhs) > plant_worth(rhs);
+            });
+    }
+
+    void sort_and_cull_unworthy_plants(std::vector<plant_encounter_t>& plants, int32_t cull_below_worth)
+    {
+        sort_by_worth(plants);
+
+        for(size_t i = 0; i < plants.size(); ++i)
+        {
+            if(plant_worth(plants[i]) >= cull_below_worth)
+            {
+                plants.erase(plants.begin(), plants.begin() + i);
+                return;
+            }
+        }
+    }
+
+
+    std::string summarize(creature_encounter_t const& enc)
+    {
+        if(enc.generated_values.size() > 0)
+            return enc.generated_values[0];
+        else if(enc.value_nodes.size() > 0)
+            return print_plant(enc.value_nodes[0]);
+
+        return "";
+    }
+
+    std::string summarize(location_encounter_t const& loc)
+    {
+        return loc.generated_values[0]
+            +  " (" + loc.children[0].generated_values[0] + ")";
+    }
+
+    std::string summarize(plant_encounter_t const& plant)
+    {
+        ASSERT(plant.children.size() >= 1, "Expecting more than one plant property");
+        ASSERT(plant.children[1].name == "Status Effect", "Expected child[1] to be 'Status Effect'");
+
+        auto plant_name = value_name(plant.children[0]);
+        string plant_worth_str = "$" + std::to_string(plant_worth(plant));
+
+        return plant_worth_str + " :: " + plant_name + ": " + print_sub_property(plant.children[1]);
+    }
+
+    std::string summarize(journey_segment_t const& seg)
     {
         std::string summary;
 
-        summary += to_string(seg.coord) + ":";
+        summary += "  " + to_string(seg.coord) + " (" + std::to_string(seg.dist) + " " + dist_units_name + "):";
 
-        // if(is_boring(hex))
-        // {
-        //     summary += " nothing interesting";
-        // }
+        for(auto const& loc : seg.locations)
+        {
+            summary += "\n    " + summarize(loc);
+        }
+        for(auto const& plant : seg.plants)
+        {
+            summary += "\n    " + summarize(plant);
+        }
 
         return summary;
     }
@@ -201,12 +348,18 @@ namespace fast_travel_sim
     {
         std::string summary;
 
-        auto num_hexes = convert_integer<size_t, uint64_t>(entry.hexes.size());
-        summary += std::to_string(num_hexes) + " hexes traveled\n";
+        auto num_segs = convert_integer<size_t, uint64_t>(entry.segments.size());
+        summary += std::to_string(num_segs) + " segments traveled\n";
 
-        for(auto const& hex : entry.hexes)
+        for(auto const& seg : entry.segments)
         {
-            summary += summarize(hex) + "\n";
+            summary += summarize(seg) + "\n";
+        }
+        for(auto const& enc : entry.creatures)
+        {
+            auto enc_sum = summarize(enc);
+            indent_in_place(enc_sum, "    ");
+            summary += enc_sum + "\n";
         }
 
         return summary;
