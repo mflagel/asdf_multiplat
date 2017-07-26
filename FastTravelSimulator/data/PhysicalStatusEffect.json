@@ -5,6 +5,7 @@
       "Name":"Good",
       "Weight": "%",
       "Values":[
+        "Pest Repellent",
         "Sedative",
         "Pain Relief",
         "Healing",
@@ -25,12 +26,12 @@
       "Values":[
         "Poisonous",
         "Laxitive",
-        "Rash-causing",
+        "Rash-Causing",
         "Blindness",
-        "Disorient Limbs",
-        "Swollen Tongue",
-        "Numb Limb(s) (Foot, leg, arm, hand)",
-        "Hair Falling Out",
+        "Limb-Disorienting",
+        "Tongue-Swelling",
+        "Limb-Numming (Foot, leg, arm, hand)",
+        "Hair-Loss",
         "Stiffness",
         "Impotence"
       ]

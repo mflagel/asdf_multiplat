@@ -3,6 +3,12 @@
   "Properties":[
     {
         "Name":"Location",
+        "Properties":[
+          {
+            "Name":"Location Visibility",
+            "Include":"LocationVisibility.json"
+          }
+        ],
         "Values":[
           "%10 Natural Beauty",
           "%4 Monument",
@@ -22,16 +28,12 @@
             "Grass",
             "Fern",
             "Tree Bark",
-            "Leaf",
+            "Tree Leaf",
             "Medium Plant",
             "Other (pinecone, seed, etc)",
             {
               "Name":"Mushroom",
               "Include":"PlantGeneratorData/mushroom.json"
-            },
-            {
-              "Name":"Small Plant",
-              "Include":"PlantGeneratorData/small_plants/small_plants.json"
             },
             {
               "Name":"Small Plant Root",

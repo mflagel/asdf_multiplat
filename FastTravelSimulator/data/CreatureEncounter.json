@@ -3,6 +3,7 @@
   "Values":[
     {
       "Name":"Neutral Creature",
+      "Weight":1,
       "Values":[
         "Buzzram",
         "Ram-Bird",
@@ -11,6 +12,7 @@
     },
     {
       "Name":"Hostile Creature",
+      "Weight":10,
       "Values":[
         "%20 Trivial Monster",
         {
