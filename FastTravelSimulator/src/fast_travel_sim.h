@@ -53,15 +53,32 @@ namespace fast_travel_sim
     using journal_t = std::vector<journal_entry_t>;
     
 
-    //int travel_speed(hex_t const&
+    /// WIP
+    struct daily_travel_schedule_t
+    {
+        uint32_t num_hours_travelling = 8;
+        uint32_t num_hours_sleeping   = 8;
+        uint32_t num_hours_surviving  = 8;
+
+        inline bool is_valid() const {
+            return num_hours_travelling
+                 + num_hours_sleeping
+                 + num_hours_surviving
+                == 24;
+        }
+    };
 
 
     inline std::string to_string(hex_coord_t const& c)
     {
         return "{" + std::to_string(c.x) + "," + std::to_string(c.y) + "}";
     }
+
+    bool is_boring(generated_node_t const&);
     bool is_boring(generated_hex_t const&);
     bool is_boring(journal_entry_t const&);
+
+    int status_effect_value(generated_node_t const&);
 
 
 
@@ -69,8 +86,10 @@ namespace fast_travel_sim
     journal_t make_long_journey(journey_route_t, hex_database_t const&);
 
 
-
-    std::string summarize(route_segment_t const&);
+    std::string summarize(creature_encounter_t const&);
+    std::string summarize(location_encounter_t const&);
+    std::string summarize(plant_encounter_t const&);
+    std::string summarize(journey_segment_t const&);
     std::string summarize(journal_entry_t const&);
     std::string summarize(journal_t const&);
 }
