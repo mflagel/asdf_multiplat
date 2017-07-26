@@ -24,6 +24,7 @@ namespace plantgen
 {
     constexpr int weight_inherit_code = -9001; //todo: better number?
 
+
     /// curiously recurring template pattern (sort-of)
     template <typename T>
     struct base_node_
@@ -49,6 +50,26 @@ namespace plantgen
                 s += " (" + sub_name + ")";
 
             return s;
+        }
+
+        size_t child_index(std::string const& child_name) const
+        {
+            ///TODO: investigate if it's faster to compare hashes
+            for(size_t i = 0; i < children.size(); ++i)
+                if(children[i].name == child_name)
+                    return i;
+
+            throw std::out_of_range(std::string("no child found named '" + child_name + "' in '" + name + "'"));
+        }
+
+        T& child(std::string const& child_name)
+        {
+            return children[child_index(child_name)];
+        }
+
+        T const& child(std::string const& child_name) const
+        {
+            return children[child_index(child_name)];
         }
 
         void add_child(T&& c)
