@@ -20,7 +20,8 @@ namespace fast_travel_sim
     constexpr uint32_t num_hours_surviving  = 8;
                                     //total = 24
 
-    constexpr int32_t default_travel_rate = 24; //24 miles per day
+    // constexpr int32_t default_travel_rate = 24; //24 miles per day
+    constexpr int32_t default_travel_rate = 3; //24 miles per day
     constexpr int32_t miles_per_hex = 6; // TEMP will make this variable later
 
     struct route_segment_t
@@ -32,10 +33,21 @@ namespace fast_travel_sim
 
     using journey_route_t = std::vector<route_segment_t>;
 
+    struct journey_segment_t : route_segment_t
+    {
+        std::vector<location_encounter_t> locations;
+        std::vector<plant_encounter_t> plants;
 
+        journey_segment_t(route_segment_t const& rseg)
+        : route_segment_t(rseg)
+        {}
+    };
+
+    // represents a day's worth of travel
     struct journal_entry_t
     {
-        std::vector<route_segment_t> hexes;
+        std::vector<journey_segment_t> segments;
+        std::vector<creature_encounter_t> creatures;
     };
 
     using journal_t = std::vector<journal_entry_t>;
