@@ -317,13 +317,10 @@ namespace fast_travel_sim
 
     std::string summarize(plant_encounter_t const& plant)
     {
-        ASSERT(plant.children.size() >= 1, "Expecting more than one plant property");
-        ASSERT(plant.children[1].name == "Status Effect", "Expected child[1] to be 'Status Effect'");
-
-        auto plant_name = value_name(plant.children[0]);
+        auto plant_desc = value_name(plant.child("Physical Description"));
         string plant_worth_str = "$" + std::to_string(plant_worth(plant));
 
-        return plant_worth_str + " :: " + plant_name + ": " + print_sub_property(plant.children[1]);
+        return plant_worth_str + " :: " + plant_desc + ": " + print_sub_property(plant.child("Status Effect"));
     }
 
     std::string summarize(journey_segment_t const& seg)
