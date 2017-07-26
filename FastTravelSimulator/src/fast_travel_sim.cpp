@@ -12,6 +12,8 @@ namespace fast_travel_sim
     namespace
     {
         constexpr char const* hex_encounter_data_filepath = "../data/HexData.json";
+        constexpr char const* creature_encounter_data_filepath = "../data/CreatureEncounter.json";
+        constexpr char const* dist_units_name = "miles";
     }
 
     // in order to figure out how far someone can go on a route
@@ -19,7 +21,8 @@ namespace fast_travel_sim
     // and slow-rate into a larger distance 
     int32_t difficulty_modified_dist(int32_t dist, int32_t difficulty)
     {
-        return dist * difficulty;
+        WARN_IF(difficulty < 0, "negative difficulty will give negative (or zero) modified distance, which is probably bad");
+        return dist * (1 + difficulty);
     }
 
     int32_t difficulty_modified_dist(int32_t dist, hex_t const& hex)
@@ -91,12 +94,6 @@ namespace fast_travel_sim
 
         return route;
     }
-
-
-    // uint32_t hours_required(route_segment_t const& segment)
-    // {
-    //     //segment.dist
-    // }
     
 
     /*
@@ -114,40 +111,68 @@ namespace fast_travel_sim
         journal_entry_t current_journal_entry;
         uint32_t days_spent_travelling = 0;
 
+        const int32_t daily_travel_dist = num_hours_travelling * default_travel_rate;
         int32_t daily_dist_remaining = num_hours_travelling * default_travel_rate;
 
         for(size_t current_seg_index = 0; current_seg_index < route.size(); ++current_seg_index)
         {
             auto const& cur_seg = route[current_seg_index];
             auto const& cur_hex = hex_db.hex_at(cur_seg.coord);
+            journey_segment_t jseg(cur_seg);
 
             auto modified_dist = difficulty_modified_dist(cur_seg.dist, cur_hex);
 
             // if there is travel budget left, travel this segment
             if(daily_dist_remaining >= modified_dist)
             {
-                current_journal_entry.hexes.push_back(cur_seg);
+                jseg.locations.push_back(cur_hex.location);
+                jseg.plants.push_back(cur_hex.plant);
+
+                current_journal_entry.segments.push_back(std::move(jseg));
+
                 daily_dist_remaining -= modified_dist;
             }
             else
             {
+                /// FIXME safe conversion for int <--> float
                 // split segment into travellable and not-travellable
                 int32_t untravelled_dist = modified_dist - daily_dist_remaining;
-                int32_t fraction = daily_dist_remaining / modified_dist;
+                float fract_travelled = float(modified_dist - untravelled_dist) / float(modified_dist);
+                int32_t actual_travelled = int32_t(float(cur_seg.dist) * fract_travelled);
+                int32_t actual_untravelled = cur_seg.dist - actual_travelled;
 
-                route_segment_t new_seg{cur_seg.coord, cur_seg.path, untravelled_dist};
+                ASSERT(untravelled_dist > 0, "");
+                ASSERT(fract_travelled > 0.0f && fract_travelled < 1.0f, "");
+                ASSERT(actual_travelled > 0, "");
+                ASSERT(actual_untravelled > 0, "");
+
+                //add journal entry of current segment with distance travelled
+                current_journal_entry.segments.push_back(std::move(jseg));
+                current_journal_entry.segments.back().dist = actual_travelled;
+
+                //zero the dist remaining so we actually 'travel' it
+                //otherwise infinite loop
+                daily_dist_remaining = 0;
+
+                //push new seg with remaining distance
+                route_segment_t new_seg{cur_seg.coord, cur_seg.path, actual_untravelled};
                 route.insert(route.begin() + current_seg_index + 1, std::move(new_seg));
             }
 
 
-            // make camp if there's no more travel remaining for the day
-            if(daily_dist_remaining == 0)
+            // 'make camp' if there's no more travel remaining for the day
+            //          or if this is the last segment
+            if(daily_dist_remaining == 0 || current_seg_index + 1 == route.size())
             {
                 //todo: encounters for the day
+                auto creature_gen_node = generate_node(hex_db.creature_rollables);
+                current_journal_entry.creatures.push_back(std::move(creature_gen_node));
+
+                journal.push_back(std::move(current_journal_entry));
 
 
-                journal.emplace_back(std::move(current_journal_entry));  /// current_journal_entry will be empty after being moved
                 ++days_spent_travelling;
+                daily_dist_remaining = num_hours_travelling * default_travel_rate;
             }
         }
 
