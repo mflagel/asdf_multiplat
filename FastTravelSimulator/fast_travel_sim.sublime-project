@@ -1,0 +1,25 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"bin",
+				"obj",
+				"build"
+			],
+			"path": "."
+		},
+		{
+			"path": "/home/mathias/Programming/AsdfMultiplat/doc"
+		},
+		{
+			"folder_exclude_patterns":
+			[
+				"bin",
+				"obj"
+			],
+			"path": "/home/mathias/Programming/AsdfMultiplat/asdf_multiplat"
+		}
+	]
+}
