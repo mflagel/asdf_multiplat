@@ -24,10 +24,65 @@ namespace fast_travel_sim
     constexpr int32_t default_travel_rate = 3; //24 miles per day
     constexpr int32_t miles_per_hex = 6; // TEMP will make this variable later
 
+
+
+    enum path_type_e
+    {
+        path_paved = 0
+      , path_dirt
+      , path_none
+      , path_forest
+      , path_difficult
+    };
+
+    /// I could make path_type_e start at -2 and count upwards
+    /// but I prefer starting at 0 in case I want to index into
+    /// an array (it's common for me to have a constexpr array
+    /// of names)
+    constexpr int32_t path_difficulty_min = -2;
+    inline constexpr int32_t path_difficulty(path_type_e path)
+    {
+        return path_difficulty_min + path;
+    }
+
+
+    enum travel_pace_e
+    {        
+          travel_pace_normal
+        , travel_pace_quick
+        , travel_pace_cautious
+        , travel_pace_exploring
+        , travel_pace_cautious_exploring
+        , travel_pace_foraging
+        , travel_pace_count
+    };
+
+    /// Experimenting with int percentages instead of floats
+    constexpr std::array<int32_t, travel_pace_count> travel_pace_percentages
+    {
+          100 // travel_pace_normal
+        , 150 // travel_pace_quick
+        ,  75 // travel_pace_cautious
+        ,  50 // travel_pace_exploring
+        ,  20 // travel_pace_cautious_exploring
+        ,  50 // travel_pace_foraging
+    };
+
+    constexpr std::array<char const*, travel_pace_count> travel_pace_strings =
+    {
+        "normal"
+        "quick"
+        "cautious"
+        "exploring"
+        "cautious exploring"
+        "foraging"
+    };
+
     struct route_segment_t
     {
         hex_coord_t coord;
         path_type_e path = path_none;
+        travel_pace_e pace = travel_pace_normal;
         int32_t dist = 0;
     };
 
@@ -66,6 +121,37 @@ namespace fast_travel_sim
                  + num_hours_surviving
                 == 24;
         }
+    };
+
+    struct traveller_t
+    {
+        std::string name;
+        int32_t travel_rate = default_travel_rate;
+        int32_t survival_skill = 0;
+        int32_t navigation_skill = 0;
+    };
+
+    struct travel_group_t
+    {
+        std::vector<traveller_t> travellers;
+
+        int32_t slowest_travel_rate      = std::numeric_limits<int32_t>::max();
+        int32_t highest_survival_skill   = std::numeric_limits<int32_t>::min();
+        int32_t highest_navigation_skill = std::numeric_limits<int32_t>::min();
+
+        void add_traveller(traveller_t const& t);
+        void add_traveller(traveller_t&& t);
+        void adjust_cache(traveller_t const& t);
+        void rebuild_cache();
+    };
+
+    struct journey_t
+    {
+        travel_group_t travel_group;
+        journey_route_t route;
+        int32_t day_rations = 0;
+
+        size_t num_travellers() const { return travel_group_travellers.size(); }
     };
 
 
