@@ -26,25 +26,6 @@ namespace fast_travel_sim
       , terrain_grade_count
     };
 
-    enum path_type_e
-    {
-        path_paved = 0
-      , path_dirt
-      , path_none
-      , path_forest
-      , path_difficult
-    };
-
-    /// I could make path_type_e start at -2 and count upwards
-    /// but I prefer starting at 0 in case I want to index into
-    /// an array (it's common for me to have a constexpr array
-    /// of names)
-    constexpr int32_t path_difficulty_min = -2;
-    inline constexpr int32_t path_difficulty(path_type_e path)
-    {
-        return path_difficulty_min + path;
-    }
-
     using hex_coord_t = glm::ivec2;
 
     struct hex_t
@@ -56,14 +37,8 @@ namespace fast_travel_sim
         hex_t(hex_t const&) = default;
     };
 
-    inline int32_t terrain_difficulty(terrain_grade_e grade, path_type_e path)
-    {
-        return uint32_t(grade) + path_difficulty(path);
-    }
-
     inline int32_t terrain_difficulty(hex_t const& hex)
     {
-        //return terrain_difficulty(hex.grade, hex.path);
         return int32_t(hex.grade);
     }
 
