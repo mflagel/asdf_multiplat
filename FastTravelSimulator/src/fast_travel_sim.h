@@ -167,9 +167,7 @@ namespace fast_travel_sim
     int status_effect_value(generated_node_t const&);
 
 
-
-    journey_route_t build_route(int distance_miles, hex_t);
-    journal_t make_long_journey(journey_route_t, hex_database_t const&);
+    journal_t simulate_journey(journey_t const&, hex_database_t const&);
 
 
     std::string summarize(creature_encounter_t const&);

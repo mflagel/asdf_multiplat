@@ -34,7 +34,9 @@ namespace fast_travel_sim
 
     int32_t difficulty_modified_dist(route_segment_t const& route_seg, hex_database_t const& hex_db)
     {
-        return difficulty_modified_dist(route_seg.dist, hex_db.hex_at(route_seg.coord));
+        auto modded_hex_dist = difficulty_modified_dist(route_seg.dist, hex_db.hex_at(route_seg.coord));
+
+        return modded_hex_dist;
     }
 
 
@@ -152,20 +154,50 @@ namespace fast_travel_sim
     }
 
 
-
-
-    /// FIXME I think I'll have to create some sort of fake coords
-    /// because otherwise it makes no sense to take a single hex
-    /// and distance, since route_segment_t stores a coord
-    journey_route_t build_route(int distance_miles, hex_t hex)
+    void travel_group_t::add_traveller(traveller_t const& t)
     {
-        auto d = std::ldiv(distance_miles, miles_per_hex);
-        uint32_t num_hexes = d.quot + d.rem > 0;
+        adjust_cache(t);
+        travellers.push_back(t);
+    }
 
-        journey_route_t route;
-        route.resize(num_hexes, route_segment_t{hex.coord, path_none, miles_per_hex});
+    void travel_group_t::add_traveller(traveller_t&& t)
+    {
+        adjust_cache(t);
+        travellers.push_back(std::move(t));
+    }
 
-        return route;
+    void travel_group_t::adjust_cache(traveller_t const& t)
+    {
+        slowest_travel_rate      = std::min(slowest_travel_rate,      t.travel_rate);
+        highest_survival_skill   = std::max(highest_survival_skill,   t.survival_skill);
+        highest_navigation_skill = std::max(highest_navigation_skill, t.navigation_skill);
+    }
+
+    void travel_group_t::rebuild_cache()
+    {
+        slowest_travel_rate      = std::numeric_limits<int32_t>::max();
+        highest_survival_skill   = std::numeric_limits<int32_t>::min();
+        highest_navigation_skill = std::numeric_limits<int32_t>::min();
+
+        for(auto const& t : travellers)
+        {
+            adjust_cache(t);
+        }
+    }
+
+    /// WIP just doing 3d6 for now
+    int32_t roll_dice()
+    {
+        int a = random_int(1, 6);
+        int b = random_int(1, 6);
+        int c = random_int(1, 6);
+
+        return a+b+c;
+    }
+
+    bool test_skill(int32_t skill_rank)
+    {
+        return roll_dice() <= skill_rank;
     }
     
 
@@ -177,9 +209,14 @@ namespace fast_travel_sim
         add a journal entry for the day
     */
 
-    //take route by copy, as it might get modified later if I split a segment
-    journal_t make_long_journey(journey_route_t route, hex_database_t const& hex_db)
+    //take journey by copy, as it will probably get modified later
+    journal_t simulate_journey(journey_t journey, hex_database_t const& hex_db)
     {
+        ASSERT(journey.travel_group.travellers.size() > 0, "Can't simulate a journey without travellers");
+        WARN_IF(journey.route.empty(), "Simulating a journey without a route");
+
+        auto& route = journey.route;
+
         journal_t journal;
         journal_entry_t current_journal_entry;
         uint32_t days_spent_travelling = 0;
@@ -228,7 +265,8 @@ namespace fast_travel_sim
                 daily_dist_remaining = 0;
 
                 //push new seg with remaining distance
-                route_segment_t new_seg{cur_seg.coord, cur_seg.path, actual_untravelled};
+                route_segment_t new_seg(cur_seg);
+                new_seg.dist = actual_untravelled;
                 route.insert(route.begin() + current_seg_index + 1, std::move(new_seg));
             }
 
@@ -241,8 +279,22 @@ namespace fast_travel_sim
                 auto creature_gen_node = generate_node(hex_db.creature_rollables);
                 current_journal_entry.creatures.push_back(std::move(creature_gen_node));
 
-                journal.push_back(std::move(current_journal_entry));
+                journey.day_rations -= journey.num_travellers();
 
+                if(cur_seg.pace == travel_pace_foraging)
+                {
+                    for(auto const& traveller : journey.travel_group.travellers)
+                    {
+                        auto margin = -1 * roll_dice() - traveller.survival_skill;
+                        margin = std::max(margin,0);
+
+                        //1 for success, and another 1 for every 4 margins of success
+                        journey.day_rations += (margin >= 0) + (margin / 4);
+                    }
+                }
+
+                current_journal_entry.rations_remaining = journey.day_rations;
+                journal.push_back(std::move(current_journal_entry));
 
                 ++days_spent_travelling;
                 daily_dist_remaining = num_hours_travelling * default_travel_rate;
@@ -346,7 +398,7 @@ namespace fast_travel_sim
         std::string summary;
 
         auto num_segs = convert_integer<size_t, uint64_t>(entry.segments.size());
-        summary += std::to_string(num_segs) + " segments traveled\n";
+        summary += std::to_string(num_segs) + " segments traveled; Rations Remaining: " + std::to_string(entry.rations_remaining) + "\n";
 
         for(auto const& seg : entry.segments)
         {
@@ -409,15 +461,19 @@ const std::array<hex_t, 8> test_hexes =
 
 const std::array<route_segment_t, 8> test_route =
 {
-    route_segment_t{hex_coord_t{0,0}, path_paved,     miles_per_hex},
-    route_segment_t{hex_coord_t{1,0}, path_paved,     miles_per_hex},
-    route_segment_t{hex_coord_t{2,0}, path_dirt,      miles_per_hex},
-    route_segment_t{hex_coord_t{3,0}, path_dirt,      miles_per_hex},
-    route_segment_t{hex_coord_t{4,0}, path_none,      miles_per_hex},
-    route_segment_t{hex_coord_t{5,0}, path_forest,    miles_per_hex},
-    route_segment_t{hex_coord_t{6,0}, path_forest,    miles_per_hex},
-    route_segment_t{hex_coord_t{7,0}, path_difficult, miles_per_hex}
+    route_segment_t{hex_coord_t{0,0}, path_paved,     travel_pace_normal,   miles_per_hex},
+    route_segment_t{hex_coord_t{1,0}, path_paved,     travel_pace_normal,   miles_per_hex},
+    route_segment_t{hex_coord_t{2,0}, path_dirt,      travel_pace_foraging, miles_per_hex},
+    route_segment_t{hex_coord_t{3,0}, path_dirt,      travel_pace_foraging, miles_per_hex},
+    route_segment_t{hex_coord_t{4,0}, path_none,      travel_pace_foraging, miles_per_hex},
+    route_segment_t{hex_coord_t{5,0}, path_forest,    travel_pace_cautious, miles_per_hex},
+    route_segment_t{hex_coord_t{6,0}, path_forest,    travel_pace_cautious, miles_per_hex},
+    route_segment_t{hex_coord_t{7,0}, path_difficult, travel_pace_normal,   miles_per_hex}
 };
+
+const traveller_t test_traveller{"test",default_travel_rate,10,10};
+
+constexpr int32_t test_rations = 100;
 
 
 int main(int argc, char* argv[])
@@ -429,15 +485,17 @@ int main(int argc, char* argv[])
     hex_db.creature_rollables = node_from_json(creature_encounter_data_filepath);
 
     //TODO: load route from file
-    journey_route_t route;
-    route.insert(route.begin(), test_route.begin(), test_route.end());
+    journey_t journey;
+    journey.travel_group.add_traveller(test_traveller);
+    journey.route.insert(journey.route.begin(), test_route.begin(), test_route.end());
+    journey.day_rations = test_rations;
 
     for(auto const& hex : test_hexes)
     {
         hex_db.generate_if_empty(hex);
     }
 
-    journal_t results = make_long_journey(route, hex_db);
+    journal_t results = simulate_journey(journey, hex_db);
     cout << summarize(results);
 
     return 0;
