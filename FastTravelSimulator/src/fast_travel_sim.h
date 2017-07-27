@@ -70,12 +70,12 @@ namespace fast_travel_sim
 
     constexpr std::array<char const*, travel_pace_count> travel_pace_strings =
     {
-        "normal"
-        "quick"
-        "cautious"
-        "exploring"
-        "cautious exploring"
-        "foraging"
+          "normal"
+        , "quick"
+        , "cautious"
+        , "exploring"
+        , "cautious exploring"
+        , "foraging"
     };
 
     struct route_segment_t
@@ -103,6 +103,8 @@ namespace fast_travel_sim
     {
         std::vector<journey_segment_t> segments;
         std::vector<creature_encounter_t> creatures;
+
+        int32_t rations_remaining = 0;
     };
 
     using journal_t = std::vector<journal_entry_t>;
@@ -151,7 +153,7 @@ namespace fast_travel_sim
         journey_route_t route;
         int32_t day_rations = 0;
 
-        size_t num_travellers() const { return travel_group_travellers.size(); }
+        size_t num_travellers() const { return travel_group.travellers.size(); }
     };
 
 
@@ -167,7 +169,7 @@ namespace fast_travel_sim
     int status_effect_value(generated_node_t const&);
 
 
-    journal_t simulate_journey(journey_t const&, hex_database_t const&);
+    journal_t simulate_journey(journey_t, hex_database_t const&);
 
 
     std::string summarize(creature_encounter_t const&);

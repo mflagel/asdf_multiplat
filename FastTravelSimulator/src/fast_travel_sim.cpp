@@ -379,7 +379,9 @@ namespace fast_travel_sim
     {
         std::string summary;
 
-        summary += "  " + to_string(seg.coord) + " (" + std::to_string(seg.dist) + " " + dist_units_name + "):";
+        auto pace_str = std::string(travel_pace_strings[seg.pace]);
+        summary += "  " + to_string(seg.coord) + " (" + std::to_string(seg.dist) + " " + dist_units_name
+                        + " at a " + pace_str + " pace)";
 
         for(auto const& loc : seg.locations)
         {
