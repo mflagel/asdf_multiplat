@@ -5,7 +5,39 @@
 
 #define PI 3.14159265359f
 // #define nullindex 4294967295
-#define nullindex std::numeric_limits<size_t>::max()
+// #define nullindex std::numeric_limits<size_t>::max()
+
+struct nullindex_t
+{
+    template<typename T>
+    constexpr bool operator==(T const& rhs) const
+    {
+        return rhs == std::numeric_limits<T>::max();
+    }
+    template<typename T>
+    constexpr bool operator!=(T const& rhs) const
+    {
+        return rhs != std::numeric_limits<T>::max();
+    }
+    template<typename T>
+    constexpr operator T() const
+    {
+        return std::numeric_limits<T>::max();
+    }
+};
+
+const nullindex_t nullindex = {};
+
+template<typename T>
+constexpr bool operator==(T const& lhs, nullindex_t const& rhs)
+{
+    return rhs == lhs;
+}
+template<typename T>
+constexpr bool operator!=(T const& lhs, nullindex_t const& rhs)
+{
+    return rhs != lhs;
+}
 
 #define ASDF_UNUSED(x) (void)x
 
@@ -23,8 +55,9 @@
 #ifdef _MSC_VER
 #define DEBUG_BREAK __debugbreak()
 #else
-#include <signal.h>
-#define DEBUG_BREAK raise(SIGTRAP);
+//#include <signal.h>
+#include <csignal>
+#define DEBUG_BREAK std::raise(SIGTRAP);
 #endif
 
 //Assertion code shamelessly copymodified from: 
