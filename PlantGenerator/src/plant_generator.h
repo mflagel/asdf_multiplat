@@ -39,8 +39,9 @@ namespace plantgen
         std::vector<T> value_nodes;
 
         base_node_() = default;
-        base_node_(std::string const& _name)
+        base_node_(std::string const& _name, uint32_t _weight = 0)
         : name(_name)
+        , weight(_weight)
         {}
 
         std::string name_string() const
@@ -126,25 +127,29 @@ namespace plantgen
     };
 
 
-    // store value nodeas separately, since I can't store nodes in
-    // the variant without them being heap-allocated
-    // (since AFAIK if the variant stores a node, which stores the
-    // variant, it can lead to an infinite size)
     struct pregen_node_t : base_node_<pregen_node_t>
     {
-        value_list_t values;
+        variant_value_t value;
 
         user_data_t user_data;
 
         using base_node_::base_node_;
 
+        pregen_node_t(weighted_value_t const& wv)
+        : base_node_<pregen_node_t>("", wv.weight)
+        , value(wv)
+        {
+        }
+
+
         void merge_with(pregen_node_t const& n)
         {
             base_node_::merge_with(n);
-            values.insert(values.end(), n.values.begin(), n.values.end());
+            value = n.value;
             user_data.insert(n.user_data.begin(), n.user_data.end());
         }
     };
+
 
     struct generated_node_t : base_node_<generated_node_t>
     {
@@ -152,13 +157,17 @@ namespace plantgen
         std::string print_string;
 
         size_t num_rollable_values = nullindex;
-        size_t num_rollable_value_nodes = nullindex;
+        // size_t num_rollable_value_nodes = nullindex;
         size_t value_index = nullindex;
 
         using base_node_::base_node_;
 
-        size_t num_rollable_values_and_vnodes() const
-        { return num_rollable_values + num_rollable_value_nodes; }
+        inline std::string const& generated_value() const
+        {
+            ASSERT(generated_values.size() > 0, "Cannot grab a generated value from an empty list");
+            WARN_IF(generated_values.size() > 1, "There are generated values being ignored from %s", name.c_str());
+            return generated_values[0];
+        }
 
         inline void merge_with(generated_node_t const& n)
         {
@@ -167,12 +176,9 @@ namespace plantgen
 
             if(num_rollable_values == nullindex)
                 num_rollable_values = n.num_rollable_values;
-            if(num_rollable_value_nodes == nullindex)
-                num_rollable_value_nodes = n.num_rollable_value_nodes;
 
-
-            //ASSERT(value_index == nullindex || n.value_index == nullindex, "node merge conflict: value index");
-            WARN_IF(value_index != nullindex && n.value_index != nullindex, "generated node merge conflict (both nodes have a value index) (%zu and %zu)", value_index, n.value_index);
+            WARN_IF(value_index != nullindex && n.value_index != nullindex, "generated node merge conflict (%s and %s; both nodes have a value index) (%zu and %zu)"
+                                                                            , name.c_str(), n.name.c_str(), value_index, n.value_index);
             if(value_index == nullindex)
                 value_index = n.value_index;
 
@@ -207,6 +213,12 @@ namespace plantgen
         return nullptr;
     }
 
+    template <typename T>
+    bool is_leaf(base_node_<T> const& n)
+    {
+        return n.children.empty() && n.value_nodes.empty();
+    }
+
 
     template <typename Node>
     Node const* leaf_value_node(Node const& node)
@@ -222,8 +234,7 @@ namespace plantgen
     {
         auto const* n = leaf_value_node(node);
         ASSERT(n, "Unexpected null node");
-        ASSERT(n->generated_values.size() > 0, "Expected a generated value");
-        return n->generated_values[0];
+        return n->generated_value();
     }
 
     inline std::string const& value_name(generated_node_t const& node)
@@ -248,8 +259,6 @@ namespace plantgen
     template <typename L>
     uint32_t total_weight(L const& list);
 
-    std::string indenation_string(size_t indent_level);
-
 
     pregen_node_t    node_from_file(stdfs::path const& filepath);
     generated_node_t generate_node(pregen_node_t const& node);
@@ -259,6 +268,7 @@ namespace plantgen
 
     using sz = std::numeric_limits<size_t>;
 
+    std::string indenation_string(size_t indent_level);
     std::string to_string(pregen_node_t const& node, size_t depth = sz::max(), size_t level = 0);
     std::string to_string(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
 

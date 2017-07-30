@@ -87,7 +87,7 @@ namespace plantgen
 
 
     /// Runtime version (compile-time visitor pattern doesn't compile in msvc)
-    std::vector<std::string> roll_value(weighted_value_t const& variant_val)
+    std::vector<std::string> roll_value(variant_value_t const& variant_val)
     {
         std::vector<std::string> output;
 
@@ -113,42 +113,39 @@ namespace plantgen
         return output;
     }
 
-    generated_node_t roll_values(value_list_t const& values, std::vector<pregen_node_t> const& value_nodes)
+    generated_node_t roll_values(pregen_node_t const& node)
     {
-        if(values.empty() && value_nodes.empty())
+        generated_node_t output_node;
+
+        auto const& value_nodes = node.value_nodes;
+        output_node.num_rollable_values = value_nodes.size();
+
+        WARN_IF(value_nodes.empty(), "Rolling values for an empty list");
+        if(value_nodes.empty())
             return generated_node_t();
 
-        uint32_t total = total_weight(values) + total_weight(value_nodes);
+        int roll = random_int(total_weight(value_nodes));
 
-        int roll = random_int(total);
-
-        generated_node_t node;
-        node.num_rollable_values = values.size();
-        node.num_rollable_value_nodes = value_nodes.size();
-
-        for(size_t i = 0; i < values.size(); ++i)
-        {
-            if(roll <= values[i].weight)
-            {
-                node.generated_values = std::move(roll_value(values[i]));
-                node.value_index = i;
-                return node;
-            }
-
-            roll -= values[i].weight;
-        }
 
         //if no value from the value list has been hit yet, continue onward into value_nodes
         for(size_t i = 0; i < value_nodes.size(); ++i)
         {
             if(roll <= value_nodes[i].weight)
             {
-                node.name = value_nodes[i].name;
-                node.value_index = values.size() + i;
+                output_node.name = value_nodes[i].name;
+                output_node.value_index = i;
 
-                auto gend_node = generate_node(value_nodes[i]);
-                node.add_value_node(std::move(gend_node));
-                return node;
+                if(value_nodes[i].value.index() > 0)
+                {
+                    output_node.generated_values = roll_value(value_nodes[i].value);
+                }
+                else
+                {
+                    auto gend_node = generate_node(value_nodes[i]);
+                    output_node.add_value_node(std::move(gend_node));
+                }
+                
+                return output_node;
             }
 
             roll -= value_nodes[i].weight;
@@ -156,12 +153,6 @@ namespace plantgen
 
         EXPLODE("Random roll was too large, ran out of values and value_nodes");
         return generated_node_t("ERROR");
-    }
-
-
-    generated_node_t roll_values(pregen_node_t const& node)
-    {
-        return roll_values(node.values, node.value_nodes);
     }
 
     pregen_node_t node_from_file(stdfs::path const& filepath)
@@ -199,7 +190,7 @@ namespace plantgen
             node.add_child(generate_node(child));
         }
 
-        if(pre_node.values.size() > 0 || pre_node.value_nodes.size() > 0)
+        if(pre_node.value_nodes.size() > 0)
         {
             generated_node_t rolled = roll_values(pre_node);
             node.merge_with(rolled);
@@ -252,8 +243,17 @@ namespace plantgen
         stringstream s;
 
         auto indent = indenation_string(level);
-        string weight_str = node.weight == 1 ? "" : " (Weight " + std::to_string(node.weight) + ")";
-        s << indent << node.name_string() << weight_str << "\n";
+        string weight_str = node.weight == 1 ? "" 
+                                             : " (Weight " + std::to_string(node.weight) + ")";
+
+        if(is_leaf(node))
+        {
+            s << indent << node.value << weight_str << "\n";
+        }
+        else
+        {
+            s << indent << node.name_string() << weight_str << "\n";
+        }
 
         if(level + 1 > depth)
             return s.str();
@@ -263,9 +263,7 @@ namespace plantgen
 
         indent.append(indenation_string(1));
 
-        for(auto const& value : node.values)
-            s << indent << value << "\n";
-
+        
         for(auto const& vnode : node.value_nodes)
             s << to_string(vnode, depth, level + 1);
 
