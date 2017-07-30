@@ -283,7 +283,7 @@ namespace plantgen
                     }
                     else
                     {
-                        node.values.push_back(std::move(value_type_from_json(value_json)));
+                        node.value_nodes.emplace_back(value_type_from_json(value_json));
                     }
 
                     value_json = value_json->next;
@@ -359,8 +359,7 @@ namespace plantgen
         //handle weight inhereit
         if(node.weight == weight_inherit_code)
         {
-            node.weight = + total_weight(node.values)
-                          + total_weight(node.value_nodes);
+            node.weight = total_weight(node.value_nodes);
         }
 
         return node;
