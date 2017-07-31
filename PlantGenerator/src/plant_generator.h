@@ -29,14 +29,14 @@ namespace plantgen
     template <typename T>
     struct base_node_
     {
+        T* parent = nullptr;
+        std::vector<T> children;
+        std::vector<T> value_nodes;
+
         std::string name;
         std::string sub_name; //used for includes
 
         uint32_t weight = 1;
-
-        T* parent = nullptr;
-        std::vector<T> children;
-        std::vector<T> value_nodes;
 
         base_node_() = default;
         base_node_(std::string const& _name, uint32_t _weight = 0)
@@ -183,7 +183,6 @@ namespace plantgen
         std::string print_string;
 
         size_t num_rollable_values = nullindex;
-        // size_t num_rollable_value_nodes = nullindex;
         size_t value_index = nullindex;
 
         using base_node_::base_node_;
