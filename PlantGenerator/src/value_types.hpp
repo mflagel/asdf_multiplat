@@ -20,17 +20,13 @@ namespace plantgen
     /// I'd rather use nullptr_t for the null type, but the compiler
     /// complains at the operator<< overload that takes a variant_value_t
     using null_value_t = int;
+
     /// null_value_t is the first variant subtype, and thus the one that is used for the default ctor
     /// which sort of makes it an optional<variant<...>>
     using variant_value_t = std::variant<null_value_t, std::string, range_value_t, multi_value_t>;
-
-    // todo: maybe always store an vector of variant?
-    // although in the case of user data, where I want an unordered map,
-    // maybe it's better to have the value be a node
-    // so all things are nodes that contain a vector of user_value_t
-    // Needs some wrapper funcs to make it less verbose to access stuff
-    using user_value_t = std::variant<bool, double, std::string>; //ie: random json data
-    using user_data_t = std::unordered_map<std::string, user_value_t>;
+    /// user values are data that isn't a property and isnt a rollable value
+    /// useful for programs that extend plant_generator
+    using user_value_t = std::variant<null_value_t, bool, double, std::string>; //ie: json value types
 
     // This is where C++ gets kind of weird....  SFINAE
     // enable_if T is not a variant_value

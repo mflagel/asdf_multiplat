@@ -13,7 +13,7 @@ namespace plantgen
     range_value_t range_value_from_json(cJSON* json);
     weighted_value_t value_type_from_json(cJSON* json);
     user_value_t user_value_from_json(cJSON const& json);
-    user_data_t user_values_from_json(cJSON const& json);
+    user_data_node_t user_node_from_json(cJSON const& json);
     pregen_node_t node_from_json(cJSON* json_node);
     pregen_node_t node_from_json(stdfs::path const& filepath);
     generated_node_t generate_node_from_json(stdfs::path const& filepath);

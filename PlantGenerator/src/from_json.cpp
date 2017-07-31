@@ -183,29 +183,30 @@ namespace plantgen
                 return user_value_t(std::string(json.valuestring));
 
             default:
+                throw json_type_exception(include_dir_stack.top(), json,
+                    {cJSON_True, cJSON_False, cJSON_Number, cJSON_String});
                 break;
         };
 
-        throw json_type_exception(include_dir_stack.top(), json,
-            {cJSON_True, cJSON_False, cJSON_Number, cJSON_String});
-
-        return bool(false); //placating compiler
+        return nullptr;
     }
 
-    user_data_t user_values_from_json(cJSON const& json)
+    user_data_node_t user_node_from_json(cJSON const& json)
     {
-        user_data_t values;
+        user_data_node_t node;
+
+        if(json.string)
+            node.name = json.string;
 
         switch(json.type)
         {
+            case cJSON_Object:
             case cJSON_Array:
             {
                 cJSON* cur_child = json.child;
                 while(cur_child)
                 {
-                    auto child_vals = user_values_from_json(*cur_child);
-                    /// FIXME
-                    //values.insert(values.end(), child_vals.begin(), child_vals.end());
+                    node.add_child(user_node_from_json(*cur_child));
 
                     cur_child = cur_child->next;
                 }
@@ -214,11 +215,11 @@ namespace plantgen
             }
 
             default:
-                values.insert({std::string(json.string), user_value_from_json(json)});
+                node.value = user_value_from_json(json);
                 break;
         }
 
-        return values;
+        return node;
     }
 
     int weight_from_string(std::string const& weight_str)
@@ -350,7 +351,7 @@ namespace plantgen
             }
             else
             {
-                node.user_data = user_values_from_json(*cur_child);
+                node.user_data.add_child(user_node_from_json(*cur_child));
             }
 
             cur_child = cur_child->next;

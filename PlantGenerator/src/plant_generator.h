@@ -126,28 +126,54 @@ namespace plantgen
         }
     };
 
+    struct user_data_node_t : base_node_<user_data_node_t>
+    {
+        user_value_t value;
+
+        user_data_node_t() = default;
+
+        user_data_node_t(std::string const& _name, user_value_t const& _uval)
+        : base_node_<user_data_node_t>(_name)
+        , value(_uval)
+        {
+        }
+
+        void merge_with(user_data_node_t const& n)
+        {
+            base_node_::merge_with(n);
+            value = n.value;
+        }
+    };
+
 
     struct pregen_node_t : base_node_<pregen_node_t>
     {
         variant_value_t value;
 
-        user_data_t user_data;
+        user_data_node_t user_data;
 
-        using base_node_::base_node_;
+        pregen_node_t()
+        : base_node_<pregen_node_t>()
+        {
+            user_data.name = "User Data";
+        }
 
         pregen_node_t(weighted_value_t const& wv)
         : base_node_<pregen_node_t>("", wv.weight)
         , value(wv)
         {
+            user_data.name = "User Data";
         }
-
 
         void merge_with(pregen_node_t const& n)
         {
             base_node_::merge_with(n);
             value = n.value;
-            user_data.insert(n.user_data.begin(), n.user_data.end());
+            user_data.merge_with(n.user_data);
         }
+
+        bool has_user_data() const
+        { return user_data.children.size() > 0; }
     };
 
 
@@ -194,8 +220,8 @@ namespace plantgen
 
     /// A lazy breadth-first depth-second hybrid
     /// TODO: implement a real bfs
-    template <typename T>
-    base_node_<T> const* find(base_node_<T> const& node, std::string name)
+    template <typename Node>
+    Node const* find(Node const& node, std::string name)
     {
         for(auto const& child : node.children)
         {
@@ -269,10 +295,11 @@ namespace plantgen
     using sz = std::numeric_limits<size_t>;
 
     std::string indenation_string(size_t indent_level);
-    std::string to_string(pregen_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+    std::string to_string(user_data_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+    std::string to_string(pregen_node_t    const& node, size_t depth = sz::max(), size_t level = 0);
     std::string to_string(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
 
-    void print_node(pregen_node_t const& node, size_t depth = sz::max(), size_t level = 0);
+    void print_node(pregen_node_t    const& node, size_t depth = sz::max(), size_t level = 0);
     void print_node(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
 
 
