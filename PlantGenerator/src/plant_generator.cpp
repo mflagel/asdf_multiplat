@@ -271,17 +271,20 @@ namespace plantgen
         stringstream s;
 
         auto indent = indenation_string(level);
-        string weight_str = node.weight == 1 ? "" 
-                                             : " (Weight " + std::to_string(node.weight) + ")";
+        
+        s << indent;
 
-        if(is_leaf(node))
-        {
-            s << indent << node.value << weight_str << "\n";
-        }
-        else
-        {
-            s << indent << node.name_string() << weight_str << "\n";
-        }
+        if(node.name.size() > 0)
+            s << node.name_string();
+
+        if(node.value.index() > 0)
+            s << node.value;
+
+        if(node.weight != 1)
+            s << " (Weight " + std::to_string(node.weight) + ")";
+
+        s << "\n";
+
 
         if(level + 1 > depth)
             return s.str();
