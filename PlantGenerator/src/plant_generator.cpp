@@ -197,10 +197,10 @@ namespace plantgen
             ASSERT(node.weight == pre_node.weight, "Node merge affected weight unexpectedly");
         }
 
-        auto search = pre_node.user_data.find("PrintString");
-        if(search != pre_node.user_data.end())
+        // auto search = pre_node.user_data.find("PrintString");
+        if(auto const* nd = find(pre_node.user_data, "PrintString"); nd)
         {
-            node.print_string = std::get<std::string>(search->second);
+            node.print_string = std::get<std::string>(nd->value);
         }
 
         return node;
@@ -235,6 +235,34 @@ namespace plantgen
 
 
     /// TODO: factor out similarities with below?
+    /// TODO: use regular string concat rather than stringstream
+    ///       I'm not using any of the features of SS that make it worth using
+    string to_string(user_data_node_t const& node, size_t const depth, size_t level)
+    {
+        if(level > depth)
+            return "";
+
+        stringstream s;
+
+        auto indent = indenation_string(level);
+
+        s << indent << node.name_string() << ": ";
+
+        if(is_leaf(node))
+        {
+            s << node.value;
+            return s.str();
+        }
+
+        if(level + 1 > depth)
+            return s.str();
+
+        for(auto const& child : node.children)
+            s << "\n" << to_string(child, depth, level + 1);
+
+        return s.str();
+    }
+
     string to_string(pregen_node_t const& node, size_t const depth, size_t level)
     {
         if(level > depth)
@@ -258,6 +286,9 @@ namespace plantgen
         if(level + 1 > depth)
             return s.str();
 
+        if(node.has_user_data())
+            s << to_string(node.user_data, depth, level + 1) << "\n";
+
         for(auto const& child : node.children)
             s << to_string(child, depth, level + 1);
 
@@ -266,9 +297,6 @@ namespace plantgen
         
         for(auto const& vnode : node.value_nodes)
             s << to_string(vnode, depth, level + 1);
-
-        for(auto const& user_vals : node.user_data)
-            s << indent << user_vals.first << ": " << user_vals.second << "\n";
 
         return s.str();
     }
