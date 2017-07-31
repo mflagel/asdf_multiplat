@@ -1,0 +1,35 @@
+{
+  "Name":"Neutral Creature",
+  "Values":[
+    {
+      "Name":"Buzzram",
+      "Loot":[
+        "Buzzram Pelt",
+        "Buzzram Horns",
+        "Buzzram Bones"
+      ]
+    },
+    {
+      "Name":"Ram-Bird",
+      "Loot":[
+        "Ram-Bird Feather",
+        "Ram-Bird Horns",
+        "Ram-Bird Meat"
+      ]
+    },
+    {
+      "Name":"Bullfalo",
+      "Loot":[
+        "Bullfalo Pelt",
+        "Bullfalo Tusks"
+      ]
+    },
+    {
+      "Name":"Bear",
+      "Loot":[
+        "Bear Pelt",
+        "Bear Teeth, Claws"
+      ]
+    }
+  ]
+}
