@@ -47,7 +47,7 @@
         },
         {
           "Name":"Status Effect",
-          "Include":"StatusEffect.json"
+          "Include":"StatusEffects/StatusEffect.json"
         }
       ]
     }
