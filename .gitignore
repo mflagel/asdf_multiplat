@@ -57,12 +57,17 @@ ext/glm/doc
 /hexmap/assets/*
 /hexmap/data/*
 
+
 #plantgen
 /PlantGenerator/build
 /PlantGenerator/Makefile
 /PlantGenerator/test/build
 /PlantGenerator/test/Win32
 /PlantGenerator/test/PlantGenerator__Tests.dir/
+
+
+#FastTravelSim
+/FastTravelSimulator/build/
 
 
 #windows
