@@ -1,0 +1,44 @@
+{
+  "Name":"Neutral Creature",
+  "Values":[
+    {
+      "Name":"Buzzram",
+      "Loot":[
+        "Buzzram Pelt",
+        "Buzzram Horns",
+        "Buzzram Bones"
+      ]
+    },
+    {
+      "Name":"Big-Horn Sheep",
+      "Loot":[
+        "Big-Horn Sheep Horns",
+        "Big-Horn Sheep Pelt",
+      ]
+    },
+    {
+      "Name":"Takin (Large Muscular Goat)",
+      "Loot":[
+        "Takin Pelt"
+      ]
+    },
+    {
+      "Name":"Iguana"
+    },
+    {
+      "Name":"Giant Snake",
+      "Loot":[
+        "Giant Snake Skin",
+        "Giant Snake Fangs"
+      ]
+    },
+    {
+      "Name":"Nature Spirit",
+      "Values":[
+      ]
+    },
+    {
+      "Name":"Cloud of Locusts"
+    }
+  ]
+}
