@@ -13,15 +13,15 @@
       "Name":"Ram-Bird",
       "Loot":[
         "Ram-Bird Feather",
-        "Ram-Bird Horns",
-        "Ram-Bird Meat"
+        "Ram-Bird Horns"
       ]
     },
     {
       "Name":"Bullfalo",
       "Loot":[
-        "Bullfalo Pelt",
-        "Bullfalo Tusks"
+        "Bullfalo Plates",
+        "Bullfalo Tusks",
+        "Bullfalo Heart"
       ]
     },
     {
@@ -29,6 +29,33 @@
       "Loot":[
         "Bear Pelt",
         "Bear Teeth, Claws"
+      ]
+    },
+    {
+      "Name":"Moose Troll",
+      "Loot":[
+        "Moose Troll Antlers",
+        "Moose Troll Nose Ring (Gold)",
+        "Moose Troll Eyes",
+        "Moose Troll Teeth",
+        "Moose Troll Skin",
+        "Moose Troll Fat",
+        {
+          "Troll Stomach":[
+            "Copper",
+            "Silver",
+            "Gold"
+          ]
+        }
+      ],
+      "Image":"http://i.imgur.com/pq3tJC1.jpg"
+    },
+    {
+      "Name":"Tortoise-Saurus"
+    },
+    {
+      "Name":"Nature Spirit",
+      "Values":[
       ]
     }
   ]
