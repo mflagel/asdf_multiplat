@@ -4,8 +4,14 @@
 #include <map>
 #include <vector>
 
+#include <boost/rational.hpp>
+
 #include "hex_generator.h"
 
+/// TODO: replace with something slimmer
+///       I don't need the 10 or so boost libraries that
+///       boost rational includes
+using rational_t = boost::rational<int32_t>;
 
 
 // http://thealexandrian.net/wordpress/17320/roleplaying-games/hexcrawl-part-2-wilderness-travel
@@ -83,7 +89,7 @@ namespace fast_travel_sim
         hex_coord_t coord;
         path_type_e path = path_none;
         travel_pace_e pace = travel_pace_normal;
-        int32_t dist = 0;
+        rational_t dist = 0;
     };
 
     using journey_route_t = std::vector<route_segment_t>;
