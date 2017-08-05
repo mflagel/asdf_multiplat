@@ -3,7 +3,7 @@
   "Values":[
     {
       "Name":"Neutral Creature",
-      "Include":"NeutralCreatures.json"
+      "Include":"Creatures/NeutralCreatures.json" 
     },
     {
       "Name":"Hostile Creature",
