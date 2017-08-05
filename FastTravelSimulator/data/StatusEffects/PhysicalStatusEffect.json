@@ -11,39 +11,40 @@
         "Healing",
         "Energy Boost",
         "Muscle Relaxant",
-        "Contraceptive",
         "Antiseptic",
-        "Anti-venom",
-        "Plant Vision",
-        "Ethereal",
+        "Contraceptive",
         "Waterbreathing",
-        "Fire Resistance"
+        "Fire Resistance",
+        "Anti-venom",
+        "Ethereal",
+        "Plant Vision"
       ]
     },
     {
       "Name":"Bad",
       "Weight": "%",
       "Values":[
-        "Poisonous",
-        "Laxitive",
         "Rash-Causing",
         "Blindness",
         "Limb-Disorienting",
         "Tongue-Swelling",
-        "Limb-Numming (Foot, leg, arm, hand)",
+        "Poisonous",
+        "Laxitive",
         "Hair-Loss",
         "Stiffness",
-        "Impotence"
+        "Impotence",
+        "Limb-Numming (Foot, leg, arm, hand)"
       ]
     },
     {
       "Name":"Weird",
       "Weight": "%",
       "Values":[
-        "Bio-luminecent Blood",
         "Eye Color Change",
         "Colored Tongue",
-        "lignification (turn into a tree)"
+        "Bio-luminecent Blood",
+        "Lignification (turn into a tree)",
+        "Petrification"
       ]
     }
   ]
