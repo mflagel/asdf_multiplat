@@ -18,25 +18,31 @@ namespace fast_travel_sim
         constexpr char const* dist_units_name = "miles";
     }
 
+
+    //todo: move somewhere?
+    std::string to_string(rational_t const& r)
+    {
+        std::string s = std::to_string(r.numerator());
+        if(r.denominator() != 1)
+            s += "/" + std::to_string(r.denominator());
+        return s;
+    }
+
     // in order to figure out how far someone can go on a route
     // that crosses differing terrain difficulties, convert a distance
     // and slow-rate into a larger distance 
-    int32_t difficulty_modified_dist(int32_t dist, int32_t difficulty)
+    /// Templated so that it can take int or boost::rational
+    template<typename T>
+    T difficulty_modified_dist(T dist, int32_t difficulty)
     {
         WARN_IF(difficulty < 0, "negative difficulty will give negative (or zero) modified distance, which is probably bad");
         return dist * (1 + difficulty);
     }
 
-    int32_t difficulty_modified_dist(int32_t dist, hex_t const& hex)
+    template<typename T>
+    T difficulty_modified_dist(T dist, hex_t const& hex)
     {
         return difficulty_modified_dist(dist, terrain_difficulty(hex));
-    }
-
-    int32_t difficulty_modified_dist(route_segment_t const& route_seg, hex_database_t const& hex_db)
-    {
-        auto modded_hex_dist = difficulty_modified_dist(route_seg.dist, hex_db.hex_at(route_seg.coord));
-
-        return modded_hex_dist;
     }
 
 
@@ -135,12 +141,12 @@ namespace fast_travel_sim
         // ie: rarity only matters if the value index is high
 
         {
-            double percentage = double(duration.value_index) / double(duration.num_rollable_values_and_vnodes());
+            double percentage = double(duration.value_index) / double(duration.num_rollable_values);
             double weight_mult = (1.0 / duration.weight);
             value *= 1.0 + (weight_mult * percentage) * status_effect_duration_mult;
         }
         {
-            double percentage = double(severity.value_index) / double(severity.num_rollable_values_and_vnodes());
+            double percentage = double(severity.value_index) / double(severity.num_rollable_values);
             double weight_mult = (1.0 / severity.weight);
             value *= 1.0 + (weight_mult * percentage) * status_effect_severity_mult;
         }
@@ -222,7 +228,7 @@ namespace fast_travel_sim
         uint32_t days_spent_travelling = 0;
 
         const int32_t daily_travel_dist = num_hours_travelling * default_travel_rate;
-        int32_t daily_dist_remaining = num_hours_travelling * default_travel_rate;
+        rational_t daily_dist_remaining = num_hours_travelling * default_travel_rate;
 
         for(size_t current_seg_index = 0; current_seg_index < route.size(); ++current_seg_index)
         {
@@ -246,13 +252,13 @@ namespace fast_travel_sim
             {
                 /// FIXME safe conversion for int <--> float
                 // split segment into travellable and not-travellable
-                int32_t untravelled_dist = modified_dist - daily_dist_remaining;
-                float fract_travelled = float(modified_dist - untravelled_dist) / float(modified_dist);
-                int32_t actual_travelled = int32_t(float(cur_seg.dist) * fract_travelled);
-                int32_t actual_untravelled = cur_seg.dist - actual_travelled;
+                rational_t untravelled_dist = modified_dist - daily_dist_remaining;
+                rational_t fract_travelled = (modified_dist - untravelled_dist) / modified_dist;
+                rational_t actual_travelled = cur_seg.dist * fract_travelled;
+                rational_t actual_untravelled = cur_seg.dist - actual_travelled;
 
                 ASSERT(untravelled_dist > 0, "");
-                ASSERT(fract_travelled > 0.0f && fract_travelled < 1.0f, "");
+                ASSERT(fract_travelled > 0 && fract_travelled < 1, "");
                 ASSERT(actual_travelled > 0, "");
                 ASSERT(actual_untravelled > 0, "");
 
@@ -380,8 +386,8 @@ namespace fast_travel_sim
         std::string summary;
 
         auto pace_str = std::string(travel_pace_strings[seg.pace]);
-        summary += "  " + to_string(seg.coord) + " (" + std::to_string(seg.dist) + " " + dist_units_name
-                        + " at a " + pace_str + " pace)";
+        summary += "  " + to_string(seg.coord) + " (" + to_string(seg.dist) + " " + dist_units_name
+                        + " at a " + pace_str + " pace):";
 
         for(auto const& loc : seg.locations)
         {
@@ -476,7 +482,6 @@ const std::array<route_segment_t, 8> test_route =
 const traveller_t test_traveller{"test",default_travel_rate,10,10};
 
 constexpr int32_t test_rations = 100;
-
 
 int main(int argc, char* argv[])
 {
