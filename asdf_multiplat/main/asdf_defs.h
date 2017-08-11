@@ -92,6 +92,7 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
 
 
 
+
 // Color Stuff
 #ifdef glm_core_type
 using color_t = glm::vec4;
@@ -177,46 +178,6 @@ inline uint32_t signed_to_unsigned(int32_t i)
 }
 
 
-
-<<<<<<< 6724831d532ee2372593b7caa391b16754faf95d
-/// Delete / Default operators
-
-#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
-    _obj_name_(_obj_name_ const&) = default;  \
-    _obj_name_& operator=(_obj_name_ const&) = default;
-/*--------*/
-
-#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
-    _obj_name_(_obj_name_ const&) = delete;  \
-    _obj_name_& operator=(_obj_name_ const&) = delete;
-/*--------*/
-
-
-#define DEFAULT_MOVE(_obj_name_) \
-    _obj_name_(_obj_name_&&) = default; \
-    _obj_name_& operator=(_obj_name_&&) = default;
-/*--------*/
-
-#define DELETE_MOVE(_obj_name_) \
-    _obj_name_(_obj_name_&&) = delete; \
-    _obj_name_& operator=(_obj_name_&&) = delete;
-/*--------*/
-
-
-#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
-    _obj_name_(const _obj_name_&) = delete; \
-    _obj_name_& operator=(_obj_name_ const&) = delete; \
-    _obj_name_(_obj_name_&&) = delete; \
-    _obj_name_& operator=(_obj_name_&&) = delete;
-/*--------*/
-
-
-#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
-    DELETE_COPY_ASSIGNMENT(_obj_name_) \
-    DEFAULT_MOVE(_obj_name_) 
-/*--------*/
-
-
 /// https://stackoverflow.com/a/24018996
 /// Super interesting. std::conditional basically works such that
 /// if T and U are the same, it 'returns' true, but if false, 
@@ -254,3 +215,43 @@ struct is_c_str
       std::is_same<char const *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value
 > {};
 ///
+
+
+
+
+/// Delete / Default operators
+
+#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = default;  \
+    _obj_name_& operator=(_obj_name_ const&) = default;
+/*--------*/
+
+#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = delete;  \
+    _obj_name_& operator=(_obj_name_ const&) = delete;
+/*--------*/
+
+
+#define DEFAULT_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = default; \
+    _obj_name_& operator=(_obj_name_&&) = default;
+/*--------*/
+
+#define DELETE_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+    _obj_name_(const _obj_name_&) = delete; \
+    _obj_name_& operator=(_obj_name_ const&) = delete; \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
+    DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    DEFAULT_MOVE(_obj_name_) 
+/*--------*/
