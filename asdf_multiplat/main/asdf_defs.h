@@ -71,3 +71,43 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
     #define ASSERT(condition) do { POW2_UNUSED(condition); } while (0)
     #define EXPLODE(message, ...) do { POW2_UNUSED(condition); } while (0)
 #endif 
+
+
+
+/// Delete / Default operators
+
+#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = default;  \
+    _obj_name_& operator=(_obj_name_ const&) = default;
+/*--------*/
+
+#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = delete;  \
+    _obj_name_& operator=(_obj_name_ const&) = delete;
+/*--------*/
+
+
+#define DEFAULT_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = default; \
+    _obj_name_& operator=(_obj_name_&&) = default;
+/*--------*/
+
+#define DELETE_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+    _obj_name_(const _obj_name_&) = delete; \
+    _obj_name_& operator=(_obj_name_ const&) = delete; \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
+    DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    DEFAULT_MOVE(_obj_name_) 
+/*--------*/
+
