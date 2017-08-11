@@ -174,3 +174,44 @@ inline uint32_t signed_to_unsigned(int32_t i)
 {
     return convert_integer<int32_t,uint32_t>(i);
 }
+
+
+
+/// Delete / Default operators
+
+#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = default;  \
+    _obj_name_& operator=(_obj_name_ const&) = default;
+/*--------*/
+
+#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = delete;  \
+    _obj_name_& operator=(_obj_name_ const&) = delete;
+/*--------*/
+
+
+#define DEFAULT_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = default; \
+    _obj_name_& operator=(_obj_name_&&) = default;
+/*--------*/
+
+#define DELETE_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+    _obj_name_(const _obj_name_&) = delete; \
+    _obj_name_& operator=(_obj_name_ const&) = delete; \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
+    DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    DEFAULT_MOVE(_obj_name_) 
+/*--------*/
+
+>>>>>>> added a bunch more delete/default assignment/copy/move operator macros, which are now in asdf_defs instead of gl_resources
