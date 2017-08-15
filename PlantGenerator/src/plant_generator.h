@@ -143,6 +143,17 @@ namespace plantgen
             base_node_::merge_with(n);
             value = n.value;
         }
+
+        template <typename T>
+        T& value_as()
+        {
+            return std::get<T>(value);
+        }
+        template <typename T>
+        T const& value_as() const
+        {
+            return std::get<T>(value);
+        }
     };
 
 
@@ -174,6 +185,26 @@ namespace plantgen
 
         bool has_user_data() const
         { return user_data.children.size() > 0; }
+
+        variant_value_t const& value_at(size_t i) const
+        {
+            ASSERT(i < value_nodes.size(), "");
+            return value_nodes[i].value;
+        }
+
+        template <typename T>
+        T const& value_at(size_t i) const
+        {
+            ASSERT(i < value_nodes.size(), "");
+            return std::get<T>(value_nodes[i].value);
+        }
+
+
+        template <typename T>
+        T const& value_as() const
+        {
+            return std::get<T>(value);
+        }
     };
 
 
@@ -202,8 +233,9 @@ namespace plantgen
             if(num_rollable_values == nullindex)
                 num_rollable_values = n.num_rollable_values;
 
-            WARN_IF(value_index != nullindex && n.value_index != nullindex, "generated node merge conflict (%s and %s; both nodes have a value index) (%zu and %zu)"
-                                                                            , name.c_str(), n.name.c_str(), value_index, n.value_index);
+            WARN_IF(value_index != nullindex && n.value_index != nullindex
+                  , "generated node merge conflict (%s and %s; both nodes have a value index) (%zu and %zu)"
+                  , name.c_str(), n.name.c_str(), value_index, n.value_index);
             if(value_index == nullindex)
                 value_index = n.value_index;
 
@@ -219,6 +251,10 @@ namespace plantgen
 
     /// A lazy breadth-first depth-second hybrid
     /// TODO: implement a real bfs
+    /// FIXME: return ref and throw exception on not found??
+    ///        have a similar find_if<>
+    ///        similar to std:get<> and std::get_if<>
+    ///        in face maybe this should be named get()
     template <typename Node>
     Node const* find(Node const& node, std::string name)
     {
@@ -290,6 +326,7 @@ namespace plantgen
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
 
     generated_node_t roll_values(pregen_node_t const& node);
+    std::vector<std::string> roll_multi_value(multi_value_t const& m);
 
     using sz = std::numeric_limits<size_t>;
 
