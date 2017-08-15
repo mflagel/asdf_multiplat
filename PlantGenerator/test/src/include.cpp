@@ -12,7 +12,7 @@ TEST_CASE("Include")
 {
     pregen_node_t node = node_from_json("../data/include.json");
     REQUIRE(node.children.size() == 5);
-    REQUIRE(node.value_nodes.size() == 5);
+    REQUIRE(node.value_nodes.size() == 9);
 
     SECTION("Include As Property")
     {
@@ -93,5 +93,74 @@ TEST_CASE("Include")
             test_basic_node(vn.children[0]);
             test_basic_node(vn.value_nodes[0]);
         }
+    }
+
+    SECTION("Weird Path")
+    {
+        auto const& vn = node.value_nodes[5];
+
+        REQUIRE(vn.name == "Include");
+        REQUIRE(vn.sub_name == "");
+
+        REQUIRE(vn.children.size() == 1);
+        REQUIRE(vn.value_nodes.size() == 1);
+
+        test_basic_node(vn.children[0]);
+        test_basic_node(vn.value_nodes[0]);
+    }
+
+    SECTION("Double Include")
+    {
+        auto const& vn = node.value_nodes[6];
+
+        REQUIRE(vn.name == "Include a file that includes");
+        REQUIRE(vn.sub_name == "Include");
+
+        REQUIRE(vn.children.size() == 1);
+        REQUIRE(vn.value_nodes.size() == 1);
+
+        test_basic_node(vn.children[0]);
+        test_basic_node(vn.value_nodes[0]);
+    }
+
+    SECTION("Double Include and Merge")
+    {
+        auto const& vn = node.value_nodes[7];
+
+        REQUIRE(vn.name == "Double Include and Merge");
+        REQUIRE(vn.sub_name == "Include");
+
+        REQUIRE(vn.children.size() == 3);
+        REQUIRE(vn.value_nodes.size() == 4);
+
+        test_basic_node(vn.children[0]);
+        test_basic_node(vn.value_nodes[0]);
+
+        CHECK(vn.children[1].name == "A");
+        CHECK(vn.children[2].name == "B");
+
+        CHECK(vn.value_nodes[1].value_as<string>() == "Test 1");
+        CHECK(vn.value_nodes[2].value_as<string>() == "Test 2");
+        CHECK(vn.value_nodes[3].value_as<string>() == "Test 3");
+    }
+
+    SECTION("Properties and Values before Include")
+    {
+        auto const& vn = node.value_nodes[8];
+
+        REQUIRE(vn.name == "Values Before Include");
+        REQUIRE(vn.sub_name == "Include");
+
+        REQUIRE(vn.children.size() == 3);
+        REQUIRE(vn.value_nodes.size() == 4);
+
+        CHECK(vn.children[0].name == "A");
+        CHECK(vn.children[1].name == "B");
+        test_basic_node(vn.children[2]);
+
+        CHECK(vn.value_nodes[0].value_as<string>() == "Test 1");
+        CHECK(vn.value_nodes[1].value_as<string>() == "Test 2");
+        CHECK(vn.value_nodes[2].value_as<string>() == "Test 3");
+        test_basic_node(vn.value_nodes[3]);
     }
 }
