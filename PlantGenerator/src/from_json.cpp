@@ -275,16 +275,20 @@ namespace plantgen
                     // if the value is a node, load it differently
                     // since we can't return a node as part of the variant
 
-                    //if the value is an object starting with a child named "Name", it's a node
-                    if(value_json->type == cJSON_Object 
-                    && value_json->child
-                    && str_eq(value_json->child->string, "Name"))
+                    // is range or multi
+                    bool is_value_type_node = value_json->type == cJSON_Object 
+                                           && value_json->child
+                                           &&  (str_eq(value_json->child->string, "Range")
+                                             || str_eq(value_json->child->string, "Multi"))
+                                           ;
+
+                    if(is_value_type_node || value_json->type != cJSON_Object)
                     {
-                        node.value_nodes.push_back(std::move(node_from_json(value_json)));
+                        node.value_nodes.emplace_back(value_type_from_json(value_json));
                     }
                     else
                     {
-                        node.value_nodes.emplace_back(value_type_from_json(value_json));
+                        node.value_nodes.push_back(std::move(node_from_json(value_json)));
                     }
 
                     value_json = value_json->next;
@@ -312,6 +316,14 @@ namespace plantgen
                         auto prev_weight = node.weight;
                         node.merge_with(std::move(included_node));
                         node.weight = prev_weight;
+
+                        /// TODO: check for existance of name value?
+                        ///       as opposed to just checking for an empty name
+                        if(node.name == "")
+                        {
+                            node.name = included_node.name;
+                            node.sub_name = "";
+                        }
                     // }
                     // else
                     // {
