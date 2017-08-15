@@ -45,14 +45,14 @@
                     "Weight":789
                 }
             ]
-        }
+        },
         {
             "Name":"Weight of Values",
             "Values":[
                 {
                     "Name":"Weight of Values Value Node",
-                    "Weight":"%"
-                    "Values"[
+                    "Weight":"%",
+                    "Values":[
                         "%123 WoV VN A",
                         "%456 WoV VN B",
                         "%789 WoV VN C",
