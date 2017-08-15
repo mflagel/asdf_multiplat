@@ -247,6 +247,37 @@ namespace plantgen
         return -1;
     }
 
+    void include_to_node(pregen_node_t& node, stdfs::path relpath)
+    {
+        if(relpath.empty())
+        {
+            throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
+        }
+
+        auto parent_path = include_dir_stack.top().parent_path();
+        stdfs::path fullpath = parent_path / relpath;
+
+        try{
+            auto included_node = node_from_json(fullpath);
+
+            auto prev_weight = node.weight;
+            node.merge_with(std::move(included_node));
+            node.weight = prev_weight;
+
+            /// TODO: check for existance of name value?
+            ///       as opposed to just checking for an empty name
+            if(node.name == "")
+            {
+                node.name = included_node.name;
+                node.sub_name = "";
+            }
+        }
+        catch(file_not_found_exception const&)
+        {
+            throw include_exception{include_dir_stack.top(), fullpath};
+        }
+    }
+
     pregen_node_t node_from_json(cJSON* json_node)
     {
         pregen_node_t node;
@@ -297,43 +328,7 @@ namespace plantgen
             else if(str_eq(cur_child->string, "Include"))
             {
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
-
-                stdfs::path relpath(cur_child->valuestring);
-
-                if(relpath.empty())
-                {
-                    throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
-                }
-
-                auto parent_path = include_dir_stack.top().parent_path();
-                stdfs::path fullpath = parent_path / relpath;
-
-                try{
-                    auto included_node = node_from_json(fullpath);
-
-                    // if(included_node.name == node.name)
-                    // {
-                        auto prev_weight = node.weight;
-                        node.merge_with(std::move(included_node));
-                        node.weight = prev_weight;
-
-                        /// TODO: check for existance of name value?
-                        ///       as opposed to just checking for an empty name
-                        if(node.name == "")
-                        {
-                            node.name = included_node.name;
-                            node.sub_name = "";
-                        }
-                    // }
-                    // else
-                    // {
-                    //     node.add_child(std::move(included_node));
-                    // }
-                }
-                catch(file_not_found_exception const&)
-                {
-                    throw include_exception{include_dir_stack.top(), fullpath};
-                }
+                include_to_node(node, stdfs::path(cur_child->valuestring));
             }
             else if(str_eq(cur_child->string, "Weight"))
             {
