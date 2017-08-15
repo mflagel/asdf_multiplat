@@ -292,10 +292,11 @@ namespace fast_travel_sim
                     for(auto const& traveller : journey.travel_group.travellers)
                     {
                         auto margin = -1 * roll_dice() - traveller.survival_skill;
-                        margin = std::max(margin,0);
 
                         //1 for success, and another 1 for every 4 margins of success
-                        journey.day_rations += (margin >= 0) + (margin / 4);
+                        current_journal_entry.rations_gained = (margin >= 0) + ((margin * margin > 0) / 4);
+                        journey.day_rations += current_journal_entry.rations_gained;
+
                     }
                 }
 
@@ -408,6 +409,9 @@ namespace fast_travel_sim
         auto num_segs = convert_integer<size_t, uint64_t>(entry.segments.size());
         summary += std::to_string(num_segs) + " segments traveled; Rations Remaining: " + std::to_string(entry.rations_remaining) + "\n";
 
+        if(entry.rations_gained > 0)
+            summary += "  Rations gained: " + std::to_string(entry.rations_gained) + "\n";
+
         for(auto const& seg : entry.segments)
         {
             summary += summarize(seg) + "\n";
@@ -424,6 +428,9 @@ namespace fast_travel_sim
 
     std::string summarize(journal_t const& journal)
     {
+        if(journal.empty())
+            return "Empty Journey";
+
         std::string summary;
 
         summary += "--- Journey Stats ---\n";

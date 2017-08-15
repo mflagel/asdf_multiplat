@@ -111,6 +111,7 @@ namespace fast_travel_sim
         std::vector<creature_encounter_t> creatures;
 
         int32_t rations_remaining = 0;
+        int32_t rations_gained = 0;
     };
 
     using journal_t = std::vector<journal_entry_t>;
@@ -159,7 +160,8 @@ namespace fast_travel_sim
         journey_route_t route;
         int32_t day_rations = 0;
 
-        size_t num_travellers() const { return travel_group.travellers.size(); }
+        size_t num_travellers() const
+        { return travel_group.travellers.size(); }
     };
 
 
