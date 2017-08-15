@@ -52,6 +52,52 @@
                     "Include":"basic_node.json"
                 }
             ]
+        },
+
+        {
+            "Include":"../data/include_extended.json"
+        },
+
+        {
+            "Name":"Include a file that includes",
+            "Include":"include_extended.json"
+        },
+
+        {
+            "Name":"Double Include and Merge",
+            "Include":"include_extended.json",
+            "Properties":[
+                {
+                    "Name":"A"
+                },
+                {
+                    "Name":"B"
+                }
+            ],
+            "Values": [
+                "Test 1",
+                "Test 2",
+                "Test 3"
+            ]
+        },
+        {
+            "Name":"Values Before Include",
+            "Properties":
+            [
+                {
+                    "Name":"A"
+                },
+                {
+                    "Name":"B"
+                }
+            ],
+            "Values":
+            [
+                "Test 1",
+                "Test 2",
+                "Test 3"
+            ],
+            "Include":"include_extended.json"
         }
     ]
 }
