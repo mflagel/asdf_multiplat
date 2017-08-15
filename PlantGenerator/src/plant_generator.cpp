@@ -246,7 +246,10 @@ namespace plantgen
 
         auto indent = indenation_string(level);
 
-        s << indent << node.name_string() << ": ";
+        s << indent;
+
+        if(node.name != "")
+            s << node.name_string() << ": ";
 
         if(is_leaf(node))
         {
