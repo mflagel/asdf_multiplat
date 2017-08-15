@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <cstdint>
+#include <type_traits>
 
 #define PI 3.14159265359f
 // #define nullindex 4294967295
@@ -174,3 +175,43 @@ inline uint32_t signed_to_unsigned(int32_t i)
 {
     return convert_integer<int32_t,uint32_t>(i);
 }
+
+
+
+/// https://stackoverflow.com/a/24018996
+/// Super interesting. std::conditional basically works such that
+/// if T and U are the same, it 'returns' true, but if false, 
+/// recursively calls is_any_of with the rest of the args
+template<typename T, typename U, typename... Us>
+struct is_any_of
+    : std::integral_constant<
+        bool,
+        std::conditional<
+            std::is_same<T,U>::value,
+            std::true_type,
+            is_any_of<T,Us...>
+        >::type::value
+      >
+{ };
+
+template<typename T, typename U>
+struct is_any_of<T,U> : std::is_same<T,U>::type { };
+///
+
+
+/// https://stackoverflow.com/a/24855290
+// template<class T>
+// struct is_c_str
+//   : std::integral_constant<
+//       bool,
+//       std::is_same<char const *, typename std::decay<T>::type>::value ||
+//       std::is_same<char *, typename std::decay<T>::type>::value
+// > {};
+template<class T>
+struct is_c_str
+  : std::integral_constant<
+      bool,
+      std::is_same<char *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value ||
+      std::is_same<char const *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value
+> {};
+///
