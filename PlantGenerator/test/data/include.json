@@ -1,0 +1,57 @@
+{
+    "Name":"Include",
+    "Properties":[
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json"
+        },
+        {
+            "Include":"basic_node.json",
+            "Name":"Basic Node"
+        },
+        {
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json",
+            "Comment":"Testing with User Data"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json"
+        }
+    ],
+    "Values":[
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json"
+        },
+        {
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json",
+            "Comment":"Testing with User Data"
+        },
+
+        {
+            "Name":"Include in VNode",
+            "Properties":[
+                {
+                    "Include":"basic_node.json"
+                }
+            ],
+            "Values":[
+                {
+                    "Include":"basic_node.json"
+                }
+            ]
+        }
+    ]
+}
