@@ -1,10 +1,24 @@
 #pragma once
 
+#include <cstring>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 #include <variant>
+
+
+#ifdef _MSC_VER
+#include <filesystem>
+#else
+#include <experimental/filesystem>
+#endif
+
+
+#include <asdfm/main/asdf_defs.h>
+
+
+namespace stdfs = std::experimental::filesystem;
 
 namespace plantgen
 {
@@ -31,46 +45,86 @@ namespace plantgen
     // This is where C++ gets kind of weird....  SFINAE
     // enable_if T is not a variant_value
     // (otherwise the compiler complains that this overlaps with the std default variant-vs-variant comparator)
-    template< class T>
-    struct is_variant_subtype : std::integral_constant<bool,
-                                  std::is_same<T, std::string>::value
-                               || std::is_same<T, range_value_t>::value
-                               || std::is_same<T, multi_value_t>::value
-                               || std::is_same<T, null_value_t>::value >
-                               {};
+
+    template <class T>
+    struct is_variant_subtype : is_any_of<T
+                                        , std::string
+                                        , range_value_t
+                                        , multi_value_t
+                                        , null_value_t>
+                                        {};
 
     template <typename T>
     struct is_variant_value_comparable : std::integral_constant<bool,
                                            is_variant_subtype<T>::value
-                                        || std::is_same<std::remove_const<T>, char*>::value >
+                                        || std::is_same_v<char*, typename std::remove_cv<T>>
+                                        || std::is_same_v<char const*, typename std::remove_reference<T>> >
                                         {};
 
 
-    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
+    /// Helper Aliases
+    template <typename T>
+    inline constexpr bool is_variant_subtype_v = is_variant_subtype<T>::value;
+    template <typename T>
+    inline constexpr bool is_variant_value_comparable_v = is_variant_value_comparable<T>::value;
+
+
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
     bool operator==(variant_value_t const& v, T const& t)
     {
         return std::get<T>(v) == t;
     }
-    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
     bool operator==(T const& t, variant_value_t const& v)
     {
         return std::get<T>(v) == t;
     }
     
-    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<std::decay<T>>::value> >
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
     bool operator!=(variant_value_t const& v, T const& t)
     {
         return std::get<T>(v) != t;
     }
-    
-    /* Compiler complains about having two overloads for this function
-    template <typename T, typename = std::enable_if_t<is_variant_value_comparable<T>::value && !std::is_void<T>::value>>
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
     bool operator!=(T const& t, variant_value_t const& v)
     {
         return std::get<T>(v) != t;
     }
-    */
-    
+
+
+    inline bool operator==(variant_value_t const& v, const char* const c)
+    {
+        return strcmp(std::get<std::string>(v).c_str(), c) == 0;
+    }
+    inline bool operator==(const char* const c, variant_value_t const& v)
+    {
+        return v == c;
+    }
+    inline bool operator!=(variant_value_t const& v, const char* const c)
+    {
+        return !(v == c);
+    }
+    inline bool operator!=(const char* const c, variant_value_t const& v)
+    {
+        return !(v == c);
+    }
+
+
+    /// Required to prevent an ambiguous overload with the above comparison funcs
+    inline bool operator!=(multi_value_t const& lhs, multi_value_t const& rhs)
+    {
+        return lhs.num_to_pick != rhs.num_to_pick
+            && lhs.values != rhs.values;
+    }
+    inline bool operator==(stdfs::path path, const char* const c)
+    {
+        return strcmp(path.c_str(), c) == 0;
+    }
+    ///
     
 
     // The weight value is not a percentage, but rather
@@ -84,7 +138,39 @@ namespace plantgen
         uint32_t weight = 1;
     };
 
-    using value_list_t = std::vector<weighted_value_t>;
+    // using value_list_t = std::vector<weighted_value_t>;
+
+
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
+    bool operator==(weighted_value_t const& wv, T const& v)
+    {
+        return static_cast<variant_value_t>(wv) == v;
+    }
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
+    bool operator==(T const& v, weighted_value_t const& wv)
+    {
+        return wv == v;
+    }
+    
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
+    bool operator!=(weighted_value_t const& wv, T const& v)
+    {
+        return !(wv == v);
+    }
+    template <typename T,
+        typename = std::enable_if_t<is_variant_value_comparable_v<T>> >
+    bool operator!=(T const& v, weighted_value_t const& wv)
+    {
+        return wv != v;
+    }
+
+    inline bool operator!=(weighted_value_t const& wv, const char* const c)
+    {
+        return static_cast<variant_value_t>(wv) != c;
+    }
 
 
 
@@ -163,42 +249,47 @@ namespace plantgen
 
 
 
+    // template <typename L>
+    // bool operator==(value_list_t const& value_list, L const& comp_list)
+    // {
+    //     if(value_list.size() != comp_list.size())
+    //         return false;
 
-    template <typename L>
-    bool operator==(value_list_t const& value_list, L const& comp_list)
-    {
-        if(value_list.size() != comp_list.size())
-            return false;
+    //     /*for(size_t i = 0; i < value_list.size(); ++i)
+    //     {
+    //         if(value_list[i] != comp_list[i])
+    //             return false;
+    //     }*/
 
-        /*for(size_t i = 0; i < value_list.size(); ++i)
-        {
-            if(value_list[i] != comp_list[i])
-                return false;
-        }*/
+    //     // use range based for so that this function can take an
+    //     // initializer list which has no operator[] but has
+    //     // begin/end iterators
+    //     size_t i = 0;
+    //     for(auto const& c : comp_list)
+    //     {
+    //         if(value_list[i] != c)
+    //             return false;
 
-        // use range based for so that this function can take an
-        // initializer list which has no operator[] but has
-        // begin/end iterators
-        size_t i = 0;
-        for(auto const& c : comp_list)
-        {
-            if(value_list[i] != c)
-                return false;
+    //         ++i;
+    //     }
 
-            ++i;
-        }
+    //     return true;
+    // }
+    // template <typename L>
+    // bool operator==(L const& comp_list, value_list_t const& value_list)
+    // {
+    //     return value_list == comp_list;
+    // }
 
-        return true;
-    }
-    template <typename L>
-    bool operator==(L const& comp_list, value_list_t const& value_list)
-    {
-        return value_list == comp_list;
-    }
+    // template <typename L>
+    // bool operator!=(value_list_t const& value_list, L const& comp_list)
+    // {
+    //     return !(value_list == comp_list);
+    // }
+    // template <typename L>
+    // bool operator!=(L const& comp_list, value_list_t const& value_list)
+    // {
+    //     return !(value_list == comp_list);
+    // }
 
-    template <typename L>
-    bool operator!=(value_list_t const& value_list, L const& comp_list)
-    {
-        return !(value_list == comp_list);
-    }
 }
