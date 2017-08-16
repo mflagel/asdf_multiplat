@@ -169,6 +169,9 @@ namespace plantgen
             user_data.name = "User Data";
         }
 
+        DEFAULT_COPY_ASSIGNMENT(pregen_node_t)
+        DEFAULT_MOVE(pregen_node_t)
+
         pregen_node_t(weighted_value_t const& wv)
         : base_node_<pregen_node_t>("", wv.weight)
         , value(wv)
@@ -326,7 +329,7 @@ namespace plantgen
     generated_node_t generate_node_from_file(stdfs::path const& filepath);
 
     generated_node_t roll_values(pregen_node_t const& node);
-    std::vector<std::string> roll_multi_value(multi_value_t const& m);
+    std::vector<pregen_node_t> roll_multi_value(multi_value_t const& m);
 
     using sz = std::numeric_limits<size_t>;
 

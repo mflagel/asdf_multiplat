@@ -90,6 +90,8 @@ namespace plantgen
         return values;
     }
 
+
+    /// WIP trying to support non-string multi values
     multi_value_t multi_value_from_json(cJSON* json)
     {
         ASSERT(str_eq(json->child->string, "Multi"), "Expected a \"Multi\" json_obj");
@@ -98,14 +100,12 @@ namespace plantgen
         multi_value_t v;
         v.num_to_pick = json->child->valueint;
 
-        try {
-            v.values = std::move(value_string_list_from_json_array(json->child->next));
-        }
-        catch (json_type_exception& je)
+        cJSON* value_array_json = json->child->next;
+        for(cJSON* j = value_array_json->child; j; j = j->next)
         {
-
-            std::string s = "json type error: \"Multi\" only supports a value list of strings, not " + std::string(cJSON_type_strings[je.json_type_found]);
-            throw std::runtime_error(std::move(s));
+            auto n = node_from_json(j);
+            auto pn = std::make_unique<pregen_node_t>(n);
+            v.values.push_back(std::move(pn));
         }
 
         return v;

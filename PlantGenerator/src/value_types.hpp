@@ -22,12 +22,19 @@ namespace stdfs = std::experimental::filesystem;
 
 namespace plantgen
 {
+
+    struct pregen_node_t;
     
     struct multi_value_t
     {
         size_t num_to_pick;
 
-        std::vector<std::string> values;
+        std::vector<std::unique_ptr<pregen_node_t>> values;
+
+        multi_value_t() = default;
+        ~multi_value_t();
+        multi_value_t(multi_value_t const&); 
+        multi_value_t& operator=(multi_value_t const&);
     };
     using range_value_t = std::vector<std::string>;
     
@@ -201,19 +208,7 @@ namespace plantgen
         return os;
     }
 
-    inline std::ostream& operator<<(std::ostream& os, multi_value_t const& obj)
-    {
-        std::string s = std::to_string(obj.num_to_pick) + " from {";
-
-        for(auto const& val : obj.values)
-            s += val + ", ";
-
-        s.resize(s.size() - 1);
-        s.back() = '}';
-
-        os << s;
-        return os;
-    }
+    std::ostream& operator<<(std::ostream& os, multi_value_t const& obj);
 
     inline std::ostream& operator<<(std::ostream& os, variant_value_t const& obj)
     {
