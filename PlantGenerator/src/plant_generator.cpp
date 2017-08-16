@@ -16,9 +16,6 @@ using namespace std;
 
 namespace plantgen
 {
-    //std::vector<std::string> roll_multi_value(multi_value_t const& m);
-
-
     std::mt19937 mt_rand( std::chrono::high_resolution_clock::now().time_since_epoch().count() );
 
     int32_t random_int(uint32_t min, uint32_t max)
@@ -44,20 +41,20 @@ namespace plantgen
         return total;
     }
 
-    std::vector<std::string> roll_multi_value(multi_value_t const& m)
+    std::vector<pregen_node_t> roll_multi_value(multi_value_t const& m)
     {
-        if(m.num_to_pick >= m.values.size())
-            return m.values;
+        // if(m.num_to_pick >= m.values.size())
+        //     return m.values;
 
         std::vector<size_t> inds(m.values.size());
         std::iota(inds.begin(), inds.end(), size_t(0)); //0, 1, 2, 3, ..., size-1
         std::shuffle(inds.begin(), inds.end(), std::mt19937{std::random_device{}()});
 
-        std::vector<std::string> output;
+        std::vector<pregen_node_t> output;
         output.reserve(m.num_to_pick);
         
         for(size_t i = 0; i < m.num_to_pick; ++i)
-            output.push_back(m.values[inds[i]]);
+            output.push_back(*m.values[inds[i]]);
 
         return output;
     }
@@ -103,7 +100,7 @@ namespace plantgen
         else if(auto* m = std::get_if<multi_value_t>(&variant_val))
         {
             auto rolled_multi = roll_multi_value(*m);
-            output.insert(output.end(), rolled_multi.begin(), rolled_multi.end());
+            // output.insert(output.end(), rolled_multi.begin(), rolled_multi.end());
         }
         else
         {
@@ -246,7 +243,10 @@ namespace plantgen
 
         auto indent = indenation_string(level);
 
-        s << indent << node.name_string() << ": ";
+        s << indent;
+
+        if(node.name != "")
+            s << node.name_string() << ": ";
 
         if(is_leaf(node))
         {

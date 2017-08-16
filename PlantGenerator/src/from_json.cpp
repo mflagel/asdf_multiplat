@@ -90,6 +90,8 @@ namespace plantgen
         return values;
     }
 
+
+    /// WIP trying to support non-string multi values
     multi_value_t multi_value_from_json(cJSON* json)
     {
         ASSERT(str_eq(json->child->string, "Multi"), "Expected a \"Multi\" json_obj");
@@ -98,14 +100,12 @@ namespace plantgen
         multi_value_t v;
         v.num_to_pick = json->child->valueint;
 
-        try {
-            v.values = std::move(value_string_list_from_json_array(json->child->next));
-        }
-        catch (json_type_exception& je)
+        cJSON* value_array_json = json->child->next;
+        for(cJSON* j = value_array_json->child; j; j = j->next)
         {
-
-            std::string s = "json type error: \"Multi\" only supports a value list of strings, not " + std::string(cJSON_type_strings[je.json_type_found]);
-            throw std::runtime_error(std::move(s));
+            auto n = node_from_json(j);
+            auto pn = std::make_unique<pregen_node_t>(n);
+            v.values.push_back(std::move(pn));
         }
 
         return v;
@@ -247,8 +247,41 @@ namespace plantgen
         return -1;
     }
 
-    pregen_node_t node_from_json(cJSON* json_node)
+    void include_to_node(pregen_node_t& node, stdfs::path const& relpath)
     {
+        if(relpath.empty())
+        {
+            throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
+        }
+
+        auto parent_path = include_dir_stack.top().parent_path();
+        stdfs::path fullpath = parent_path / relpath;
+
+        try{
+            auto included_node = node_from_json(fullpath);
+
+            auto prev_weight = node.weight;
+            node.merge_with(std::move(included_node));
+            node.weight = prev_weight;
+
+            /// TODO: check for existance of name value?
+            ///       as opposed to just checking for an empty name
+            if(node.name == "")
+            {
+                node.name = included_node.name;
+                node.sub_name = "";
+            }
+        }
+        catch(file_not_found_exception const&)
+        {
+            throw include_exception{include_dir_stack.top(), fullpath};
+        }
+    }
+
+    pregen_node_t object_node_from_json(cJSON* json_node)
+    {
+        ASSERT(json_node->type == cJSON_Object, "Expected cJSON type to be Object");
+
         pregen_node_t node;
 
         cJSON* cur_child = json_node->child;
@@ -275,16 +308,20 @@ namespace plantgen
                     // if the value is a node, load it differently
                     // since we can't return a node as part of the variant
 
-                    //if the value is an object starting with a child named "Name", it's a node
-                    if(value_json->type == cJSON_Object 
-                    && value_json->child
-                    && str_eq(value_json->child->string, "Name"))
+                    // is range or multi
+                    bool is_value_type_node = value_json->type == cJSON_Object 
+                                           && value_json->child
+                                           &&  (str_eq(value_json->child->string, "Range")
+                                             || str_eq(value_json->child->string, "Multi"))
+                                           ;
+
+                    if(is_value_type_node || value_json->type != cJSON_Object)
                     {
-                        node.value_nodes.push_back(std::move(node_from_json(value_json)));
+                        node.value_nodes.emplace_back(value_type_from_json(value_json));
                     }
                     else
                     {
-                        node.value_nodes.emplace_back(value_type_from_json(value_json));
+                        node.value_nodes.push_back(std::move(node_from_json(value_json)));
                     }
 
                     value_json = value_json->next;
@@ -293,35 +330,7 @@ namespace plantgen
             else if(str_eq(cur_child->string, "Include"))
             {
                 ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
-
-                stdfs::path relpath(cur_child->valuestring);
-
-                if(relpath.empty())
-                {
-                    throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
-                }
-
-                auto parent_path = include_dir_stack.top().parent_path();
-                stdfs::path fullpath = parent_path / relpath;
-
-                try{
-                    auto included_node = node_from_json(fullpath);
-
-                    // if(included_node.name == node.name)
-                    // {
-                        auto prev_weight = node.weight;
-                        node.merge_with(std::move(included_node));
-                        node.weight = prev_weight;
-                    // }
-                    // else
-                    // {
-                    //     node.add_child(std::move(included_node));
-                    // }
-                }
-                catch(file_not_found_exception const&)
-                {
-                    throw include_exception{include_dir_stack.top(), fullpath};
-                }
+                include_to_node(node, stdfs::path(cur_child->valuestring));
             }
             else if(str_eq(cur_child->string, "Weight"))
             {
@@ -364,6 +373,42 @@ namespace plantgen
         }
 
         return node;
+    }
+
+    pregen_node_t array_node_from_json(cJSON* json_node)
+    {
+        ASSERT(json_node->type == cJSON_Array, "Expected cJSON type to be Array");
+
+        pregen_node_t node;
+
+        cJSON* cur_child = json_node->child;
+        while(cur_child)
+        {
+            node.add_child(node_from_json(cur_child));
+
+            cur_child = cur_child->next;
+        }
+
+        return node;
+    }
+
+    pregen_node_t node_from_json(cJSON* json_node)
+    {
+        switch(json_node->type)
+        {
+            case cJSON_Object:
+                return object_node_from_json(json_node);
+
+            case cJSON_Array:
+                return array_node_from_json(json_node);
+
+            default:
+            {
+                pregen_node_t node;
+                node.value = value_type_from_json(json_node);
+                return node;
+            }
+        }
     }
 
     pregen_node_t node_from_json(stdfs::path const& _filepath)

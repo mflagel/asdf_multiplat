@@ -25,26 +25,117 @@ Ranges:
         ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
     Three value ranges will similarily split between three values
 
+  TODO: support value nodes for range values (currently only supports strings)
+
+Multi-Values:
+  Allows you to randomly pick multiple values out of a list
+
+  ex:
+    {
+      "Multi": 2,
+      "Values": [
+        "A"
+        "B"
+        "C"
+        "D"
+      ]
+    }
+
+  TODO: support value nodes for multi-values (currently only supports strings)
+
 Include:
   Plants can contain an entire generated plant as a property
     ex: a small plant might generate a root, grass, and flower from three separate data files
 
   This allows the user to factor out reusable components into their own file.
-
-  Not sure which keyword to use. Probably "Include"
     ex:
       "Properties": [
           {
-              "Name": "Root"
-              "Include": "some/filepath/plant_root.json"
+              "Include": "some/filepath/some_data.json"
           }
       ]
+
+
+  You can provide a different name when including. The name of the root node in the included file will be the 'sub_name' of the resulting node
+    ex:
+      included_file.json:
+      {
+        "Name":"Some Name",
+        "Properties:[
+          ....
+        ],
+        "Values":[
+          ...
+        ]
+      }
+
+      main_file.json:
+      {
+        "Name":"Different Name"
+        "Include":"included_file.json"
+      }
+
+      Will result in a node named "Different Name" and a sub_name of "Some Name". This will get printed as "Different Name (Some Name)"
+
+
+  You can define a list of properties and/or values in addition to including from a file. This will merge the two lists
+  The values will be added in order listed
+    include after example:
+      included_file.json:
+        {
+          "Values"[
+            "1",
+            "2"
+          ]
+        }
+
+      main_file.json:
+        {
+          "Values":[
+            "A",
+            "B",
+            "C"
+          ],
+          "Include":"included_file.json"
+        }
+
+      resulting value list:
+        A B C 1 2
+
+
+    include before example:
+      included_file.json:
+        {
+          "Values"[
+            "1",
+            "2"
+          ]
+        }
+
+      main_file.json:
+        {
+          "Include":"included_file.json",
+          "Values":[
+            "A",
+            "B",
+            "C"
+          ]
+        }
+
+      resulting value list:
+        1 2 A B C
+
 
   TODO:
     Cache included nodes by absolute filename, rather than reloading them every time
 
+    add a "Include Properties" keyword
+    add a "Include Values" keyword
+
 
 Tree Merging:
+  NOT YET IMPLEMENTED
+
   In cases where the user wants a slightly different version of a given generator definition file, the user could specify two generator trees and merge them. This could be done by merging two files, or by merging one file with an inline definition.
 
   ex:

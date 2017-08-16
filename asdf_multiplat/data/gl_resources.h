@@ -6,6 +6,7 @@
 
 #include <gl/glew.h>
 
+#include "main/asdf_defs.h"
 #include "gl_enums.h"
 #include "gl_vertex_spec.h"
 #include "shader.h"
@@ -13,24 +14,6 @@
 
 namespace asdf
 {
-
-    struct opengl_object_t
-    {
-        GLuint id = UINT_MAX;
-
-        opengl_object_t() = default;
-        //virtual ~opengl_object_t() = 0;
-        virtual ~opengl_object_t() = default;
-    };
-
-    #define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
-        _obj_name_(const _obj_name_&) = delete; \
-        _obj_name_& operator=(const _obj_name_&) = delete; \
-        _obj_name_(_obj_name_&&) = delete; \
-        _obj_name_& operator=(_obj_name_&&) = delete;
-    /*--------*/
-
-
     #define GL_OBJ(_obj_name_, _gen_func_, _delete_func_)   \
         struct _obj_name_ : opengl_object_t                 \
         {                                                   \
@@ -44,9 +27,20 @@ namespace asdf
                 _delete_func_(1, &id);                      \
             }                                               \
                                                             \
-            DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_)         \
+            UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_)      \
         };                                                  
     /*--------*/
+
+
+    struct opengl_object_t
+    {
+        GLuint id = UINT_MAX;
+
+        opengl_object_t() = default;
+        //virtual ~opengl_object_t() = 0;
+        virtual ~opengl_object_t() = default;
+    };
+
 
     GL_OBJ(vao_t, glGenVertexArrays, glDeleteVertexArrays);
     GL_OBJ(framebuffer_t, glGenFramebuffers, glDeleteFramebuffers);
