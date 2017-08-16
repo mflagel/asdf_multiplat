@@ -25,6 +25,24 @@ Ranges:
         ex: A range of White and Black could return 20% white, 80% black (ie: dark grey)
     Three value ranges will similarily split between three values
 
+  TODO: support value nodes for range values (currently only supports strings)
+
+Multi-Values:
+  Allows you to randomly pick multiple values out of a list
+
+  ex:
+    {
+      "Multi": 2,
+      "Values": [
+        "A"
+        "B"
+        "C"
+        "D"
+      ]
+    }
+
+  TODO: support value nodes for multi-values (currently only supports strings)
+
 Include:
   Plants can contain an entire generated plant as a property
     ex: a small plant might generate a root, grass, and flower from three separate data files
