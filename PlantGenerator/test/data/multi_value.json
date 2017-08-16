@@ -28,11 +28,41 @@
         },
         {
             "Multi":4,
-            "Range":[
+            "Values":[
                 "2 A",
                 "2 B",
                 "2 C",
                 "2 D"
+            ]
+        },
+        {
+            "Multi": 2,
+            "Values": [
+                {
+                    "Name":"Multi VN A",
+                    "Values":[
+                        "VN val 1"
+                    ]
+                },
+                {
+                    "Name":"Multi VN B",
+                    "Values":[
+                        {
+                            "Multi":2,
+                            "Values":[
+                                "A",
+                                "B",
+                                "C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name":"Multi VN C"
+                },
+                {
+                    "Name":"Multi VN D"
+                }
             ]
         }
     ]

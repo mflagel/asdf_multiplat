@@ -17,7 +17,8 @@ include_directories(src)
 include_directories(../src)
 
 file(GLOB plantgen_sources "../src/plant_generator.cpp"
-                           "../src/from_json.cpp")
+                           "../src/from_json.cpp"
+                           "../src/value_types.cpp")
 
 file(GLOB test_sources "src/*.cpp")
 set(ext_sources ${CMAKE_SOURCE_DIR}/../../ext/cJSON/cJSON.c)

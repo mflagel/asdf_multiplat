@@ -95,7 +95,7 @@ TEST_CASE("Value Types")
 
         REQUIRE(node.name == "Multi Value");
         REQUIRE(node.children.size() == 1);
-        REQUIRE(node.value_nodes.size() == 2);
+        REQUIRE(node.value_nodes.size() == 3);
 
         auto const& pn = node.children[0];
         auto const& p1_m = pn.value_nodes[0].value_as<multi_value_t>();
@@ -123,7 +123,7 @@ TEST_CASE("Value Types")
                     {
                         if(j != i)
                         {
-                            CHECK(rolled[i] != rolled[j]);
+                            CHECK(rolled[i].value != rolled[j].value);
                         }
                     }
                 }
@@ -132,5 +132,15 @@ TEST_CASE("Value Types")
         check_roll(p1_m);
         check_roll(vn_m1);
         check_roll(vn_m2);
+
+        /// TODO check if after 1000 rolls, each value is touched at least once
+
+        SECTION("Multi with VN nodes")
+        {
+            auto const& multi = node.value_nodes[0].value_as<multi_value_t>();
+
+            CHECK(multi.num_to_pick == 2);
+            CHECK(multi.values.size() == 4);
+        }
     }
 }
