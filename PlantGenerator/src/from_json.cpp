@@ -247,7 +247,7 @@ namespace plantgen
         return -1;
     }
 
-    void include_to_node(pregen_node_t& node, stdfs::path relpath)
+    void include_to_node(pregen_node_t& node, stdfs::path const& relpath)
     {
         if(relpath.empty())
         {
@@ -278,8 +278,10 @@ namespace plantgen
         }
     }
 
-    pregen_node_t node_from_json(cJSON* json_node)
+    pregen_node_t object_node_from_json(cJSON* json_node)
     {
+        ASSERT(json_node->type == cJSON_Object, "Expected cJSON type to be Object");
+
         pregen_node_t node;
 
         cJSON* cur_child = json_node->child;
@@ -371,6 +373,42 @@ namespace plantgen
         }
 
         return node;
+    }
+
+    pregen_node_t array_node_from_json(cJSON* json_node)
+    {
+        ASSERT(json_node->type == cJSON_Array, "Expected cJSON type to be Array");
+
+        pregen_node_t node;
+
+        cJSON* cur_child = json_node->child;
+        while(cur_child)
+        {
+            node.add_child(node_from_json(cur_child));
+
+            cur_child = cur_child->next;
+        }
+
+        return node;
+    }
+
+    pregen_node_t node_from_json(cJSON* json_node)
+    {
+        switch(json_node->type)
+        {
+            case cJSON_Object:
+                return object_node_from_json(json_node);
+
+            case cJSON_Array:
+                return array_node_from_json(json_node);
+
+            default:
+            {
+                pregen_node_t node;
+                node.value = value_type_from_json(json_node);
+                return node;
+            }
+        }
     }
 
     pregen_node_t node_from_json(stdfs::path const& _filepath)
