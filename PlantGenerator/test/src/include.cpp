@@ -16,9 +16,18 @@ TEST_CASE("Include")
 
     SECTION("Include As Property")
     {
-        test_basic_node(node.children[0]);
-        test_basic_node(node.children[1]);
-        test_basic_node(node.children[2]);
+        SECTION("Child [0]")
+        {
+            test_basic_node(node.children[0]);
+        }
+        SECTION("Child [1]")
+        {
+            test_basic_node(node.children[1]);
+        }
+        SECTION("Child [2]")
+        {
+            test_basic_node(node.children[2]);
+        }
         
         SECTION("With User Data")
         {

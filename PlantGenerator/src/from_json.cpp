@@ -1,7 +1,6 @@
 #include "from_json.h"
 
 #include <unordered_map>
-#include <stack>
 
 #include <asdf_multiplat/utilities/utilities.h>
 
@@ -65,8 +64,10 @@ namespace plantgen
     // if the JSON files are not all in the same directory
 
     //FIXME make this not global
-    std::stack<stdfs::path> include_dir_stack;
+    stdfs::path current_node_path;
+    std::vector<stdfs::path> include_dir_stack;
     std::unordered_map<stdfs::path, pregen_node_t> include_cache;
+    ///
 
 
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array)
@@ -80,7 +81,7 @@ namespace plantgen
         {
             if(j->type != cJSON_String)
             {
-                throw json_type_exception(include_dir_stack.top(), *j, cJSON_String);
+                throw json_type_exception(include_dir_stack.back(), *j, cJSON_String);
             }
 
             values.emplace_back(j->valuestring);
@@ -183,7 +184,7 @@ namespace plantgen
                 return user_value_t(std::string(json.valuestring));
 
             default:
-                throw json_type_exception(include_dir_stack.top(), json,
+                throw json_type_exception(include_dir_stack.back(), json,
                     {cJSON_True, cJSON_False, cJSON_Number, cJSON_String});
                 break;
         };
@@ -254,27 +255,71 @@ namespace plantgen
             throw std::runtime_error("Include path is empty for \"" + node.name + "\"");
         }
 
-        auto parent_path = include_dir_stack.top().parent_path();
+        
+        stdfs::path parent_path;
+        if(include_dir_stack.size() > 0)
+        {
+            parent_path = include_dir_stack.back().parent_path();
+        }
+        else
+        {
+            ASSERT(!current_node_path.empty(), "");
+            ASSERT(current_node_path == stdfs::canonical(current_node_path), "current_node_path is not canonical");
+            parent_path = current_node_path.parent_path();
+        }
+
+
         stdfs::path fullpath = parent_path / relpath;
+        auto canonical_path = stdfs::canonical(fullpath);
 
-        try{
-            auto included_node = node_from_json(fullpath);
 
-            auto prev_weight = node.weight;
-            node.merge_with(std::move(included_node));
-            node.weight = prev_weight;
-
-            /// TODO: check for existance of name value?
-            ///       as opposed to just checking for an empty name
-            if(node.name == "")
+        /// If this path is already in the include stack
+        /// it means there is a cycle in the include graph
+        for(auto const& inc : include_dir_stack)
+        {
+            if(canonical_path == inc)
             {
-                node.name = included_node.name;
-                node.sub_name = "";
+                throw include_cycle_exception(include_dir_stack);
+            }
+        }
+
+
+        
+        pregen_node_t included_node;
+
+        try
+        {
+            auto cached_node_entry = include_cache.find(canonical_path);
+            if(cached_node_entry != include_cache.end())
+            {
+                included_node = cached_node_entry->second;
+            }
+            else
+            {
+                include_dir_stack.push_back(canonical_path);
+                included_node = node_from_json(canonical_path);
+                include_dir_stack.pop_back();
+
+                include_cache.insert({canonical_path, included_node});
             }
         }
         catch(file_not_found_exception const&)
         {
-            throw include_exception{include_dir_stack.top(), fullpath};
+            throw include_not_found_exception{include_dir_stack.back(), canonical_path};
+        }
+
+
+        /// Merge node and fiddle with weights and names
+        auto prev_weight = node.weight;
+        node.merge_with(std::move(included_node));
+        node.weight = prev_weight;
+
+        /// TODO: check for existance of name value?
+        ///       as opposed to just checking for an empty name
+        if(node.name == "")
+        {
+            node.name = included_node.name;
+            node.sub_name = "";
         }
     }
 
@@ -354,7 +399,7 @@ namespace plantgen
                 }
 
                 default:
-                    throw json_type_exception(include_dir_stack.top(), *cur_child,
+                    throw json_type_exception(include_dir_stack.back(), *cur_child,
                         {cJSON_Number, cJSON_String});
                 }
             }
@@ -413,38 +458,24 @@ namespace plantgen
 
     pregen_node_t node_from_json(stdfs::path const& _filepath)
     {
-        auto filepath = stdfs::canonical(_filepath);
+        auto canonical_path = stdfs::canonical(_filepath);
 
-        if(!stdfs::is_regular_file(filepath))
-            throw file_not_found_exception{filepath};
+        if(!stdfs::is_regular_file(canonical_path))
+            throw file_not_found_exception{canonical_path};
 
-        auto canonical_path = stdfs::canonical(filepath);
+        std::string json_str = tired_of_build_issues::read_text_file(canonical_path.string());
+        cJSON* json_root = cJSON_Parse(json_str.c_str());
 
-        auto cached_node_entry = include_cache.find(canonical_path);
-        if(cached_node_entry != include_cache.end())
+        if(!json_root)
         {
-            return cached_node_entry->second;
+            throw json_parse_exception(canonical_path, cJSON_GetErrorPtr());
         }
-        else
-        {
-            //std::string json_str = asdf::util::read_text_file(filepath);
-            std::string json_str = tired_of_build_issues::read_text_file(canonical_path.string());
-            cJSON* json_root = cJSON_Parse(json_str.c_str());
+        
+        current_node_path = canonical_path;
+        auto node = node_from_json(json_root);
+        cJSON_Delete(json_root);
 
-            if(!json_root)
-            {
-                throw json_parse_exception(filepath, cJSON_GetErrorPtr());
-            }
-
-            include_dir_stack.push(canonical_path);
-            auto node = node_from_json(json_root);
-            cJSON_Delete(json_root);
-            include_dir_stack.pop();
-
-            include_cache.insert({canonical_path, node});
-
-            return node;
-        }
+        return node;
     }
 
     generated_node_t generate_node_from_json(stdfs::path const& filepath)
