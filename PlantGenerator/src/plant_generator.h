@@ -354,16 +354,32 @@ namespace plantgen
         {}
     };
 
-    struct include_exception : public std::runtime_error
+    struct include_not_found_exception : public std::runtime_error
     {
         stdfs::path include_from_path;
         stdfs::path include_path;
 
-        include_exception(stdfs::path const& _inc_from, stdfs::path const& _inc)
+        include_not_found_exception(stdfs::path const& _inc_from, stdfs::path const& _inc)
         : std::runtime_error("File Not Found: " + _inc.string() + "\n"
                            + "Included by " + _inc_from.string() + "\n")
         , include_from_path(_inc_from)
         , include_path(_inc)
         {}
+    };
+
+    struct include_cycle_exception : public std::runtime_error
+    {
+        std::vector<stdfs::path> include_stack;
+
+        include_cycle_exception(std::vector<stdfs::path> _inc_stack)
+        : std::runtime_error("")
+        , include_stack(std::move(_inc_stack))
+        {
+            std::string str = "Cyclical Include";
+
+            ///TODO: Print out the include stack
+
+            static_cast<std::runtime_error&>(*this) = std::runtime_error(str);
+        }
     };
 }
