@@ -172,4 +172,14 @@ TEST_CASE("Include")
         CHECK(vn.value_nodes[2].value_as<string>() == "Test 3");
         test_basic_node(vn.value_nodes[3]);
     }
+
+    SECTION("Error Handling")
+    {
+        SECTION("Circular Includes")
+        {
+            pregen_node_t node;
+            REQUIRE_THROWS_AS(node = node_from_json("../data/include_errors.json")
+                            , include_cycle_exception const&);
+        }
+    }
 }
