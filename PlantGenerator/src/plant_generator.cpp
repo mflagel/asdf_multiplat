@@ -173,8 +173,7 @@ namespace plantgen
         }
         else if(ext == ".yaml" || ext == ".yml")
         {
-            cout << "TODO: yaml support";
-            return pregen_node_t();
+            throw invalid_file_exception{filepath, std::string("TODO: yaml support")};
         }
 
 

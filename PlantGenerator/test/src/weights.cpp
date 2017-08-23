@@ -96,4 +96,50 @@ TEST_CASE("Weights")
         REQUIRE(wov_vn.weight == 1464); //123 + 456 + 789 + 32 + 64
         REQUIRE(wov_vn.weight == sum);
     }
+
+    SECTION("Error Handling")
+    {
+        SECTION("Weight Is String")
+        {
+            cJSON* json_root = cJSON_Parse(
+                R"~({
+                    "Name":"Weight As String",
+                    "Weight":"Weight cannot be a string"
+                })~"
+            );
+
+            REQUIRE_THROWS_AS(node_from_json(json_root)
+                            , invalid_weight_exception const&);
+        }
+
+        SECTION("Percent Without Weight Value")
+        {
+            cJSON* json_root = cJSON_Parse(
+                R"~({
+                    "Name":"a",
+                    "Values":[
+                        "% Percent Without Weight Value"
+                    ]
+                })~"
+            );
+
+            REQUIRE_THROWS_AS(node_from_json(json_root)
+                            , invalid_weight_exception const&);
+        }
+
+        SECTION("Percent With String Instead Of Numbers")
+        {
+            cJSON* json_root = cJSON_Parse(
+                R"~({
+                    "Name":"a",
+                    "Values":[
+                        "%abcd Percent With String Instead Of Numbers"
+                    ]
+                })~"
+            );
+
+            REQUIRE_THROWS_AS(node_from_json(json_root)
+                            , invalid_weight_exception const&);
+        }
+    }
 }

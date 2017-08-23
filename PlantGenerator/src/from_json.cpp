@@ -118,10 +118,12 @@ namespace plantgen
         return value_string_list_from_json_array(json);
     }
 
+
     weighted_value_t value_from_string(std::string const& value_string)
     {
         weighted_value_t v = value_string;
 
+        
         if(value_string[0] == '%')
         {
             auto space_pos = value_string.find_first_of(' ');
@@ -129,12 +131,11 @@ namespace plantgen
             if(space_pos > 1)
             {
                 v = value_string.substr(space_pos+1, std::string::npos);
-                v.weight = std::stoi(value_string.substr(1, space_pos));
+                v.weight = weight_from_string(value_string);
             }
             else
             {
-                //TODO: better error message
-                std::cout << "Invalid Weight Specifier for \"" << value_string << "\"\n";
+                throw invalid_weight_exception(value_string);
             }
         }
 
@@ -223,6 +224,7 @@ namespace plantgen
         return node;
     }
 
+    ///TODO: move; not json specific
     int weight_from_string(std::string const& weight_str)
     {
         if(weight_str[0] == '%')
@@ -236,12 +238,19 @@ namespace plantgen
 
             if(space_pos > 1)
             {
-                return std::stoi(weight_str.substr(1, space_pos));
+                try
+                {
+                    return std::stoi(weight_str.substr(1, space_pos));
+                }
+                catch (...)
+                {
+                    throw invalid_weight_exception(weight_str);
+                }
+                
             }
             else
             {
-                //TODO: better error message
-                std::cout << "Invalid Weight Specifier for \"" << weight_str << "\"\n";
+                throw invalid_weight_exception(weight_str);
             }
         }
 
@@ -419,7 +428,9 @@ namespace plantgen
                         node.weight = weight;
                     }
                     else
-                        std::cout << "Invalid Weight Specifier for \"" << node.name << "\"\n";
+                    {
+                        throw invalid_weight_exception(node.name);
+                    }
 
                     break;
                 }
