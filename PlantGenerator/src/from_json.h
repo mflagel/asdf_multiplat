@@ -8,8 +8,6 @@ struct cJSON;
 
 namespace plantgen
 {
-    int weight_from_string(std::string const& weight_str); ///TODO: move; not json specific
-
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array);
     multi_value_t multi_value_from_json(cJSON* json);
     range_value_t range_value_from_json(cJSON* json);

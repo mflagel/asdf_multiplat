@@ -319,6 +319,8 @@ namespace plantgen
     int32_t random_int(uint32_t min, uint32_t max);
     int32_t random_int(uint32_t max);
 
+    int weight_from_string(std::string const& weight_str);
+    weighted_value_t value_from_string(std::string const& value_string);
 
     template <typename L>
     uint32_t total_weight(L const& list);
