@@ -175,11 +175,11 @@ int main(int argc, char* argv[])
     {
         if(has_flag(flag_print_pregen))
         {
-            print_node(pregen_node);
+            cout << to_string(pregen_node) << "\n";
         }
         if(has_flag(flag_print_generated))
         {
-            print_node(generated_node);
+            cout << to_string(generated_node) << "\n";
         }
         if(has_flag(flag_print_simplified))
         {

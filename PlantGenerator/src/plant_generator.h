@@ -340,9 +340,6 @@ namespace plantgen
     std::string to_string(pregen_node_t    const& node, size_t depth = sz::max(), size_t level = 0);
     std::string to_string(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
 
-    void print_node(pregen_node_t    const& node, size_t depth = sz::max(), size_t level = 0);
-    void print_node(generated_node_t const& node, size_t depth = sz::max(), size_t level = 0);
-
 
     /// Exceptions
     struct invalid_file_exception : public std::runtime_error
