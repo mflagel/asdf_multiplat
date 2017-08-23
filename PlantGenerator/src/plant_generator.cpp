@@ -30,6 +30,64 @@ namespace plantgen
     }
 
 
+    /// non-format-specific parsing
+    int weight_from_string(std::string const& weight_str)
+    {
+        if(weight_str[0] == '%')
+        {
+            if(weight_str.size() == 1)
+            {
+                return weight_inherit_code;
+            }
+
+            auto space_pos = weight_str.find_first_of(' ');
+
+            if(space_pos > 1)
+            {
+                try
+                {
+                    return std::stoi(weight_str.substr(1, space_pos));
+                }
+                catch (...)
+                {
+                    throw invalid_weight_exception(weight_str);
+                }
+                
+            }
+            else
+            {
+                throw invalid_weight_exception(weight_str);
+            }
+        }
+
+        return -1;
+    }
+
+    weighted_value_t value_from_string(std::string const& value_string)
+    {
+        weighted_value_t v = value_string;
+
+        
+        if(value_string[0] == '%')
+        {
+            auto space_pos = value_string.find_first_of(' ');
+
+            if(space_pos > 1)
+            {
+                v = value_string.substr(space_pos+1, std::string::npos);
+                v.weight = weight_from_string(value_string);
+            }
+            else
+            {
+                throw invalid_weight_exception(value_string);
+            }
+        }
+
+        return v;
+    }
+    
+
+
     template <typename L>
     uint32_t total_weight(L const& list)
     {

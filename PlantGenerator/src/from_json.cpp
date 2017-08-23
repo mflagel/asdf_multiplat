@@ -118,30 +118,6 @@ namespace plantgen
         return value_string_list_from_json_array(json);
     }
 
-
-    weighted_value_t value_from_string(std::string const& value_string)
-    {
-        weighted_value_t v = value_string;
-
-        
-        if(value_string[0] == '%')
-        {
-            auto space_pos = value_string.find_first_of(' ');
-
-            if(space_pos > 1)
-            {
-                v = value_string.substr(space_pos+1, std::string::npos);
-                v.weight = weight_from_string(value_string);
-            }
-            else
-            {
-                throw invalid_weight_exception(value_string);
-            }
-        }
-
-        return v;
-    }
-
     weighted_value_t value_type_from_json(cJSON* json)
     {
         if(json->type == cJSON_String)
@@ -222,39 +198,6 @@ namespace plantgen
         }
 
         return node;
-    }
-
-    ///TODO: move; not json specific
-    int weight_from_string(std::string const& weight_str)
-    {
-        if(weight_str[0] == '%')
-        {
-            if(weight_str.size() == 1)
-            {
-                return weight_inherit_code;
-            }
-
-            auto space_pos = weight_str.find_first_of(' ');
-
-            if(space_pos > 1)
-            {
-                try
-                {
-                    return std::stoi(weight_str.substr(1, space_pos));
-                }
-                catch (...)
-                {
-                    throw invalid_weight_exception(weight_str);
-                }
-                
-            }
-            else
-            {
-                throw invalid_weight_exception(weight_str);
-            }
-        }
-
-        return -1;
     }
 
     void include_to_node(pregen_node_t& node, stdfs::path const& relpath)
