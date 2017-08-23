@@ -343,15 +343,23 @@ namespace plantgen
 
 
     /// Exceptions
-
-    struct file_not_found_exception : public std::runtime_error
+    struct invalid_file_exception : public std::runtime_error
     {
         stdfs::path path;
+        stdfs::path expected_extension;
 
-        file_not_found_exception(stdfs::path const& _path)
-        : std::runtime_error("File Not Found: \"" + _path.string() + "\"")
+        invalid_file_exception(stdfs::path const& _path, stdfs::path const& _expected_extension)
+        : std::runtime_error("Invalid File Type '" + _path.extension().string() + "' in " + _path.string()
+                         + "\nExpected " + _expected_extension.string())
         , path(_path)
-        {}
+        , expected_extension(_expected_extension)
+        {
+        }
+
+        invalid_file_exception(stdfs::path const& _path, std::string _error_message)
+        : std::runtime_error(_error_message + "\n(" + _path.string() + ")")
+        {
+        }
     };
 
     struct include_not_found_exception : public std::runtime_error

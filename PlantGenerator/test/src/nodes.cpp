@@ -39,8 +39,10 @@ TEST_CASE("Node Stuff")
     SECTION("Basic Node")
     {
         test_basic_node(node_from_json("../data/basic_node.json"));
+    }
+    SECTION("Basic Extended")
+    {
         test_basic_node(node_from_json("../data/basic_node_extended.json"));
-        
     }
     
     SECTION("Fancy Node")
@@ -129,5 +131,19 @@ TEST_CASE("Node Stuff")
         {
             CHECK(vn.value_nodes[i+1].value == vn_value_strings[i]);
         }
+    }
+
+    SECTION("Error Checking")
+    {
+        using namespace std::experimental::filesystem;
+
+        REQUIRE_THROWS_AS(node_from_file(""), filesystem_error const&);
+        REQUIRE_THROWS_AS(node_from_json(""), filesystem_error const&);
+
+        REQUIRE_THROWS_AS(node_from_file("not_a_file"), filesystem_error const&);
+        REQUIRE_THROWS_AS(node_from_json("not_a_file"), filesystem_error const&);
+
+        REQUIRE_THROWS_AS(node_from_file("not_a_file.json"), filesystem_error const&);
+        REQUIRE_THROWS_AS(node_from_json("not_a_file.json"), filesystem_error const&);
     }
 }

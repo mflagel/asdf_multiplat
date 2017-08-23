@@ -1,0 +1,8 @@
+{
+    "Name":"Circular Include",
+    "Values":[
+        {
+            "Include":"include_circular.json"
+        }
+    ]
+}
