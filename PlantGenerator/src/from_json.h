@@ -8,6 +8,8 @@ struct cJSON;
 
 namespace plantgen
 {
+    int weight_from_string(std::string const& weight_str); ///TODO: move; not json specific
+
     std::vector<std::string> value_string_list_from_json_array(cJSON* json_array);
     multi_value_t multi_value_from_json(cJSON* json);
     range_value_t range_value_from_json(cJSON* json);
@@ -84,5 +86,13 @@ namespace plantgen
         json_type_exception(stdfs::path const& _json_filepath, cJSON const& _json, std::initializer_list<int> _types_expected)
         : json_type_exception(_json_filepath, _json, std::vector<int>{_types_expected})
         {}
+    };
+
+    struct invalid_weight_exception : std::runtime_error
+    {
+        invalid_weight_exception(std::string weight_string)
+        : std::runtime_error("Invalid Weight Specifier for \"" + weight_string + "\"")
+        {
+        }
     };
 }
