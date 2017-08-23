@@ -177,9 +177,14 @@ TEST_CASE("Include")
     {
         SECTION("Circular Includes")
         {
-            pregen_node_t node;
-            REQUIRE_THROWS_AS(node = node_from_json("../data/include_errors.json")
+            REQUIRE_THROWS_AS(node_from_json("../data/include_circular.json")
                             , include_cycle_exception const&);
+        }
+
+        SECTION("Include File Not Found")
+        {
+            REQUIRE_THROWS_AS(node_from_json("../data/include_file_not_found.json")
+                            , include_not_found_exception const&);
         }
     }
 }

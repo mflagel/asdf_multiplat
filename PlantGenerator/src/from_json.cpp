@@ -270,7 +270,22 @@ namespace plantgen
 
 
         stdfs::path fullpath = parent_path / relpath;
-        auto canonical_path = stdfs::canonical(fullpath);
+        stdfs::path canonical_path;
+        try
+        {
+            canonical_path = stdfs::canonical(fullpath);
+        }
+        catch (stdfs::filesystem_error const& fs_e)
+        {
+            if(fs_e.code() == std::errc::no_such_file_or_directory)
+            {
+                throw include_not_found_exception{include_dir_stack.back(), canonical_path};
+            }
+            else
+            {
+                throw fs_e;
+            }
+        }
 
 
         /// If this path is already in the include stack
@@ -287,26 +302,37 @@ namespace plantgen
         
         pregen_node_t included_node;
 
-        try
+        
+        auto cached_node_entry = include_cache.find(canonical_path);
+        if(cached_node_entry != include_cache.end())
         {
-            auto cached_node_entry = include_cache.find(canonical_path);
-            if(cached_node_entry != include_cache.end())
-            {
-                included_node = cached_node_entry->second;
-            }
-            else
-            {
-                include_dir_stack.push_back(canonical_path);
-                included_node = node_from_json(canonical_path);
-                include_dir_stack.pop_back();
+            included_node = cached_node_entry->second;
+        }
+        else
+        {
+            include_dir_stack.push_back(canonical_path);
 
-                include_cache.insert({canonical_path, included_node});
+            try
+            {
+                included_node = node_from_file(canonical_path);
             }
+            catch(stdfs::filesystem_error const& fs_e)
+            {
+                if(fs_e.code() == std::errc::no_such_file_or_directory)
+                {
+                    throw include_not_found_exception{include_dir_stack.back(), canonical_path};
+                }
+                else
+                {
+                    throw fs_e;
+                }
+            }
+
+            include_dir_stack.pop_back();
         }
-        catch(file_not_found_exception const&)
-        {
-            throw include_not_found_exception{include_dir_stack.back(), canonical_path};
-        }
+
+
+        include_cache.insert({canonical_path, included_node});
 
 
         /// Merge node and fiddle with weights and names
@@ -458,10 +484,22 @@ namespace plantgen
 
     pregen_node_t node_from_json(stdfs::path const& _filepath)
     {
-        auto canonical_path = stdfs::canonical(_filepath);
+        stdfs::path canonical_path;
+
+        try
+        {
+            canonical_path = stdfs::canonical(_filepath);
+        }
+        catch (stdfs::filesystem_error const& fs_e)
+        {
+            throw fs_e;
+        }
+
+        if(stdfs::is_directory(canonical_path))
+            throw stdfs::filesystem_error("Cannot create node from JSON", canonical_path, std::make_error_code(std::errc::is_a_directory));
 
         if(!stdfs::is_regular_file(canonical_path))
-            throw file_not_found_exception{canonical_path};
+            throw stdfs::filesystem_error("Cannot create node from JSON", canonical_path, std::make_error_code(std::errc::not_supported));
 
         std::string json_str = tired_of_build_issues::read_text_file(canonical_path.string());
         cJSON* json_root = cJSON_Parse(json_str.c_str());

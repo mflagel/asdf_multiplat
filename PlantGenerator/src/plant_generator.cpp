@@ -156,6 +156,16 @@ namespace plantgen
     {
         using namespace std;
 
+        std::error_code ec;
+        bool exists = stdfs::exists(filepath, ec);
+        if(!ec && !exists) //if no error code from stdfs::exists and file does not exists, set ec
+            ec = std::make_error_code(std::errc::no_such_file_or_directory);
+
+        if(ec)
+        {
+            throw stdfs::filesystem_error("Cannot create node from file", filepath, ec);
+        }
+
         auto ext = filepath.extension();
         if(ext == ".json")
         {
@@ -167,11 +177,11 @@ namespace plantgen
             return pregen_node_t();
         }
 
-        //TODO: exception?
+
         if(stdfs::is_directory(filepath))
-            cout << filepath.string() << " is a directory, not a file";
+            throw invalid_file_exception{filepath, std::string("file is actually a directory")};
         else
-            cout << "Filetype " << ext << " not recognized";
+            throw invalid_file_exception{filepath, stdfs::path("json")};
 
         return pregen_node_t();
     }
