@@ -85,7 +85,7 @@ namespace plantgen
 
         return v;
     }
-    
+
 
 
     template <typename L>
@@ -396,15 +396,5 @@ namespace plantgen
             s << to_string(vn, depth, level + 1);
 
         return s.str();
-    }
-
-    void print_node(pregen_node_t const& node, size_t depth, size_t level)
-    {
-        cout << to_string(node, depth, level);
-    }
-
-    void print_node(generated_node_t const& node, size_t depth, size_t level)
-    {
-        cout << to_string(node, depth, level);
     }
 }
