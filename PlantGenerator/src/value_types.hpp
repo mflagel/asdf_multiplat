@@ -180,21 +180,6 @@ namespace plantgen
     }
 
 
-
-    /// SFINAE is terribly obnoxious
-    /*template <typename T, typename = std::enable_if_t<std::is_same<std::decay<T>, variant_value_t>::value
-                                                   || std::is_same<std::decay<T>, user_value_t>::value >>
-    std::ostream& operator<<(std::ostream& os, T const& obj)
-    {
-        std::visit( [&os](auto const& arg)
-            {
-                os << arg;
-            }
-        , obj);
-        
-        return os;
-    }*/
-
     inline std::ostream& operator<<(std::ostream& os, range_value_t const& obj)
     {
         std::string s = "{";
@@ -240,51 +225,4 @@ namespace plantgen
         
         return os;
     }
-
-
-
-
-    // template <typename L>
-    // bool operator==(value_list_t const& value_list, L const& comp_list)
-    // {
-    //     if(value_list.size() != comp_list.size())
-    //         return false;
-
-    //     /*for(size_t i = 0; i < value_list.size(); ++i)
-    //     {
-    //         if(value_list[i] != comp_list[i])
-    //             return false;
-    //     }*/
-
-    //     // use range based for so that this function can take an
-    //     // initializer list which has no operator[] but has
-    //     // begin/end iterators
-    //     size_t i = 0;
-    //     for(auto const& c : comp_list)
-    //     {
-    //         if(value_list[i] != c)
-    //             return false;
-
-    //         ++i;
-    //     }
-
-    //     return true;
-    // }
-    // template <typename L>
-    // bool operator==(L const& comp_list, value_list_t const& value_list)
-    // {
-    //     return value_list == comp_list;
-    // }
-
-    // template <typename L>
-    // bool operator!=(value_list_t const& value_list, L const& comp_list)
-    // {
-    //     return !(value_list == comp_list);
-    // }
-    // template <typename L>
-    // bool operator!=(L const& comp_list, value_list_t const& value_list)
-    // {
-    //     return !(value_list == comp_list);
-    // }
-
 }
