@@ -326,6 +326,7 @@ namespace plantgen
     uint32_t total_weight(L const& list);
 
 
+    pregen_node_t    node_from_merged_nodes(std::vector<pregen_node_t> const& nodes);
     pregen_node_t    node_from_file(stdfs::path const& filepath);
     generated_node_t generate_node(pregen_node_t const& node);
     generated_node_t generate_node_from_file(stdfs::path const& filepath);

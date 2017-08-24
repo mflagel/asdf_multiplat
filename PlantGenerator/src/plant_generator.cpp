@@ -210,6 +210,21 @@ namespace plantgen
         return generated_node_t("ERROR");
     }
 
+    pregen_node_t node_from_merged_nodes(std::vector<pregen_node_t> const& nodes)
+    {
+        if(nodes.empty())
+            return pregen_node_t();
+
+        pregen_node_t node = nodes[0];
+
+        for(size_t i = 1; i < nodes.size(); ++i)
+        {
+            node.merge_with(nodes[i]);
+        }
+
+        return node;
+    }
+
     pregen_node_t node_from_file(stdfs::path const& filepath)
     {
         using namespace std;

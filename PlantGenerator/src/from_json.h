@@ -16,6 +16,7 @@ namespace plantgen
     user_data_node_t user_node_from_json(cJSON const& json);
     pregen_node_t node_from_json(cJSON* json_node);
     pregen_node_t node_from_json(stdfs::path const& filepath);
+    std::vector<pregen_node_t> nodes_from_json(cJSON* json_array);
     generated_node_t generate_node_from_json(stdfs::path const& filepath);
 
 
@@ -55,7 +56,12 @@ namespace plantgen
                 json_node_name = "Unnamed Node";
 
             std::string str = "Incorrect data type '" + std::string(cJSON_type_strings[json_type_found])
-                + "' for node '" + json_node_name + "'   found in file " + _json_filepath.string();
+                + "' for node '" + json_node_name;
+
+            if(!_json_filepath.empty())
+            {
+                str += "'   found in file " + _json_filepath.string();
+            }
 
             if(json_types_expected.size() == 1)
             {

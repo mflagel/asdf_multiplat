@@ -64,9 +64,16 @@ namespace plantgen
     // if the JSON files are not all in the same directory
 
     //FIXME make this not global
-    stdfs::path current_node_path;
-    std::vector<stdfs::path> include_dir_stack;
+    std::vector<stdfs::path> node_path_stack;
     std::unordered_map<stdfs::path, pregen_node_t> include_cache;
+
+    stdfs::path current_node_path()
+    {
+        if(node_path_stack.size() > 0)
+            return node_path_stack.back();
+
+        return stdfs::path();
+    }
     ///
 
 
@@ -81,7 +88,7 @@ namespace plantgen
         {
             if(j->type != cJSON_String)
             {
-                throw json_type_exception(include_dir_stack.back(), *j, cJSON_String);
+                throw json_type_exception(current_node_path(), *j, cJSON_String);
             }
 
             values.emplace_back(j->valuestring);
@@ -161,7 +168,7 @@ namespace plantgen
                 return user_value_t(std::string(json.valuestring));
 
             default:
-                throw json_type_exception(include_dir_stack.back(), json,
+                throw json_type_exception(current_node_path(), json,
                     {cJSON_True, cJSON_False, cJSON_Number, cJSON_String});
                 break;
         };
@@ -209,15 +216,16 @@ namespace plantgen
 
         
         stdfs::path parent_path;
-        if(include_dir_stack.size() > 0)
+        if(node_path_stack.size() > 0)
         {
-            parent_path = include_dir_stack.back().parent_path();
+            ASSERT(current_node_path() == stdfs::canonical(current_node_path()), "current_node_path is not canonical");
+            parent_path = current_node_path().parent_path();
         }
         else
         {
-            ASSERT(!current_node_path.empty(), "");
-            ASSERT(current_node_path == stdfs::canonical(current_node_path), "current_node_path is not canonical");
-            parent_path = current_node_path.parent_path();
+            /// if loading json from raw string instead of file, current_node_path will be empty
+            /// in which case assume paths are relative to current working dir
+            parent_path = ".";
         }
 
 
@@ -231,7 +239,7 @@ namespace plantgen
         {
             if(fs_e.code() == std::errc::no_such_file_or_directory)
             {
-                throw include_not_found_exception{include_dir_stack.back(), canonical_path};
+                throw include_not_found_exception{current_node_path(), canonical_path};
             }
             else
             {
@@ -242,11 +250,11 @@ namespace plantgen
 
         /// If this path is already in the include stack
         /// it means there is a cycle in the include graph
-        for(auto const& inc : include_dir_stack)
+        for(auto const& inc : node_path_stack)
         {
             if(canonical_path == inc)
             {
-                throw include_cycle_exception(include_dir_stack);
+                throw include_cycle_exception(node_path_stack);
             }
         }
 
@@ -262,8 +270,6 @@ namespace plantgen
         }
         else
         {
-            include_dir_stack.push_back(canonical_path);
-
             try
             {
                 included_node = node_from_file(canonical_path);
@@ -272,15 +278,13 @@ namespace plantgen
             {
                 if(fs_e.code() == std::errc::no_such_file_or_directory)
                 {
-                    throw include_not_found_exception{include_dir_stack.back(), canonical_path};
+                    throw include_not_found_exception{current_node_path(), canonical_path};
                 }
                 else
                 {
                     throw fs_e;
                 }
             }
-
-            include_dir_stack.pop_back();
         }
 
 
@@ -352,8 +356,53 @@ namespace plantgen
             }
             else if(str_eq(cur_child->string, "Include"))
             {
-                ASSERT(cur_child->type == cJSON_String, "Include filepath must be a string");
+                if(cur_child->type != cJSON_String)
+                    throw json_type_exception(current_node_path(), *cur_child, cJSON_String);
+                    
                 include_to_node(node, stdfs::path(cur_child->valuestring));
+            }
+            else if(str_eq(cur_child->string, "Merge"))
+            {
+                ASSERT(cur_child, "");
+                if(cur_child->type != cJSON_Array)
+                    throw json_type_exception(current_node_path(), *cur_child, cJSON_Array);
+
+                std::vector<pregen_node_t> merge_nodes;
+
+                cJSON* arr_child = cur_child->child;
+                while(arr_child)
+                {
+                    switch(arr_child->type)
+                    {
+                        case cJSON_String:
+                        {
+                            pregen_node_t inc_node;
+                            include_to_node(inc_node, stdfs::path(arr_child->valuestring));
+                            merge_nodes.push_back(std::move(inc_node));
+                            break;
+                        }
+
+                        case cJSON_Object:
+                            merge_nodes.push_back(node_from_json(arr_child));
+                            break;
+
+                        default:
+                            throw json_type_exception(current_node_path(), *arr_child,
+                                                      {cJSON_String, cJSON_Object});
+                            break;
+                    }
+                    
+                    arr_child = arr_child->next;
+                }
+
+                auto merged_node = node_from_merged_nodes(merge_nodes);
+                node.merge_with(merged_node);
+
+                if(node.name.empty())
+                {
+                    node.name = merged_node.name;
+                    node.sub_name.clear();
+                }
             }
             else if(str_eq(cur_child->string, "Weight"))
             {
@@ -379,7 +428,7 @@ namespace plantgen
                 }
 
                 default:
-                    throw json_type_exception(include_dir_stack.back(), *cur_child,
+                    throw json_type_exception(current_node_path(), *cur_child,
                         {cJSON_Number, cJSON_String});
                 }
             }
@@ -400,25 +449,34 @@ namespace plantgen
         return node;
     }
 
-    pregen_node_t array_node_from_json(cJSON* json_node)
+    std::vector<pregen_node_t> nodes_from_json(cJSON* json_array)
     {
-        ASSERT(json_node->type == cJSON_Array, "Expected cJSON type to be Array");
+        ASSERT(json_array, "");
+        ASSERT(json_array->type == cJSON_Array, "Expected cJSON type to be Array");
 
-        pregen_node_t node;
+        std::vector<pregen_node_t> nodes;
 
-        cJSON* cur_child = json_node->child;
+        cJSON* cur_child = json_array->child;
         while(cur_child)
         {
-            node.add_child(node_from_json(cur_child));
-
+            nodes.push_back(node_from_json(cur_child));
             cur_child = cur_child->next;
         }
 
+        return nodes;
+    }
+
+    pregen_node_t array_node_from_json(cJSON* json_array)
+    {
+        pregen_node_t node;
+        node.children = nodes_from_json(json_array);
         return node;
     }
 
     pregen_node_t node_from_json(cJSON* json_node)
     {
+        ASSERT(json_node, "");
+
         switch(json_node->type)
         {
             case cJSON_Object:
@@ -463,9 +521,12 @@ namespace plantgen
             throw json_parse_exception(canonical_path, cJSON_GetErrorPtr());
         }
         
-        current_node_path = canonical_path;
+        node_path_stack.push_back(canonical_path);
+
         auto node = node_from_json(json_root);
         cJSON_Delete(json_root);
+
+        node_path_stack.pop_back();
 
         return node;
     }
