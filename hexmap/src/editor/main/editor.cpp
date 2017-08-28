@@ -59,7 +59,7 @@ namespace editor
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
 
-        test_minimap = make_shared<ui::minimap_t>(*rendered_map);
+        test_minimap = make_shared<ui::minimap_t>(rendered_map);
     }
 
     void editor_t::resize(uint32_t w, uint32_t h)
@@ -75,7 +75,7 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-            rendered_map->spline_renderer.render_some_spline_handles(inds);
+            rendered_map.spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
@@ -93,12 +93,12 @@ namespace editor
         {
             auto const& sel_obj = map_data.objects[sel_obj_ind];
 
-            auto& spritebatch = rendered_map->spritebatch;
-            auto const& shader = rendered_map->shader;
+            auto& spritebatch = rendered_map.spritebatch;
+            auto const& shader = rendered_map.shader;
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = rendered_map->objects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto const& obj_size_px = rendered_map.objects_atlas->atlas_entries[sel_obj.id].size_px;
             auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
             auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
 
@@ -112,7 +112,7 @@ namespace editor
         {
             auto const& box = app.renderer->box; //no sense making a new one
 
-            auto& shader = rendered_map->shader;
+            auto& shader = rendered_map.shader;
 
             glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
             glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
@@ -122,7 +122,7 @@ namespace editor
             shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
             
 
-            auto const& camera = rendered_map->camera;
+            auto const& camera = rendered_map.camera;
             shader->view_matrix       = camera.view_matrix();
             shader->projection_matrix = camera.projection_ortho();
 
@@ -139,9 +139,9 @@ namespace editor
         action_stack.clear();
 
         //reset camera
-        rendered_map->camera_controller.position = default_camera_position;
-        rendered_map->update(0.0f);
-        rendered_map->camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map->camera.aspect_ratio);
+        rendered_map.camera_controller.position = default_camera_position;
+        rendered_map.update(0.0f);
+        rendered_map.camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map.camera.aspect_ratio);
 
         map_filepath = "";
         map_is_dirty = false;
@@ -213,7 +213,7 @@ namespace editor
             }
         }
 
-        rendered_map->on_event(event); //for camera controller
+        rendered_map.on_event(event); //for camera controller
     }
 
 
@@ -425,7 +425,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = rendered_map->objects_atlas->atlas_entries;
+        auto const& atlas_entries = rendered_map.objects_atlas->atlas_entries;
         ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
@@ -497,7 +497,7 @@ namespace editor
         wip_spline->nodes.back().position = position;
 
         ptrdiff_t spline_ind = wip_spline - map_data.splines.data();
-        rendered_map->spline_renderer.dirty_splines.insert(spline_ind);
+        rendered_map.spline_renderer.dirty_splines.insert(spline_ind);
 
         if(wip_spline->spline_type == spline_t::bezier)
         {

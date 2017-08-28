@@ -22,18 +22,17 @@ public:
     glm::vec2 camera_pos() const;
     void camera_pos(glm::vec2 const&, bool emit_signal = true);
 
-    float camera_zoom_exponent() const { return hex_map->camera.zoom(); }
+    float camera_zoom_exponent() const {
+        ASSERT(editor, "Editor not yet initialized");
+        return editor->rendered_map.camera.zoom();
+    }
     void camera_zoom_exponent(float zoom_exponent);
 
-    bool is_hex_map_initialized() const { return hex_map != nullptr; }
+    bool is_hex_map_initialized() const { return editor != nullptr; }
 
     MainWindow* main_window = nullptr;
 
-    //encapsulation is obnoxious
-    asdf::hexmap::ui::hex_map_t* hex_map;
-    asdf::hexmap::data::hex_map_t& map_data;
-
-    asdf::hexmap::editor::editor_t editor;
+    std::unique_ptr<asdf::hexmap::editor::editor_t> editor;
 
 private:
     std::unique_ptr<asdf::gl_state_t> gl_state;
@@ -56,7 +55,7 @@ protected:
     glm::ivec2 adjusted_screen_coords(int x, int y) const; //not 100% happy with this name
 
 signals:
-    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+    void hex_map_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e new_tool);
     void camera_changed(asdf::camera_t const&);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);

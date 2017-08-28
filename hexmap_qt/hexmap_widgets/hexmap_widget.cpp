@@ -27,7 +27,6 @@ using tool_type_e = asdf::hexmap::editor::editor_t::tool_type_e;
 
 hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 : QOpenGLWidget(_parent)
-, map_data(editor.map_data)
 {
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
@@ -36,8 +35,7 @@ hexmap_widget_t::hexmap_widget_t(QWidget* _parent)
 void hexmap_widget_t::initializeGL()
 {
     using namespace asdf;
-    // Set up the rendering context, load shaders and other resources, etc.:
-
+    
     void* qt_gl_context = reinterpret_cast<void*>(context());  //this technically isnt the native context pointer, but I don't think I care so long as it's unique
     app.renderer = make_unique<asdf::asdf_renderer_t>(qt_gl_context);  //do this before content init. Content needs GL_State to exist
     GL_State.set_current_state_machine(app.renderer->gl_state);
@@ -50,14 +48,15 @@ void hexmap_widget_t::initializeGL()
     auto shader = Content.create_shader_highest_supported("hexmap");
     Content.shaders.add_resource(shader);
 
-    editor.init();
-    hex_map = editor.rendered_map.get();
+    editor = std::make_unique<hexmap::editor::editor_t>();
+    editor->init();
+    // hex_map = &(editor.rendered_map);
 
-    editor.map_changed_callback = [this](){
-        emit map_data_changed(map_data);
+    editor->map_changed_callback = [this](){
+        emit map_data_changed(editor->map_data);
     };
 
-    emit hex_map_initialized(editor);
+    emit hex_map_initialized();
 }
 
 void hexmap_widget_t::resizeGL(int w, int h)
@@ -67,8 +66,8 @@ void hexmap_widget_t::resizeGL(int w, int h)
     app.surface_width = w;
     app.surface_height = h;
 
-    editor.resize(w, h);
-    main_window->set_scrollbar_stuff(hex_map->camera);
+    editor->resize(w, h);
+    main_window->set_scrollbar_stuff(editor->rendered_map.camera);
     //emit camera_changed(hex_map->camera);
 }
 
@@ -93,29 +92,29 @@ void hexmap_widget_t::paintGL()
 
     glDisable(GL_CULL_FACE);
 
-    editor.render();
+    editor->render();
 }
 
 
 glm::uvec2 hexmap_widget_t::map_size_cells() const
 {
-    return map_data.hex_grid.size_cells();
+    return editor->map_data.hex_grid.size_cells();
 }
 
 glm::vec2  hexmap_widget_t::map_size_units() const
 {
-    return map_data.hex_grid.size_units();
+    return editor->map_data.hex_grid.size_units();
 }
 
 glm::vec2 hexmap_widget_t::camera_pos() const
 {
-    return vec2(hex_map->camera.position.x, hex_map->camera.position.y);
+    return vec2(editor->rendered_map.camera.position.x, editor->rendered_map.camera.position.y);
 }
 
 void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
 {
-    hex_map->camera.position.x = p.x;
-    hex_map->camera.position.y = p.y;
+    editor->rendered_map.camera.position.x = p.x;
+    editor->rendered_map.camera.position.y = p.y;
 
     //if(emit_signal)
         //emit camera_changed(hex_map->camera);
@@ -124,7 +123,7 @@ void hexmap_widget_t::camera_pos(glm::vec2 const& p, bool emit_signal)
 //final zoom is equal to 2^zoom_exponent
 void hexmap_widget_t::camera_zoom_exponent(float zoom_exponent)
 {
-    hex_map->camera.position.z = zoom_exponent;
+    editor->rendered_map.camera.position.z = zoom_exponent;
 }
 
 
@@ -176,12 +175,12 @@ void hexmap_widget_t::mouseReleaseEvent(QMouseEvent* event)
     , (event->flags() & Qt::MouseEventCreatedDoubleClick) > 0
     };
 
-    auto obj_sel = editor.object_selection;
+    auto obj_sel = editor->object_selection;
     mouse.mouse_up(asdf_event, adjusted_screen_coords(event->x(), event->y()));
 
-    if(obj_sel != editor.object_selection)
+    if(obj_sel != editor->object_selection)
     {
-        emit object_selection_changed(editor);
+        emit object_selection_changed(*editor);
     }
 
     update();
@@ -218,14 +217,14 @@ void hexmap_widget_t::wheelEvent(QWheelEvent* event)
     {
         float num_steps = event->angleDelta().y() / 8.0f / 15.0f;
 
-        auto& zoom = hex_map->camera.position.z;
+        auto& zoom = editor->rendered_map.camera.position.z;
 
         zoom += num_steps * zoom_per_scroll_tick;
         zoom = glm::clamp(zoom, min_zoom, max_zoom);
 
-        main_window->set_scrollbar_stuff(hex_map->camera);
+        main_window->set_scrollbar_stuff(editor->rendered_map.camera);
         update();
-        emit camera_changed(hex_map->camera);
+        emit camera_changed(editor->rendered_map.camera);
     }
 }
 
@@ -243,12 +242,12 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
     sdl_key_event.mod |= KMOD_ALT   * (event->modifiers() & Qt::AltModifier) > 0;
     sdl_key_event.mod |= KMOD_GUI   * (event->modifiers() & Qt::MetaModifier) > 0;
 
-    auto prev_tool = editor.current_tool;
+    auto prev_tool = editor->current_tool;
 
-    editor.input->on_key_down(sdl_key_event);
+    editor->input->on_key_down(sdl_key_event);
 
-    if(prev_tool != editor.current_tool)
-        emit editor_tool_changed(editor.current_tool);
+    if(prev_tool != editor->current_tool)
+        emit editor_tool_changed(editor->current_tool);
 
     /// TODO only call this when editor does not handle key
     QWidget::keyPressEvent(event);
@@ -270,19 +269,19 @@ glm::ivec2 hexmap_widget_t::adjusted_screen_coords(int x, int y) const
 
 void hexmap_widget_t::set_editor_tool(tool_type_e new_tool)
 {
-    editor.set_tool(new_tool);
+    editor->set_tool(new_tool);
     emit editor_tool_changed(new_tool);
 }
 
 void hexmap_widget_t::set_palette_item(QModelIndex const& index)
 {
-    switch(editor.current_tool)
+    switch(editor->current_tool)
     {
         case tool_type_e::terrain_paint:
-            editor.current_tile_id = index.row();
+            editor->current_tile_id = index.row();
             break;
         case tool_type_e::place_objects:
-            editor.current_object_id = index.row();
+            editor->current_object_id = index.row();
             break;
 
     default:
@@ -302,11 +301,11 @@ void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
         for(auto const& filepath : terrain_filepaths)
         {
             std::string filepath_str{filepath.toUtf8().constData()};
-            editor.rendered_map->terrain_bank.add_texture(filepath_str);
-            editor.rendered_map->terrain_bank.asset_names.push_back("TEST");
+            editor->rendered_map.terrain_bank.add_texture(filepath_str);
+            editor->rendered_map.terrain_bank.asset_names.push_back("TEST");
         }
 
-        emit terrain_added(editor.rendered_map->terrain_bank);
+        emit terrain_added(editor->rendered_map.terrain_bank);
     }
 }
 

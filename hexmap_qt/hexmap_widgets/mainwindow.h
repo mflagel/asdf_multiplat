@@ -32,6 +32,7 @@ public:
 
     void set_scrollbar_stuff(asdf::camera_t const&);
 
+
 public slots:
     void scrollbar_changed();
 
@@ -52,7 +53,7 @@ private:
     void save_status_message();
 
 private slots:
-    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+    void init();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);
 

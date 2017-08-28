@@ -21,7 +21,7 @@ namespace editor
 
     glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
     {
-        return vec2(editor.rendered_map->camera.screen_to_world_coord(vec2(screen_coords)));
+        return vec2(editor.rendered_map.camera.screen_to_world_coord(vec2(screen_coords)));
     }
 
     bool input_handler_t::on_mouse_down(mouse_button_event_t& event)
