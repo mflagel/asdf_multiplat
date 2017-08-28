@@ -32,8 +32,9 @@ namespace data
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
 
-    void texture_bank_t::add_texture(path const& texture_path)
+    void texture_bank_t::add_texture(saved_texture_t const& added_texture)
     {
+        path const& texture_path = added_texture.filepath;
         ASSERT(is_regular_file(texture_path), "File not found %s", texture_path.c_str());
 
         texture_t new_texture(texture_path.string(), SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
@@ -68,10 +69,22 @@ namespace data
         app.renderer->quad.render_without_vao(screen_shader);
 
 
-        saved_textures.push_back(saved_texture_t{texture_path});
+        saved_textures.push_back(added_texture);
         LOG("Added texture '%s' to '%s'", texture_path.c_str(), atlas_texture.name.c_str());
 
         ASSERT(!CheckGLError(), "GL Error in texture_bank_t::add_texture() for \'%s\'", texture_path.c_str());
+    }
+
+    void texture_bank_t::add_textures(std::vector<saved_texture_t> const& added_textures)
+    {
+        for(auto const& t : added_textures)
+            add_texture(t);
+    }
+
+
+    void texture_bank_t::add_texture(path const& texture_path)
+    {
+        add_texture(saved_texture_t{texture_path.stem().string(), texture_path});
     }
 
     void texture_bank_t::add_textures(std::vector<path> const& filepaths, path const& relative_dir)
@@ -100,6 +113,20 @@ namespace data
     void texture_bank_t::add_textures_from_asset_dir(std::vector<path> const& filepaths)
     {
         add_textures(filepaths, path(Content.asset_path));
+    }
+
+
+    void saved_texture_t::to_JSON(cJSON* root)
+    {
+        CJSON_ADD_STR(name);
+        ASSERT(filepath.string().size() > 0, "Unexpected empty filepath");
+        cJSON_AddStringToObject(root, "filepath", filepath.string().c_str());
+    }
+
+    void saved_texture_t::from_JSON(cJSON* root)
+    {
+        CJSON_GET_STR(name);
+        filepath = path(string(cJSON_GetObjectItem(root, "filepath")->valuestring));
     }
 
 }

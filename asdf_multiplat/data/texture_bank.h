@@ -9,6 +9,7 @@
 
 #include "texture.h"
 #include "gl_resources.h"
+#include "utilities/cjson_utils.hpp"
 
 namespace asdf {
 namespace data
@@ -23,7 +24,11 @@ namespace data
 
     struct saved_texture_t
     {
-        std::experimental::filesystem::path filesystem_location;
+        std::string name;
+        std::experimental::filesystem::path filepath;
+
+        void to_JSON(cJSON*);
+        void from_JSON(cJSON*);
     };
 
 
@@ -48,6 +53,9 @@ namespace data
         std::vector<saved_texture_t> saved_textures;
 
         texture_bank_t(std::string name = "unnamed texture bank");
+
+        void add_texture(saved_texture_t const&);
+        void add_textures(std::vector<saved_texture_t> const&);
 
         void add_texture(std::experimental::filesystem::path const& texture_path);
         void add_textures(std::vector<std::experimental::filesystem::path> const& filepaths, std::experimental::filesystem::path const& relative_dir = std::experimental::filesystem::path());

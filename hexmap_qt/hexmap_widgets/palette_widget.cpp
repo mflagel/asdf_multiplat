@@ -99,13 +99,13 @@ void palette_item_model_t::build_from_terrain_bank(asdf::hexmap::data::terrain_b
 
     for(size_t i = 0; i < terrain.saved_textures.size(); ++i)
     {
-        std::string filepath_str = terrain.saved_textures[i].filesystem_location.string();
+        std::string filepath_str = terrain.saved_textures[i].filepath.string();
 
         QImage thumb(QString(filepath_str.c_str()));
         thumb = thumb.scaled(thumbnail_dimm_px,thumbnail_dimm_px);
 
         palette_item_model_t::entry_t entry {
-              terrain.asset_names[i].c_str()
+              terrain.saved_textures[i].name.c_str()
             , std::move(thumb)
         };
 
