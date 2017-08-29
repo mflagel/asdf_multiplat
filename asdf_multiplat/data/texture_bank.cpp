@@ -32,9 +32,82 @@ namespace data
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
     }
 
+    void texture_bank_t::load_from_file(path const& filepath)
+    {
+        ASSERT(is_regular_file(filepath), "Not a valid file");
+
+        std::string json_str = read_text_file(filepath.string());
+        cJSON* root = cJSON_Parse(json_str.c_str());
+        ASSERT(root, "Error loading imported textures json file");
+
+        vector<saved_texture_t> terrain;
+        //CJSON_GET_ITEM_VECTOR(terrain);
+
+        ASSERT(root && root->child, "invalid texture bank json;");
+        cJSON* terrain_json = root->child;
+
+        name = terrain_json->string;
+        for(cJSON* arr_item = terrain_json->child; arr_item; arr_item = arr_item->next)
+        {
+            terrain.push_back(saved_texture_t());
+            terrain.back().from_JSON(arr_item);
+        }
+
+        auto parent_path = filepath.parent_path();
+
+        for(auto& t : terrain)
+        {
+            //filepaths in json are relative to the json document itself
+            if(!t.filepath.is_absolute())
+                t.local_filepath = std::experimental::filesystem::canonical(parent_path / t.filepath);
+            else
+                t.local_filepath = std::experimental::filesystem::canonical(t.filepath);
+        }
+
+        add_textures(terrain);
+
+        cJSON_Delete(root);
+    }
+
+    void texture_bank_t::save_to_file(std::experimental::filesystem::path const& filepath)
+    {
+        write_text_file(filepath.string(), save_to_string());
+    }
+
+    cJSON* texture_bank_t::to_JSON() const
+    {
+        CJSON_CREATE_ROOT();
+        
+        cJSON* textures_json = cJSON_CreateArray();
+        for(auto const& t : saved_textures)
+            cJSON_AddItemToArray(textures_json, t.to_JSON());
+
+        cJSON_AddItemToObject(root, name.c_str(), textures_json);
+
+        return root;
+    }
+
+    std::string texture_bank_t::save_to_string() const
+    {
+        char* cjson_cstr = cJSON_Print(to_JSON());
+        std::string str(cjson_cstr);
+        free(cjson_cstr);
+
+        return str;
+    }
+
+    std::string texture_bank_t::save_to_string_unformatted() const
+    {
+        char* cjson_cstr = cJSON_PrintUnformatted(to_JSON());
+        std::string str(cjson_cstr);
+        free(cjson_cstr);
+
+        return str;
+    }
+
     void texture_bank_t::add_texture(saved_texture_t const& added_texture)
     {
-        path const& texture_path = added_texture.filepath;
+        path const& texture_path = added_texture.local_filepath;
         ASSERT(is_regular_file(texture_path), "File not found %s", texture_path.c_str());
 
         texture_t new_texture(texture_path.string(), SOIL_LOAD_RGBA); //force RGBA, since that's what the atlas uses. Might not be neccesary now that I'm rendering to a framebuffer
@@ -84,7 +157,10 @@ namespace data
 
     void texture_bank_t::add_texture(path const& texture_path)
     {
-        add_texture(saved_texture_t{texture_path.stem().string(), texture_path});
+        add_texture(saved_texture_t{texture_path.stem().string()
+                                  , texture_path
+                                  , std::experimental::filesystem::canonical(texture_path)
+                                  });
     }
 
     void texture_bank_t::add_textures(std::vector<path> const& filepaths, path const& relative_dir)
@@ -116,11 +192,14 @@ namespace data
     }
 
 
-    void saved_texture_t::to_JSON(cJSON* root)
+    cJSON* saved_texture_t::to_JSON() const
     {
+        CJSON_CREATE_ROOT();
         CJSON_ADD_STR(name);
         ASSERT(filepath.string().size() > 0, "Unexpected empty filepath");
         cJSON_AddStringToObject(root, "filepath", filepath.string().c_str());
+
+        return root;
     }
 
     void saved_texture_t::from_JSON(cJSON* root)

@@ -18,27 +18,7 @@ namespace data
 
     void terrain_bank_t::load_from_file(path const& filepath)
     {
-        ASSERT(is_regular_file(filepath), "Not a valid file");
-
-        std::string json_str = read_text_file(filepath.string());
-        cJSON* root = cJSON_Parse(json_str.c_str());
-        ASSERT(root, "Error loading imported textures json file");
-
-        vector<saved_texture_t> terrain;
-        CJSON_GET_ITEM_VECTOR(terrain);
-
-        auto parent_path = filepath.parent_path();
-
-        for(auto& t : terrain)
-        {
-            //filepaths in json are relative to the json document itself
-            if(!t.filepath.is_absolute())
-                t.filepath = parent_path / t.filepath;
-        }
-
-        add_textures(terrain);
-
-        cJSON_Delete(root);
+        texture_bank_t::load_from_file(filepath);
 
         //rebuild_colors();
     }

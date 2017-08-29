@@ -25,9 +25,10 @@ namespace data
     struct saved_texture_t
     {
         std::string name;
-        std::experimental::filesystem::path filepath;
+        std::experimental::filesystem::path filepath; //filepath as saved in json, which is relative to the json file
+        std::experimental::filesystem::path local_filepath;    //canonical filepath 
 
-        void to_JSON(cJSON*);
+        cJSON* to_JSON() const;
         void from_JSON(cJSON*);
     };
 
@@ -53,6 +54,13 @@ namespace data
         std::vector<saved_texture_t> saved_textures;
 
         texture_bank_t(std::string name = "unnamed texture bank");
+
+        void load_from_file(std::experimental::filesystem::path const& filepath);
+        void save_to_file(std::experimental::filesystem::path const& filepath);
+
+        cJSON* to_JSON() const;
+        std::string save_to_string() const;
+        std::string save_to_string_unformatted() const;
 
         void add_texture(saved_texture_t const&);
         void add_textures(std::vector<saved_texture_t> const&);
