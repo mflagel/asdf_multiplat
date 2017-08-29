@@ -308,6 +308,12 @@ void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
     }
 }
 
+void hexmap_widget_t::save_terrain(QString const& filepath)
+{
+    auto path = std::experimental::filesystem::path(filepath.toUtf8().constData());
+    editor->map_data.terrain_bank.save_to_file(path);
+}
+
 void hexmap_widget_t::zoom_to_selection()
 {
 
