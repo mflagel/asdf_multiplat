@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     friend class hexmap_widget_t;
+    friend class minimap_widget_t;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -64,6 +65,7 @@ private:
 
     asdf::hexmap::editor::editor_t* editor = nullptr;
 
+    hexmap_widget_t* hexmap_widget = nullptr;
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;

@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
 #include <glm/glm.hpp>
+
+#include "asdf_multiplat/data/texture_atlas.h"
 
 #include "data/hex_grid.h"
 #include "data/map_objects.h"
 #include "data/spline.h"
+#include "data/terrain_bank.h"
 
 namespace asdf
 {
@@ -19,6 +23,9 @@ namespace data
         data::hex_grid_t hex_grid;
         std::vector<map_object_t> objects;
         std::vector<spline_t> splines;
+
+        data::terrain_bank_t terrain_bank;
+        std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
         
         hex_map_t(std::string const& map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
         hex_map_t(glm::uvec2 grid_size);

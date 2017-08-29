@@ -102,8 +102,9 @@ namespace ui
         //rendered_polygon_<hexagon_vertex_t> hexagon;
         rendered_multi_polygon_<hexagon_vertex_t> hexagon;  //multi-polyogn because we need to track info for non-instanced rendering
 
-        data::terrain_bank_t terrain_bank;
-        std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
+        // data::terrain_bank_t& terrain_bank;
+        // asdf::data::texture_atlas_t* objects_atlas;
+        // std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
         spline_renderer_t spline_renderer;
 
         vao_t hexagons_vao; //used for instancing the hex tiles
@@ -115,8 +116,6 @@ namespace ui
 
     public:
         hex_map_t(data::hex_map_t& _map_data);
-
-        void load_terrain_assets(std::string const& data_dir);
         
         void update(float dt);
         void render(render_flags_e = everything);

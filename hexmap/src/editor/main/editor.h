@@ -84,7 +84,6 @@ namespace editor
         tool_type_e current_tool = terrain_paint;
 
         std::unique_ptr<input_handler_t> input;
-        std::shared_ptr<ui::minimap_t> test_minimap;
 
     private:
         action_stack_t action_stack; //private to ensure signal_data_changed() gets called

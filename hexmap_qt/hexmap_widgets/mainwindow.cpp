@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Hexmap");
 
+    hexmap_widget = ui->hexmap_widget;
+
     {
         connect(ui->actionNew,     &QAction::triggered, this, &MainWindow::new_map);
         connect(ui->actionOpen,    &QAction::triggered, this, &MainWindow::open_map);
@@ -261,7 +263,7 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
-    nm.set_base_tiles(editor->rendered_map.terrain_bank);
+    nm.set_base_tiles(editor->map_data.terrain_bank);
 
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
@@ -409,7 +411,7 @@ void MainWindow::init()
     }
 
     {
-        minimap = new minimap_widget_t(*editor);
+        minimap = new minimap_widget_t(*editor, this);
         minimap->setMinimumSize(200, 200);
         minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
@@ -429,8 +431,8 @@ void MainWindow::init()
         terrain_palette_model = new palette_item_model_t();
         objects_palette_model = new palette_item_model_t();
 
-        terrain_palette_model->build_from_terrain_bank(editor->rendered_map.terrain_bank);
-        objects_palette_model->build_from_atlas(*(editor->rendered_map.objects_atlas.get()));
+        terrain_palette_model->build_from_terrain_bank(editor->map_data.terrain_bank);
+        objects_palette_model->build_from_atlas(*(editor->map_data.objects_atlas.get()));
 
         //lazy rebuild
         connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);

@@ -1,9 +1,18 @@
 #include "stdafx.h"
 #include "hex_map.h"
 
+#include "asdf_multiplat/main/asdf_multiplat.h"
+#include "asdf_multiplat/data/gl_resources.h"
+#include "asdf_multiplat/data/content_manager.h"
+
+
+using namespace std;
 
 namespace asdf
 {
+    using namespace util;
+    using namespace data;
+
 namespace hexmap
 {
 namespace data
@@ -11,17 +20,26 @@ namespace data
     constexpr const char* default_map_name = "unnamed map";
     constexpr size_t hxm_version = 1;
 
+    constexpr char terrain_types_json_filename[] = "terrain_types.json";
+    
+
     hex_map_t::hex_map_t(std::string const& _map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style)
     : map_name(_map_name)
     , hex_grid(grid_size, default_cell_style)
+    , terrain_bank(std::string("hexmap terrain"))
     {
+        auto data_dir = find_folder("data");
+        
+        auto terrain_types_json_filepath = data_dir + "/" + string(terrain_types_json_filename);
+        terrain_bank.saved_textures.clear(); //reset so I'm not infinitely piling stuff on
+        terrain_bank.load_from_file(terrain_types_json_filepath);
 
+        objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
     }
 
     hex_map_t::hex_map_t(glm::uvec2 grid_size)
     : hex_map_t(default_map_name, grid_size)
-    {
-    }
+    {}
 
     //TODO: refactor save/load code such that hex_grid_t::save_to_file() takes a SDL_RWops*
     //      to read/write to

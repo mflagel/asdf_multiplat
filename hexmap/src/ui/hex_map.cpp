@@ -28,8 +28,6 @@ namespace ui
     // const glm::vec4 grid_color(1.0f, 1.0f, 1.0f, 1.0f);
     constexpr float grid_overlay_thickness = 2.0f;
 
-    constexpr char terrain_types_json_filename[] = "terrain_types.json";
-
     constexpr int apply_hexagon_textures = 1;
 
 
@@ -38,7 +36,6 @@ namespace ui
 
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
     : map_data(_map_data)
-    , terrain_bank(std::string("hexmap terrain"))
     {
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
@@ -110,20 +107,9 @@ namespace ui
 
         ASSERT(!CheckGLError(), "GL Error setting hexmap VAO and vertex attributes");
 
-        auto data_dir = find_folder("data");
-        load_terrain_assets(data_dir);
-        objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
 
         spline_renderer.init(Content.create_shader_highest_supported("spline"));
-
         spline_renderer.spline_list = &map_data.splines;
-    }
-
-    void hex_map_t::load_terrain_assets(std::string const& data_dir)
-    {
-        auto terrain_types_json_filepath = data_dir + "/" + string(terrain_types_json_filename);
-        terrain_bank.saved_textures.clear(); //reset so I'm not infinitely piling stuff on
-        terrain_bank.load_from_file(terrain_types_json_filepath);
     }
 
     void hex_map_t::update(float dt)
@@ -171,16 +157,6 @@ namespace ui
             spline_renderer.rebuild_if_dirty();
             render_splines();
         }
-
-
-        //TEST
-        // re-importing every frame so I can capture it with nvidia's gfx debugger
-        // GL_State->bind(terrain_bank.atlas_fbo);
-        // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //load_terrain_assets(find_folder("data"));
-        //glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
-        //---
     }
 
     void hex_map_t::on_event(SDL_Event* event)
@@ -215,7 +191,7 @@ namespace ui
 
         if((render_flags & render_flags_e::terrain) > 0)
         {
-            glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
+            glBindTexture(GL_TEXTURE_2D, map_data.terrain_bank.atlas_texture.texture_id);
             render_hexagons(chunk.size, GL_TRIANGLE_FAN);
         }
 
@@ -282,6 +258,8 @@ namespace ui
     void hex_map_t::render_map_objects()
     {
         spritebatch.begin(shader->view_matrix, shader->projection_matrix);
+
+        auto const* objects_atlas = map_data.objects_atlas.get();
 
         for(auto& obj : map_data.objects)
         {
