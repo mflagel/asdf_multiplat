@@ -200,6 +200,11 @@ namespace data
         add_textures(filepaths, path(Content.asset_path));
     }
 
+    void texture_bank_t::clear()
+    {
+        saved_textures.clear();
+    }
+
 
     cJSON* saved_texture_t::to_JSON() const
     {

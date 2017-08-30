@@ -68,6 +68,8 @@ namespace data
         void add_texture(std::experimental::filesystem::path const& texture_path);
         void add_textures(std::vector<std::experimental::filesystem::path> const& filepaths, std::experimental::filesystem::path const& relative_dir = std::experimental::filesystem::path());
         void add_textures_from_asset_dir(std::vector<std::experimental::filesystem::path> const& filepaths);
+
+        void clear();
     };
 }
 }
