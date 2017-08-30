@@ -1,0 +1,55 @@
+{
+  "Name": "Hex Data",
+  "Properties":[
+    {
+        "Name":"Location",
+        "Properties":[
+          {
+            "Name":"Location Visibility",
+            "Include":"LocationVisibility.json"
+          }
+        ],
+        "Values":[
+          "%10 Natural Beauty",
+          "%4 Monument",
+          "%1 Dungeon Entrance",
+          "%2 Remnant of History",
+          "%1 Important Building",
+          "%2 Hideout"
+        ]
+    },
+    {
+      "Name":"Plant",
+      "Properties":[
+        {
+          "Name":"Physical Description",
+          "Values":[
+            "Flower",
+            "Grass",
+            "Fern",
+            "Tree Bark",
+            "Tree Leaf",
+            "Medium Plant",
+            "Other (pinecone, seed, etc)",
+            {
+              "Name":"Mushroom",
+              "Include":"PlantGeneratorData/mushroom.json"
+            },
+            {
+              "Name":"Small Plant Root",
+              "Include":"PlantGeneratorData/small_plants/roots/small_plant_root.json"
+            },
+            {
+              "Name":"Fruit",
+              "Include":"PlantGeneratorData/fruit/fruit_list.json"
+            }
+          ]
+        },
+        {
+          "Name":"Status Effect",
+          "Include":"StatusEffects/StatusEffect.json"
+        }
+      ]
+    }
+  ]
+}

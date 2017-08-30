@@ -12,6 +12,8 @@
 #include <utility>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/uniform_int_distribution.hpp>
 
@@ -32,6 +34,22 @@ DIAGNOSTIC_IGNORE(-Wcomment)
     #define GetCurrentDir getcwd
     #define SetCurrentDir chdir
 #endif
+
+
+
+namespace std
+{
+template<>
+struct hash<glm::ivec2> {
+    size_t operator()(const glm::ivec2 &v) const {
+        /// https://stackoverflow.com/a/17885727
+        // return std::hash<int>()(v.x) ^ std::hash<int>()(v.y);
+
+        // https://stackoverflow.com/a/2634715
+        return (7919 + std::hash<int>()(v.x)) * 7919 + std::hash<int>()(v.y);
+    }
+};
+}
 
 
 namespace asdf {

@@ -2,30 +2,16 @@
     "Name":"Multi Value",
     "Properties":[
         {
-            "Name":"Range Value In Property",
+            "Name":"Multi In Property",
             "Values":[
-                "NotMulti A",
-                "NotMulti B",
-                "NotMulti C",
                 {
-                    "Range":[
-                        "P1R1 A",
-                        "P1R1 B",
-                        "P1R1 C",
-                        "P1R1 D"
+                    "Multi":3,
+                    "Values":[
+                        "P1 A",
+                        "P1 B",
+                        "P1 C",
+                        "P1 D"
                     ]
-                },
-                {
-                    "Range":[
-                        "P1R2 A",
-                        "P1R2 B",
-                        "P1R2 C",
-                        "P1R2 D"
-                    ]
-                },
-                {
-                    "Name": "P1 ValueNode",
-                    "Values":[]
                 }
             ]
         }
@@ -42,11 +28,41 @@
         },
         {
             "Multi":4,
-            "Range":[
+            "Values":[
                 "2 A",
                 "2 B",
                 "2 C",
                 "2 D"
+            ]
+        },
+        {
+            "Multi": 2,
+            "Values": [
+                {
+                    "Name":"Multi VN A",
+                    "Values":[
+                        "VN val 1"
+                    ]
+                },
+                {
+                    "Name":"Multi VN B",
+                    "Values":[
+                        {
+                            "Multi":2,
+                            "Values":[
+                                "A",
+                                "B",
+                                "C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name":"Multi VN C"
+                },
+                {
+                    "Name":"Multi VN D"
+                }
             ]
         }
     ]

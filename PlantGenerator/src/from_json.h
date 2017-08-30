@@ -13,9 +13,10 @@ namespace plantgen
     range_value_t range_value_from_json(cJSON* json);
     weighted_value_t value_type_from_json(cJSON* json);
     user_value_t user_value_from_json(cJSON const& json);
-    user_data_t user_values_from_json(cJSON const& json);
+    user_data_node_t user_node_from_json(cJSON const& json);
     pregen_node_t node_from_json(cJSON* json_node);
     pregen_node_t node_from_json(stdfs::path const& filepath);
+    std::vector<pregen_node_t> nodes_from_json(cJSON* json_array);
     generated_node_t generate_node_from_json(stdfs::path const& filepath);
 
 
@@ -55,7 +56,12 @@ namespace plantgen
                 json_node_name = "Unnamed Node";
 
             std::string str = "Incorrect data type '" + std::string(cJSON_type_strings[json_type_found])
-                + "' for node '" + json_node_name + "'   found in file " + _json_filepath.string();
+                + "' for node '" + json_node_name;
+
+            if(!_json_filepath.empty())
+            {
+                str += "'   found in file " + _json_filepath.string();
+            }
 
             if(json_types_expected.size() == 1)
             {
@@ -84,5 +90,13 @@ namespace plantgen
         json_type_exception(stdfs::path const& _json_filepath, cJSON const& _json, std::initializer_list<int> _types_expected)
         : json_type_exception(_json_filepath, _json, std::vector<int>{_types_expected})
         {}
+    };
+
+    struct invalid_weight_exception : std::runtime_error
+    {
+        invalid_weight_exception(std::string weight_string)
+        : std::runtime_error("Invalid Weight Specifier for \"" + weight_string + "\"")
+        {
+        }
     };
 }

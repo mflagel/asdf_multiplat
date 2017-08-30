@@ -1,0 +1,16 @@
+{
+  "Name":"Corruption Creature",
+  "Values":[
+    {
+      "Name":"Bone-Skulk",
+      "References":[
+        "http://www.sssscomic.com/comic.php?page=605",
+        "http://www.sssscomic.com/comic.php?page=607"
+      ]
+    },
+    {
+      "Name":"Sjødraug",
+      "Reference":"http://www.sssscomic.com/comic.php?page=508"
+    }
+  ]
+}

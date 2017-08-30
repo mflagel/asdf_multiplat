@@ -1,0 +1,13 @@
+{
+    "Name":"Include",
+    "Properties":[
+        {
+            "Include":"basic_node.json"
+        }
+    ],
+    "Values":[
+        {
+            "Include":"basic_node.json"
+        }
+    ]
+}

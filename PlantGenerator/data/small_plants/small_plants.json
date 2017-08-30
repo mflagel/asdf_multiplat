@@ -1,0 +1,13 @@
+{
+    "Name": "Small Plant",
+    "Values":[
+        {
+            "Name":"Small Plant",
+            "Include":"small_plant.json"
+        },
+        {
+            "Name":"Kale",
+            "Include":"kale.json"
+        }
+    ]
+}

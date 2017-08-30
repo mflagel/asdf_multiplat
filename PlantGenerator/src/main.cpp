@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     using namespace std;
     if(argc < 2)
     {
-        cout << "TODO: output helpful message when there are no arguments";
+        cout << "TODO: output helpful message when there are no arguments\n";
         return 0;
     }
 
@@ -175,11 +175,11 @@ int main(int argc, char* argv[])
     {
         if(has_flag(flag_print_pregen))
         {
-            print_node(pregen_node);
+            cout << to_string(pregen_node) << "\n";
         }
         if(has_flag(flag_print_generated))
         {
-            print_node(generated_node);
+            cout << to_string(generated_node) << "\n";
         }
         if(has_flag(flag_print_simplified))
         {
