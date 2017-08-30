@@ -67,6 +67,7 @@ public slots:
     void set_palette_item(QModelIndex const&);
     void add_terrain(QStringList const& terrain_filepaths);
     void save_terrain(QString const& filepath);
+    void load_terrain(QString const& filepath);
 
     void zoom_to_selection();
     void zoom_extents();

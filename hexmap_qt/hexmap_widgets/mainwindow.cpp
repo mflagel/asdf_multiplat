@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(palette_widget, &palette_widget_t::terrain_add,  ui->hexmap_widget, &hexmap_widget_t::add_terrain);
         connect(palette_widget, &palette_widget_t::terrain_save, ui->hexmap_widget, &hexmap_widget_t::save_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
 
 
         ui->right_dock->setWidget(palette_widget);
