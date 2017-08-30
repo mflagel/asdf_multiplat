@@ -139,7 +139,9 @@ namespace asdf {
         return out_keyList;
     }
 
+
     std::vector<std::string> tokenize(char* const str, char* const delimiters);
+    void replace(std::string& str, std::string const& to_replace, std::string const& replacement);
 
     /************************************************************************/
     /* SDL Utilities

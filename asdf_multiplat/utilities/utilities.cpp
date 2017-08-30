@@ -282,7 +282,18 @@ namespace asdf {
 		     SDL_ClearError();
 	     }
      #endif
-     }
+    }
+
+
+    void replace(std::string& str, std::string const& to_replace, std::string const& replacement)
+    {
+        for(size_t i = str.find(to_replace, 0); i != std::string::npos; i = str.find(to_replace, i))
+        {
+            str.replace(i, to_replace.size(), replacement);
+            i += to_replace.size(); // prevents find from catching on something inside of to_replace
+        } 
+    }
+
 
     /************************************************************************/
     /* GetB2FixtureVerts
