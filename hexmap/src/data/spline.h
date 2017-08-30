@@ -14,6 +14,9 @@ namespace asdf {
 namespace hexmap {
 namespace data
 {
+    using spline_index_t = size_t;
+    using spline_node_index_t = size_t;
+
     struct line_node_t
     {
         glm::vec2 position;
@@ -38,12 +41,19 @@ namespace data
         std::vector<line_node_t> nodes;
         std::vector<control_node_t> control_nodes;
         interpolation_e spline_type = linear;
+        bool loops = false;
 
         size_t size() const { return nodes.size(); }
 
         void save_to_file(SDL_RWops*) const;
         void load_from_file(SDL_RWops*);
     };
+
+    bool point_intersects_spline(glm::vec2 const& world_pos, spline_t const&, float dist_threshold = 0.1f);
+
+    bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1);
+    bool circle_intersects_bezier(glm::vec2 const& circle_pos, float radius
+                                , glm::vec2 const& p0, glm::vec2 const& p1, glm::vec2 const& p2, glm::vec2 const& p3);
 
     constexpr std::array<const char*, spline_t::num_interp_types> spline_interpolation_names =
     {
@@ -62,7 +72,6 @@ namespace data
         , 0 // hermite
         , 4 // bezier
     };
-
 
     struct spline_selection_t
     {
