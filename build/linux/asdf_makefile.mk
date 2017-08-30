@@ -17,6 +17,11 @@ LINK_FLAGS += $(PKG_LFLAGS)
 OBJECT_NO_PATH := $(notdir $(addsuffix .o, $(basename $(SOURCES))))
 OBJECTS := $(addprefix $(OBJPATH)/, $(OBJECT_NO_PATH))
 
+DEPS_NO_PATH := $(notdir $(addsuffix .d, $(basename $(SOURCES))))
+DEPS := $(addprefix $(OBJPATH)/, $(DEPS_NO_PATH))
+
+
+### GNU MAKE BUILT IN VARIABLES ###
 # $@	name of whichever target caused rule's recipe to run.
 # $%	target's member name
 # $<	name of first prerequisite
@@ -108,15 +113,15 @@ endif
 all: $(PROJNAME)
 	@echo -e '\e[1;32m'----- $(PROJNAME) End ------- $(ENDCOLOR)
 
+
+
 debug: CPPFLAGS += -DDEBUG -g
 debug: CFLAGS   += -DDEBUG -g
 debug: all
 
 #release: CPPFLAGS += TODO release flags
 #release:   CFLAGS += TODO release flags
-#release: all
-
-
+release: all
 
 intro:
 	@echo -e '\e[1;32m'----- $(PROJNAME) Start ----- $(ENDCOLOR)
@@ -137,18 +142,20 @@ intro:
 	printf "\n"
 	@echo CPPFLAGS: $(CPPFLAGS)
 	printf "\n"
-	# @echo LINK_FLAGS: $(LINK_FLAGS)
+	@echo LINK_FLAGS: $(LINK_FLAGS)
 
 	# @echo Objs: $(OBJECTS)
 	# @echo Srcs: $(SOURCES)
 	# @echo Includes: $(_INCLUDES)
 	# @echo SysIncludes: $(SYSINCLUDES)
 	@echo -e '\e[1;32m'-------------------------------- $(ENDCOLOR)
-	@echo -e $(CYAN)--------- COMPILING --------- $(ENDCOLOR)
+	@echo -e $(CYAN)------ GENERATING DEPENDANCIES ------ $(ENDCOLOR)
 
 
 rebuild: clean all
 
+deps : $(DEPS)
+	@echo -e $(CYAN)--------- COMPILING --------- $(ENDCOLOR)
 
 $(PROJNAME): $(OBJECTS)
 	@echo -e $(YELLOW)---------- LINKING $(TARGET_TYPE)  --------- $(ENDCOLOR)
@@ -159,9 +166,9 @@ $(PROJNAME): $(OBJECTS)
 		echo "Archiving Target $(BIN_OUT)";                  \
 		ar rcsv $(BIN_OUT) $(OBJECTS) ;                      \
 	else                                                     \
-		echo $(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);  \
-		printf "\nErrors:\n";                \
-		$(CXX) $(LINK_FLAGS) $(OBJECTS) -o $(BIN_OUT);       \
+		echo $(CXX) $(OBJECTS) $(LINK_FLAGS) -o $(BIN_OUT);  \
+		printf "\nErrors:\n";                                \
+		$(CXX) $(OBJECTS) $(LINK_FLAGS) -o $(BIN_OUT);       \
 	fi
 
 	@echo -e $(YELLOW)------------------- $(ENDCOLOR)
@@ -169,29 +176,50 @@ $(PROJNAME): $(OBJECTS)
 
 clean:
 	@echo $(PROJNAME) : Nuking obj folder
-	@-\rm $(OBJPATH)/*
+	@-\rm -rv $(OBJPATH)/*
+
+clean-deps:
+	@echo cleaning dependancies
+	@-\rm -rv $(OBJPATH)/*.d
 
 
-.PHONY: all intro rebuild clean
+.PHONY: all intro rebuild clean clean-deps
 
 ###############################
 define BUILD_SHIT
 
 # Compiler -c CFlags -I Includes Sysincludes -o objectname sourcefile
-$$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.c | intro
+$$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.c | intro deps
 	@echo -e $$(CYAN) $$(CC) $<$$(ENDCOLOR)
 	@$$(CC) -c $$(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
-$$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro
+$$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro deps
 	@echo -e $$(CYAN) $$(CC) $<$(ENDCOLOR)
 	@$$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
-$$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro
+$$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro deps
 	@echo -e $$(CYAN) $$(CXX) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
 	# use $(CXX) to compile with $CPPFLAGS $_INCLUDES AND $_SYSINCLUDES
 	# output an object file with a name equal to the rule's name (using $@)
 	# the file compiled is the name of the first prerequisite (using $<)
 	@$$(CXX) -c $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
+
+$$(OBJPATH)/%.d: $$(SRCPATH)/$(1)/%.c | clean-deps
+	@echo TODO: .c deps
+
+$$(OBJPATH)/%.d: $$(SRCPATH)/$(1)/%.cc | clean-deps
+	@echo TODO: .cc deps
+
+
+$$(OBJPATH)/%.d: $$(SRCPATH)/$(1)/%.cpp | clean-deps
+	# @echo "deps for $$@"
+	# # generate dep file and put in a temp file (%.d.$)
+	# $$(CXX) -MT $$@ -MM $$(CPPFLAGS) $$(_INCLUDES) $$(_SYSINCLUDES) $$< > $$@.$$$$
+	# # do some sed voodoo to "makes each ‘.d’ file depend on all the source
+	# # and header files that the corresponding ‘.o’ file depends on"
+	# sed 's,\($$*\)\.o[ :]*,\1.o $$@ : ,g' < $$@.$$$$ > $$@;
+	# rm -f $$@.$$$$
+
 
 endef
 
@@ -213,3 +241,8 @@ $(call BUILD_SHIT_WITH, $(SRC_FOLDERS))
 ###############################
 
 ###############################
+
+
+
+
+include $(objects:.o=.d)

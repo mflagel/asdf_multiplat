@@ -14,6 +14,7 @@ namespace hexmap
 {
 
     glm::ivec2 world_to_hex_coord(glm::vec2 world_pos);
+    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q = false);
 
 namespace data
 {
@@ -32,6 +33,16 @@ namespace data
         hex_tile_id_t tile_id;
     };
 
+    inline bool operator==(hex_grid_cell_t const& lhs, hex_grid_cell_t const& rhs)
+    {
+        return lhs.tile_id == rhs.tile_id;
+    }
+
+    inline bool operator!=(hex_grid_cell_t const& lhs, hex_grid_cell_t const& rhs)
+    {
+        return !(lhs == rhs);
+    }
+
     //FIXME see if something like this exists already
     struct bbox_units_t
     {
@@ -40,7 +51,11 @@ namespace data
     };
 
     
-    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>; //row of columns
+    // row of columns ( accessed [x,y] )
+    // iterated for(each row in cells){ 
+    //              for(each x in row)
+    //              { ...stuff... }
+    using hex_cells_t = std::vector<std::vector<hex_grid_cell_t>>;
 
     struct hex_grid_chunk_t
     {
@@ -50,9 +65,17 @@ namespace data
 
         hex_cells_t cells;
 
-        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(new_chunk_width, new_chunk_height));
+        hex_grid_chunk_t(glm::uvec2 size = glm::uvec2(new_chunk_width, new_chunk_height), hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{0});
 
-        hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
+        bool operator==(hex_grid_chunk_t const&) const;
+        bool operator!=(hex_grid_chunk_t const& rhs) const { return !(*this == rhs); }
+        bool contents_equal(hex_grid_chunk_t const&) const;
+
+        inline hex_grid_cell_t& cell_at_local_coord(glm::ivec2 c) {return cells[c.x][c.y];}
+        inline hex_grid_cell_t& cell_at_local_coord(int x, int y) {return cells[x][y];}
+
+        inline hex_grid_cell_t const& cell_at_local_coord(glm::ivec2 c) const {return cells[c.x][c.y];}
+        inline hex_grid_cell_t const& cell_at_local_coord(int x, int y) const {return cells[x][y];}
     };
 
     using hex_chunks_t = std::vector<std::vector<hex_grid_chunk_t>>; // row of columns

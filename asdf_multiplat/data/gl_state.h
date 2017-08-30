@@ -25,6 +25,8 @@ namespace asdf
 
         std::vector<std::string> gl_extensions;
         GLint max_uniform_components = 0;
+        GLint max_texture_size = 0;
+        GLint max_texture_units = 0;
         size_t highest_glsl_version = 0;
 
         GLuint current_vao = 0;
@@ -59,10 +61,15 @@ namespace asdf
         void push_fbo(framebuffer_t const& fbo, gl_viewport_t const&);
         void push_fbo(GLuint fbo_id, GLint x, GLint y, GLsizei width, GLsizei height);
         void push_fbo(framebuffer_t const&, GLint x, GLint y, GLsizei width, GLsizei height);
+        void push_fbo(GLuint fbo_id, GLint x, GLint y, uint32_t width, uint32_t height);
+        void push_fbo(framebuffer_t const&, GLint x, GLint y, uint32_t width, uint32_t height);
         void pop_fbo();
 
         void buffer_data(gl_buffer_object_t const& buffer, GLsizeiptr size, const GLvoid * data);
+        void buffer_data(gl_buffer_object_t const& buffer, size_t size, const GLvoid * data);
         void init_render_target(framebuffer_t const&, texture_t const&);
+
+        void set_viewport(gl_viewport_t const& v);
 
         bool assert_sync(); //ensures the values here are sync'd with openGL
     };
@@ -82,18 +89,20 @@ namespace asdf
 
     ///GL Utility Function Declarations
     size_t get_highest_glsl_ver();
-    const/*expr*/ char* get_fbo_status_string(GLint status_code);
+    const/*expr*/ char* get_fbo_status_string(GLenum status_code);
     const char* get_use_program_error(GLint error_code);
+
 
     ///RAII objects to manage the lifetime of fbo's and render targets
     struct scoped_fbo_t
     {
-        scoped_fbo_t(GLuint fbo_id, GLint x, GLint y, GLsizei width, GLsizei height)
+        scoped_fbo_t(GLuint fbo_id, GLint x, GLint y, uint32_t width, uint32_t height)
         {
+            
             GL_State->push_fbo(fbo_id, x, y, width, height);
         }
 
-        scoped_fbo_t(framebuffer_t const& fbo, GLint x, GLint y, GLsizei width, GLsizei height)
+        scoped_fbo_t(framebuffer_t const& fbo, GLint x, GLint y, uint32_t width, uint32_t height)
         {
             GL_State->push_fbo(fbo, x, y, width, height);
         }
@@ -114,7 +123,9 @@ namespace asdf
     struct scoped_render_target_t : scoped_fbo_t
     {
         scoped_render_target_t(render_target_t const& r)
-        : scoped_fbo_t(r.fbo.id, 0, 0, r.texture.width, r.texture.height)
+        : scoped_fbo_t(r.fbo.id, 0, 0
+                     , r.texture.width
+                     , r.texture.height)
         {
         }
 

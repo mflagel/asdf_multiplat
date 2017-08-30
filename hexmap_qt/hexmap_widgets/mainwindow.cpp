@@ -26,6 +26,7 @@
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
 #include "minimap_widget.h"
+#include "terrain_brush_selector.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -157,8 +158,28 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
+    /// Minimap Dock
+    minimap_dock = new QDockWidget(tr("Minimap"));
+    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, minimap_dock);
+
+    ///Brush Settings
     {
-        palette_widget = new palette_widget_t(this);
+        auto brush_setings_dock = new QDockWidget(tr("Brush Settings"));
+
+        brush_settings = new terrain_brush_selector_t();
+        brush_setings_dock->setWidget(brush_settings);
+
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, brush_setings_dock);
+
+        connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
+    }
+    
+    /// Terrain / Object Palette
+    {
+        palette_dock = new QDockWidget();
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
+
+        palette_widget = new palette_widget_t();
 
         palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         //palette_widget->setMinimumSize(200, 300);
@@ -170,7 +191,7 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(palette_widget, &palette_widget_t::terrain_add, ui->hexmap_widget, &hexmap_widget_t::add_terrain);
 
 
-        ui->right_dock->setWidget(palette_widget);
+        palette_dock->setWidget(palette_widget);
     }
 
 
@@ -204,8 +225,6 @@ MainWindow::MainWindow(QWidget *parent) :
                     ui->hexmap_widget->editor.set_spline_node_style(node_style);
                 });
     }
-
-
 }
 
 MainWindow::~MainWindow()
@@ -319,7 +338,7 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
-    nm.set_base_tiles(editor->rendered_map->terrain_bank);
+    nm.set_base_tiles(*(editor->rendered_map->terrain_bank.get()));
 
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
@@ -415,23 +434,23 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     minimap->setMinimumSize(200, 200);
     minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
-    minimapdock->setWidget(minimap);
-
+    //must connect initialized before handing this tot he minimapdock
+    //otherwise the minimap initialize signal will have already fired before connecting
+    connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
     connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
         [this](){
             minimap->is_dirty = true;
             minimap->update();
         });
 
-    using qd = QDockWidget;
-    minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
-    addDockWidget(Qt::RightDockWidgetArea, minimapdock);
+    
+    minimap_dock->setWidget(minimap);
+    minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
 
     terrain_palette_model = new palette_item_model_t();
     objects_palette_model = new palette_item_model_t();
 
-    terrain_palette_model->build_from_terrain_bank(editor.rendered_map->terrain_bank);
+    terrain_palette_model->build_from_terrain_bank(*(editor.rendered_map->terrain_bank.get()));
     objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
 
     //lazy rebuild
@@ -440,9 +459,14 @@ void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
     editor_tool_changed(editor.current_tool);
 }
 
+void MainWindow::minimap_initialized()
+{
+    minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
+}
+
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
-    auto* dock = ui->right_dock;
+    auto* dock = palette_dock;
 
     switch(new_tool)
     {
@@ -476,4 +500,9 @@ void MainWindow::editor_tool_changed(tool_type_e new_tool)
 void MainWindow::object_selection_changed(asdf::hexmap::editor::editor_t& editor)
 {
     object_properties->set_from_object_selection(editor.object_selection, editor.map_data.objects);
+}
+
+void MainWindow::custom_terrain_brush_changed(asdf::hexmap::data::terrain_brush_t const& brush)
+{
+    editor->set_custom_terrain_brush(brush);
 }

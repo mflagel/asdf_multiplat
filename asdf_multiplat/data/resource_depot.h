@@ -10,10 +10,11 @@
 
 namespace asdf {
 
-struct resource_not_found_exception : std::exception {
+struct resource_not_found_exception : std::runtime_error
+{
 	std::string resourceName;
 	resource_not_found_exception(std::string resourceName);
-	const char* what() const;
+	//const char* what() const noexcept override;
 };
 
 template <class T>
@@ -25,8 +26,8 @@ public:
     std::map<std::string, T> resources;
 
 public:
-    resource_depot_t(T default_resource = 0)
-        : default_resource(default_resource) {}
+    resource_depot_t(T _default_resource = 0)
+        : default_resource(_default_resource) {}
     ~resource_depot_t() = default;
 
 	T const& operator[](std::string const& resourceName){
@@ -61,8 +62,6 @@ public:
 
 	void delete_resource(std::string const& resourceName){
 		resources.erase(resourceName);
-
-        int wtf = 9001;
 	}
 
 };

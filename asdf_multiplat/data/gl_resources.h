@@ -51,7 +51,7 @@ namespace asdf
         framebuffer_t fbo;
         texture_t texture;
 
-        render_target_t(int width, int height);
+        render_target_t(uint32_t width, uint32_t height);
         void init();
     };
         

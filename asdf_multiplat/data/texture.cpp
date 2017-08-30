@@ -57,7 +57,7 @@ namespace asdf
     }
 
 
-    texture_t::texture_t(std::string const& _name, color_t* color_data, int _width, int _height, bool generate_mipmaps)
+    texture_t::texture_t(std::string const& _name, color_t* color_data, uint32_t _width, uint32_t _height, bool generate_mipmaps)
     : name{_name}
     , width{_width}
     , height{_height}
@@ -84,7 +84,7 @@ namespace asdf
             ASSERT(!CheckGLError(), "Error loading mipmaps for texture \"%s\" after loading from color_t array", name.c_str());
         }
 
-        LOG_IF(!CheckGLError(), "successfully created texture \"%s\" size {%zu, %zu} from color_t array", name.c_str(), width, height);
+        LOG_IF(!CheckGLError(), "successfully created texture \"%s\" size {%u, %u} from color_t array", name.c_str(), width, height);
     }
 
     texture_t::~texture_t()
@@ -92,7 +92,7 @@ namespace asdf
         glDeleteTextures(1, &texture_id);
     }
 
-    void texture_t::write(const color_t* color_data, const size_t _width, const size_t _height)
+    void texture_t::write(const color_t* color_data, const uint32_t _width, const uint32_t _height)
     {
         width = _width;
         height = _height;
@@ -112,8 +112,8 @@ namespace asdf
         glTexImage2D(GL_TEXTURE_2D
                    , 0         // mipmap level (0 for base)
                    , GL_RGBA   // format of resulting texture data
-                   , width
-                   , height
+                   , unsigned_to_signed(width)
+                   , unsigned_to_signed(width)
                    , 0         // afaik this is deprecated. openGL docs for 3.3 say "This value must be 0"
                    , GL_RGBA   // format of data in ram. color_t is RGBA
                    , GL_FLOAT
@@ -128,7 +128,13 @@ namespace asdf
     void texture_t::load_texture(std::string const& filepath, int force_channels)
     {
         int channels = 0;
-        unsigned char* img = SOIL_load_image(filepath.c_str(), &width, &height, &channels, force_channels);
+
+        int w = 0;
+        int h = 0;
+        unsigned char* img = SOIL_load_image(filepath.c_str(), &w, &h, &channels, force_channels);
+
+        width  = signed_to_unsigned(w);
+        height = signed_to_unsigned(h);
 
         // SOIL_load_image gives the original number of channels even when we force
         // however the resulting image data has the forced format
@@ -143,11 +149,11 @@ namespace asdf
         /// COPYPASTE FROM SOIL.C  SOIL_internal_create_OGL_texture()
         /// Invert Image
 		int i, j;
-		for( j = 0; j*2 < height; ++j )
+		for( j = 0; j*2 < h; ++j )
 		{
-			int index1 = j * width * channels;
-			int index2 = (height - 1 - j) * width * channels;
-			for( i = width * channels; i > 0; --i )
+			int index1 = j * w * channels;
+			int index2 = (h - 1 - j) * w * channels;
+			for( i = w * channels; i > 0; --i )
 			{
 				unsigned char temp = img[index1];
 				img[index1] = img[index2];
@@ -175,9 +181,9 @@ namespace asdf
 
         glTexImage2D(GL_TEXTURE_2D
                    , 0 //level 0
-                   , format            //format of the resulting opengl texture
-                   , width
-                   , height
+                   , unsigned_to_signed(format)  //format of the resulting opengl texture
+                   , unsigned_to_signed(width)
+                   , unsigned_to_signed(height)
                    , 0                 //some deprecated value
                    , format            //format of the image data in memory
                    , GL_UNSIGNED_BYTE  //supposedly SOIL loads image data as ubytes
@@ -213,8 +219,10 @@ namespace asdf
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &_width);
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &_height);
 
-            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &format);
+            int iformat;
+            glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &iformat);
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED, &_compressed);
+            format = signed_to_unsigned(iformat);
 
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_RED_TYPE,   &types[0]);
             glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_GREEN_TYPE, &types[1]);
@@ -224,8 +232,8 @@ namespace asdf
         
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        width = glm::abs(_width);
-        height = glm::abs(_height);
+        width = signed_to_unsigned(glm::abs(_width));
+        height = signed_to_unsigned(glm::abs(_height));
         is_compressed = _compressed == 1;
     }
 

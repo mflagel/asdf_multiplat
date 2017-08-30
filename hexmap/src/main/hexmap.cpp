@@ -34,6 +34,8 @@ namespace hexmap
         app.renderer->gl_clear_color = color_t{0.5f, 0.75f, 0.9f, 1.0f};
 
         rendered_map = make_unique<ui::hex_map_t>(map_data);
+        rendered_map->terrain_bank = make_shared<data::terrain_bank_t>(std::string("hexmap terrain"));
+
         resize(app.render_target_size().x, app.render_target_size().y);
 
         ASSERT(!CheckGLError(), "GL Error in hexmap_t::init()");
