@@ -20,7 +20,7 @@
 #define DEBUG_BREAK __debugbreak()
 #else
 #include <signal.h>
-#define DEBUG_BREAK raise(SIGTRAP);
+#define DEBUG_BREAK ::raise(SIGTRAP);
 #endif
 
 //Assertion code shamelessly copymodified from: 
@@ -176,5 +176,3 @@ inline uint32_t signed_to_unsigned(int32_t i)
     DELETE_COPY_ASSIGNMENT(_obj_name_) \
     DEFAULT_MOVE(_obj_name_) 
 /*--------*/
-
->>>>>>> hexmap_qt
