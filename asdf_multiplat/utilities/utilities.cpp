@@ -187,6 +187,85 @@ namespace asdf {
 #endif
     }
 
+
+    /*
+                       /                            
+                   a       x                        
+              b                y                    
+          c         d             z                 
+      e     f     g    h                            
+
+
+    make E relative to G
+
+    con_e = /a/b/c/e
+    con_g = /a/b/d/g
+
+    common = /a/b/
+    uncommon_E = c/e
+    uncommon_G = d/g
+
+    replace common path with "../" some number of times
+    number of "../" is equal to number of elements in uncommon_G
+
+
+    E relative to G = ../../c/e
+    */
+    using path = std::experimental::filesystem::path;
+    path relative(path const& a, path const& b)
+    {
+        using namespace std::experimental::filesystem;
+
+        path con_a = canonical(a);
+        path con_b = canonical(b);
+
+        con_b.remove_filename();
+
+        if(con_a.root_path() != con_b.root_path())
+            return con_a; //no relative path, only absolute
+
+        //split into vector of components so I can access easier
+        std::vector<path> components_a;
+        std::vector<path> components_b;
+
+        for(auto const& c_a : con_a)
+            components_a.push_back(c_a);
+        for(auto const& c_b : con_b)
+            components_b.push_back(c_b);
+
+//#ifdef _MSC_VER
+//        components_a.pop_back();
+//        components_b.pop_back();
+//#endif
+
+        size_t num_common_components = 0;
+
+        for(size_t i = 0; 
+            i < components_a.size() 
+         && i < components_b.size()
+         && components_a[i] == components_b[i];
+            ++i)
+        {
+            ++num_common_components;
+        }
+
+        path result;
+
+        size_t num_upwards = components_b.size() - num_common_components;
+        for(size_t i = 0; i < num_upwards; ++i)
+            result /= "..";
+
+        for(size_t i = num_common_components; i < components_a.size(); ++i)
+        {
+            result /= components_a[i];
+        }
+
+
+        return result;
+    }
+
+
+
 //     Document read_json_file(std::string const& filepath)
 //     {
 //         std::string json = read_text_file(filepath);

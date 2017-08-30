@@ -11,6 +11,8 @@
 #include <tuple>
 #include <utility>
 
+#include <experimental/filesystem>
+
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/uniform_int_distribution.hpp>
 
@@ -100,6 +102,10 @@ namespace asdf {
 
     std::string find_folder(std::string const& name, size_t max_search_dist = 5);
     void create_dir(std::string const& path);
+
+    /// TODO: deprecate this func once MSVC releases their full <filesystem> implementation
+    ///       (or at least their version of relative(path, path)
+    std::experimental::filesystem::path relative(std::experimental::filesystem::path const& a, std::experimental::filesystem::path const& b);
 
     /************************************************************************/
     /* Random Number Generation
