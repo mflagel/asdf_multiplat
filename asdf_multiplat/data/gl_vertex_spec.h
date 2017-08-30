@@ -4,7 +4,7 @@
 
 #include <gl/glew.h>
 
-#include "asdf_defs.h"
+#include "main/asdf_defs.h"
 #include "stdafx.h"
 #include "utilities/utilities.h"
 #include "shader.h"

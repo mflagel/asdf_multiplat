@@ -129,7 +129,7 @@ namespace editor
 
             auto const& pixel_texture = Content.textures["pixel"];
             auto const& obj_size_px = rendered_map->objects_atlas->atlas_entries[sel_obj.id].size_px;
-            auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
+            vec2 scale = vec2(uvec2(obj_size_px) / pixel_texture->get_size()); //scale overlay texture to match object texture size
             auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
 
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
