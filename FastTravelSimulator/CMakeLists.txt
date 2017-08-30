@@ -16,11 +16,13 @@ include_directories(../include)
 include_directories(src)
 include_directories(../ext)
 include_directories(../PlantGenerator/src)
+include_directories(../../boost_1_64_0)
 
 file(GLOB sources "src/*.cpp")
 
 set(PlantgenSrc ../PlantGenerator/src)
 set(plantgen_sources ${PlantgenSrc}/plant_generator.cpp
+                     ${PlantgenSrc}/value_types.cpp
                      ${PlantgenSrc}/plant_printer.cpp
                      ${PlantgenSrc}/from_json.cpp)
 
