@@ -98,7 +98,6 @@ using color_t = glm::vec4;
 // #define DIAGNOSTIC_POP _Pragma("GCC diagnostic pop");
 // #define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(GCC diagnostic ignored #to_ignore);
 // #define DIAGNOSTIC_ERROR(to_error) PRAGMA(GCC diagnostic error #to_error);
-
 #else
 #define DIAGNOSTIC_PUSH 
 #define DIAGNOSTIC_POP
@@ -138,3 +137,44 @@ inline uint32_t signed_to_unsigned(int32_t i)
 {
     return convert_integer<int32_t,uint32_t>(i);
 }
+
+
+
+/// Delete / Default operators
+
+#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = default;  \
+    _obj_name_& operator=(_obj_name_ const&) = default;
+/*--------*/
+
+#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = delete;  \
+    _obj_name_& operator=(_obj_name_ const&) = delete;
+/*--------*/
+
+
+#define DEFAULT_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = default; \
+    _obj_name_& operator=(_obj_name_&&) = default;
+/*--------*/
+
+#define DELETE_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+    _obj_name_(const _obj_name_&) = delete; \
+    _obj_name_& operator=(_obj_name_ const&) = delete; \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
+    DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    DEFAULT_MOVE(_obj_name_) 
+/*--------*/
+
+>>>>>>> hexmap_qt
