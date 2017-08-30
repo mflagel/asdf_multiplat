@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "asdf_defs.h"
 #include "texture_bank.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -71,6 +72,14 @@ namespace data
 
     void texture_bank_t::save_to_file(std::experimental::filesystem::path const& filepath)
     {
+
+        /// FIXME: I dislike that this is a side effect. Should rename this func somehwat?
+        for(auto& t : saved_textures)
+        {
+            ///t.filepath = std::filesystem::relative(t.filepath, filepath);  /// MSVC Y U NO SUPPORT FULL C++17 FILESYSTEM!!
+            t.filepath = asdf::util::relative(t.local_filepath, filepath);
+        }
+
         write_text_file(filepath.string(), save_to_string());
     }
 
@@ -205,7 +214,9 @@ namespace data
     void saved_texture_t::from_JSON(cJSON* root)
     {
         CJSON_GET_STR(name);
-        filepath = path(string(cJSON_GetObjectItem(root, "filepath")->valuestring));
+        auto path_str = string(cJSON_GetObjectItem(root, "filepath")->valuestring);
+        asdf::util::replace(path_str, "\\", "/");
+        filepath = std::experimental::filesystem::path(path_str);
     }
 
 }
