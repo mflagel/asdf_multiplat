@@ -22,9 +22,10 @@ namespace asdf {
         , fragment_shader_id(load_shader(_fshader_filepath, GL_FRAGMENT_SHADER))
         , shader_program_id(UINT32_MAX)
     {
-        create_shader_program(vertex_shader_id, fragment_shader_id);
-        load_uniforms_and_attributes();
+        shader_program_id = create_shader_program(vertex_shader_id, fragment_shader_id);
+        ASSERT(shader_program_id != nullindex, "Error creating shader \'%s\'", name.c_str());
         ASSERT(!CheckGLError(), "Error creating shader \'%s\'", name.c_str());
+        load_uniforms_and_attributes();
     }
 
     shader_t::~shader_t() {
@@ -39,6 +40,7 @@ namespace asdf {
         int name_len = -1, num = -1;
         GLenum type = GL_ZERO;
 
+        ASSERT(shader_program_id != nullindex, "shader program not valid");
 
         glGetProgramiv(shader_program_id, GL_ACTIVE_UNIFORMS, &total);
 
@@ -66,6 +68,8 @@ namespace asdf {
 
             attributes[name_buffer] = location;
         }
+
+        ASSERT(!CheckGLError(), "Error loading shader uniforms and/or attributes\'%s\'", name.c_str());
     }
 
     void shader_t::update_wvp_uniform()
