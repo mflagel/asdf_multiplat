@@ -119,8 +119,8 @@ DIAGNOSTIC_IGNORE(-Wsign-compare)
 template <typename A, typename B>
 B convert_integer(A value)
 {
-    ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
-    ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
+    //ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
+    //ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
 
     return static_cast<B>(value);
 }
