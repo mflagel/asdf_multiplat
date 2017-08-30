@@ -68,6 +68,12 @@ namespace fast_travel_sim
         {}
     };
 
+    struct discoverable_t
+    {
+        std::variant<location_encounter_t, plant_encounter_t, creature_encounter_t> encounter;
+        bool discovered = false;
+    };
+
     struct generated_hex_t : hex_t
     {
         location_encounter_t location;

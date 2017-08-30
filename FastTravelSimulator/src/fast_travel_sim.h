@@ -138,6 +138,7 @@ namespace fast_travel_sim
         int32_t travel_rate = default_travel_rate;
         int32_t survival_skill = 0;
         int32_t navigation_skill = 0;
+        int32_t perception_skill = 0;
     };
 
     struct travel_group_t
@@ -175,7 +176,6 @@ namespace fast_travel_sim
     bool is_boring(journal_entry_t const&);
 
     int status_effect_value(generated_node_t const&);
-
 
     journal_t simulate_journey(journey_t, hex_database_t const&);
 
