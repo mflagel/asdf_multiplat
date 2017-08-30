@@ -137,6 +137,7 @@ using color_t = glm::vec4;
 // #define DIAGNOSTIC_POP _Pragma("GCC diagnostic pop");
 // #define DIAGNOSTIC_IGNORE(to_ignore) PRAGMA(GCC diagnostic ignored #to_ignore);
 // #define DIAGNOSTIC_ERROR(to_error) PRAGMA(GCC diagnostic error #to_error);
+
 #else
 #define DIAGNOSTIC_PUSH 
 #define DIAGNOSTIC_POP
@@ -177,7 +178,6 @@ inline uint32_t signed_to_unsigned(int32_t i)
 }
 
 
-
 /// https://stackoverflow.com/a/24018996
 /// Super interesting. std::conditional basically works such that
 /// if T and U are the same, it 'returns' true, but if false, 
@@ -215,7 +215,6 @@ struct is_c_str
       std::is_same<char const *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value
 > {};
 ///
-
 
 
 /// Delete / Default operators
