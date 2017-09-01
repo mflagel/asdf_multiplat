@@ -1,0 +1,69 @@
+{
+    "Name":"Multi Value",
+    "Properties":[
+        {
+            "Name":"Multi In Property",
+            "Values":[
+                {
+                    "Multi":3,
+                    "Values":[
+                        "P1 A",
+                        "P1 B",
+                        "P1 C",
+                        "P1 D"
+                    ]
+                }
+            ]
+        }
+    ],
+    "Values":[
+        {
+            "Multi":2,
+            "Values":[
+                "1 A",
+                "1 B",
+                "1 C",
+                "1 D"
+            ]
+        },
+        {
+            "Multi":4,
+            "Values":[
+                "2 A",
+                "2 B",
+                "2 C",
+                "2 D"
+            ]
+        },
+        {
+            "Multi": 2,
+            "Values": [
+                {
+                    "Name":"Multi VN A",
+                    "Values":[
+                        "VN val 1"
+                    ]
+                },
+                {
+                    "Name":"Multi VN B",
+                    "Values":[
+                        {
+                            "Multi":2,
+                            "Values":[
+                                "A",
+                                "B",
+                                "C"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name":"Multi VN C"
+                },
+                {
+                    "Name":"Multi VN D"
+                }
+            ]
+        }
+    ]
+}

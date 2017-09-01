@@ -1,0 +1,37 @@
+{
+  "Name":"Hostile Creature",
+  "Values":[
+    {
+      "Name":"Normally-Neutral Creature",
+      "Include":"NeutralCreatures.json"
+    },
+    {
+      "Name":"SharkRay Bird Swarm",
+      "Loot":[
+        "Shark Ray Fins",
+        "Shark Ray Teeth"
+      ]
+    },
+    {
+      "Name":"Blood Serpent"
+    },
+    {
+      "Name":"Slake Hound",
+      "Loot":[
+        "Slake Hound Bile Gland"
+        "Slake Hound Spines"
+      ]
+    },
+    {
+      "Name":"Banth",
+      "Loot":[
+        "Banth Pelt",
+        "Banth Claws",
+        "Banth Eyes"
+      ]
+    },
+    {
+      "Name":"Bulette"
+    }
+  ]
+}

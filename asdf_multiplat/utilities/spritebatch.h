@@ -6,6 +6,9 @@
 
 //#include "asdf_multiplat/data/gl_resources.h"
 
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wcomment)
+
 class FTFont;
 
 namespace asdf {
@@ -19,19 +22,30 @@ namespace asdf {
     /* Rectangle Structs
     /************************************************************************/
     struct rect_t {
-        int x, y, width, height;
-        rect_t(int x, int y, int width, int height)
-            :x(x), y(y), width(width), height(height) {}
+        int x;
+        int y;
+        int width;
+        int height;
+        rect_t(int _x, int _y, int _width, int _height)
+            : x(_x)
+            , y(_y)
+            , width(_width)
+            , height(_height)
+        {}
     };
 
     struct rectf_t {
         float x, y, width, height;
-        rectf_t(float x, float y, float width, float height)
-            :x(x), y(y), width(width), height(height) {}
+        rectf_t(float _x, float _y, float _width, float _height)
+            : x(_x)
+            , y(_y)
+            , width(_width)
+            , height(_height)
+            {}
         rectf_t(glm::vec2 const& pos, glm::vec2 const& size)
             :x(pos.x), y(pos.y), width(size.x), height(size.y) {}
-        rectf_t(const rectf_t& rect)
-            :x(rect.x), y(rect.y), width(rect.width), height(rect.height) {}
+
+        rectf_t(const rectf_t& rect) = default;
     };
 
 
@@ -47,14 +61,21 @@ namespace asdf {
         glm::vec2   scale;
         float       rotation;
 
-        sprite_t(std::shared_ptr<texture_t> const& texture, glm::vec2 const& position, rect_t const& src_rect, color_t color = glm::vec4(1.0f), glm::vec2 const& scale = glm::vec2(1, 1), float rotation = 0)
-            : texture(texture), position(position), src_rect(src_rect), color(color), scale(scale), rotation(rotation) 
+        sprite_t(std::shared_ptr<texture_t> const& _texture, glm::vec2 const& _position
+               , rect_t const& _src_rect, color_t _color = glm::vec4(1.0f)
+               , glm::vec2 const& _scale = glm::vec2(1, 1), float _rotation = 0)
+            : texture(_texture)
+            , position(_position)
+            , src_rect(_src_rect)
+            , color(_color)
+            , scale(_scale)
+            , rotation(_rotation) 
         {}
     };
 
     struct text_sprite_t
     {
-        FTFont* font;
+        FTFont* font = nullptr;
         size_t face_size;
         std::string str;
         glm::vec2   position;
@@ -62,7 +83,12 @@ namespace asdf {
         float       rotation;
 
         text_sprite_t(std::string _str, FTFont* _font, size_t _face_size, glm::vec2 _position, color_t _color = color_t(1.0f), float _rotation = 0)
-        : str(_str), font(_font), face_size(_face_size), position(_position), color(_color), rotation(_rotation) 
+        : str(_str)
+        , font(_font)
+        , face_size(_face_size)
+        , position(_position)
+        , color(_color)
+        , rotation(_rotation) 
         {}
     };
 
@@ -118,3 +144,5 @@ namespace asdf {
     };
 
 }
+
+DIAGNOSTIC_POP

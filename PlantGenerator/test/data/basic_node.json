@@ -1,0 +1,20 @@
+{
+    "Name":"Basic Node",
+    "Properties":[
+        {
+            "Name":"Property",
+            "Values":[
+                "1 A",
+                "1 B",
+                "1 C",
+                "1 D"
+            ]
+        }
+    ],
+    "Values":[
+        "A",
+        "B",
+        "C",
+        "D"
+    ]
+}

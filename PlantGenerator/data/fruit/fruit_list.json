@@ -1,0 +1,40 @@
+{
+    "Name":"Fruit",
+    "Values":[
+        {
+            "Name":"Gourd",
+            "Weight": 10,
+            "Include":"gourd.json"
+        },
+        {
+            "Name":"Citrus",
+            "Weight": "%",
+            "Values":[
+                "Tangerine",
+                "Orange",
+                "Lemon",
+                "Lime"
+            ]
+        },
+        {
+            "Name":"Berries",
+            "Weight": "%",
+            "Values":[
+                "Blueberry",
+                "Raspberry",
+                "Blackberry",
+                "Salmonberry",
+                "Cranberry"
+            ]
+        },
+        {
+            "Name":"Berry",
+            "Weight": 10,
+            "Include":"berry.json"
+        },
+        "Apple",
+        "Pear",
+        "Grape",
+        "Peach"
+    ]
+}

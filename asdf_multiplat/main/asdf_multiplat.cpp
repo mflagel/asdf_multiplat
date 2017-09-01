@@ -6,7 +6,7 @@
 //#include <glm/gtx/rotate_vector.hpp>
 
 #include "main/input_sdl.h"
-#include "data/gl_state.h"
+#include "data/gl_resources.h"
 #include "data/content_manager.h"
 //#include "ui/ui_base.h"
 #include "utilities/spritebatch.h"
@@ -188,14 +188,14 @@ namespace asdf {
                 break;
 
             case SDL_MOUSEMOTION:
-                event->motion.x -= surface_width  / 2;
-                event->motion.y = surface_height / 2 - event->motion.y;
+                event->motion.x -= unsigned_to_signed(surface_width)  / 2;
+                event->motion.y =  unsigned_to_signed(surface_height) / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                event->button.x -= surface_width / 2;
-                event->motion.y = surface_height / 2 - event->motion.y;
+                event->button.x -= unsigned_to_signed(surface_width) / 2;
+                event->motion.y  = unsigned_to_signed(surface_height) / 2 - event->motion.y;
                 break;
 
             case SDL_MOUSEWHEEL:
@@ -205,10 +205,11 @@ namespace asdf {
             {
                 switch(event->window.event)
                 {
-                    case SDL_WINDOWEVENT_RESIZED: [[FALLTHROUGH]]
+                    case SDL_WINDOWEVENT_RESIZED:// [[FALLTHROUGH]]
                     case SDL_WINDOWEVENT_SIZE_CHANGED:
                     {
-                        resize(event->window.data1, event->window.data2);
+                        ASSERT(event->window.data1 >= 0 && event->window.data2 >= 0, "");
+                        resize(uint32_t(event->window.data1), uint32_t(event->window.data2));
                         break;
                     }
                 };
@@ -252,10 +253,13 @@ namespace asdf {
         flags |= SDL_WINDOW_BORDERLESS * settings.borderless;
         flags |= SDL_WINDOW_RESIZABLE  * settings.resizable;
 
-        main_window = SDL_CreateWindow(WINDOW_TITLE.c_str(),
-                                        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                        settings.resolution_width, settings.resolution_height,
-                                        flags);
+        main_window = SDL_CreateWindow(WINDOW_TITLE.c_str()
+                                     , SDL_WINDOWPOS_CENTERED
+                                     , SDL_WINDOWPOS_CENTERED
+                                     , unsigned_to_signed(settings.resolution_width)
+                                     , unsigned_to_signed(settings.resolution_height)
+                                     , flags
+                                     );
         checkSDLError(__LINE__);
         ASSERT(main_window != 0, "Unable to create window");
 
@@ -295,15 +299,17 @@ namespace asdf {
 
         auto save_result = SOIL_save_screenshot
         (
-            file_path.c_str(),
-            SOIL_SAVE_TYPE_BMP,
-            0, 0, surface_width, surface_height
+            file_path.c_str()
+          , SOIL_SAVE_TYPE_BMP
+          , 0, 0
+          , unsigned_to_signed(surface_width)
+          , unsigned_to_signed(surface_height)
         );
 
         //soil returns 0 for failure apparently
         if(save_result == 0)
         {
-            LOG("ERROR: SOIL failed saving screenshot {%zu,%zu} \"%s\""
+            LOG("ERROR: SOIL failed saving screenshot {%u,%u} \"%s\""
                 , surface_width, surface_height, file_path.c_str());
             LOG(" SOIL: %s", SOIL_last_result());
         }

@@ -1,0 +1,140 @@
+--- Feature List ---
+
+-- Node --
+{
+    "Name": "Node_Name",
+    "Properties"[
+        {
+            "Name":"Node Property",
+            "Values":[
+                "A",
+                "B",
+                "C"
+            ]
+        }
+    ]
+}
+
+
+-- Range Values --
+{
+    "Name":"Some Node",
+    "Values":[
+        {
+            "Range":[
+                "Nothing"
+                "Everything"
+            ]
+        },
+        {
+            "Range":[
+                "White",
+                "Black"
+            ]
+        }
+    ]
+}
+
+
+-- Multi Values --
+{
+    "Name": "Color",
+    "Values":[
+        {
+            "Multi":2,
+            "Values":[
+                "Green",
+                "Orange",
+                "Yellow",
+                "Red",
+                "White",
+                "Black"
+            ]
+        }
+    ]
+}
+
+
+-- Weights --
+Weights default to 1
+Setting a weight is a shorthand for entering something multiple times in a list
+
+Long Form:
+{
+    "Name": "Animal"
+    "Values":[
+        {
+            "Name": "Bird"
+            "Weight": 1000
+        },
+        {
+            "Name":" "Rhinocerous"
+            "Weight": 100
+        },
+        {
+            "Name":" "Unicorn"
+            "Weight": 1
+        },
+    ]
+}
+
+Short Form:
+{
+    "Name": "Animal"
+    "Values":[
+        "%1000 Bird",
+        "%100 Rhinocerous",
+        "%1 Unicorn"
+    ]
+}
+
+
+In the examples above, there is a 1 in 1101 chance that a unicorn will be generated
+
+
+-- Includes --
+You can include the contents of another document with the Include keyword
+The document can be used as property, or as a value in a value list.
+
+As a Property:
+{
+    "Name": "Car",
+    "Properties":[
+        {
+            "Name": "Chassis",
+            "Include": "Chassis.json"
+        },
+        {
+            "Name": "Engine",
+            "Include": "Engine.json"
+        }
+    ]
+}
+
+
+As a Value:
+{
+    "Name": "Fruit"
+    "Values":[
+        {
+            "Name": "Berry",
+            "Include": "Berry.json"
+        }
+    ]
+}
+
+
+The filename specified should be relative to the document that is doing the including.
+Ex:
+    a document stored at "/data/cars/car.json" wishes to include a random color document stored at "/data/properties/color.json"
+
+    {
+        "Name": Car"
+        "Properties":[
+            {
+                "Name": "Color"
+                "Include": ../properties/color.json"
+            }
+        ]
+    }
+

@@ -301,6 +301,7 @@ void hexmap_widget_t::add_terrain(QStringList const& terrain_filepaths)
         for(auto const& filepath : terrain_filepaths)
         {
             std::string filepath_str{filepath.toUtf8().constData()};
+
             editor->map_data.terrain_bank.add_texture(filepath_str);
         }
 

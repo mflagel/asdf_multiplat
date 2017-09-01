@@ -110,12 +110,6 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="right_dock">
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="right_dock_contents"/>
-  </widget>
   <widget class="QDockWidget" name="left_dock">
    <property name="floating">
     <bool>false</bool>

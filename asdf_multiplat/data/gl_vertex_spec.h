@@ -4,9 +4,13 @@
 
 #include <gl/glew.h>
 
+#include "main/asdf_defs.h"
 #include "stdafx.h"
 #include "utilities/utilities.h"
 #include "shader.h"
+
+DIAGNOSTIC_PUSH
+DIAGNOSTIC_IGNORE(-Wwrite-strings)
 
 namespace asdf
 {
@@ -29,10 +33,11 @@ namespace asdf
         template <size_t N, typename T, GLuint GL_Type>       \
         struct struct_name : vertex_attrib_<N, T, GL_Type>    \
         {                                                     \
-            static constexpr const char* name = #attrib_name;       \
+            static constexpr char* name = #attrib_name; \
         };                                                    \
-        template <size_t N, typename T, GLuint GL_Type> constexpr char* struct_name<N, T, GL_Type>::name;    //apparently clang needs this to link properly
+        template <size_t N, typename T, GLuint GL_Type> constexpr char* struct_name<N, T, GL_Type>::name; //apparently clang needs this
         //----
+
 
         
 
@@ -133,3 +138,5 @@ namespace asdf
         }
     };
 }
+
+DIAGNOSTIC_POP

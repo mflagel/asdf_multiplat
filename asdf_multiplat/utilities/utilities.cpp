@@ -18,6 +18,8 @@
 #include <dirent.h>
 #endif
 
+DIAGNOSTIC_IGNORE(-Wcomment)
+
 // using namespace rapidjson;
 
 namespace asdf {
@@ -325,9 +327,11 @@ namespace asdf {
 	    return true;
     }
 
-    std::vector<std::string> tokenize(char* const str, char* const delimiters)
+    /// TODO: replace this with a c++11 version
+    std::vector<std::string> tokenize(const char* _str, const char* delimiters)
     {
         std::vector<std::string> tokens;
+        char* str = strdup(_str);
 
 #ifdef _MSC_VER
         char* next_token = nullptr;
@@ -345,6 +349,7 @@ namespace asdf {
         }
 #endif
 
+        free(str);
         return tokens;
     }
 

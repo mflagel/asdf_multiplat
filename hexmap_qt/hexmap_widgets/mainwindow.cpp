@@ -26,6 +26,7 @@
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
 #include "minimap_widget.h"
+#include "terrain_brush_selector.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -135,8 +136,28 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
+    /// Minimap Dock
+    minimap_dock = new QDockWidget(tr("Minimap"));
+    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, minimap_dock);
+
+    ///Brush Settings
     {
-        palette_widget = new palette_widget_t(this);
+        auto brush_setings_dock = new QDockWidget(tr("Brush Settings"));
+
+        brush_settings = new terrain_brush_selector_t();
+        brush_setings_dock->setWidget(brush_settings);
+
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, brush_setings_dock);
+
+        connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
+    }
+    
+    /// Terrain / Object Palette
+    {
+        palette_dock = new QDockWidget();
+        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
+
+        palette_widget = new palette_widget_t();
 
         palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
         //palette_widget->setMinimumSize(200, 300);
@@ -150,7 +171,39 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
 
 
-        ui->right_dock->setWidget(palette_widget);
+        palette_dock->setWidget(palette_widget);
+    }
+
+
+    {
+        spline_settings_widget = new spline_settings_widget_t();
+        spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
+
+        connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+            , [this](int index)
+              {
+                  ASSERT(index >= 0, "");
+                  auto interp = (spline_t::interpolation_e)(index);
+                  ui->hexmap_widget->editor.set_current_spline_interpolation(interp);
+              });
+
+        connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+                [this](double value)
+                {
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor.new_node_style;
+                    ASSERT(value <= std::numeric_limits<float>::max(), "spline thickness too large to store in a float");
+                    node_style.thickness = static_cast<float>(value);
+                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
+                });
+
+        connect(spline_settings_widget, &spline_settings_widget_t::colorSelected,
+                [this](QColor c) {
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor.new_node_style;
+                    node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
+                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
+                });
     }
 }
 
@@ -358,6 +411,7 @@ void MainWindow::init()
 {
     editor = ui->hexmap_widget->editor.get();
 
+
     /// Render Flag Toggles
     {
         using rflags = asdf::hexmap::ui::hex_map_t::render_flags_e;
@@ -381,9 +435,24 @@ void MainWindow::init()
     }
 
 
+    //must connect initialized before handing this tot he minimapdock
+    //otherwise the minimap initialize signal will have already fired before connecting
+    connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
+    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+        [this](){
+            minimap->is_dirty = true;
+            minimap->update();
+        });
+
+    
+    minimap_dock->setWidget(minimap);
+    minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+
+
     {
         spline_settings_widget = new spline_settings_widget_t();
         spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
+
 
         connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
             , [this](int index)
@@ -392,6 +461,7 @@ void MainWindow::init()
                   auto interp = (spline_t::interpolation_e)(index);
                   ui->hexmap_widget->editor->set_current_spline_interpolation(interp);
               });
+
 
         connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
                 [this](double value)
@@ -444,10 +514,14 @@ void MainWindow::init()
 }
 
 
+void MainWindow::minimap_initialized()
+{
+    minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
+}
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
-    auto* dock = ui->right_dock;
+    auto* dock = palette_dock;
 
     switch(new_tool)
     {
@@ -481,4 +555,9 @@ void MainWindow::editor_tool_changed(tool_type_e new_tool)
 void MainWindow::object_selection_changed(asdf::hexmap::editor::editor_t& editor)
 {
     object_properties->set_from_object_selection(editor.object_selection, editor.map_data.objects);
+}
+
+void MainWindow::custom_terrain_brush_changed(asdf::hexmap::data::terrain_brush_t const& brush)
+{
+    editor->set_custom_terrain_brush(brush);
 }

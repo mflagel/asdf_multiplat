@@ -2,17 +2,23 @@
 
 #include <memory>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "main/hexmap.h"
+#include "data/hex_map.h"
+#include "data/terrain_brush.h"
+#include "ui/minimap.h"
+#include "ui/terrain_brush_renderer.h"
+
 #include "editor/main/input.h"
 #include "editor/command_actions/command_actions.h"
-
-#include "ui/minimap.h"
 
 namespace asdf {
 namespace hexmap {
 namespace editor
 {
+    using spline_index_t = data::spline_index_t;
+    using spline_node_index_t = data::spline_node_index_t;
 
     enum hex_region_e
     {
@@ -27,23 +33,49 @@ namespace editor
         , num_hex_regions
     };
 
-    struct object_selection_t
+    struct base_selection_t
     {
         glm::vec2 upper_bound;
         glm::vec2 lower_bound;
 
         editor_t& editor;
+    };
+
+    struct object_selection_t : base_selection_t
+    {
         std::unordered_set<size_t> object_indices;
+        std::unordered_set<size_t> spline_indices;
 
         object_selection_t(editor_t&);
 
-        bool operator ==(object_selection_t const& rhs);
-        bool operator !=(object_selection_t const& rhs);
+        bool operator ==(object_selection_t const& rhs) const;
+        bool operator !=(object_selection_t const& rhs) const;
 
         bool add_object_index(size_t);
         bool remove_object_index(size_t);
         void clear_selection();
-        bool is_empty() const { return object_indices.empty(); }
+        bool is_empty() const { return object_indices.empty() && spline_indices.empty(); }
+
+        void recalc_bounds();
+    };
+
+    struct spline_node_selection_t : base_selection_t
+    {
+        std::unordered_map<size_t, std::unordered_set<size_t>> node_indices; //map of spline inds, set of spline node inds
+
+        spline_node_selection_t(editor_t&);
+
+        bool operator ==(spline_node_selection_t const& rhs) const { return node_indices == rhs.node_indices; }
+        bool operator !=(spline_node_selection_t const& rhs) const { return !(*this == rhs); }
+
+        bool add_node_index(spline_index_t, spline_node_index_t);
+        bool remove_node_index(spline_index_t, spline_node_index_t);
+        bool add_all_nodes_from_spline(spline_index_t);
+        bool remove_all_nodes_from_spline(spline_index_t);
+
+        void clear_selection();
+
+        bool is_empty() const { return node_indices.empty(); }
 
         void recalc_bounds();
     };
@@ -63,6 +95,11 @@ namespace editor
         //terrain
         uint64_t current_tile_id = 0;
         tile_coord_dict_t painted_terrain_coords;
+
+        std::vector<data::terrain_brush_t> terrain_brushes;
+        size_t current_terrain_brush_index = 0;
+        std::unique_ptr<ui::terrain_brush_renderer_t> terrain_brush_renderer;
+        glm::vec2 brush_pos;
 
         //objects
         uint64_t current_object_id = 0;
@@ -96,6 +133,7 @@ namespace editor
 
         void render() override;
         void render_selection();
+        void render_current_brush();
 
         void on_event(SDL_Event*) override;
 
@@ -123,6 +161,12 @@ namespace editor
         void signal_data_changed();
         void push_action(std::unique_ptr<editor_action_t>&&);
         void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
+
+        void set_custom_terrain_brush(data::terrain_brush_t const& new_brush);
+        inline data::terrain_brush_t const& current_terrain_brush() const { 
+            ASSERT(terrain_brushes.size() > 0, "Cannot get current terrain brushes when there are no brushes");
+            return terrain_brushes[current_terrain_brush_index]; 
+        }
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

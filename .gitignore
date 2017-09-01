@@ -18,6 +18,10 @@ bin
 *.cproject
 *.pro.user
 
+CMakeCache.txt
+CMakeFiles
+*.cmake
+
 /docs/
 
 asdf_multiplat/obj
@@ -53,6 +57,18 @@ hexmap_qt/hexmap_widgets/packages/*
 #hexmap other
 /hexmap/assets/*
 /hexmap/data/*
+
+
+#plantgen
+/PlantGenerator/build
+/PlantGenerator/Makefile
+/PlantGenerator/test/build
+/PlantGenerator/test/Win32
+/PlantGenerator/test/PlantGenerator__Tests.dir/
+
+
+#FastTravelSim
+/FastTravelSimulator/build/
 
 
 #windows

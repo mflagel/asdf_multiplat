@@ -11,19 +11,21 @@ using namespace asdf::util;
 
 namespace asdf {
 
-    shader_t::shader_t(std::string const& name, std::string vshader_filepath, std::string fshader_filepath)
-    : shader_t(name, vshader_filepath.c_str(), fshader_filepath.c_str())
+    shader_t::shader_t(std::string const& _name, std::string _vshader_filepath, std::string _fshader_filepath)
+    : shader_t(_name, _vshader_filepath.c_str(), _fshader_filepath.c_str())
     {
     }
 
-    shader_t::shader_t(std::string const& name, const char* vshader_filepath, const char* fshader_filepath)
-        : name(name)
-        , vertex_shader_id(load_shader(vshader_filepath, GL_VERTEX_SHADER))
-        , fragment_shader_id(load_shader(fshader_filepath, GL_FRAGMENT_SHADER))
-        , shader_program_id(create_shader_program(vertex_shader_id, fragment_shader_id))
+    shader_t::shader_t(std::string const& _name, const char* _vshader_filepath, const char* _fshader_filepath)
+        : name(_name)
+        , vertex_shader_id(load_shader(_vshader_filepath, GL_VERTEX_SHADER))
+        , fragment_shader_id(load_shader(_fshader_filepath, GL_FRAGMENT_SHADER))
+        , shader_program_id(UINT32_MAX)
     {
-        load_uniforms_and_attributes();
+        shader_program_id = create_shader_program(vertex_shader_id, fragment_shader_id);
+        ASSERT(shader_program_id != nullindex, "Error creating shader \'%s\'", name.c_str());
         ASSERT(!CheckGLError(), "Error creating shader \'%s\'", name.c_str());
+        load_uniforms_and_attributes();
     }
 
     shader_t::~shader_t() {
@@ -38,6 +40,7 @@ namespace asdf {
         int name_len = -1, num = -1;
         GLenum type = GL_ZERO;
 
+        ASSERT(shader_program_id != nullindex, "shader program not valid");
 
         glGetProgramiv(shader_program_id, GL_ACTIVE_UNIFORMS, &total);
 
@@ -47,7 +50,7 @@ namespace asdf {
                 , &name_len, &num, &type, name_buffer);
 
             name_buffer[name_len] = 0;
-            GLuint location = glGetUniformLocation(shader_program_id, name_buffer);
+            GLint location = glGetUniformLocation(shader_program_id, name_buffer);
 
             uniforms[name_buffer] = location;
         }
@@ -57,14 +60,16 @@ namespace asdf {
 
         for (int i = 0; i < total; i++)
         {
-            glGetActiveAttrib(shader_program_id, (GLuint)i, sizeof(name_buffer)-1
+            glGetActiveAttrib(shader_program_id, GLuint(i), sizeof(name_buffer)-1
                 , &name_len, &num, &type, name_buffer);
 
             name_buffer[name_len] = 0;
-            GLuint location = glGetAttribLocation(shader_program_id, name_buffer);
+            GLint location = glGetAttribLocation(shader_program_id, name_buffer);
 
             attributes[name_buffer] = location;
         }
+
+        ASSERT(!CheckGLError(), "Error loading shader uniforms and/or attributes\'%s\'", name.c_str());
     }
 
     void shader_t::update_wvp_uniform()
@@ -99,7 +104,7 @@ namespace asdf {
         bool shader_error = CheckGLError(shader);
         if (shader_error) {
             LOG("--------Error in shader source:\n");
-            LOG(shader_src);
+            LOG("%s", shader_src);
 
 #ifdef _DEBUG
             int asdfa;
@@ -116,7 +121,7 @@ namespace asdf {
     /*static*/GLuint shader_t::create_shader_program(const GLuint vs, const GLuint fs) 
     {
         //create
-        int shader_program = glCreateProgram();
+        GLuint shader_program = glCreateProgram();
         ASSERT(CheckGLError() == 0, "Error creating shader program");
 
         //attach
@@ -137,14 +142,16 @@ namespace asdf {
             int maxLength = 0;
             int length = 0;
             glGetProgramiv(shader_program, GL_INFO_LOG_LENGTH, &maxLength);
-            char* log = new char[maxLength];
+            maxLength = std::max(0, maxLength);
+            char* log = new char[size_t(maxLength)];
             glGetProgramInfoLog(shader_program, maxLength, &length, log);
 
             LOG("--- GL_INFO_LOG ---");
             LOG("%s", log);
             LOG("-------------------");
 
-            return GLuint(nullindex);
+            delete[] log;
+            return GLuint(UINT32_MAX);
         }
 
         return shader_program;

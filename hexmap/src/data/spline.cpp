@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "spline.h"
 
+#include <glm/gtx/norm.hpp>
+
 #include "asdf_multiplat/data/gl_vertex_spec.h"
 
 namespace asdf {
@@ -72,6 +74,122 @@ namespace data
         }
     }
 
+
+    bool point_intersects_spline(glm::vec2 const& world_pos, spline_t const& spline, float dist_threshold)
+    {
+        if(spline.nodes.size() == 0)
+        {
+            return false;
+        }
+        else if(spline.nodes.size() == 1)
+        {
+            auto dist = glm::length(spline.nodes[0].position - world_pos);
+            return dist <= dist_threshold;
+        }
+        else
+        {
+            //get closest point to world_pos
+            spline_node_index_t closest = 0;
+            auto cv = spline.nodes[0].position - world_pos;
+            auto closest_dist_sq = glm::length2(cv);
+
+            for(size_t i = 1; i < spline.nodes.size(); ++i)
+            {
+                auto v = spline.nodes[i].position - world_pos;
+                auto dsq = glm::length2(v);
+
+                if(dsq < closest_dist_sq)
+                {
+                    closest = i;
+                    closest_dist_sq = dsq;
+                }
+            }
+
+            auto const& p0 = spline.nodes[closest].position;
+
+
+            // get prev or next node, whichever is closest to world_pos (and exists)
+            line_node_t const* prev = nullptr;
+            line_node_t const* next = nullptr;
+
+            if(spline.loops)
+            {
+                prev = (closest == 0) ? &(*spline.nodes.end())  : &(spline.nodes[closest-1]);
+                next = (closest+1 == spline.nodes.size()) ?  &(spline.nodes[0])     : &(spline.nodes[closest+1]);
+            }
+            else
+            {
+                prev = (closest==0)                       ? nullptr : &(spline.nodes[closest-1]);
+                next = (closest+1 == spline.nodes.size()) ? nullptr : &(spline.nodes[closest+1]);
+            }
+
+            ASSERT(next || prev, "somehow both next and prev are null");
+
+            //if prev is null, use next, else use prev
+            auto* second_closest = (prev != nullptr) ? prev : next;
+
+            //if both are not-null, grab the closest one
+            if(prev && next)
+            {
+                auto d_prev = glm::length2(prev->position - world_pos);
+                auto d_next = glm::length2(next->position - world_pos);
+
+                second_closest = (d_prev > d_next) ? next : prev;
+            }
+
+
+            auto p1 = second_closest->position;
+
+
+            switch(spline.spline_type)
+            {
+                case spline_t::linear:
+                    return circle_intersects_line(world_pos, dist_threshold, p0, p1);
+                // case spline_t::bezier:
+                {
+                    //auto c1 = spline.control_nodes[2*inds[0]+0].position;
+                    //auto c2 = spline.control_nodes[2*inds[0]+1].position;
+                    //return circle_intersects_bezier(world_pos, dist_threshold
+                    //                                n1.position, c1, c2, n2.position);
+                }
+                default: EXPLODE("TODO: implement intersection with %s splines", spline_interpolation_names[spline.spline_type]);
+                    return false;
+            }
+        }
+    }
+
+    bool circle_intersects_line(glm::vec2 const& circle_pos, float radius, glm::vec2 const& p0, glm::vec2 const& p1)
+    {
+        using namespace glm;
+
+        auto a = circle_pos - p0;
+        auto b = p1-p0;
+        
+        float cos_theta = dot(a, b) / (length(a) * length(b));
+        float proj_length = length(a) * cos_theta;
+
+        //if beyond the line segment, check dist to p0 and p1
+        //otherwise corners won't be handled
+        auto t = proj_length / length(b); //I feel like there's proably a more optimal way to calculate this value
+        if(t < 0 || t > 1)
+        {
+            auto d0 = circle_pos - p0;
+            auto d1 = circle_pos - p1;
+            return (length(d0) <= radius) || (length(d1) <= radius);
+        }
+
+        vec2 proj_vect = proj_length * normalize(b);
+        vec2 dist_vect = a - proj_vect;
+        float dist = length(dist_vect);
+
+        return dist <= radius;
+    }
+
+    bool circle_intersects_bezier(glm::vec2 circle_pos, float radius, glm::vec2 p0, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+    {
+        EXPLODE("todo");
+        return false;
+    }
 
 
     void spline_selection_t::select_spline(spline_t& spline)

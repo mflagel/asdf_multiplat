@@ -1,0 +1,89 @@
+{
+    "Name": "Mushroom",
+    "Properties": [
+        {
+            "Name": "Cap",
+            "Properties":[
+                {
+                    "Name": "Shape",
+                    "Values":[
+                        "Button"
+                        ,"Flat"
+                        ,"Spherical"
+                        ,"Coral"
+                        ,"Web"
+                    ]
+                },
+                {
+                    "Name": "Thickness",
+                    "Values": [
+                        "Small",
+                        "Wide"
+                    ]
+                },
+                {
+                    "Name": "Color",
+                    "Values": [
+                        {
+                            "Name":"Color",
+                            "Weight":50,
+                            "Values":[
+                                {
+                                "Range": [
+                                    "White",
+                                    "Black",
+                                    "Brown"
+                                ]
+                               }
+                        ]
+                        },
+                        "Rainbow"
+                    ]
+                },
+                {
+                    "Name": "Pattern",
+                    "Values": [
+                        "Plain",
+                        {
+                            "Multi": 2,
+                            "Values":[
+                                "Spotted",
+                                "Fan Lines",
+                                "Curvy Lines",
+                                "Pustule-Covered"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name": "Gills",
+                    "Values": [
+                        "Covered",
+                        "Frilly",
+                        "Sparse"
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Stem",
+            "Properties": [
+                {
+                    "Name": "Length",
+                    "Values": [
+                        "Short",
+                        "Long",
+                        "Shelf"
+                    ]
+                },
+                {
+                    "Name": "Thickness",
+                    "Values": [
+                        "Thin",
+                        "Thick"
+                    ]
+                }
+            ]
+        }
+    ]
+}

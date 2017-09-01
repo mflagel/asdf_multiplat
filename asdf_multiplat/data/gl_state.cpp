@@ -44,7 +44,8 @@ namespace asdf
         LOG("OpenGL Initialized");
         LOG("--Supported OpenGL Extensions--")
 
-        gl_extensions = tokenize((char*)(glGetString(GL_EXTENSIONS)), " ");
+        const char* ext_cstr = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+        gl_extensions = tokenize(ext_cstr, " ");
 
         for(auto const& ext : gl_extensions)
         {
@@ -54,15 +55,15 @@ namespace asdf
 
         //TODO: store an enum and array of relevant gl info?
 
-        GLint max_uniform_components = 0;
+        max_uniform_components = 0;
         glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &max_uniform_components);
         LOG("Max Uniform Components: %i", max_uniform_components);
 
-        GLint max_texture_size = 0;
+        max_texture_size = 0;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
         LOG("Max Texture Size: %i", max_texture_size);
 
-        GLint max_texture_units = 0;
+        max_texture_units = 0;
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture_units);
         LOG("Max Texture Units: %i", max_texture_units);
 
@@ -168,8 +169,8 @@ namespace asdf
         glBindFramebuffer(GL_FRAMEBUFFER, fbo_id);
 
         ASSERT(!CheckGLError(), "GL Error binding framebuffer %i", fbo_id);
-        glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
-        ASSERT(!CheckGLError(), "GL Error setting viewport to %i,%i %i,%i", v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+        set_viewport(v);
+        ASSERT(!CheckGLError(), "GL Error setting viewport to %i,%i %u,%u", v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
     }
 
     void gl_state_t::push_fbo(framebuffer_t const& fbo, gl_viewport_t const& v)
@@ -187,6 +188,21 @@ namespace asdf
         push_fbo(fbo.id, x, y, width, height);
     }
 
+    void gl_state_t::push_fbo(GLuint fbo_id, GLint x, GLint y, uint32_t width, uint32_t height)
+    {
+        push_fbo(fbo_id, x, y
+            , unsigned_to_signed(width)
+            , unsigned_to_signed(height)
+            );
+    }
+    void gl_state_t::push_fbo(framebuffer_t const& fbo, GLint x, GLint y, uint32_t width, uint32_t height)
+    {
+        push_fbo(fbo.id, x, y
+            , unsigned_to_signed(width)
+            , unsigned_to_signed(height)
+            );
+    }
+
     void gl_state_t::pop_fbo()
     {
         ASSERT(!fbo_stack.empty(), "");
@@ -195,7 +211,7 @@ namespace asdf
         if(!fbo_stack.empty())
         {
             auto const& v = fbo_stack.top().second;
-            glViewport(v.bottom_left.x, v.bottom_left.y, v.size.x, v.size.y);
+            set_viewport(v);
             ASSERT(!CheckGLError(), "GL Error setting viewport");
             glBindFramebuffer(GL_FRAMEBUFFER, fbo_stack.top().first);
 
@@ -216,6 +232,11 @@ namespace asdf
         ASSERT(!CheckGLError(), "error sending data to buffer");
     }
 
+    void gl_state_t::buffer_data(gl_buffer_object_t const& buffer, size_t size, const GLvoid * data)
+    {
+        buffer_data(buffer, convert_integer<size_t,GLsizeiptr>(size), data);
+    }
+
     void gl_state_t::init_render_target(framebuffer_t const& fbo, texture_t const& texture)
     {
         scoped_fbo_t scoped(fbo, 0, 0, texture.width, texture.height);
@@ -230,11 +251,18 @@ namespace asdf
         GLenum draw_buffers = GL_COLOR_ATTACHMENT0;
         glDrawBuffers(1, &draw_buffers);
 
-        auto gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        GLenum gl_fbo_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         ASSERT(gl_fbo_status == GL_FRAMEBUFFER_COMPLETE, "Broken FBO %i  Status: 0x%0x\nError: %s", fbo.id, gl_fbo_status, get_fbo_status_string(gl_fbo_status));
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void gl_state_t::set_viewport(gl_viewport_t const& v)
+    {
+        glViewport(v.bottom_left.x, v.bottom_left.y
+                 , unsigned_to_signed(v.size.x)
+                 , unsigned_to_signed(v.size.y));
     }
 
 
@@ -273,7 +301,7 @@ namespace asdf
 
 
     /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCheckFramebufferStatus.xhtml
-    const/*expr*/ char* get_fbo_status_string(GLint status_code)
+    const/*expr*/ char* get_fbo_status_string(GLenum status_code)
     {
         switch(status_code)
         {

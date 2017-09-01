@@ -1,0 +1,51 @@
+{
+  "Name":"Physical Effect",
+  "Values":[
+    {
+      "Name":"Good",
+      "Weight": "%",
+      "Values":[
+        "Pest Repellent",
+        "Sedative",
+        "Pain Relief",
+        "Healing",
+        "Energy Boost",
+        "Muscle Relaxant",
+        "Antiseptic",
+        "Contraceptive",
+        "Waterbreathing",
+        "Fire Resistance",
+        "Anti-venom",
+        "Ethereal",
+        "Plant Vision"
+      ]
+    },
+    {
+      "Name":"Bad",
+      "Weight": "%",
+      "Values":[
+        "Rash-Causing",
+        "Blindness",
+        "Limb-Disorienting",
+        "Tongue-Swelling",
+        "Poisonous",
+        "Laxitive",
+        "Hair-Loss",
+        "Stiffness",
+        "Impotence",
+        "Limb-Numming (Foot, leg, arm, hand)"
+      ]
+    },
+    {
+      "Name":"Weird",
+      "Weight": "%",
+      "Values":[
+        "Eye Color Change",
+        "Colored Tongue",
+        "Bio-luminecent Blood",
+        "Lignification (turn into a tree)",
+        "Petrification"
+      ]
+    }
+  ]
+}

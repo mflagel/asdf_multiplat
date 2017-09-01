@@ -1,0 +1,103 @@
+{
+    "Name":"Include",
+    "Properties":[
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json"
+        },
+        {
+            "Include":"basic_node.json",
+            "Name":"Basic Node"
+        },
+        {
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json",
+            "Comment":"Testing with User Data"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json"
+        }
+    ],
+    "Values":[
+        {
+            "Name":"Basic Node",
+            "Include":"basic_node.json"
+        },
+        {
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json"
+        },
+        {
+            "Name":"## Basic Node ##",
+            "Include":"basic_node.json",
+            "Comment":"Testing with User Data"
+        },
+
+        {
+            "Name":"Include in VNode",
+            "Properties":[
+                {
+                    "Include":"basic_node.json"
+                }
+            ],
+            "Values":[
+                {
+                    "Include":"basic_node.json"
+                }
+            ]
+        },
+
+        {
+            "Include":"../data/include_extended.json"
+        },
+
+        {
+            "Name":"Include a file that includes",
+            "Include":"include_extended.json"
+        },
+
+        {
+            "Name":"Double Include and Merge",
+            "Include":"include_extended.json",
+            "Properties":[
+                {
+                    "Name":"A"
+                },
+                {
+                    "Name":"B"
+                }
+            ],
+            "Values": [
+                "Test 1",
+                "Test 2",
+                "Test 3"
+            ]
+        },
+        {
+            "Name":"Values Before Include",
+            "Properties":
+            [
+                {
+                    "Name":"A"
+                },
+                {
+                    "Name":"B"
+                }
+            ],
+            "Values":
+            [
+                "Test 1",
+                "Test 2",
+                "Test 3"
+            ],
+            "Include":"include_extended.json"
+        }
+    ]
+}

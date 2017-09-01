@@ -30,6 +30,17 @@ addons:
 env:
   - COMPILER=clang++-3.8
 
+
+# safelist
+branches:
+  only:
+  - master
+  - map_objects
+  - hexmap_qt
+  - ogl_compatability
+  - travis-ci
+
+
 # install:
 
 # before_script:

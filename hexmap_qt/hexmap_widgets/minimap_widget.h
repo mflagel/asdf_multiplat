@@ -38,6 +38,9 @@ public:
     explicit minimap_widget_t(asdf::hexmap::editor::editor_t&, QWidget *parent = 0);
     ~minimap_widget_t();
 
+signals:
+    void initialized();
+
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;

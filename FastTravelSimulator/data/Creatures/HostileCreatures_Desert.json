@@ -1,0 +1,39 @@
+{
+  "Name":"Hostile Creature",
+  "Values":[
+    {
+      "Name":"Normally-Neutral Creature",
+      "Include":"NeutralCreatures.json"
+    },
+    "Bulette",
+    "Dire Jackal",
+    "Dire Wolf",
+    "Dire Coyote",
+    "Hyaenodon",
+    {
+      "Name":"Kai-Tan",
+      "Loot":[
+        "Rations",
+        "Kai-Tan Weaponry"
+      ]
+    },
+    {
+      "Name":"Basalisk"
+    },
+    {
+      "Name":"Golem"
+    },
+    {
+      "Name":"Swarm of Bats"
+    },
+    {
+      "Name":"Swarm of Beetles"
+    },
+    {
+      "Name":"Plated Beetle",
+      "Loot":[
+        "Hunter Beetle Carapace"
+      ]
+    }
+  ]
+}

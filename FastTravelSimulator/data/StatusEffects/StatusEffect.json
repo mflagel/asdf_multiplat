@@ -1,0 +1,51 @@
+{
+  "Name":"Status Effect",
+  "PrintString": "A %Severity% %$Effect% effect that lasts %Duration%",
+  "Properties":[
+    {
+      "Name":"Effect",
+      "Values":[
+        {
+          "Name":"Physical Effect",
+          "Weight": 50,
+          "Include":"PhysicalStatusEffect.json"
+        },
+        {
+          "Name":"Mental Effect",
+          "Weight": 10,
+          "Include":"MentalStatusEffect.json"
+        },
+        {
+          "Name":"Spiritual Effect",
+          "Weight": 1,
+          "Include":"SpiritualStatusEffect.json"
+        }
+      ]
+    },
+    {
+      "Name":"Duration",
+      "Values":[
+        "%10 A few Moments",
+        "%20 A few Minutes",
+        "%20 About an Hour",
+        "%10 A few Hours",
+        "%5 Several Hours",
+        "%5 A Full Day",
+        "%4 A Couple Days",
+        "%3 A Few Days",
+        "%2 A Handful of Days",
+        "%1 Almost a Week"
+      ]
+    },
+    {
+      "Name":"Severity",
+      "Values":[
+        "Very Mild",
+        "%4 Mild",
+        "%10 Medium-Severity",
+        "%4 Major",
+        "Extreme"
+      ]
+    }
+  ]
+}

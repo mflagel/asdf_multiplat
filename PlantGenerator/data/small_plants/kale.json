@@ -1,0 +1,96 @@
+{
+    "Name": "Kale",
+    "Properties":[
+        {
+            "Name":"Leaf",
+            "Properties":[
+                {
+                    "Name":"Pattern",
+                    "Values":[
+                        "Curly",
+                        "Very Curly",
+                        "Bumpy",
+                        "Knobbly",
+                        "Flat Fringed",
+                        "Wavy",
+                        "Flat",
+                        "Broad",
+                        "Feathery"
+                    ]
+                },
+                {
+                    "Name":"Leaf Color",
+                    "Values":[
+                        "Greenish White",
+                        "Reddish White",
+                        "Pale Green",
+                        "Dark Green",
+                        "Pale Purple",
+                        "Dark Purple",
+                        "Reddish Purple"
+                    ]
+                },
+                {
+                    "Name":"Leaf Tip Color",
+                    "Values":[
+                        "Pale Green",
+                        "Dark Green",
+                        "Pale Purple",
+                        "Dark Purple"
+                    ]
+                },
+                {
+                    "Name":"Taste",
+                    "Values": [
+                        {
+                            "Range":[
+                                "Bland",
+                                "Bitter",
+                                "Peppery"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Name":"Stem",
+            "Properties":[
+                {
+                    "Name":"Taste",
+                    "Values":[
+                        {
+                            "Range":[
+                                "Bland",
+                                "Bitter"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "Name":"Color",
+                    "Values":[
+                        "White",
+                        "Light Green",
+                        "Light Purple",
+                        "Reddish Purple",
+                        "Pale Green",
+                        "Pale Purple",
+                        "Dark Green",
+                        "Dark Purple"
+                    ]
+                }
+            ]
+        },
+        {
+            "Name": "Size",
+            "Values":[
+                "Fist-Sized",
+                "Ball-Sized",
+                "Head-Sized",
+                "Body-Sized",
+                "Absurdly Big"
+            ]
+        }
+    ]
+}
