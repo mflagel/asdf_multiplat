@@ -403,7 +403,7 @@ void MainWindow::init()
     }
 
 
-    //must connect initialized before handing this tot he minimapdock
+    //must connect initialized before handing this tot he minimap_dock
     //otherwise the minimap initialize signal will have already fired before connecting
     connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
     connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
@@ -412,9 +412,37 @@ void MainWindow::init()
             minimap->update();
         });
 
-    
-    minimap_dock->setWidget(minimap);
-    minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+
+
+    {
+        minimap = new minimap_widget_t(*editor, this);
+        minimap->setMinimumSize(200, 200);
+        minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+        minimap_dock->setWidget(minimap);
+
+        connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+            [this](){
+                minimap->is_dirty = true;
+                minimap->update();
+            });
+
+        using qd = QDockWidget;
+        minimap_dock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+
+        terrain_palette_model = new palette_item_model_t();
+        objects_palette_model = new palette_item_model_t();
+
+        terrain_palette_model->build_from_terrain_bank(editor->map_data.terrain_bank);
+        objects_palette_model->build_from_atlas(*(editor->map_data.objects_atlas.get()));
+
+        //lazy rebuild
+        connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
+
+        editor_tool_changed(editor->current_tool);
+    }
+
+
 
 
     {
@@ -448,36 +476,6 @@ void MainWindow::init()
                     node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
                     ui->hexmap_widget->editor->set_spline_node_style(node_style);
                 });
-    }
-
-    {
-        minimap = new minimap_widget_t(*editor, this);
-        minimap->setMinimumSize(200, 200);
-        minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-        QDockWidget* minimapdock = new QDockWidget(tr("Minimap"), this);
-        minimapdock->setWidget(minimap);
-
-        connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
-            [this](){
-                minimap->is_dirty = true;
-                minimap->update();
-            });
-
-        using qd = QDockWidget;
-        minimapdock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
-        addDockWidget(Qt::RightDockWidgetArea, minimapdock);
-
-        terrain_palette_model = new palette_item_model_t();
-        objects_palette_model = new palette_item_model_t();
-
-        terrain_palette_model->build_from_terrain_bank(editor->map_data.terrain_bank);
-        objects_palette_model->build_from_atlas(*(editor->map_data.objects_atlas.get()));
-
-        //lazy rebuild
-        connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
-
-        editor_tool_changed(editor->current_tool);
     }
 }
 

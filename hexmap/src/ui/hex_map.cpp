@@ -31,7 +31,7 @@ namespace ui
 
 
     hex_map_t::hex_map_t(data::hex_map_t& _map_data)
-    : hex_grid_t(_map_data.hex_grid)
+    : hex_grid_t(_map_data.hex_grid, _map_data.terrain_bank)
     , map_data(_map_data)
     {
         spritebatch.spritebatch_shader = Content.shaders["spritebatch"];
