@@ -219,9 +219,14 @@ namespace asdf {
         using namespace std::experimental::filesystem;
 
         path con_a = canonical(a);
-        path con_b = canonical(b);
 
+        // remove the filename otherwise an exception is thrown in UNIX
+        // because the file doesn't exist yet. Works fine in window
+        // I think
+        path con_b = b;
         con_b.remove_filename();
+        con_b = canonical(con_b);
+
 
         if(con_a.root_path() != con_b.root_path())
             return con_a; //no relative path, only absolute
