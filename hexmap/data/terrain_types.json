@@ -30,7 +30,7 @@
         },
         {
             "name" : "Test",
-            "filepath" : "C:\\Users\\Mathias\\Documents\\Programming\\AsdfMultiplat\\assets\\textures\\debug_purple.png"
+            "filepath" : "../../assets/textures/debug_purple.png"
         }
   ]
 }
