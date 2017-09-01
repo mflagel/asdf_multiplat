@@ -20,6 +20,7 @@ class spline_settings_widget_t;
 class object_properties_widget_t;
 class minimap_widget_t;
 class terrain_brush_selector_t;
+class hexmap_widget_t;
 
 class MainWindow : public QMainWindow
 {
@@ -56,7 +57,7 @@ private:
 
 private slots:
     void init();
-    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+    //void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void minimap_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);

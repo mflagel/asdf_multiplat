@@ -173,38 +173,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         palette_dock->setWidget(palette_widget);
     }
-
-
-    {
-        spline_settings_widget = new spline_settings_widget_t();
-        spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
-
-        connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
-            , [this](int index)
-              {
-                  ASSERT(index >= 0, "");
-                  auto interp = (spline_t::interpolation_e)(index);
-                  ui->hexmap_widget->editor.set_current_spline_interpolation(interp);
-              });
-
-        connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                [this](double value)
-                {
-                    auto& editor = ui->hexmap_widget->editor;
-                    auto node_style = editor.new_node_style;
-                    ASSERT(value <= std::numeric_limits<float>::max(), "spline thickness too large to store in a float");
-                    node_style.thickness = static_cast<float>(value);
-                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
-                });
-
-        connect(spline_settings_widget, &spline_settings_widget_t::colorSelected,
-                [this](QColor c) {
-                    auto& editor = ui->hexmap_widget->editor;
-                    auto node_style = editor.new_node_style;
-                    node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
-                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
-                });
-    }
 }
 
 MainWindow::~MainWindow()
@@ -516,7 +484,8 @@ void MainWindow::init()
 
 void MainWindow::minimap_initialized()
 {
-    minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
+    /// fixme??
+    //minimap->map_data.terrain_bank = ui->hexmap_widget->editor->rendered_map->terrain_bank;
 }
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)

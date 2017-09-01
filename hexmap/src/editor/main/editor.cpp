@@ -58,11 +58,6 @@ namespace editor
     {
         hexmap_t::init();
 
-        //load default terrain and map objects
-        auto data_dir = find_folder("data");
-        rendered_map->load_terrain_assets(data_dir + "/" + string(terrain_types_json_filename));
-        rendered_map->objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
-
 #ifdef DEBUG
         new_map_action("", uvec2(16,16));
 #else
@@ -179,8 +174,8 @@ namespace editor
                 shader->world_matrix[3][0] = brush_pos.x;
                 shader->world_matrix[3][1] = brush_pos.y;
 
-                shader->view_matrix       = rendered_map->shader->view_matrix ;
-                shader->projection_matrix = rendered_map->shader->projection_matrix;
+                shader->view_matrix       = rendered_map.shader->view_matrix ;
+                shader->projection_matrix = rendered_map.shader->projection_matrix;
 
                 terrain_brush_renderer->render();
 
