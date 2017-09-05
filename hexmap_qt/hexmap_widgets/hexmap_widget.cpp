@@ -333,5 +333,6 @@ void hexmap_widget_t::zoom_to_selection()
 
 void hexmap_widget_t::zoom_extents()
 {
-
+    camera_pos(glm::vec2(editor->map_data.hex_grid.size) / 2.0f);
+    main_window->set_scrollbar_stuff(editor->rendered_map.camera);
 }

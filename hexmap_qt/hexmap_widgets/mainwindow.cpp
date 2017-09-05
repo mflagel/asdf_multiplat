@@ -298,8 +298,7 @@ void MainWindow::new_map()
         cell.tile_id = nm.selected_base_tile_index();
 
         ui->hexmap_widget->editor->new_map_action(name, map_size, cell);
-        ui->hexmap_widget->camera_pos(glm::vec2(map_size) / 2.0f);
-        set_scrollbar_stuff(ui->hexmap_widget->editor->rendered_map.camera);
+        ui->hexmap_widget->zoom_extents();
     }
 }
 
@@ -312,7 +311,12 @@ void MainWindow::open_map()
 
     if(filepath.size() > 0)
     {
+        ui->hexmap_widget->makeCurrent();
         editor->load_action(std::string(filepath.toUtf8().constData()));
+        ui->hexmap_widget->zoom_extents();
+
+        //lazy rebuild
+        palette_widget->build_from_terrain_bank(hexmap_widget->editor->map_data.terrain_bank);
     }
 }
 

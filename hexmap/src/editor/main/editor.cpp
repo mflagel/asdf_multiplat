@@ -225,6 +225,10 @@ namespace editor
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
 
+        rendered_map.camera_controller.position = default_camera_position;
+        rendered_map.update(0.0f);
+        rendered_map.camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map.camera.aspect_ratio);
+
         signal_data_changed();
     }
 
