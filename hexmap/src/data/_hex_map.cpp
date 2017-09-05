@@ -97,10 +97,23 @@ namespace data
 
         /// close file and commit to disk
         SDL_RWclose(io);
+
+
+        /// Save terrain_bank as a separate file
+        /// Will get compressed with the rest of the save file at some point
+        std::experimental::filesystem::path terrain_path(filepath);
+        terrain_path += "terrain.json";
+        terrain_bank.save_to_file(terrain_path);
     }
 
     void hex_map_t::load_from_file(std::string const& filepath)
     {
+        /// load terrain first so it exists when the map loads
+        std::experimental::filesystem::path terrain_path(filepath);
+        terrain_path += "terrain.json";
+        terrain_bank.clear(); /// TODO: cache existing terrain rather than reloading entirely
+        terrain_bank.load_from_file(terrain_path);
+
         SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
 
         if (!io)
