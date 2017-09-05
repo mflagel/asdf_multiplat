@@ -194,7 +194,17 @@ void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
         mouse
     };
 
-    mouse.mouse_move(asdf_event, adjusted_screen_coords(event->x(), event->y()));
+    auto coords = adjusted_screen_coords(event->x(), event->y());
+
+    if(mouse.is_dragging())
+    {
+        mouse.mouse_drag(asdf_event, coords);
+    }
+    else
+    {
+        mouse.mouse_move(asdf_event, coords);
+    }
+
     update(); //lazy
 }
 

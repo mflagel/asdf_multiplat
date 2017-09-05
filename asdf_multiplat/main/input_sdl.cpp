@@ -29,7 +29,16 @@ namespace asdf
             case SDL_MOUSEMOTION:
             {
                 auto asdf_event = mouse_event_from_sdl(mouse, event->motion);
-                mouse.mouse_move(asdf_event, ivec2(event->button.x, event->button.y));
+
+                if(mouse.is_dragging())
+                {
+                    mouse.mouse_drag(asdf_event, ivec2(event->button.x, event->button.y));
+                }
+                else
+                {
+                    mouse.mouse_move(asdf_event, ivec2(event->button.x, event->button.y));
+                }
+
                 break;
             }
 

@@ -131,6 +131,47 @@ namespace editor
             {
                 editor.brush_pos = hex_to_world_coord(hx);
 
+                break;
+            }
+
+            case editor_t::place_objects:
+            {
+                editor.brush_pos = mw;
+
+                break;
+            }
+
+            case editor_t::place_splines:
+            {
+                if(editor.is_placing_spline())
+                {
+                    editor.update_WIP_node(mw);
+                }
+                break;
+            }
+
+            case editor_t::num_tool_types: break;
+        }
+
+        return false;
+    }
+
+    bool input_handler_t::on_mouse_drag(mouse_motion_event_t& event)
+    {
+        auto mw = world_coords(event.mouse_state.mouse_position);
+        auto hx = world_to_hex_coord(mw);
+
+        switch(editor.current_tool)
+        {
+            case editor_t::select:
+            {
+                break;
+            }
+
+            case editor_t::terrain_paint:
+            {
+                editor.brush_pos = hex_to_world_coord(hx);
+
                 /// If the user is dragging the mouse
                 /// paint hexes along the line they have dragged
                 /// otherwise it will only paint one hex per update
@@ -159,7 +200,7 @@ namespace editor
             {
                 if(editor.is_placing_spline())
                 {
-                    if(event.mouse_state.is_dragging())
+                    if(event.mouse_state.is_dragging(mouse_left))
                     {
                         editor.update_WIP_control_nodes(mw);
                     }

@@ -47,6 +47,7 @@ namespace editor
         bool on_mouse_down(mouse_button_event_t&) override;
         bool on_mouse_up(mouse_button_event_t&) override;
         bool on_mouse_move(mouse_motion_event_t&) override;
+        bool on_mouse_drag(mouse_motion_event_t&) override;
         bool on_mouse_wheel(mouse_wheel_event_t&) override;
 
         void on_key_down(SDL_Keysym keysm);
