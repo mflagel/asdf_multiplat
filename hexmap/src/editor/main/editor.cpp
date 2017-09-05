@@ -69,21 +69,23 @@ namespace editor
 
         {
             using namespace data;
-            terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
-            terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
-            terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
-            terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
-            // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
-            // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
-            // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
-            terrain_brushes.push_back(terrain_brush_hexagon(1));
-            terrain_brushes.push_back(terrain_brush_hexagon(2));
-            terrain_brushes.push_back(terrain_brush_hexagon(3));
-            terrain_brushes.push_back(terrain_brush_hexagon(5));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+            // saved_terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+            // saved_terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+            // saved_terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(1));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(2));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(3));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(5));
+
+            terrain_brush = saved_terrain_brushes[0];
 
             terrain_brush_renderer = std::make_unique<ui::terrain_brush_renderer_t>();
             terrain_brush_renderer->init(Content.create_shader_highest_supported("passthrough"));
-            terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+            terrain_brush_renderer->set_brush(&terrain_brush);
         }
     }
 
@@ -415,25 +417,23 @@ namespace editor
     }
 
 
-    /// Terrain
+    /// Terrain Brushes
     void editor_t::set_custom_terrain_brush(data::terrain_brush_t const& new_brush)
     {
-        //0th brush is custom brush
-        if(terrain_brushes.size() == 0)
-        {
-            terrain_brushes.push_back(new_brush);
-        }
-        else
-        {
-            terrain_brushes[0] = new_brush;
-        }
+        terrain_brush = new_brush;        
+        terrain_brush_renderer->set_brush(&terrain_brush);
+    }
 
-        current_terrain_brush_index = 0;
-        
-        terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+    void editor_t::save_current_terrain_brush()
+    {
+        if(saved_terrain_brushes.empty())
+            saved_terrain_brushes.push_back(terrain_brush);
+        else if(terrain_brush != saved_terrain_brushes.back())
+            saved_terrain_brushes.push_back(terrain_brush);
     }
 
 
+    /// Terrain
     void editor_t::paint_terrain_start()
     {
         painted_terrain_coords.clear();
