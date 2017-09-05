@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "terrain_brush_selector.h"
 
 /// https://doc-snapshots.qt.io/qt5-dev/qopenglwidget.html
 
@@ -258,6 +259,20 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
 
     if(prev_tool != editor->current_tool)
         emit editor_tool_changed(editor->current_tool);
+
+    /// Hxm_Qt specific hotkeys
+    switch(event->key())
+    {
+        case Qt::Key_BracketLeft:
+            main_window->brush_settings->shrink_brush();
+            update();
+            return;
+        case Qt::Key_BracketRight:
+            main_window->brush_settings->grow_brush();
+            update();
+            return;
+    }
+
 
     /// TODO only call this when editor does not handle key
     QWidget::keyPressEvent(event);
