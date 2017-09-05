@@ -131,7 +131,7 @@ namespace data
         LOG("offset after grid: %zu", SDL_RWtell(io));
 
         {
-            //objects.reserve(header.num_map_objects);
+            objects.resize(header.num_map_objects);
             uint64_t n = SDL_RWread(io, objects.data(), sizeof (map_object_t), objects.size());
             ASSERT(n == objects.size(), "Error reading map objects");
             LOG("read %zu map objects", n);
