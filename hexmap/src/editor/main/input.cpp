@@ -338,7 +338,7 @@ namespace editor
     {
         size_t obj_ind = editor.map_data.object_index_at(mw);
 
-        if(obj_ind != size_t(-1))
+        if(obj_ind != nullindex)
         {
             switch(modifier_keys)
             {

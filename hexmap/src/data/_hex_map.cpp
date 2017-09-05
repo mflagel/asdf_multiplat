@@ -157,9 +157,9 @@ namespace data
         auto possible_object_indices = object_indices_at(world_pos);
         
         if(possible_object_indices.size() > 0)
-            return *possible_object_indices.end(); //just return the last one, since that should be the top-most
+            return possible_object_indices.back(); //just return the last one, since that should be the top-most
         else
-            return -1;
+            return nullindex;
     }
 
     std::vector<object_index_t> hex_map_t::object_indices_at(glm::vec2 const& world_pos) const
@@ -193,7 +193,7 @@ namespace data
         if(possible_spline_indices.size() > 0)
             return *possible_spline_indices.end(); //just return the last one, since that should be the top-most
         else
-            return -1;
+            return nullindex;
     }
 
     std::vector<spline_index_t> hex_map_t::spline_indices_at(glm::vec2 const& world_pos) const
