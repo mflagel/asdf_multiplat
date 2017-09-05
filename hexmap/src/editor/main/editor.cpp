@@ -190,15 +190,15 @@ namespace editor
         map_data.map_name = map_name;
         map_data.hex_grid = data::hex_grid_t(size, default_cell_style);
 
+        map_filepath = "";
+        map_is_dirty = false;
+
         action_stack.clear();
 
         //reset camera
         rendered_map.camera_controller.position = default_camera_position;
         rendered_map.update(0.0f);
         rendered_map.camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map.camera.aspect_ratio);
-
-        map_filepath = "";
-        map_is_dirty = false;
 
         signal_data_changed();
     }
@@ -218,8 +218,9 @@ namespace editor
 
     void editor_t::load_action(std::string const& filepath)
     {
-        map_filepath = filepath;
         map_data.load_from_file(filepath);
+        
+        map_filepath = filepath;
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());

@@ -20,7 +20,6 @@ namespace hexmap
 namespace data
 {
     constexpr const char* default_map_name = "unnamed map";
-    constexpr size_t hxm_version = 1;
 
     constexpr char terrain_types_json_filename[] = "terrain_types.json";
     
@@ -58,7 +57,6 @@ namespace data
         }
 
         hxm_header_t header;
-        header.version = 1;
         header.chunk_size = hex_grid.chunk_size();
         header.map_size = hex_grid.size;
         header.num_map_objects = objects.size();

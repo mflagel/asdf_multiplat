@@ -40,15 +40,20 @@ namespace data
         std::vector<spline_index_t> spline_indices_at(glm::vec2 const& world_pos) const;
     };
 
-    struct hxm_header_t
+    constexpr size_t hxm_version = 0;
+
+    struct hxm_header_v0
     {
         uint64_t version{0}; //this might need to be seperate from the header in case the header changes
 
-        glm::uvec2 map_size{0};
         glm::uvec2 chunk_size{0};
+        glm::uvec2 map_size{0};
         uint64_t num_map_objects{0};
         uint64_t num_splines{0};
     };
+
+    struct hxm_header_t : hxm_header_v0
+    {};
 }
 }
 }
