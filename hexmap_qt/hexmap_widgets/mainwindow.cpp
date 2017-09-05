@@ -40,6 +40,10 @@ namespace
 
     constexpr int zoom_exponent_tick_per_press = 1;
 
+    constexpr const char* default_map_name = "untitled";
+    constexpr size_t default_map_width  = 30;
+    constexpr size_t default_map_height = 30;
+
     constexpr const char* default_map_file_extension = "hxm";
 }
 
@@ -153,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
     }
-    
+
     /// Terrain / Object Palette
     {
         palette_dock = new QDockWidget();
@@ -414,7 +418,7 @@ void MainWindow::init()
 
         ui->actionGrid->setChecked((editor->map_render_flags & rflags::grid_outline));
         ui->actionHex_Coords->setChecked((editor->map_render_flags & rflags::hex_coords));
-    
+
         auto connect_thing = [this](QAction* thing, rflags flag)
         {
             connect(thing, &QAction::triggered, [this, flag](bool chk)
@@ -434,7 +438,7 @@ void MainWindow::init()
     //must connect initialized before handing this tot he minimap_dock
     //otherwise the minimap initialize signal will have already fired before connecting
     connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
-    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
         [this](){
             minimap->is_dirty = true;
             minimap->update();
@@ -449,7 +453,7 @@ void MainWindow::init()
 
         minimap_dock->setWidget(minimap);
 
-        connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+        connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
             [this](){
                 minimap->is_dirty = true;
                 minimap->update();
@@ -505,6 +509,12 @@ void MainWindow::init()
                     ui->hexmap_widget->editor->set_spline_node_style(node_style);
                 });
     }
+
+    asdf::hexmap::data::hex_grid_cell_t cell;
+    cell.tile_id = 0;
+    glm::uvec2 map_size(default_map_width, default_map_height);
+    ui->hexmap_widget->editor->new_map_action(default_map_name, map_size, cell);
+    ui->hexmap_widget->zoom_extents();
 }
 
 
