@@ -39,6 +39,8 @@ namespace
     constexpr int status_message_timeout_ms = 5000;
 
     constexpr int zoom_exponent_tick_per_press = 1;
+
+    constexpr const char* default_map_file_extension = "hxm";
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -335,13 +337,35 @@ void MainWindow::save_map()
 
 void MainWindow::save_map_as()
 {
-    QString dir(ui->hexmap_widget->editor->map_filepath.c_str());
-    QString filepath = QFileDialog::getSaveFileName(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+    auto const& map_filepath = hexmap_widget->editor->map_filepath;
+    auto const& map_name = hexmap_widget->editor->map_data.map_name;
 
-    if(filepath.size() > 0)
+    QString dir;
+    if(map_filepath.size() > 0)
     {
-        editor->save_action( std::string(filepath.toUtf8().constData()) );
-        save_status_message();
+        dir = QString(map_filepath.c_str());
+    }
+    else if(map_name.size() > 0)
+    {
+        QString qmapname((map_name + "." + default_map_file_extension).c_str());
+        dir = QString(qmapname);
+    }
+
+
+    QFileDialog save_dialog(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+    save_dialog.setAcceptMode(QFileDialog::AcceptSave);
+    save_dialog.setDefaultSuffix(default_map_file_extension);
+
+    if(save_dialog.exec())
+    {
+        auto filenames = save_dialog.selectedFiles();
+        ASSERT(filenames.size() <= 1, "There should not be multiple save filenames");
+        if(filenames.size() > 0)
+        {
+            auto const& filepath = filenames[0];
+            editor->save_action( std::string(filepath.toUtf8().constData()) );
+            save_status_message();
+        }
     }
 }
 
