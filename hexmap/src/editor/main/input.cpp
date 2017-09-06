@@ -307,7 +307,9 @@ namespace editor
                 {
                     case editor_t::terrain_paint:
                     {
-                        editor.set_current_tile_id(num_from_key);
+                        // make it 1-indexed such that pressing 1 selects the
+                        // 'first'(zero'th) tile
+                        editor.set_current_tile_id(num_from_key - 1);
                         break;
                     }
 
