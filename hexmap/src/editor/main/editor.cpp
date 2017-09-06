@@ -174,7 +174,7 @@ namespace editor
                 shader->world_matrix = glm::mat4();
 
                 shader->world_matrix[3][0] = brush_pos.x;
-                shader->world_matrix[3][1] = brush_pos.y;
+                shader->world_matrix[3][1] = brush_pos.y + hex_height_d2;
 
                 shader->view_matrix       = rendered_map.shader->view_matrix ;
                 shader->projection_matrix = rendered_map.shader->projection_matrix;
