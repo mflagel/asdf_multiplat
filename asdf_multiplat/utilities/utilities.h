@@ -171,7 +171,7 @@ namespace asdf {
     /************************************************************************/
     int compress_file(std::experimental::filesystem::path const& src_filepath
                     , std::experimental::filesystem::path const& dest_filepath
-                    , int compression_level) noexcept;
+                    , int compression_level = -1) noexcept;
     int compress_file(FILE* src, FILE* dest, int compression_level) noexcept;
 
 
