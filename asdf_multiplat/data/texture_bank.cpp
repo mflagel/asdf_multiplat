@@ -13,7 +13,8 @@
 using namespace std;
 using namespace glm;
 
-using namespace std::experimental::filesystem;
+namespace stdfs = std::experimental::filesystem;
+using path = stdfs::path;
 
 namespace asdf
 {
@@ -31,6 +32,33 @@ namespace data
         GL_State->init_render_target(atlas_fbo, atlas_texture);
 
         ASSERT(!CheckGLError(), "GL Error Initializing texture_bank_t");
+    }
+    
+    path hunt_for_file(path const& _p)
+    {
+        constexpr size_t num_upwards_attempts = 3;
+
+        //if relative path, look upwards a bit
+        if(_p.is_relative())
+        {
+            path p = _p;
+            for(size_t i = 0; i < num_upwards_attempts; ++i)
+            {
+                path up_p = "../";
+                up_p += p;
+                if(stdfs::exists(p))
+                    return p;
+            }
+        }
+
+        //do a more detailed search
+        path start_point = _p.parent_path().parent_path();
+        path search = asdf::util::find_file(_p.filename(), start_point);
+
+        if(!search.empty())
+            return search;
+
+        return path();
     }
 
     void texture_bank_t::load_from_file(path const& filepath)
@@ -60,9 +88,23 @@ namespace data
         {
             //filepaths in json are relative to the json document itself
             if(!t.filepath.is_absolute())
-                t.local_filepath = std::experimental::filesystem::canonical(parent_path / t.filepath);
+                t.local_filepath = parent_path / t.filepath;
             else
-                t.local_filepath = std::experimental::filesystem::canonical(t.filepath);
+                t.local_filepath = t.filepath;
+
+            try{
+                t.local_filepath = stdfs::canonical(t.local_filepath);
+            }
+            catch (stdfs::filesystem_error const& fs_e)
+            {
+                ///try to hunt around for the file
+                auto p = hunt_for_file(t.local_filepath);
+
+                if(stdfs::exists(p))
+                    t.local_filepath = p;
+                else
+                    throw fs_e; //just rethrow
+            }
         }
 
         add_textures(terrain);
