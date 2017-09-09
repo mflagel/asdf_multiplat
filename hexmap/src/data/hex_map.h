@@ -31,13 +31,21 @@ namespace data
         
         hex_map_t(std::string const& map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
         hex_map_t(glm::uvec2 grid_size);
-        void save_to_file(std::string const& filepath);
-        void load_from_file(std::string const& filepath);
 
         object_index_t object_index_at(glm::vec2 const& world_pos) const;
         spline_index_t spline_index_at(glm::vec2 const& world_pos) const;
         std::vector<object_index_t> object_indices_at(glm::vec2 const& world_pos) const;
         std::vector<spline_index_t> spline_indices_at(glm::vec2 const& world_pos) const;
+
+        void save_to_file(std::string const& filepath);
+        void load_from_file(std::string const& filepath);
+
+    private:
+        void _save_to_file(std::experimental::filesystem::path const& filepath);
+        void _load_from_file(std::experimental::filesystem::path const& filepath);
+        void package_map(std::vector<std::experimental::filesystem::path> const& map_filepaths
+                       , std::experimental::filesystem::path const& package_filepath);
+        void unpackage_map(std::experimental::filesystem::path const& filepath);
     };
 
     constexpr size_t hxm_version = 0;

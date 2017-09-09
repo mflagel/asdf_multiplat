@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "hex_map.h"
 
+#include <cstddef>
+
 #include <glm/gtx/norm.hpp>
 
 #include "asdf_multiplat/main/asdf_multiplat.h"
@@ -8,7 +10,9 @@
 #include "asdf_multiplat/data/content_manager.h"
 
 
+
 using namespace std;
+namespace stdfs = std::experimental::filesystem;
 
 namespace asdf
 {
@@ -42,114 +46,6 @@ namespace data
     : hex_map_t(default_map_name, grid_size)
     {}
 
-    //TODO: refactor save/load code such that hex_grid_t::save_to_file() takes a SDL_RWops*
-    //      to read/write to
-
-    // https://wiki.libsdl.org/SDL_RWops?highlight=%28%5CbCategoryStruct%5Cb%29%7C%28CategoryIO%29
-    // https://wiki.libsdl.org/SDL_RWwrite?highlight=%28%5CbCategoryIO%5Cb%29%7C%28CategoryEnum%29%7C%28CategoryStruct%29
-    void hex_map_t::save_to_file(std::string const& filepath)
-    {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
-
-        if(!io)
-        {
-            EXPLODE("data::hex_map_t::save_to_file() error");  //todo: handle errors better
-        }
-
-        hxm_header_t header;
-        header.chunk_size = hex_grid.chunk_size();
-        header.map_size = hex_grid.size;
-        header.num_map_objects = objects.size();
-        header.num_splines = splines.size();
-
-        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(&header), sizeof(hxm_header_t), 1);
-
-        if(num_written != 1)
-        {
-            EXPLODE("error writing hxm header");
-        }
-        else
-        {
-            LOG("wrote header (%zu bytes)", sizeof(hxm_header_t));
-        }
-
-        /// save data
-        hex_grid.save_to_file(io);
-        LOG("offset after hex_grid: %zu", SDL_RWtell(io));
-
-        {
-            num_written = SDL_RWwrite(io, objects.data(), sizeof(map_object_t), objects.size());
-            ASSERT(num_written == objects.size(), "error saving map_objects");
-            LOG("wrote %zu map_objects (%zu bytes)", num_written, num_written * sizeof(map_object_t));
-            LOG("offset after objects: %zu", SDL_RWtell(io));
-        }
-
-
-        for(auto const& spline : splines)
-        {
-            spline.save_to_file(io);
-        }
-        LOG("offset after splines: %zu", SDL_RWtell(io));
-
-        LOG("total stream size: %zu", SDL_RWtell(io));
-
-        /// close file and commit to disk
-        SDL_RWclose(io);
-
-
-        /// Save terrain_bank as a separate file
-        /// Will get compressed with the rest of the save file at some point
-        std::experimental::filesystem::path terrain_path(filepath);
-        terrain_path += "terrain.json";
-        terrain_bank.save_to_file(terrain_path);
-    }
-
-    void hex_map_t::load_from_file(std::string const& filepath)
-    {
-        /// load terrain first so it exists when the map loads
-        std::experimental::filesystem::path terrain_path(filepath);
-        terrain_path += "terrain.json";
-        terrain_bank.clear(); /// TODO: cache existing terrain rather than reloading entirely
-        terrain_bank.load_from_file(terrain_path);
-
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
-
-        if (!io)
-        {
-            EXPLODE("data::hex_map_t::load_to_file()");  //todo: handle errors better
-        }
-
-
-        hxm_header_t header;
-        size_t num_read = SDL_RWread(io, &header, sizeof (hxm_header_t), 1);
-        ASSERT(num_read > 0, "Error reading file header");
-
-        ASSERT(header.version == hxm_version, "incorrect hxm version (got %zu, expected %zu)", header.version, hxm_version);
-
-        ///load data
-        hex_grid.load_from_file(io, header);
-        LOG("offset after grid: %zu", SDL_RWtell(io));
-
-        {
-            objects.resize(header.num_map_objects);
-            uint64_t n = SDL_RWread(io, objects.data(), sizeof (map_object_t), objects.size());
-            ASSERT(n == objects.size(), "Error reading map objects");
-            LOG("read %zu map objects", n);
-        }
-        LOG("offset after objects: %zu", SDL_RWtell(io));
-
-
-        splines.resize(header.num_splines, spline_t{});
-        for(auto& spline : splines)
-        {
-            spline.load_from_file(io);
-        }
-        LOG("offset after splines: %zu", SDL_RWtell(io));
-
-        LOG("total stream size: %zu", SDL_RWtell(io));
-
-        SDL_RWclose(io);
-    }
 
     ///OPTIMIZE: iterate from end to start and grab the first one that intersects
     size_t hex_map_t::object_index_at(glm::vec2 const& world_pos) const
@@ -210,6 +106,195 @@ namespace data
         }
 
         return spline_inds;
+    }
+
+    constexpr const char* compressed_ext = ".compressed";
+    constexpr const char* map_data_ext = ".map_data";
+    constexpr const char* terrain_data_ext = "terrain.json";
+
+    void hex_map_t::save_to_file(std::string const& filepath)
+    {
+        using namespace asdf::util;
+
+        std::vector<stdfs::path> map_filepaths;
+
+        stdfs::path map_data_filepath(filepath + map_data_ext);
+        _save_to_file(map_data_filepath);
+        map_filepaths.emplace_back(std::move(map_data_filepath));
+
+        // path compressed_map_filepath(map_data_filepath + compressed_ext);
+        // compress_file(compressed_map_filepath);
+        // map_filepaths.emplace_back(compressed_map_filepath);
+
+        /// Save terrain_bank as a separate file
+        /// Will get compressed with the rest of the save file at some point
+        stdfs::path terrain_path(filepath + terrain_data_ext);
+        terrain_bank.save_to_file(terrain_path);
+        map_filepaths.emplace_back(std::move(terrain_path));
+
+        package_map(map_filepaths, stdfs::path(filepath));
+    }
+
+    void hex_map_t::load_from_file(std::string const& filepath)
+    {
+        unpackage_map(filepath);
+
+        /// load terrain first so it exists when the map loads
+        stdfs::path terrain_path(filepath + terrain_data_ext);
+        terrain_bank.clear(); /// TODO: cache existing terrain rather than reloading entirely
+        terrain_bank.load_from_file(terrain_path);
+
+        stdfs::path map_filepath = filepath + map_data_ext;
+        _load_from_file(map_filepath);
+
+        ///remove once they've been loaded
+        ///archived file will still be there
+        stdfs::remove(terrain_path);
+        stdfs::remove(map_filepath);
+    }
+
+
+    //TODO: refactor save/load code such that hex_grid_t::save_to_file() takes a SDL_RWops*
+    //      to read/write to
+
+    // https://wiki.libsdl.org/SDL_RWops?highlight=%28%5CbCategoryStruct%5Cb%29%7C%28CategoryIO%29
+    // https://wiki.libsdl.org/SDL_RWwrite?highlight=%28%5CbCategoryIO%5Cb%29%7C%28CategoryEnum%29%7C%28CategoryStruct%29
+    void hex_map_t::_save_to_file(stdfs::path const& filepath)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+
+        if(!io)
+        {
+            EXPLODE("data::hex_map_t::save_to_file() error");  //todo: handle errors better
+        }
+
+        hxm_header_t header;
+        header.chunk_size = hex_grid.chunk_size();
+        header.map_size = hex_grid.size;
+        header.num_map_objects = objects.size();
+        header.num_splines = splines.size();
+
+        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(&header), sizeof(hxm_header_t), 1);
+
+        if(num_written != 1)
+        {
+            EXPLODE("error writing hxm header");
+        }
+        else
+        {
+            LOG("wrote header (%zu bytes)", sizeof(hxm_header_t));
+        }
+
+        /// save data
+        hex_grid.save_to_file(io);
+        LOG("offset after hex_grid: %zu", SDL_RWtell(io));
+
+        {
+            num_written = SDL_RWwrite(io, objects.data(), sizeof(map_object_t), objects.size());
+            ASSERT(num_written == objects.size(), "error saving map_objects");
+            LOG("wrote %zu map_objects (%zu bytes)", num_written, num_written * sizeof(map_object_t));
+            LOG("offset after objects: %zu", SDL_RWtell(io));
+        }
+
+
+        for(auto const& spline : splines)
+        {
+            spline.save_to_file(io);
+        }
+        LOG("offset after splines: %zu", SDL_RWtell(io));
+
+        LOG("total stream size: %zu", SDL_RWtell(io));
+
+        /// close file and commit to disk
+        SDL_RWclose(io);
+    }
+
+    void hex_map_t::_load_from_file(stdfs::path const& filepath)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+
+        if (!io)
+        {
+            EXPLODE("data::hex_map_t::load_to_file()");  //todo: handle errors better
+        }
+
+
+        hxm_header_t header;
+        size_t num_read = SDL_RWread(io, &header, sizeof (hxm_header_t), 1);
+        ASSERT(num_read > 0, "Error reading file header");
+
+        ASSERT(header.version == hxm_version, "incorrect hxm version (got %zu, expected %zu)", header.version, hxm_version);
+
+        ///load data
+        hex_grid.load_from_file(io, header);
+        LOG("offset after grid: %zu", SDL_RWtell(io));
+
+        {
+            objects.resize(header.num_map_objects);
+            uint64_t n = SDL_RWread(io, objects.data(), sizeof (map_object_t), objects.size());
+            ASSERT(n == objects.size(), "Error reading map objects");
+            LOG("read %zu map objects", n);
+        }
+        LOG("offset after objects: %zu", SDL_RWtell(io));
+
+
+        splines.resize(header.num_splines, spline_t{});
+        for(auto& spline : splines)
+        {
+            spline.load_from_file(io);
+        }
+        LOG("offset after splines: %zu", SDL_RWtell(io));
+
+        LOG("total stream size: %zu", SDL_RWtell(io));
+
+        SDL_RWclose(io);
+    }
+
+    stdfs::path make_temp_path(stdfs::path const& path)
+    {
+        auto temp_filepath = path;
+        do
+        {
+            temp_filepath += "__temp";
+        }
+        while (stdfs::exists(temp_filepath));
+
+        return temp_filepath;
+    }
+
+    void hex_map_t::package_map(std::vector<stdfs::path> const& map_filepaths, stdfs::path const& package_filepath)
+    {
+        /// write to a slightly-different path
+        /// once writing/packaging is done, move the file at
+        /// [working_filepath] to [filepath]
+        /// supposedly this prevents accidental corruption
+        /// if there is already a file at [filepath]
+        stdfs::path working_filepath = make_temp_path(package_filepath);
+
+        int tar_result = archive_files(map_filepaths, working_filepath);
+        if(tar_result != 0)
+        {
+            fprintf(stderr, "tar_open(): %s\n", strerror(errno));
+            EXPLODE("error archiving map");
+        }
+
+        stdfs::rename(working_filepath, package_filepath);
+
+        //clean up temp files
+        for(auto const& p : map_filepaths)
+        {
+            stdfs::remove(p);
+        }
+    }
+
+    void hex_map_t::unpackage_map(stdfs::path const& filepath)
+    {
+        int tar_result = unarchive_files(filepath, filepath.parent_path());
+        if(tar_result != 0)
+        {
+            fprintf(stderr, "tar_open(): %s\n", strerror(errno));
+            EXPLODE("error extracting map from archive");
+        }
     }
 
 }
