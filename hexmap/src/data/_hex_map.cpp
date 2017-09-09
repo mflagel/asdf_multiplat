@@ -108,9 +108,9 @@ namespace data
         return spline_inds;
     }
 
-    constexpr const char* compressed_ext = ".compressed";
-    constexpr const char* map_data_ext = ".map_data";
-    constexpr const char* terrain_data_ext = "terrain.json";
+    constexpr const char* compressed_ext   = ".compressed";
+    constexpr const char* map_data_ext     = ".map_data";
+    constexpr const char* terrain_data_ext = ".terrain.json";
 
     void hex_map_t::save_to_file(std::string const& filepath)
     {
@@ -262,6 +262,11 @@ namespace data
         return temp_filepath;
     }
 
+    /// TODO: put temporary compression / archive files in a temp folder?
+    ///       ie stdfs::temp_directory_path() / "hexmap" / package_filepath /
+    ///       will require copying over terrain json before loading
+    ///       or modifying load code to specify a directory that paths
+    ///       should be relative to
     void hex_map_t::package_map(std::vector<stdfs::path> const& map_filepaths, stdfs::path const& package_filepath)
     {
         /// write to a slightly-different path
@@ -271,7 +276,17 @@ namespace data
         /// if there is already a file at [filepath]
         stdfs::path working_filepath = make_temp_path(package_filepath);
 
-        int tar_result = archive_files(map_filepaths, working_filepath);
+        std::vector<stdfs::path> compressed_filepaths;
+        for(auto const& p : map_filepaths)
+        {
+            compressed_filepaths.emplace_back(p.string() + compressed_ext);
+            int r = asdf::util::compress_file(p, compressed_filepaths.back());
+            if(r != 0)
+                EXPLODE("failed to compress file [%s]", compressed_filepaths.back().c_str());
+            stdfs::remove(p); //remove uncompressed temp file
+        }
+
+        int tar_result = archive_files(compressed_filepaths, working_filepath);
         if(tar_result != 0)
         {
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
@@ -281,7 +296,7 @@ namespace data
         stdfs::rename(working_filepath, package_filepath);
 
         //clean up temp files
-        for(auto const& p : map_filepaths)
+        for(auto const& p : compressed_filepaths)
         {
             stdfs::remove(p);
         }
@@ -294,6 +309,27 @@ namespace data
         {
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
             EXPLODE("error extracting map from archive");
+        }
+
+        {
+            stdfs::path uncompressed = filepath.string() + map_data_ext;
+            stdfs::path compressed = uncompressed.string() + compressed_ext;
+            int r = asdf::util::decompress_file(compressed, uncompressed);
+            if(r != 0)
+            {
+                EXPLODE("failed to decompress map data");
+            }
+            stdfs::remove(compressed);
+        }
+        {
+            stdfs::path uncompressed = filepath.string() + terrain_data_ext;
+            stdfs::path compressed = uncompressed.string() + compressed_ext;
+            int r = asdf::util::decompress_file(compressed, uncompressed);
+            if(r != 0)
+            {
+                EXPLODE("failed to decompress terrain json");
+            }
+            stdfs::remove(compressed);
         }
     }
 
