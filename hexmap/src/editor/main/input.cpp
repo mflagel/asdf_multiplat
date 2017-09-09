@@ -385,12 +385,12 @@ namespace editor
         {
             switch(modifier_keys)
             {
-                case KMOD_LSHIFT: [[fallthrough]]
+                case KMOD_LSHIFT: [[fallthrough]];
                 case KMOD_RSHIFT:
                     editor.select_object(obj_ind);
                     break;
 
-                case KMOD_LALT: [[fallthrough]]
+                case KMOD_LALT: [[fallthrough]];
                 case KMOD_RALT:
                     editor.deselect_object(obj_ind);
                     break;
