@@ -356,16 +356,6 @@ namespace asdf {
 
 
 
-    /// http://www.zlib.net/zlib_how.html
-    #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
-    #  include <fcntl.h>
-    #  include <io.h>
-    #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-    #else
-    #  define SET_BINARY_MODE(file)
-    #endif
-
-
     // constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
     constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K
 
@@ -454,7 +444,11 @@ namespace asdf {
         FILE* source = fopen(src_filepath.c_str(),  "r");
         FILE* dest   = fopen(dest_filepath.c_str(), "w");
 
-        return decompress_file(source, dest);
+        int decompress_result = decompress_file(source, dest);
+
+        fclose(source);
+        fclose(dest);
+        return decompress_result;
     }
 
     /// http://www.zlib.net/zlib_how.html
@@ -556,7 +550,7 @@ namespace asdf {
         {
             ASSERT(stdfs::exists(p), "archiving a file that does not exist [%s]", p.c_str());
 
-            tar_status = tar_append_file(t, p.c_str(), p.c_str());
+            tar_status = tar_append_file(t, p.c_str(), p.filename().c_str());
             if(tar_status != 0)
                 return tar_status;
         }
@@ -585,11 +579,9 @@ namespace asdf {
         if(tar_status != 0)
             return tar_status;
 
-        auto prefix = relative(tar_path.parent_path(), extract_dir);
-
         /// const_cast required because libtar never takes const char*
         /// as an argument for anything
-        tar_status = tar_extract_all(t, const_cast<char*>(prefix.c_str()));
+        tar_status = tar_extract_all(t, const_cast<char*>(extract_dir.c_str()));
         if(tar_status != 0)
             return tar_status;
 
