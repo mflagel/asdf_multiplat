@@ -113,6 +113,7 @@ namespace asdf {
         }
     }
 
+    [[deprecated("use std::filesystem")]]
     bool is_directory(std::string const& filepath)
     {
         #ifdef _MSC_VER
@@ -128,6 +129,7 @@ namespace asdf {
 #endif
     }
 
+    [[deprecated("use std::filesystem")]]
     bool is_file(std::string const& filepath)
     {
 #ifdef _MSC_VER
@@ -168,6 +170,7 @@ namespace asdf {
         }
     }
 
+    [[deprecated("use std::filesystem")]]
     void create_dir(std::string const& path)
     {
         ASSERT(!is_directory(path), "Directory already exists at %s", path.c_str());
@@ -213,10 +216,12 @@ namespace asdf {
 
     E relative to G = ../../c/e
     */
-    using path = std::experimental::filesystem::path;
     path relative(path const& a, path const& b)
     {
-        using namespace std::experimental::filesystem;
+        if(a == b)
+            return path();
+
+        using namespace stdfs;
 
         path con_a = canonical(a);
 
@@ -226,6 +231,9 @@ namespace asdf {
         path con_b = b;
         con_b.remove_filename();
         con_b = canonical(con_b);
+
+        if(con_a == con_b)
+            return path();
 
 
         if(con_a.root_path() != con_b.root_path())
@@ -271,6 +279,31 @@ namespace asdf {
         return result;
     }
 
+    // enum file_find_direction_e
+    // {
+    //       file_search_upwards
+    //     , file_search_downward
+    //     , file_search_outwards ///ie: both up and down
+    // };
+
+    path find_file(path const& filename, path const& start_point)
+    {
+        ASSERT(!filename.empty(), "cannot search for empty filename");
+
+        if(stdfs::exists(filename))
+            return filename;
+
+        ASSERT(stdfs::exists(start_point), "invalid starting point for search [%s]", start_point.c_str());
+        ASSERT(stdfs::is_directory(start_point), "start point is not a directory [%s]", start_point.c_str());
+
+        for(auto const& p : stdfs::recursive_directory_iterator(start_point))
+        {
+            if(p.path().filename() == filename)
+                return p;
+        }
+
+        return path();
+    }
 
 
 //     Document read_json_file(std::string const& filepath)

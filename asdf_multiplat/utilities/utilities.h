@@ -157,9 +157,14 @@ namespace asdf {
     std::string find_folder(std::string const& name, size_t max_search_dist = 5);
     void create_dir(std::string const& path);
 
-    /// TODO: deprecate this func once MSVC releases their full <filesystem> implementation
+    /// TODO: deprecate this func once MSVC and libstdc++ release their full <filesystem> implementations
     ///       (or at least their version of relative(path, path)
-    std::experimental::filesystem::path relative(std::experimental::filesystem::path const& a, std::experimental::filesystem::path const& b);
+    std::experimental::filesystem::path
+    relative(std::experimental::filesystem::path const& a, std::experimental::filesystem::path const& b);
+
+    std::experimental::filesystem::path
+    find_file(std::experimental::filesystem::path const& filename, std::experimental::filesystem::path const& start_point = std::experimental::filesystem::current_path());
+
 
     /************************************************************************/
     /* Random Number Generation
