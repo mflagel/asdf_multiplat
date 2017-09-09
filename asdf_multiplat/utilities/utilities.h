@@ -167,6 +167,24 @@ namespace asdf {
 
 
     /************************************************************************/
+    /* File Compression / Decompression (wraps zlib and libtar
+    /************************************************************************/
+    int compress_file(std::experimental::filesystem::path const& src_filepath
+                    , std::experimental::filesystem::path const& dest_filepath
+                    , int compression_level) noexcept;
+    int compress_file(FILE* src, FILE* dest, int compression_level) noexcept;
+
+
+    int decompress_file(std::experimental::filesystem::path const& src_filepath
+                      , std::experimental::filesystem::path const& dest_filepath) noexcept;
+    int decompress_file(FILE* src, FILE* dest) noexcept;
+
+    int archive_files(std::vector<std::experimental::filesystem::path> const& filepaths
+                    , std::experimental::filesystem::path const& combined_filepath);
+    int unarchive_files(std::experimental::filesystem::path const& tar_path,
+                        std::experimental::filesystem::path const& extract_dir);
+
+    /************************************************************************/
     /* Random Number Generation
     /************************************************************************/
     //generate random velocity and angle between min and max

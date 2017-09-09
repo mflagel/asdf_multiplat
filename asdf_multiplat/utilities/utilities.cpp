@@ -3,6 +3,11 @@
 
 #include <cstring>  //for std::strtok
 
+#include <stdio.h>
+#include <zlib.h>
+#include <fcntl.h>    //for O_RDONLY AND O_WRONLY, used with tar_open()
+#include <libtar.h>
+
 // #include "reflected_struct.h"
 
 // #include "rapidjson/rapidjson.h"
@@ -21,6 +26,9 @@
 DIAGNOSTIC_IGNORE(-Wcomment)
 
 // using namespace rapidjson;
+
+namespace stdfs = std::experimental::filesystem;
+using path = stdfs::path;
 
 namespace asdf {
     namespace util {
@@ -343,6 +351,253 @@ namespace asdf {
 
         return cwd;
     }
+
+
+
+
+
+    /// http://www.zlib.net/zlib_how.html
+    #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+    #  include <fcntl.h>
+    #  include <io.h>
+    #  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+    #else
+    #  define SET_BINARY_MODE(file)
+    #endif
+
+
+    // constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
+    constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K
+
+
+    int compress_file(std::experimental::filesystem::path const& src_filepath
+                    , std::experimental::filesystem::path const& dest_filepath
+                    , int compression_level) noexcept
+    {
+        ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
+
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+
+        int compress_result = compress_file(source, dest, compression_level);
+
+        fclose(source);
+        fclose(dest);
+
+        return compress_result;
+    }
+
+    /// http://www.zlib.net/zlib_how.html
+    int compress_file(FILE* source, FILE* dest, int compression_level) noexcept
+    {
+        using byte_t = std::byte;
+
+        z_stream strm;
+        byte_t in[zlib_chunk_size];
+        byte_t out[zlib_chunk_size];
+
+        strm.zalloc = nullptr;
+        strm.zfree  = nullptr;
+        strm.opaque = nullptr;
+
+        int deflate_status = deflateInit(&strm, compression_level);
+        if(deflate_status != Z_OK)
+            return deflate_status;
+
+        
+        int flush = Z_NO_FLUSH;
+        do
+        {
+            strm.avail_in = fread(in, 1, zlib_chunk_size, source);
+            if (ferror(source)) {
+                (void)deflateEnd(&strm);
+                return Z_ERRNO;
+            }
+            flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
+            strm.next_in = reinterpret_cast<Bytef*>(in);
+
+            /* run deflate() on input until output buffer not full, finish
+               compression if all of source has been read in */
+            do
+            {
+                strm.avail_out = zlib_chunk_size;
+                strm.next_out = reinterpret_cast<Bytef*>(out);
+
+                deflate_status = deflate(&strm, flush);
+                ASSERT(deflate_status != Z_STREAM_ERROR, "stream error during zlib deflate"); /* state not clobbered */
+
+                size_t n_to_write = zlib_chunk_size - strm.avail_out;
+                size_t n_written = fwrite(out, 1, n_to_write, dest);
+
+                if (n_written != n_to_write || ferror(dest)) {
+                    (void)deflateEnd(&strm);
+                    return Z_ERRNO;
+                }
+            }
+            while(strm.avail_out == 0);
+            ASSERT(strm.avail_in == 0, "Not all input was deflated");
+        }
+        while(flush != Z_FINISH);
+        ASSERT(deflate_status == Z_STREAM_END, "zlib stream not finished");
+
+        /* clean up and return */
+        (void)deflateEnd(&strm);
+        return Z_OK;
+    }
+
+
+    int decompress_file(std::experimental::filesystem::path const& src_filepath
+                      , std::experimental::filesystem::path const& dest_filepath) noexcept
+    {
+        ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
+
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+
+        return decompress_file(source, dest);
+    }
+
+    /// http://www.zlib.net/zlib_how.html
+    int decompress_file(FILE* source, FILE* dest) noexcept
+    {
+        using byte_t = std::byte;
+
+        z_stream strm;
+        byte_t in[zlib_chunk_size];
+        byte_t out[zlib_chunk_size];
+
+        strm.zalloc = nullptr;
+        strm.zfree  = nullptr;
+        strm.opaque = nullptr;
+
+        strm.avail_in = 0;
+        strm.next_in = nullptr;
+
+        int inflate_status = inflateInit(&strm);
+        if (inflate_status != Z_OK)
+            return inflate_status;
+
+        do
+        {
+            strm.avail_in = fread(in, 1, zlib_chunk_size, source);
+            if (ferror(source)) {
+                (void)inflateEnd(&strm);
+                return Z_ERRNO;
+            }
+            if (strm.avail_in == 0)
+                break;
+            strm.next_in = reinterpret_cast<Bytef*>(in);
+
+            /* run inflate() on input until output buffer not full */
+            do
+            {
+                strm.avail_out = zlib_chunk_size;
+                strm.next_out = reinterpret_cast<Bytef*>(out);
+
+                inflate_status = inflate(&strm, Z_NO_FLUSH);
+                ASSERT(inflate_status != Z_STREAM_ERROR, "zlib inflate error");
+
+                switch (inflate_status)
+                {
+                    case Z_NEED_DICT:
+                        inflate_status = Z_DATA_ERROR;
+                        ///FALLTHROUGH
+                    case Z_DATA_ERROR:
+                    case Z_MEM_ERROR:
+                        (void)inflateEnd(&strm);
+                        return inflate_status;
+                }
+
+                size_t n_to_write = zlib_chunk_size - strm.avail_out;
+                size_t n_written = fwrite(out, 1, n_to_write, dest);
+
+                if (n_written != n_to_write || ferror(dest)) {
+                    (void)deflateEnd(&strm);
+                    return Z_ERRNO;
+                }
+            }
+            while(strm.avail_out == 0);
+        }
+        while(inflate_status != Z_STREAM_END);
+
+        /* clean up and return */
+        (void)inflateEnd(&strm);
+        return inflate_status == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    }
+
+    int archive_files(std::vector<stdfs::path> const& filepaths, stdfs::path const& combined_filepath)
+    {
+        /// if the file doesn't exist yet, create an empty file
+        /// for tar to write into
+        if(!stdfs::exists(combined_filepath))
+        {
+            FILE* f = fopen(combined_filepath.c_str(), "w");
+            fclose(f);
+        }
+        else if(!stdfs::is_regular_file(combined_filepath))
+        {
+            return 1;
+        }
+
+        TAR *t;
+        int tar_status = tar_open(&t
+                            , combined_filepath.c_str()
+                            , nullptr   //null tartype uses default file IO functions
+                            , O_WRONLY  //must be O_RDONLY or O_WRONLY
+                            , 0         // mode?
+                            , TAR_NOOVERWRITE | TAR_VERBOSE
+                            );
+
+        if(tar_status != 0)
+            return tar_status;
+
+
+        for(auto const& p : filepaths)
+        {
+            ASSERT(stdfs::exists(p), "archiving a file that does not exist [%s]", p.c_str());
+
+            tar_status = tar_append_file(t, p.c_str(), p.c_str());
+            if(tar_status != 0)
+                return tar_status;
+        }
+
+
+        tar_status = tar_close(t);
+        return tar_status;
+    }
+
+    int unarchive_files(stdfs::path const& tar_path, stdfs::path const& extract_dir)
+    {
+        ASSERT(stdfs::exists(tar_path), "archive does not exist");
+        ASSERT(stdfs::is_regular_file(tar_path), "archive is not a valid file");
+
+        ASSERT(stdfs::exists(extract_dir), "extract_dir does not exist");
+        ASSERT(stdfs::is_directory(extract_dir), "extract_dir is not a directory");
+
+        TAR *t;
+        int tar_status = tar_open(&t
+                            , tar_path.c_str()
+                            , nullptr   //null tartype uses default file IO functions
+                            , O_RDONLY  //must be O_RDONLY or O_WRONLY
+                            , 0         // mode?
+                            , TAR_VERBOSE
+                            );
+        if(tar_status != 0)
+            return tar_status;
+
+        auto prefix = relative(tar_path.parent_path(), extract_dir);
+
+        /// const_cast required because libtar never takes const char*
+        /// as an argument for anything
+        tar_status = tar_extract_all(t, const_cast<char*>(prefix.c_str()));
+        if(tar_status != 0)
+            return tar_status;
+
+        tar_status = tar_close(t);
+        return tar_status;
+    }
+
+
 
     bool CheckBounds(int x, int y, int minX, int maxX, int minY, int maxY){
 	    if(x > maxX || x < minX)
