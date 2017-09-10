@@ -217,6 +217,29 @@ struct is_c_str
 ///
 
 
+/// https://stackoverflow.com/a/21510185
+/// allows a range-based for loop to access a container in reverse
+/// ex:
+///     for (auto x: reversed(c))
+///         ...
+namespace details {
+    template <class T> struct _reversed { T& t; _reversed(T& _t): t(_t) {} };
+    template <class T> struct _creversed { T const& t; _creversed(T const& _t): t(_t) {} };  /// ADDED by mflagel
+}
+
+template <class T> details::_reversed<T> reversed(T& t) { return details::_reversed<T>(t); }
+template <class T> details::_reversed<T const> reversed(T const& t) { return details::_reversed<T const>(t); }
+
+namespace std {
+    template <class T> auto begin(details::_reversed<T>& r) -> decltype(r.t.rbegin()) { return r.t.rbegin(); }
+    template <class T> auto end(details::_reversed<T>& r) -> decltype(r.t.rend()) { return r.t.rend(); }
+
+    template <class T> auto begin(details::_creversed<T> const& cr) -> decltype(cr.t.rbegin()) { return cr.t.rbegin(); }
+    template <class T> auto end(details::_creversed<T> const& cr) -> decltype(cr.t.rend()) { return cr.t.rend(); }
+}
+///
+
+
 /// Delete / Default operators
 
 #define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
