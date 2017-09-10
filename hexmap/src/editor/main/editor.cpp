@@ -94,6 +94,7 @@ namespace editor
         hexmap_t::resize(w, h);
     }
 
+
     void editor_t::render()
     {
         hexmap_t::render();
@@ -216,6 +217,8 @@ namespace editor
         map_data.save_to_file(filepath);
         map_is_dirty = false;
         LOG("map saved to %s", filepath.c_str());
+
+        workspace.update_recently_opened_with(filepath);
     }
 
     void editor_t::load_action(std::string const& filepath)
@@ -226,6 +229,8 @@ namespace editor
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
+
+        workspace.update_recently_opened_with(filepath);
 
         rendered_map.camera_controller.position = default_camera_position;
         rendered_map.update(0.0f);

@@ -11,6 +11,7 @@
 #include "ui/terrain_brush_renderer.h"
 
 #include "editor/main/input.h"
+#include "editor/main/editor_workspace.h"
 #include "editor/command_actions/command_actions.h"
 
 namespace asdf {
@@ -114,6 +115,7 @@ namespace editor
         data::spline_selection_t spline_selection;
 
         ///
+        editor_workspace_t workspace;
         std::string map_filepath;
         bool map_is_dirty = false;
         std::function<void()> map_changed_callback;
