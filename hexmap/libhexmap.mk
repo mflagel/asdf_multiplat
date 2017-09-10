@@ -66,6 +66,7 @@ SOURCES = $(SRCPATH)/main/main.cpp \
           $(SRCPATH)/ui/terrain_brush_renderer.cpp \
           $(SRCPATH)/ui/minimap.cpp \
           $(SRCPATH)/editor/main/editor.cpp \
+          $(SRCPATH)/editor/main/editor_workspace.cpp \
           $(SRCPATH)/editor/main/input.cpp \
           $(SRCPATH)/editor/command_actions/command_actions.cpp \
 		  $(EXTPATH)/cJSON/cJSON.c
