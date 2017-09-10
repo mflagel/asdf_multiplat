@@ -53,9 +53,12 @@ protected:
     void mouseReleaseEvent(QMouseEvent *) override;
 
 private:
+    QDir get_initial_save_load_dir();
+    void set_recent_documents(std::vector<std::experimental::filesystem::path> const&);
     void save_status_message();
 
 private slots:
+    void _open_map(std::string const& filepath);
     void init();
     //void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void minimap_initialized();

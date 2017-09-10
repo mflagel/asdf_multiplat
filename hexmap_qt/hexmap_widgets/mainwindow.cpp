@@ -30,6 +30,7 @@
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
+namespace stdfs = std::experimental::filesystem;
 
 
 namespace
@@ -308,22 +309,39 @@ void MainWindow::new_map()
     }
 }
 
+QDir MainWindow::get_initial_save_load_dir()
+{
+    if(editor->map_filepath.size() > 0)
+        return QDir(QString::fromStdString(editor->map_filepath));
+    else if(editor->workspace.recently_opened.size() > 0)
+        return QDir(QString::fromStdString(editor->workspace.recently_opened.back()));
+    else
+        return QDir::homePath();
+}
+
 void MainWindow::open_map()
 {
-    QDir map_file(QString(editor->map_filepath.c_str()));
+    QDir initial_filepath = get_initial_save_load_dir();
 
     QString filepath = QFileDialog::getOpenFileName(this,
-        tr("Open Map"), map_file.path(), tr("Hexmap Files (*.hxm)"));
+        tr("Open Map"), initial_filepath.path(), tr("Hexmap Files (*.hxm)"));
 
     if(filepath.size() > 0)
     {
-        ui->hexmap_widget->makeCurrent();
-        editor->load_action(std::string(filepath.toUtf8().constData()));
-        ui->hexmap_widget->zoom_extents();
-
-        //lazy rebuild
-        palette_widget->build_from_terrain_bank(hexmap_widget->editor->map_data.terrain_bank);
+        _open_map(filepath.toStdString());
     }
+}
+
+void MainWindow::_open_map(std::string const& filepath)
+{
+    ui->hexmap_widget->makeCurrent();
+    editor->load_action(filepath);
+    ui->hexmap_widget->zoom_extents();
+
+    //lazy rebuild
+    palette_widget->build_from_terrain_bank(hexmap_widget->editor->map_data.terrain_bank);
+
+    set_recent_documents(editor->workspace.recently_opened);
 }
 
 void MainWindow::save_map()
@@ -341,18 +359,12 @@ void MainWindow::save_map()
 
 void MainWindow::save_map_as()
 {
-    auto const& map_filepath = hexmap_widget->editor->map_filepath;
-    auto const& map_name = hexmap_widget->editor->map_data.map_name;
+    QString dir = get_initial_save_load_dir().path();
 
-    QString dir;
-    if(map_filepath.size() > 0)
+    if(!dir.endsWith(".hxm"))
     {
-        dir = QString(map_filepath.c_str());
-    }
-    else if(map_name.size() > 0)
-    {
-        QString qmapname((map_name + "." + default_map_file_extension).c_str());
-        dir = QString(qmapname);
+        dir += "/";
+        dir += QString::fromStdString(editor->map_data.map_name + "." + default_map_file_extension);
     }
 
 
@@ -369,6 +381,7 @@ void MainWindow::save_map_as()
             auto const& filepath = filenames[0];
             editor->save_action( std::string(filepath.toUtf8().constData()) );
             save_status_message();
+            set_recent_documents(editor->workspace.recently_opened);
         }
     }
 }
@@ -398,6 +411,43 @@ void MainWindow::mousePressEvent(QMouseEvent* event)
 void MainWindow::mouseReleaseEvent(QMouseEvent* event)
 {
     Q_UNUSED(event);
+}
+
+void MainWindow::set_recent_documents(vector<stdfs::path> const& recent_doc_paths)
+{
+    ui->menuOpen_Recent->clear();
+
+    for(auto const& p : reversed(recent_doc_paths))
+    {
+        ui->menuOpen_Recent->addAction(QString::fromStdString(p.filename().string())
+          , [this, p]()
+            {
+                if(stdfs::is_regular_file(p))
+                {
+                    _open_map(p.string());
+                }
+                else
+                {
+                    auto& recents = editor->workspace.recently_opened;
+                    recents.erase(std::find(recents.begin(), recents.end(), p));
+                    QMessageBox::about(this, "File Not Found"
+                        , "This file has been deleted or moved. It will be removed from the 'Open Recent' list");
+                }
+            }
+        );
+    }
+
+    if(recent_doc_paths.size() > 0)
+    {
+        ui->menuOpen_Recent->addSeparator();
+        ui->menuOpen_Recent->addAction("Clear Recents"
+          , [this]()
+            {
+                editor->workspace.recently_opened.clear();
+                set_recent_documents(vector<stdfs::path>());
+            }
+        );
+    }
 }
 
 void MainWindow::save_status_message()
