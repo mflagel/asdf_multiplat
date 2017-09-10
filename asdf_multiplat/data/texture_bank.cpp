@@ -140,20 +140,12 @@ namespace data
 
     std::string texture_bank_t::save_to_string() const
     {
-        char* cjson_cstr = cJSON_Print(to_JSON());
-        std::string str(cjson_cstr);
-        free(cjson_cstr);
-
-        return str;
+        return asdf::json_to_string(to_JSON());
     }
 
     std::string texture_bank_t::save_to_string_unformatted() const
     {
-        char* cjson_cstr = cJSON_PrintUnformatted(to_JSON());
-        std::string str(cjson_cstr);
-        free(cjson_cstr);
-
-        return str;
+        return json_to_string_unformatted(to_JSON());
     }
 
     void texture_bank_t::add_texture(saved_texture_t const& added_texture)
