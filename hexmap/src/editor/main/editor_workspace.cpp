@@ -33,17 +33,19 @@ namespace editor
         recent_files_cstrs.reserve(recently_opened.size());
         for(auto const& p : recently_opened)
             recent_files_cstrs.push_back(p.c_str());
-        cJSON_CreateStringArray(recent_files_cstrs.data(), recent_files_cstrs.size());
+
+        cJSON* str_arr = cJSON_CreateStringArray(recent_files_cstrs.data(), recent_files_cstrs.size());
+        cJSON_AddItemToObject(root, "recently_opened", str_arr);
 
         return root;
     }
 
     void editor_workspace_t::from_JSON(cJSON* root)
     {
-        auto path_from_json = [](cJSON* j)
+        auto path_from_json = [this](cJSON* j)
         {
             ASSERT(j && j->type == cJSON_String,"");
-            return stdfs::path(j->valuestring);
+            recently_opened.emplace_back(j->valuestring);
         };
 
         CJSON_FOR_EACH_ITEM_VECTOR(recently_opened, path_from_json);

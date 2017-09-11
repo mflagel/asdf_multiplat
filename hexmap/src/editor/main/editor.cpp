@@ -11,6 +11,8 @@
 using namespace std;
 using namespace glm;
 
+namespace stdfs = std::experimental::filesystem;
+
 namespace asdf
 {
     using namespace util;
@@ -280,6 +282,21 @@ namespace editor
         }
 
         rendered_map.on_event(event); //for camera controller
+    }
+
+
+    void editor_t::save_workspace(std::string const& filepath)
+    {
+        json_to_file(workspace.to_JSON(), filepath);
+    }
+
+    void editor_t::load_workspace(std::string const& filepath)
+    {
+        ASSERT(stdfs::exists(stdfs::path(filepath)), "workspace filepath does not exist");
+        
+        cJSON* root = json_from_file(filepath);
+        workspace.from_JSON(root);
+        cJSON_Delete(root);
     }
 
 

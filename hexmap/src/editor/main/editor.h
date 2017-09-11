@@ -139,6 +139,9 @@ namespace editor
 
         void on_event(SDL_Event*) override;
 
+        void save_workspace(std::string const& filepath);
+        void load_workspace(std::string const& filepath);
+
         void new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style = data::hex_grid_cell_t{});
         void save_action();
         void save_action(std::string const& filepath);
