@@ -55,6 +55,9 @@ protected:
 private:
     QDir get_initial_save_load_dir();
     void set_recent_documents(std::vector<std::experimental::filesystem::path> const&);
+    std::string workspace_path() const;
+    void load_workspace_create_if_not_exists();
+    void save_workspace();
     void save_status_message();
 
 private slots:

@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 #include <memory>
 
@@ -46,6 +47,7 @@ namespace
     constexpr size_t default_map_height = 30;
 
     constexpr const char* default_map_file_extension = "hxm";
+    constexpr const char* editor_workspace_filename = "hexmap_workspace.json";
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -342,6 +344,7 @@ void MainWindow::_open_map(std::string const& filepath)
     palette_widget->build_from_terrain_bank(hexmap_widget->editor->map_data.terrain_bank);
 
     set_recent_documents(editor->workspace.recently_opened);
+    save_workspace();
 }
 
 void MainWindow::save_map()
@@ -382,6 +385,7 @@ void MainWindow::save_map_as()
             editor->save_action( std::string(filepath.toUtf8().constData()) );
             save_status_message();
             set_recent_documents(editor->workspace.recently_opened);
+            save_workspace();
         }
     }
 }
@@ -445,6 +449,7 @@ void MainWindow::set_recent_documents(vector<stdfs::path> const& recent_doc_path
             {
                 editor->workspace.recently_opened.clear();
                 set_recent_documents(vector<stdfs::path>());
+                save_workspace();
             }
         );
     }
@@ -457,10 +462,42 @@ void MainWindow::save_status_message()
     statusBar()->showMessage(save_str, status_message_timeout_ms);
 }
 
+std::string MainWindow::workspace_path() const
+{
+    /// In the future, I'll use the native settings path
+    /// for now, just use the current working directory
+    /// (which should be the same dir as the executable)
+    //auto appdata_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    //auto workspace_path = appdata_path + "/" + editor_workspace_filename;
+    //std::string workspace_path_str = workspace_path.toStdString();
+
+    return std::string(editor_workspace_filename);
+}
+
+void MainWindow::load_workspace_create_if_not_exists()
+{
+    auto path_str = workspace_path();
+
+    if(stdfs::exists(stdfs::path(path_str)))
+    {
+        editor->load_workspace(path_str);
+    }
+    else
+    {
+        editor->save_workspace(path_str);
+    }
+}
+
+void MainWindow::save_workspace()
+{
+    editor->save_workspace(workspace_path());
+}
+
 void MainWindow::init()
 {
     editor = ui->hexmap_widget->editor.get();
-
+    load_workspace_create_if_not_exists();
+    set_recent_documents(editor->workspace.recently_opened);
 
     /// Render Flag Toggles
     {
