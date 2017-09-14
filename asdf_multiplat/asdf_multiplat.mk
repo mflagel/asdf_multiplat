@@ -15,10 +15,10 @@ BIN_OUT = $(LIBPATH)/$(SO_NAME)
 ###############################
 
 ############ LIBS #############
-LIBS += sdl2 gl glew ftgl
+LIBS += sdl2 gl glew ftgl zlib
 
 CFLAGS += -Iusr/include/SOIL
-LINK_FLAGS += -L$(LIBPATH) -lSOIL
+LINK_FLAGS += -L$(LIBPATH) -lSOIL -ltar
 ###############################
 
 ########## INCLUDES ###########

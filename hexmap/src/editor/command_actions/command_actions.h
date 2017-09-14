@@ -4,21 +4,10 @@
 #include <vector>
 #include <unordered_map>
 
+#include <asdf_multiplat/utilities/utilities.h>
 #include <glm/glm.hpp>
 
 #include "data/hex_map.h"
-
-
-// http://stackoverflow.com/a/17885727
-namespace std
-{
-template<>
-struct hash<glm::ivec2> {
-    size_t operator()(const glm::ivec2 &v) const {
-        return std::hash<int>()(v.x) ^ std::hash<int>()(v.y);
-    }
-};
-}
 
 namespace asdf {
 namespace hexmap {

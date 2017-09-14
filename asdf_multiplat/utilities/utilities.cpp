@@ -3,6 +3,11 @@
 
 #include <cstring>  //for std::strtok
 
+#include <stdio.h>
+#include <zlib.h>
+#include <fcntl.h>    //for O_RDONLY AND O_WRONLY, used with tar_open()
+#include <libtar.h>
+
 // #include "reflected_struct.h"
 
 // #include "rapidjson/rapidjson.h"
@@ -21,6 +26,9 @@
 DIAGNOSTIC_IGNORE(-Wcomment)
 
 // using namespace rapidjson;
+
+namespace stdfs = std::experimental::filesystem;
+using path = stdfs::path;
 
 namespace asdf {
     namespace util {
@@ -113,6 +121,7 @@ namespace asdf {
         }
     }
 
+    [[deprecated("use std::filesystem")]]
     bool is_directory(std::string const& filepath)
     {
         #ifdef _MSC_VER
@@ -128,6 +137,7 @@ namespace asdf {
 #endif
     }
 
+    [[deprecated("use std::filesystem")]]
     bool is_file(std::string const& filepath)
     {
 #ifdef _MSC_VER
@@ -168,6 +178,7 @@ namespace asdf {
         }
     }
 
+    [[deprecated("use std::filesystem")]]
     void create_dir(std::string const& path)
     {
         ASSERT(!is_directory(path), "Directory already exists at %s", path.c_str());
@@ -188,6 +199,120 @@ namespace asdf {
         EXPLODE("todo: posix version of create_dir()");
 #endif
     }
+
+
+    /*
+                       /                            
+                   a       x                        
+              b                y                    
+          c         d             z                 
+      e     f     g    h                            
+
+
+    make E relative to G
+
+    con_e = /a/b/c/e
+    con_g = /a/b/d/g
+
+    common = /a/b/
+    uncommon_E = c/e
+    uncommon_G = d/g
+
+    replace common path with "../" some number of times
+    number of "../" is equal to number of elements in uncommon_G
+
+
+    E relative to G = ../../c/e
+    */
+    path relative(path const& a, path const& b)
+    {
+        if(a == b)
+            return path();
+
+        using namespace stdfs;
+
+        path con_a = canonical(a);
+
+        // remove the filename otherwise an exception is thrown in UNIX
+        // because the file doesn't exist yet. Works fine in window
+        // I think
+        path con_b = b;
+        con_b.remove_filename();
+        con_b = canonical(con_b);
+
+        if(con_a == con_b)
+            return path();
+
+
+        if(con_a.root_path() != con_b.root_path())
+            return con_a; //no relative path, only absolute
+
+        //split into vector of components so I can access easier
+        std::vector<path> components_a;
+        std::vector<path> components_b;
+
+        for(auto const& c_a : con_a)
+            components_a.push_back(c_a);
+        for(auto const& c_b : con_b)
+            components_b.push_back(c_b);
+
+//#ifdef _MSC_VER
+//        components_a.pop_back();
+//        components_b.pop_back();
+//#endif
+
+        size_t num_common_components = 0;
+
+        for(size_t i = 0; 
+            i < components_a.size() 
+         && i < components_b.size()
+         && components_a[i] == components_b[i];
+            ++i)
+        {
+            ++num_common_components;
+        }
+
+        path result;
+
+        size_t num_upwards = components_b.size() - num_common_components;
+        for(size_t i = 0; i < num_upwards; ++i)
+            result /= "..";
+
+        for(size_t i = num_common_components; i < components_a.size(); ++i)
+        {
+            result /= components_a[i];
+        }
+
+
+        return result;
+    }
+
+    // enum file_find_direction_e
+    // {
+    //       file_search_upwards
+    //     , file_search_downward
+    //     , file_search_outwards ///ie: both up and down
+    // };
+
+    path find_file(path const& filename, path const& start_point)
+    {
+        ASSERT(!filename.empty(), "cannot search for empty filename");
+
+        if(stdfs::exists(filename))
+            return filename;
+
+        ASSERT(stdfs::exists(start_point), "invalid starting point for search [%s]", start_point.c_str());
+        ASSERT(stdfs::is_directory(start_point), "start point is not a directory [%s]", start_point.c_str());
+
+        for(auto const& p : stdfs::recursive_directory_iterator(start_point))
+        {
+            if(p.path().filename() == filename)
+                return p;
+        }
+
+        return path();
+    }
+
 
 //     Document read_json_file(std::string const& filepath)
 //     {
@@ -226,6 +351,245 @@ namespace asdf {
 
         return cwd;
     }
+
+
+
+
+
+    // constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
+    constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K
+
+
+    int compress_file(std::experimental::filesystem::path const& src_filepath
+                    , std::experimental::filesystem::path const& dest_filepath
+                    , int compression_level) noexcept
+    {
+        ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
+
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+
+        int compress_result = compress_file(source, dest, compression_level);
+
+        fclose(source);
+        fclose(dest);
+
+        return compress_result;
+    }
+
+    /// http://www.zlib.net/zlib_how.html
+    int compress_file(FILE* source, FILE* dest, int compression_level) noexcept
+    {
+        using byte_t = std::byte;
+
+        z_stream strm;
+        byte_t in[zlib_chunk_size];
+        byte_t out[zlib_chunk_size];
+
+        strm.zalloc = nullptr;
+        strm.zfree  = nullptr;
+        strm.opaque = nullptr;
+
+        int deflate_status = deflateInit(&strm, compression_level);
+        if(deflate_status != Z_OK)
+            return deflate_status;
+
+        
+        int flush = Z_NO_FLUSH;
+        do
+        {
+            strm.avail_in = fread(in, 1, zlib_chunk_size, source);
+            if (ferror(source)) {
+                (void)deflateEnd(&strm);
+                return Z_ERRNO;
+            }
+            flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
+            strm.next_in = reinterpret_cast<Bytef*>(in);
+
+            /* run deflate() on input until output buffer not full, finish
+               compression if all of source has been read in */
+            do
+            {
+                strm.avail_out = zlib_chunk_size;
+                strm.next_out = reinterpret_cast<Bytef*>(out);
+
+                deflate_status = deflate(&strm, flush);
+                ASSERT(deflate_status != Z_STREAM_ERROR, "stream error during zlib deflate"); /* state not clobbered */
+
+                size_t n_to_write = zlib_chunk_size - strm.avail_out;
+                size_t n_written = fwrite(out, 1, n_to_write, dest);
+
+                if (n_written != n_to_write || ferror(dest)) {
+                    (void)deflateEnd(&strm);
+                    return Z_ERRNO;
+                }
+            }
+            while(strm.avail_out == 0);
+            ASSERT(strm.avail_in == 0, "Not all input was deflated");
+        }
+        while(flush != Z_FINISH);
+        ASSERT(deflate_status == Z_STREAM_END, "zlib stream not finished");
+
+        /* clean up and return */
+        (void)deflateEnd(&strm);
+        return Z_OK;
+    }
+
+
+    int decompress_file(std::experimental::filesystem::path const& src_filepath
+                      , std::experimental::filesystem::path const& dest_filepath) noexcept
+    {
+        ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
+
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+
+        int decompress_result = decompress_file(source, dest);
+
+        fclose(source);
+        fclose(dest);
+        return decompress_result;
+    }
+
+    /// http://www.zlib.net/zlib_how.html
+    int decompress_file(FILE* source, FILE* dest) noexcept
+    {
+        using byte_t = std::byte;
+
+        z_stream strm;
+        byte_t in[zlib_chunk_size];
+        byte_t out[zlib_chunk_size];
+
+        strm.zalloc = nullptr;
+        strm.zfree  = nullptr;
+        strm.opaque = nullptr;
+
+        strm.avail_in = 0;
+        strm.next_in = nullptr;
+
+        int inflate_status = inflateInit(&strm);
+        if (inflate_status != Z_OK)
+            return inflate_status;
+
+        do
+        {
+            strm.avail_in = fread(in, 1, zlib_chunk_size, source);
+            if (ferror(source)) {
+                (void)inflateEnd(&strm);
+                return Z_ERRNO;
+            }
+            if (strm.avail_in == 0)
+                break;
+            strm.next_in = reinterpret_cast<Bytef*>(in);
+
+            /* run inflate() on input until output buffer not full */
+            do
+            {
+                strm.avail_out = zlib_chunk_size;
+                strm.next_out = reinterpret_cast<Bytef*>(out);
+
+                inflate_status = inflate(&strm, Z_NO_FLUSH);
+                ASSERT(inflate_status != Z_STREAM_ERROR, "zlib inflate error");
+
+                switch (inflate_status)
+                {
+                    case Z_NEED_DICT:
+                        inflate_status = Z_DATA_ERROR;
+                        ///FALLTHROUGH
+                    case Z_DATA_ERROR:
+                    case Z_MEM_ERROR:
+                        (void)inflateEnd(&strm);
+                        return inflate_status;
+                }
+
+                size_t n_to_write = zlib_chunk_size - strm.avail_out;
+                size_t n_written = fwrite(out, 1, n_to_write, dest);
+
+                if (n_written != n_to_write || ferror(dest)) {
+                    (void)deflateEnd(&strm);
+                    return Z_ERRNO;
+                }
+            }
+            while(strm.avail_out == 0);
+        }
+        while(inflate_status != Z_STREAM_END);
+
+        /* clean up and return */
+        (void)inflateEnd(&strm);
+        return inflate_status == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
+    }
+
+    int archive_files(std::vector<stdfs::path> const& filepaths, stdfs::path const& combined_filepath)
+    {
+        /// if the file doesn't exist yet, create an empty file
+        /// for tar to write into
+        if(!stdfs::exists(combined_filepath))
+        {
+            FILE* f = fopen(combined_filepath.c_str(), "w");
+            fclose(f);
+        }
+        else if(!stdfs::is_regular_file(combined_filepath))
+        {
+            return 1;
+        }
+
+        TAR *t;
+        int tar_status = tar_open(&t
+                            , combined_filepath.c_str()
+                            , nullptr   //null tartype uses default file IO functions
+                            , O_WRONLY  //must be O_RDONLY or O_WRONLY
+                            , 0         // mode?
+                            , TAR_NOOVERWRITE | TAR_VERBOSE
+                            );
+
+        if(tar_status != 0)
+            return tar_status;
+
+
+        for(auto const& p : filepaths)
+        {
+            ASSERT(stdfs::exists(p), "archiving a file that does not exist [%s]", p.c_str());
+
+            tar_status = tar_append_file(t, p.c_str(), p.filename().c_str());
+            if(tar_status != 0)
+                return tar_status;
+        }
+
+
+        tar_status = tar_close(t);
+        return tar_status;
+    }
+
+    int unarchive_files(stdfs::path const& tar_path, stdfs::path const& extract_dir)
+    {
+        ASSERT(stdfs::exists(tar_path), "archive does not exist");
+        ASSERT(stdfs::is_regular_file(tar_path), "archive is not a valid file");
+
+        ASSERT(stdfs::exists(extract_dir), "extract_dir does not exist");
+        ASSERT(stdfs::is_directory(extract_dir), "extract_dir is not a directory");
+
+        TAR *t;
+        int tar_status = tar_open(&t
+                            , tar_path.c_str()
+                            , nullptr   //null tartype uses default file IO functions
+                            , O_RDONLY  //must be O_RDONLY or O_WRONLY
+                            , 0         // mode?
+                            , TAR_VERBOSE
+                            );
+        if(tar_status != 0)
+            return tar_status;
+
+        /// const_cast required because libtar never takes const char*
+        /// as an argument for anything
+        tar_status = tar_extract_all(t, const_cast<char*>(extract_dir.c_str()));
+        if(tar_status != 0)
+            return tar_status;
+
+        tar_status = tar_close(t);
+        return tar_status;
+    }
+
+
 
     bool CheckBounds(int x, int y, int minX, int maxX, int minY, int maxY){
 	    if(x > maxX || x < minX)
@@ -287,7 +651,18 @@ namespace asdf {
 		     SDL_ClearError();
 	     }
      #endif
-     }
+    }
+
+
+    void replace(std::string& str, std::string const& to_replace, std::string const& replacement)
+    {
+        for(size_t i = str.find(to_replace, 0); i != std::string::npos; i = str.find(to_replace, i))
+        {
+            str.replace(i, to_replace.size(), replacement);
+            i += to_replace.size(); // prevents find from catching on something inside of to_replace
+        } 
+    }
+
 
     /************************************************************************/
     /* GetB2FixtureVerts

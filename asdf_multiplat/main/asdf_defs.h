@@ -1,7 +1,44 @@
 #pragma once
 
+#include <limits>
+#include <cstdint>
+#include <type_traits>
+
 #define PI 3.14159265359f
-#define nullindex 4294967295
+// #define nullindex 4294967295
+// #define nullindex std::numeric_limits<size_t>::max()
+
+struct nullindex_t
+{
+    template<typename T>
+    constexpr bool operator==(T const& rhs) const
+    {
+        return rhs == std::numeric_limits<T>::max();
+    }
+    template<typename T>
+    constexpr bool operator!=(T const& rhs) const
+    {
+        return rhs != std::numeric_limits<T>::max();
+    }
+    template<typename T>
+    constexpr operator T() const
+    {
+        return std::numeric_limits<T>::max();
+    }
+};
+
+const nullindex_t nullindex = {};
+
+template<typename T>
+constexpr bool operator==(T const& lhs, nullindex_t const& rhs)
+{
+    return rhs == lhs;
+}
+template<typename T>
+constexpr bool operator!=(T const& lhs, nullindex_t const& rhs)
+{
+    return rhs != lhs;
+}
 
 #define ASDF_UNUSED(x) (void)x
 
@@ -19,8 +56,9 @@
 #ifdef _MSC_VER
 #define DEBUG_BREAK __debugbreak()
 #else
-#include <signal.h>
-#define DEBUG_BREAK raise(SIGTRAP);
+//#include <signal.h>
+#include <csignal>
+#define DEBUG_BREAK std::raise(SIGTRAP);
 #endif
 
 //Assertion code shamelessly copymodified from: 
@@ -51,6 +89,7 @@ void asdf_fail(char const* condition, char const* file, int line, ...);
     #define ASSERT(condition) do { POW2_UNUSED(condition); } while (0)
     #define EXPLODE(message, ...) do { POW2_UNUSED(condition); } while (0)
 #endif 
+
 
 
 
@@ -112,16 +151,15 @@ using color_t = glm::vec4;
 #endif
 
 
-// #include <type_traits>
-
 DIAGNOSTIC_PUSH
 DIAGNOSTIC_IGNORE(-Wsign-compare)
 
 template <typename A, typename B>
 B convert_integer(A value)
 {
-    ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
-    ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
+    /// FIXME gives error / warning in GCC
+    // ASSERT(value <= std::numeric_limits<B>::max(), "value is too large to convert without overflow");
+    // ASSERT(value >= std::numeric_limits<B>::min(), "value is too small to convert without underflow");
 
     return static_cast<B>(value);
 }
@@ -138,3 +176,103 @@ inline uint32_t signed_to_unsigned(int32_t i)
 {
     return convert_integer<int32_t,uint32_t>(i);
 }
+
+
+/// https://stackoverflow.com/a/24018996
+/// Super interesting. std::conditional basically works such that
+/// if T and U are the same, it 'returns' true, but if false, 
+/// recursively calls is_any_of with the rest of the args
+template<typename T, typename U, typename... Us>
+struct is_any_of
+    : std::integral_constant<
+        bool,
+        std::conditional<
+            std::is_same<T,U>::value,
+            std::true_type,
+            is_any_of<T,Us...>
+        >::type::value
+      >
+{ };
+
+template<typename T, typename U>
+struct is_any_of<T,U> : std::is_same<T,U>::type { };
+///
+
+
+/// https://stackoverflow.com/a/24855290
+// template<class T>
+// struct is_c_str
+//   : std::integral_constant<
+//       bool,
+//       std::is_same<char const *, typename std::decay<T>::type>::value ||
+//       std::is_same<char *, typename std::decay<T>::type>::value
+// > {};
+template<class T>
+struct is_c_str
+  : std::integral_constant<
+      bool,
+      std::is_same<char *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value ||
+      std::is_same<char const *, typename std::remove_reference<typename std::remove_cv<T>::type>::type>::value
+> {};
+///
+
+
+/// https://stackoverflow.com/a/21510185
+/// allows a range-based for loop to access a container in reverse
+/// ex:
+///     for (auto x: reversed(c))
+///         ...
+namespace details {
+    template <class T> struct _reversed { T& t; _reversed(T& _t): t(_t) {} };
+    template <class T> struct _creversed { T const& t; _creversed(T const& _t): t(_t) {} };  /// ADDED by mflagel
+}
+
+template <class T> details::_reversed<T> reversed(T& t) { return details::_reversed<T>(t); }
+template <class T> details::_reversed<T const> reversed(T const& t) { return details::_reversed<T const>(t); }
+
+namespace std {
+    template <class T> auto begin(details::_reversed<T>& r) -> decltype(r.t.rbegin()) { return r.t.rbegin(); }
+    template <class T> auto end(details::_reversed<T>& r) -> decltype(r.t.rend()) { return r.t.rend(); }
+
+    template <class T> auto begin(details::_creversed<T> const& cr) -> decltype(cr.t.rbegin()) { return cr.t.rbegin(); }
+    template <class T> auto end(details::_creversed<T> const& cr) -> decltype(cr.t.rend()) { return cr.t.rend(); }
+}
+///
+
+
+/// Delete / Default operators
+
+#define DEFAULT_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = default;  \
+    _obj_name_& operator=(_obj_name_ const&) = default;
+/*--------*/
+
+#define DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    _obj_name_(_obj_name_ const&) = delete;  \
+    _obj_name_& operator=(_obj_name_ const&) = delete;
+/*--------*/
+
+
+#define DEFAULT_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = default; \
+    _obj_name_& operator=(_obj_name_&&) = default;
+/*--------*/
+
+#define DELETE_MOVE(_obj_name_) \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define DELETE_COPY_ASSIGNMENT_MOVE(_obj_name_) \
+    _obj_name_(const _obj_name_&) = delete; \
+    _obj_name_& operator=(_obj_name_ const&) = delete; \
+    _obj_name_(_obj_name_&&) = delete; \
+    _obj_name_& operator=(_obj_name_&&) = delete;
+/*--------*/
+
+
+#define UNIQUE_OBJECT_ASSIGN_COPY_MOVE(_obj_name_) \
+    DELETE_COPY_ASSIGNMENT(_obj_name_) \
+    DEFAULT_MOVE(_obj_name_) 
+/*--------*/

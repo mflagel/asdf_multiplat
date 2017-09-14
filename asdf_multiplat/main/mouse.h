@@ -26,6 +26,8 @@ namespace asdf
         return 1u << static_cast<uint8_t>(btn);
     }
 
+    constexpr uint32_t mouse_buttons_all = UINT_MAX;
+
     struct mouse_input_t;
 
     struct mouse_motion_event_t
@@ -54,6 +56,7 @@ namespace asdf
         virtual bool on_mouse_down(mouse_button_event_t&) = 0;
         virtual bool on_mouse_up(mouse_button_event_t&) = 0;
         virtual bool on_mouse_move(mouse_motion_event_t&) = 0;
+        virtual bool on_mouse_drag(mouse_motion_event_t&) = 0;
         virtual bool on_mouse_wheel(mouse_wheel_event_t&) = 0;
     };
 
@@ -72,6 +75,7 @@ namespace asdf
         void mouse_down(mouse_button_event_t&, glm::ivec2 mouse_pos);
         void mouse_up(mouse_button_event_t&, glm::ivec2 mouse_pos);
         void mouse_move(mouse_motion_event_t&, glm::ivec2 mouse_pos);
+        void mouse_drag(mouse_motion_event_t&, glm::ivec2 mouse_pos);
         void mouse_wheel(mouse_wheel_event_t&);
 
         bool mouse_button_state(mouse_button_e btn) const
@@ -80,7 +84,8 @@ namespace asdf
         }
         
         glm::ivec2 move_delta() const;
-        bool is_dragging(mouse_button_e btn = mouse_left) const;
+        bool is_dragging(mouse_button_e btn) const;
+        bool is_dragging(uint32_t mouse_btns = mouse_buttons_all) const;
         glm::ivec2 drag_delta() const;
     };
 }

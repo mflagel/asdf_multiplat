@@ -12,12 +12,16 @@
 #include <utility>
 #include <vector>
 
+#include <glm/glm.hpp>
+
+#include <experimental/filesystem>
+
 //#include <boost/random/mersenne_twister.hpp>
 //#include <boost/random/uniform_int_distribution.hpp>
 
 // #include "rapidjson/document.h"
 
-#include "asdf_defs.h"
+#include "main/asdf_defs.h"
 
 DIAGNOSTIC_PUSH
 DIAGNOSTIC_IGNORE(-Wcomment)
@@ -32,6 +36,22 @@ DIAGNOSTIC_IGNORE(-Wcomment)
     #define GetCurrentDir getcwd
     #define SetCurrentDir chdir
 #endif
+
+
+
+namespace std
+{
+template<>
+struct hash<glm::ivec2> {
+    size_t operator()(const glm::ivec2 &v) const {
+        /// https://stackoverflow.com/a/17885727
+        // return std::hash<int>()(v.x) ^ std::hash<int>()(v.y);
+
+        // https://stackoverflow.com/a/2634715
+        return (7919 + std::hash<int>()(v.x)) * 7919 + std::hash<int>()(v.y);
+    }
+};
+}
 
 
 namespace asdf {
@@ -137,6 +157,33 @@ namespace asdf {
     std::string find_folder(std::string const& name, size_t max_search_dist = 5);
     void create_dir(std::string const& path);
 
+    /// TODO: deprecate this func once MSVC and libstdc++ release their full <filesystem> implementations
+    ///       (or at least their version of relative(path, path)
+    std::experimental::filesystem::path
+    relative(std::experimental::filesystem::path const& a, std::experimental::filesystem::path const& b);
+
+    std::experimental::filesystem::path
+    find_file(std::experimental::filesystem::path const& filename, std::experimental::filesystem::path const& start_point = std::experimental::filesystem::current_path());
+
+
+    /************************************************************************/
+    /* File Compression / Decompression (wraps zlib and libtar
+    /************************************************************************/
+    int compress_file(std::experimental::filesystem::path const& src_filepath
+                    , std::experimental::filesystem::path const& dest_filepath
+                    , int compression_level = -1) noexcept;
+    int compress_file(FILE* src, FILE* dest, int compression_level) noexcept;
+
+
+    int decompress_file(std::experimental::filesystem::path const& src_filepath
+                      , std::experimental::filesystem::path const& dest_filepath) noexcept;
+    int decompress_file(FILE* src, FILE* dest) noexcept;
+
+    int archive_files(std::vector<std::experimental::filesystem::path> const& filepaths
+                    , std::experimental::filesystem::path const& combined_filepath);
+    int unarchive_files(std::experimental::filesystem::path const& tar_path,
+                        std::experimental::filesystem::path const& extract_dir);
+
     /************************************************************************/
     /* Random Number Generation
     /************************************************************************/
@@ -175,7 +222,9 @@ namespace asdf {
         return out_keyList;
     }
 
+
     std::vector<std::string> tokenize(const char* str, const char* delimiters);
+    void replace(std::string& str, std::string const& to_replace, std::string const& replacement);
 
     /************************************************************************/
     /* SDL Utilities

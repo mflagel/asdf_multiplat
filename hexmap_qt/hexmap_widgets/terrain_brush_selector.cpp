@@ -24,8 +24,12 @@ terrain_brush_selector_t::terrain_brush_selector_t(QWidget *parent) :
     /// Hexagonal Brush
     ui->sld_hexagon_radius->setMinimum(1);
     ui->sld_hexagon_radius->setMaximum(max_hex_radius_slider);
+    ui->sld_hexagon_radius->setPageStep(max_hex_radius_slider/4);
+
     ui->sb_hexagon_radius->setMinimum(1);
     ui->sb_hexagon_radius->setMaximum(max_hex_radius);
+    ui->sb_hexagon_radius->setSingleStep(1);
+
     connect(ui->sld_hexagon_radius, &QSlider::valueChanged, ui->sb_hexagon_radius, &QSpinBox::setValue);
     connect(ui->sb_hexagon_radius, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int v)
     {
@@ -61,6 +65,131 @@ terrain_brush_selector_t::~terrain_brush_selector_t()
     delete ui;
 }
 
+
+int terrain_brush_selector_t::get_brush_size() const
+{
+    switch(cur_brush_type)
+    {
+        case hexagonal:
+            return ui->sld_hexagon_radius->value();
+        case rectangular:
+        {
+            auto w = ui->sb_brush_width->value();
+            auto h = ui->sb_brush_height->value();
+            return glm::max(w,h);
+            break;
+        }
+        case circular:
+            return convert_integer<float,int>(ui->sld_circle_radius->value());
+            break;
+    }
+}
+
+void terrain_brush_selector_t::set_brush_size(int _size)
+{
+    switch(cur_brush_type)
+    {
+        case hexagonal:
+            ui->sld_hexagon_radius->setValue(_size);
+            break;
+        case rectangular:
+            ui->sb_brush_width->setValue(_size);
+            ui->sb_brush_height->setValue(_size);
+            break;
+        case circular:
+            ui->sld_circle_radius->setValue(convert_integer<int,float>(_size));
+            break;
+    }
+}
+
+void terrain_brush_selector_t::shrink_brush(int32_t amt)
+{
+    adjust_brush_size(-amt);
+}
+
+void terrain_brush_selector_t::grow_brush(int32_t amt)
+{
+    adjust_brush_size(amt);
+}
+
+void terrain_brush_selector_t::adjust_brush_size(int32_t amt)
+{
+    switch(cur_brush_type)
+    {
+        case hexagonal:
+        {
+            auto v = ui->sld_hexagon_radius->value();
+            ui->sld_hexagon_radius->setValue(v + amt);
+            break;
+        }
+        case rectangular:
+        {
+            {
+                auto v = ui->sb_brush_width->value();
+                ui->sb_brush_width->setValue(v + amt);
+            }
+            {
+                auto v = ui->sb_brush_height->value();
+                ui->sb_brush_height->setValue(v + amt);
+            }
+        }
+            break;
+        case circular:
+        {
+            auto v = ui->sld_circle_radius->value();
+            ui->sld_circle_radius->setValue(v + amt);
+            break;
+        }
+    }
+}
+
+void terrain_brush_selector_t::shrink_brush()
+{
+    adjust_brush_size(false);
+}
+
+void terrain_brush_selector_t::grow_brush()
+{
+    adjust_brush_size(true);
+}
+
+/// no-arg func just uses the pageStep or singleStep
+void terrain_brush_selector_t::adjust_brush_size(bool grow)
+{
+    int mult = grow ? 1 : -1;
+
+    switch(cur_brush_type)
+    {
+        case hexagonal:
+        {
+            auto v = ui->sld_hexagon_radius->value();
+            auto s = ui->sld_hexagon_radius->pageStep();
+            ui->sld_hexagon_radius->setValue(v + s * mult);
+            break;
+        }
+        case rectangular:
+        {
+            {
+                auto v = ui->sb_brush_width->value();
+                auto s = ui->sb_brush_width->singleStep();
+                ui->sb_brush_width->setValue(v + s * mult);
+            }
+            {
+                auto v = ui->sb_brush_height->value();
+                auto s = ui->sb_brush_height->singleStep();
+                ui->sb_brush_height->setValue(v + s * mult);
+            }
+        }
+            break;
+        case circular:
+        {
+            auto v = ui->sld_circle_radius->value();
+            auto s = ui->sld_circle_radius->pageStep();
+            ui->sld_circle_radius->setValue(v + s * mult);
+            break;
+        }
+    }
+}
 
 
 void terrain_brush_selector_t::brush_type_changed(int tab_index)

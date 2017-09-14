@@ -114,6 +114,8 @@ namespace data
 
     void hex_grid_t::init(glm::uvec2 _size, glm::uvec2 chunk_size, hex_grid_cell_t const& default_cell_style)
     {
+        size = _size;
+
         auto dv_x = div(long(_size.x), chunk_size.x); //cast to long since there's no overload of div that takes a unsigned int
         auto dv_y = div(long(_size.y), chunk_size.y); //
 

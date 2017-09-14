@@ -18,31 +18,7 @@ namespace data
 
     void terrain_bank_t::load_from_file(path const& filepath)
     {
-        ASSERT(is_regular_file(filepath), "Not a valid file");
-
-        std::string json_str = read_text_file(filepath.string());
-        cJSON* root = cJSON_Parse(json_str.c_str());
-        ASSERT(root, "Error loading imported textures json file");
-
-        vector<entry_t> terrain;
-        CJSON_GET_ITEM_VECTOR(terrain);
-
-        vector<path> filepaths;
-
-        for(auto const& t : terrain)
-        {
-            asset_names.push_back(t.name);
-
-            //filepaths in json are relative to the json document itself
-            if(t.filepath.is_absolute())
-                filepaths.push_back(t.filepath);
-            else
-                filepaths.push_back(filepath.parent_path() / t.filepath);
-        }
-
-        add_textures(filepaths);
-
-        cJSON_Delete(root);
+        texture_bank_t::load_from_file(filepath);
 
         //rebuild_colors();
     }
@@ -60,35 +36,29 @@ namespace data
         Do I even need the texture?
         Does it grab from the currently bound fbo?
     */
-    void terrain_bank_t::rebuild_colors()
-    {
-        GL_State->bind(colors_fbo);
+    // void terrain_bank_t::rebuild_colors()
+    // {
+    //     GL_State->bind(colors_fbo);
 
-        //TODO: render textures as 1x1 squares
+    //     //TODO: render textures as 1x1 squares
 
 
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
+    //     glReadBuffer(GL_COLOR_ATTACHMENT0);
 
-        int width  = atlas_texture.width  / saved_texture_dim;
-        int height = atlas_texture.height / saved_texture_dim;
-        ASSERT((width * height) == max_saved_textures, "");
+    //     int width  = atlas_texture.width  / saved_texture_dim;
+    //     int height = atlas_texture.height / saved_texture_dim;
+    //     ASSERT((width * height) == max_saved_textures, "");
 
-        std::vector<float> buffer(4 * width * height);
-        //float buffer[4 * width * height]; //4 floats per 
-        glReadPixels(0,0
-                   , width, height
-                   , GL_RGBA
-                   , GL_FLOAT
-                   , buffer.data());
+    //     std::vector<float> buffer(4 * width * height);
+    //     //float buffer[4 * width * height]; //4 floats per 
+    //     glReadPixels(0,0
+    //                , width, height
+    //                , GL_RGBA
+    //                , GL_FLOAT
+    //                , buffer.data());
 
-        ASSERT(!CheckGLError(), "GL Error reading pixels from color fbo");
-    }
-
-    void terrain_bank_t::entry_t::from_JSON(cJSON* root)
-    {
-        CJSON_GET_STR(name);
-        filepath = path(string(cJSON_GetObjectItem(root, "filepath")->valuestring));
-    }
+    //     ASSERT(!CheckGLError(), "GL Error reading pixels from color fbo");
+    // }
 }
 }
 }

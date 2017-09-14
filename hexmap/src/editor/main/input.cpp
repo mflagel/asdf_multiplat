@@ -21,7 +21,7 @@ namespace editor
 
     glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
     {
-        return vec2(editor.rendered_map->camera.screen_to_world_coord(vec2(screen_coords)));
+        return vec2(editor.rendered_map.camera.screen_to_world_coord(vec2(screen_coords)));
     }
 
     bool input_handler_t::on_mouse_down(mouse_button_event_t& event)
@@ -131,6 +131,47 @@ namespace editor
             {
                 editor.brush_pos = hex_to_world_coord(hx);
 
+                break;
+            }
+
+            case editor_t::place_objects:
+            {
+                editor.brush_pos = mw;
+
+                break;
+            }
+
+            case editor_t::place_splines:
+            {
+                if(editor.is_placing_spline())
+                {
+                    editor.update_WIP_node(mw);
+                }
+                break;
+            }
+
+            case editor_t::num_tool_types: break;
+        }
+
+        return false;
+    }
+
+    bool input_handler_t::on_mouse_drag(mouse_motion_event_t& event)
+    {
+        auto mw = world_coords(event.mouse_state.mouse_position);
+        auto hx = world_to_hex_coord(mw);
+
+        switch(editor.current_tool)
+        {
+            case editor_t::select:
+            {
+                break;
+            }
+
+            case editor_t::terrain_paint:
+            {
+                editor.brush_pos = hex_to_world_coord(hx);
+
                 /// If the user is dragging the mouse
                 /// paint hexes along the line they have dragged
                 /// otherwise it will only paint one hex per update
@@ -159,7 +200,7 @@ namespace editor
             {
                 if(editor.is_placing_spline())
                 {
-                    if(event.mouse_state.is_dragging())
+                    if(event.mouse_state.is_dragging(mouse_left))
                     {
                         editor.update_WIP_control_nodes(mw);
                     }
@@ -266,7 +307,9 @@ namespace editor
                 {
                     case editor_t::terrain_paint:
                     {
-                        editor.set_current_tile_id(num_from_key);
+                        // make it 1-indexed such that pressing 1 selects the
+                        // 'first'(zero'th) tile
+                        editor.set_current_tile_id(num_from_key - 1);
                         break;
                     }
 
@@ -338,16 +381,16 @@ namespace editor
     {
         size_t obj_ind = editor.map_data.object_index_at(mw);
 
-        if(obj_ind != size_t(-1))
+        if(obj_ind != nullindex)
         {
             switch(modifier_keys)
             {
-                case KMOD_LSHIFT: [[fallthrough]]
+                case KMOD_LSHIFT: [[fallthrough]];
                 case KMOD_RSHIFT:
                     editor.select_object(obj_ind);
                     break;
 
-                case KMOD_LALT: [[fallthrough]]
+                case KMOD_LALT: [[fallthrough]];
                 case KMOD_RALT:
                     editor.deselect_object(obj_ind);
                     break;

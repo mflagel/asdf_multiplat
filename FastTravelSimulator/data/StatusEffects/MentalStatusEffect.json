@@ -1,0 +1,38 @@
+{
+  "Name":"Mental Effect",
+  "Values":[
+    {
+      "Name":"Good",
+      "Weight": "%",
+      "Values":[
+        "Alcohol-like",
+        "Halucinogen",
+        "Euphoria",
+        "Sleep Aid",
+        "Anasthetic",
+        "Concentration",
+        "Aphrodesiac",
+        "Astral Projection"
+      ]
+    },
+    {
+      "Name":"Bad",
+      "Weight": "%",
+      "Values":[
+        "Phantom Voices",
+        "Language-Breaking",
+        "Color-Shifting (Vision)",
+        "Olfactory-Shifting",
+        "Amnesia",
+        "Distraction"
+      ]
+    },
+    {
+      "Name":"Weird",
+      "Weight": "%",
+      "Values":[
+        
+      ]
+    }
+  ]
+}

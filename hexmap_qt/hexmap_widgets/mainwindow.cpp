@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 #include <memory>
 
@@ -30,6 +31,7 @@
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
+namespace stdfs = std::experimental::filesystem;
 
 
 namespace
@@ -39,6 +41,13 @@ namespace
     constexpr int status_message_timeout_ms = 5000;
 
     constexpr int zoom_exponent_tick_per_press = 1;
+
+    constexpr const char* default_map_name = "untitled";
+    constexpr size_t default_map_width  = 30;
+    constexpr size_t default_map_height = 30;
+
+    constexpr const char* default_map_file_extension = "hxm";
+    constexpr const char* editor_workspace_filename = "hexmap_workspace.json";
 }
 
 using editor_t = asdf::hexmap::editor::editor_t;
@@ -51,8 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("Hexmap");
-    editor = &(ui->hexmap_widget->editor);
 
+    hexmap_widget = ui->hexmap_widget;
 
     {
         connect(ui->actionNew,     &QAction::triggered, this, &MainWindow::new_map);
@@ -62,28 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::undo);
         connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::redo);
-
-        /// Render Flag Toggles
-        {
-            using rflags = asdf::hexmap::ui::hex_map_t::render_flags_e;
-
-            ui->actionGrid->setChecked((editor->map_render_flags & rflags::grid_outline));
-            ui->actionHex_Coords->setChecked((editor->map_render_flags & rflags::hex_coords));
-        
-            auto connect_thing = [this](QAction* thing, rflags flag)
-            {
-                connect(thing, &QAction::triggered, [this, flag](bool chk)
-                {
-                    uint32_t temp = static_cast<uint32_t>(ui->hexmap_widget->editor.map_render_flags);
-                    temp |= (flag * chk);
-                    temp &= ~(flag * !chk);
-                    ui->hexmap_widget->editor.map_render_flags = static_cast<rflags>(temp);
-                });
-            };
-
-            connect_thing(ui->actionGrid, rflags::grid_outline);
-            connect_thing(ui->actionHex_Coords, rflags::hex_coords);
-        }
 
         /// Zoom
         {
@@ -131,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     {
         connect(ui->hexmap_widget, &hexmap_widget_t::hex_map_initialized,
-                            this, &MainWindow::hex_map_initialized);
+                            this, &MainWindow::init);
         connect(ui->hexmap_widget, &hexmap_widget_t::editor_tool_changed,
                              this, &MainWindow::editor_tool_changed);
         //connect(ui->hexmap_widget, &hexmap_widget_t::camera_changed,
@@ -173,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
     }
-    
+
     /// Terrain / Object Palette
     {
         palette_dock = new QDockWidget();
@@ -188,42 +175,12 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
                         ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
 
-        connect(palette_widget, &palette_widget_t::terrain_add, ui->hexmap_widget, &hexmap_widget_t::add_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_add,  ui->hexmap_widget, &hexmap_widget_t::add_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_save, ui->hexmap_widget, &hexmap_widget_t::save_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
 
 
         palette_dock->setWidget(palette_widget);
-    }
-
-
-    {
-        spline_settings_widget = new spline_settings_widget_t();
-        spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
-
-        connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
-            , [this](int index)
-              {
-                  ASSERT(index >= 0, "");
-                  auto interp = (spline_t::interpolation_e)(index);
-                  ui->hexmap_widget->editor.set_current_spline_interpolation(interp);
-              });
-
-        connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                [this](double value)
-                {
-                    auto& editor = ui->hexmap_widget->editor;
-                    auto node_style = editor.new_node_style;
-                    ASSERT(value <= std::numeric_limits<float>::max(), "spline thickness too large to store in a float");
-                    node_style.thickness = static_cast<float>(value);
-                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
-                });
-
-        connect(spline_settings_widget, &spline_settings_widget_t::colorSelected,
-                [this](QColor c) {
-                    auto& editor = ui->hexmap_widget->editor;
-                    auto node_style = editor.new_node_style;
-                    node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
-                    ui->hexmap_widget->editor.set_spline_node_style(node_style);
-                });
     }
 }
 
@@ -338,7 +295,7 @@ void MainWindow::new_map()
 
 
     new_map_dialog_t nm(this);
-    nm.set_base_tiles(*(editor->rendered_map->terrain_bank.get()));
+    nm.set_base_tiles(editor->map_data.terrain_bank);
 
     if(!nm.exec()) { //exec() blocks the mainw window until the modal dialog is dismissed
         return;
@@ -349,47 +306,87 @@ void MainWindow::new_map()
         asdf::hexmap::data::hex_grid_cell_t cell;
         cell.tile_id = nm.selected_base_tile_index();
 
-        ui->hexmap_widget->editor.new_map_action(name, map_size, cell);
-        ui->hexmap_widget->camera_pos(glm::vec2(map_size) / 2.0f);
-        set_scrollbar_stuff(ui->hexmap_widget->editor.rendered_map->camera);
+        ui->hexmap_widget->editor->new_map_action(name, map_size, cell);
+        ui->hexmap_widget->zoom_extents();
     }
+}
+
+QDir MainWindow::get_initial_save_load_dir()
+{
+    if(editor->map_filepath.size() > 0)
+        return QDir(QString::fromStdString(editor->map_filepath));
+    else if(editor->workspace.recently_opened.size() > 0)
+        return QDir(QString::fromStdString(editor->workspace.recently_opened.back()));
+    else
+        return QDir::homePath();
 }
 
 void MainWindow::open_map()
 {
-    QDir map_file(QString(editor->map_filepath.c_str()));
+    QDir initial_filepath = get_initial_save_load_dir();
 
     QString filepath = QFileDialog::getOpenFileName(this,
-        tr("Open Map"), map_file.path(), tr("Hexmap Files (*.hxm)"));
+        tr("Open Map"), initial_filepath.path(), tr("Hexmap Files (*.hxm)"));
 
     if(filepath.size() > 0)
     {
-        editor->load_action(std::string(filepath.toUtf8().constData()));
+        _open_map(filepath.toStdString());
     }
+}
+
+void MainWindow::_open_map(std::string const& filepath)
+{
+    ui->hexmap_widget->makeCurrent();
+    editor->load_action(filepath);
+    ui->hexmap_widget->zoom_extents();
+
+    //lazy rebuild
+    palette_widget->build_from_terrain_bank(hexmap_widget->editor->map_data.terrain_bank);
+
+    set_recent_documents(editor->workspace.recently_opened);
+    save_workspace();
 }
 
 void MainWindow::save_map()
 {
-    if(ui->hexmap_widget->editor.map_filepath.size() == 0)
+    if(ui->hexmap_widget->editor->map_filepath.size() == 0)
     {
         save_map_as();
     }
     else
     {
-        ui->hexmap_widget->editor.save_action();
+        ui->hexmap_widget->editor->save_action();
         save_status_message();
     }
 }
 
 void MainWindow::save_map_as()
 {
-    QString dir(ui->hexmap_widget->editor.map_filepath.c_str());
-    QString filepath = QFileDialog::getSaveFileName(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+    QString dir = get_initial_save_load_dir().path();
 
-    if(filepath.size() > 0)
+    if(!dir.endsWith(".hxm"))
     {
-        editor->save_action( std::string(filepath.toUtf8().constData()) );
-        save_status_message();
+        dir += "/";
+        dir += QString::fromStdString(editor->map_data.map_name + "." + default_map_file_extension);
+    }
+
+
+    QFileDialog save_dialog(this, tr("Save Map"), dir, tr("Hexmap Files (*.hxm)"));
+    save_dialog.setAcceptMode(QFileDialog::AcceptSave);
+    save_dialog.setDefaultSuffix(default_map_file_extension);
+
+    if(save_dialog.exec())
+    {
+        auto filenames = save_dialog.selectedFiles();
+        ASSERT(filenames.size() <= 1, "There should not be multiple save filenames");
+        if(filenames.size() > 0)
+        {
+            auto const& filepath = filenames[0];
+            editor->save_action( std::string(filepath.toUtf8().constData()) );
+            save_status_message();
+            set_recent_documents(editor->workspace.recently_opened);
+            save_workspace();
+        }
     }
 }
 
@@ -420,48 +417,198 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event)
     Q_UNUSED(event);
 }
 
+void MainWindow::set_recent_documents(vector<stdfs::path> const& recent_doc_paths)
+{
+    ui->menuOpen_Recent->clear();
+
+    for(auto const& p : reversed(recent_doc_paths))
+    {
+        ui->menuOpen_Recent->addAction(QString::fromStdString(p.filename().string())
+          , [this, p]()
+            {
+                if(stdfs::is_regular_file(p))
+                {
+                    _open_map(p.string());
+                }
+                else
+                {
+                    auto& recents = editor->workspace.recently_opened;
+                    recents.erase(std::find(recents.begin(), recents.end(), p));
+                    QMessageBox::about(this, "File Not Found"
+                        , "This file has been deleted or moved. It will be removed from the 'Open Recent' list");
+                }
+            }
+        );
+    }
+
+    if(recent_doc_paths.size() > 0)
+    {
+        ui->menuOpen_Recent->addSeparator();
+        ui->menuOpen_Recent->addAction("Clear Recents"
+          , [this]()
+            {
+                editor->workspace.recently_opened.clear();
+                set_recent_documents(vector<stdfs::path>());
+                save_workspace();
+            }
+        );
+    }
+}
+
 void MainWindow::save_status_message()
 {
     QString save_str = "Map Saved to \"";
-    save_str.append(ui->hexmap_widget->editor.map_filepath.c_str());
+    save_str.append(ui->hexmap_widget->editor->map_filepath.c_str());
     statusBar()->showMessage(save_str, status_message_timeout_ms);
 }
 
-
-void MainWindow::hex_map_initialized(asdf::hexmap::editor::editor_t& editor)
+std::string MainWindow::workspace_path() const
 {
-    minimap = new minimap_widget_t(editor);
-    minimap->setMinimumSize(200, 200);
-    minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    /// In the future, I'll use the native settings path
+    /// for now, just use the current working directory
+    /// (which should be the same dir as the executable)
+    //auto appdata_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    //auto workspace_path = appdata_path + "/" + editor_workspace_filename;
+    //std::string workspace_path_str = workspace_path.toStdString();
 
-    //must connect initialized before handing this tot he minimapdock
+    return std::string(editor_workspace_filename);
+}
+
+void MainWindow::load_workspace_create_if_not_exists()
+{
+    auto path_str = workspace_path();
+
+    if(stdfs::exists(stdfs::path(path_str)))
+    {
+        editor->load_workspace(path_str);
+    }
+    else
+    {
+        editor->save_workspace(path_str);
+    }
+}
+
+void MainWindow::save_workspace()
+{
+    editor->save_workspace(workspace_path());
+}
+
+void MainWindow::init()
+{
+    editor = ui->hexmap_widget->editor.get();
+    load_workspace_create_if_not_exists();
+    set_recent_documents(editor->workspace.recently_opened);
+
+    /// Render Flag Toggles
+    {
+        using rflags = asdf::hexmap::ui::hex_map_t::render_flags_e;
+
+        ui->actionGrid->setChecked((editor->map_render_flags & rflags::grid_outline));
+        ui->actionHex_Coords->setChecked((editor->map_render_flags & rflags::hex_coords));
+
+        auto connect_thing = [this](QAction* thing, rflags flag)
+        {
+            connect(thing, &QAction::triggered, [this, flag](bool chk)
+            {
+                uint32_t temp = static_cast<uint32_t>(ui->hexmap_widget->editor->map_render_flags);
+                temp |= (flag * chk);
+                temp &= ~(flag * !chk);
+                ui->hexmap_widget->editor->map_render_flags = static_cast<rflags>(temp);
+            });
+        };
+
+        connect_thing(ui->actionGrid, rflags::grid_outline);
+        connect_thing(ui->actionHex_Coords, rflags::hex_coords);
+    }
+
+
+    //must connect initialized before handing this tot he minimap_dock
     //otherwise the minimap initialize signal will have already fired before connecting
     connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
-    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed, 
+    connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
         [this](){
             minimap->is_dirty = true;
             minimap->update();
         });
 
-    
-    minimap_dock->setWidget(minimap);
-    minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
 
-    terrain_palette_model = new palette_item_model_t();
-    objects_palette_model = new palette_item_model_t();
 
-    terrain_palette_model->build_from_terrain_bank(*(editor.rendered_map->terrain_bank.get()));
-    objects_palette_model->build_from_atlas(*(editor.rendered_map->objects_atlas.get()));
+    {
+        minimap = new minimap_widget_t(*editor, this);
+        minimap->setMinimumSize(200, 200);
+        minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    //lazy rebuild
-    connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
+        minimap_dock->setWidget(minimap);
 
-    editor_tool_changed(editor.current_tool);
+        connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
+            [this](){
+                minimap->is_dirty = true;
+                minimap->update();
+            });
+
+        using qd = QDockWidget;
+        minimap_dock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+
+        terrain_palette_model = new palette_item_model_t();
+        objects_palette_model = new palette_item_model_t();
+
+        terrain_palette_model->build_from_terrain_bank(editor->map_data.terrain_bank);
+        objects_palette_model->build_from_atlas(*(editor->map_data.objects_atlas.get()));
+
+        //lazy rebuild
+        connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
+
+        editor_tool_changed(editor->current_tool);
+    }
+
+
+
+
+    {
+        spline_settings_widget = new spline_settings_widget_t();
+        spline_settings_widget->ui->LineThicknessSpinner->setValue(editor->new_node_style.thickness);
+
+
+        connect(spline_settings_widget->ui->InterpolationDropDown, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+            , [this](int index)
+              {
+                  ASSERT(index >= 0, "");
+                  auto interp = (spline_t::interpolation_e)(index);
+                  ui->hexmap_widget->editor->set_current_spline_interpolation(interp);
+              });
+
+
+        connect(spline_settings_widget->ui->LineThicknessSpinner, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+                [this](double value)
+                {
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor->new_node_style;
+                    ASSERT(value <= std::numeric_limits<float>::max(), "spline thickness too large to store in a float");
+                    node_style.thickness = static_cast<float>(value);
+                    ui->hexmap_widget->editor->set_spline_node_style(node_style);
+                });
+
+        connect(spline_settings_widget, &spline_settings_widget_t::colorSelected,
+                [this](QColor c) {
+                    auto& editor = ui->hexmap_widget->editor;
+                    auto node_style = editor->new_node_style;
+                    node_style.color = color_t(c.redF(), c.greenF(), c.blueF(), c.alphaF());
+                    ui->hexmap_widget->editor->set_spline_node_style(node_style);
+                });
+    }
+
+    asdf::hexmap::data::hex_grid_cell_t cell;
+    cell.tile_id = 0;
+    glm::uvec2 map_size(default_map_width, default_map_height);
+    ui->hexmap_widget->editor->new_map_action(default_map_name, map_size, cell);
+    ui->hexmap_widget->zoom_extents();
 }
+
 
 void MainWindow::minimap_initialized()
 {
-    minimap->rendered_map->terrain_bank = ui->hexmap_widget->editor.rendered_map->terrain_bank;
+    /// fixme??
+    //minimap->map_data.terrain_bank = ui->hexmap_widget->editor->rendered_map->terrain_bank;
 }
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)

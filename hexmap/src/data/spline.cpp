@@ -65,7 +65,7 @@ namespace data
                 SDL_RWread(io, reinterpret_cast<void*>(&sz), sizeof(uint64_t), 1);
 
                 control_nodes.resize(sz);
-                size_t n = SDL_RWread(io, control_nodes.data(), sizeof(line_node_t), sz);
+                size_t n = SDL_RWread(io, control_nodes.data(), sizeof(control_node_t), sz);
                 ASSERT(n == sz, "Error loading spline control nodes");
             }
 

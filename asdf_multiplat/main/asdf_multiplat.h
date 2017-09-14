@@ -100,6 +100,7 @@ namespace asdf {
         void resize(uint32_t w, uint32_t h);
 
         void init_SDL();
+        void make_GL_current();
 
         void update();
         void render();

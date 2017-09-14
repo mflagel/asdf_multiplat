@@ -1,0 +1,113 @@
+{
+    "Name":"Merge",
+    "Values":
+    [
+        {
+            "Merge":
+            [
+                {
+                    "Name":"A",
+                    "Properties":
+                    [
+                        "A P1",
+                        "A P2"
+                    ],
+                    "Values":
+                    [
+                        "A V1",
+                        "A V2"
+                    ]
+                },
+                {
+                    "Name":"B",
+                    "Properties":
+                    [
+                        "B P1",
+                        "B P2"
+                    ],
+                    "Values":
+                    [
+                        "B V1",
+                        "B V2"
+                    ]
+                }
+            ]
+        },
+        {
+            "Merge":
+            [
+                {
+                    "Name":"B",
+                    "Properties":
+                    [
+                        "B P1",
+                        "B P2"
+                    ],
+                    "Values":
+                    [
+                        "B V1",
+                        "B V2"
+                    ]
+                },
+                {
+                    "Name":"A",
+                    "Properties":
+                    [
+                        "A P1",
+                        "A P2"
+                    ],
+                    "Values":
+                    [
+                        "A V1",
+                        "A V2"
+                    ]
+                }
+            ]
+        },
+        {
+            "Merge":
+            [
+                "basic_node.json",
+                {
+                    "Name":"MergeTestNode",
+                    "Properties":
+                    [
+                        "Merge Test P1",
+                        "Merge Test P2"
+                    ],
+                    "Values":
+                    [
+                        "Merge Test V1",
+                        "Merge Test V2"
+                    ]
+                }
+            ]
+        },
+        {
+            "Merge":
+            [
+                {
+                    "Name":"MergeTestNode",
+                    "Properties":
+                    [
+                        "Merge Test P1",
+                        "Merge Test P2"
+                    ],
+                    "Values":
+                    [
+                        "Merge Test V1",
+                        "Merge Test V2"
+                    ]
+                },
+                "basic_node.json"
+            ]
+        },
+        {
+            "Merge":
+            [
+                "basic_node.json",
+                "fancy_node.json"
+            ]
+        }
+    ]
+}

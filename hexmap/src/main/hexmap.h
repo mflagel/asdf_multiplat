@@ -15,7 +15,7 @@ namespace hexmap
     struct hexmap_t : asdf_specific_t
     {
         data::hex_map_t map_data;
-        std::unique_ptr<ui::hex_map_t> rendered_map;
+        ui::hex_map_t rendered_map;
         ui::hex_grid_t::render_flags_e map_render_flags = ui::hex_grid_t::everything;
 
         hexmap_t();

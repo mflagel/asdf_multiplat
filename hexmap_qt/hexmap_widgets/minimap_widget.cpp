@@ -3,12 +3,16 @@
 #include <asdf_multiplat/main/asdf_multiplat.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "mainwindow.h"
+#include "hexmap_widget.h"
+
 using namespace asdf;
 
 minimap_widget_t::minimap_widget_t(asdf::hexmap::editor::editor_t& _edtior, QWidget *parent) :
     QOpenGLWidget(parent)
   , map_data(_edtior.map_data)
 {
+    hexmap_widget = static_cast<MainWindow*>(parent)->hexmap_widget;
 }
 
 minimap_widget_t::~minimap_widget_t()
@@ -30,6 +34,7 @@ void minimap_widget_t::initializeGL()
         GL_State.set_current_state_machine(*(gl_state.get()));
 
         rendered_map = std::make_unique<ui::hex_map_t>(map_data);
+
         minimap = std::make_unique<ui::minimap_t>(*(rendered_map.get()));
 
         emit initialized();

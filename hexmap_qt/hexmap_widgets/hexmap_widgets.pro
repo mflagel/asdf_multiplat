@@ -6,7 +6,7 @@
 
 QT       += core gui widgets opengl
 
-CONFIG += c++14 console
+CONFIG += debug c++14 console
 
 !win32: QMAKE_CXXFLAGS += -fms-extensions -Wno-missing-braces -Wno-writable-strings
 #QMAKE_CXXFLAGS_WARN_OFF += -Wno-missing-braces -Wno-writable-strings

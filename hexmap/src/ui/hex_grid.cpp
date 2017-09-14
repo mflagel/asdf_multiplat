@@ -37,8 +37,9 @@ namespace ui
 
 
 
-    hex_grid_t::hex_grid_t(data::hex_grid_t& _grid_data)
+    hex_grid_t::hex_grid_t(data::hex_grid_t& _grid_data, data::terrain_bank_t& _terrain_bank)
     : grid_data(_grid_data)
+    , terrain_bank(_terrain_bank)
     {
         are_hexagons_instanced = GLEW_VERSION_3_3;
 
@@ -133,9 +134,9 @@ namespace ui
 
         glUniform4f(shader->uniform("Color"), 1.0f, 1.0f, 1.0f, 1.0f);
 
-        if(terrain_bank && (render_flags & render_flags_e::terrain) > 0)
+        if((render_flags & render_flags_e::terrain) > 0)
         {
-            glBindTexture(GL_TEXTURE_2D, terrain_bank->atlas_texture.texture_id);
+            glBindTexture(GL_TEXTURE_2D, terrain_bank.atlas_texture.texture_id);
             render_hexagons(chunk.size, GL_TRIANGLE_FAN);
         }
 

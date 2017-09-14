@@ -14,8 +14,13 @@ namespace asdf
 
     bool mouse_input_t::is_dragging(mouse_button_e btn) const
     {
+        return is_dragging(mouse_button_bit(btn));
+    }
+
+    bool mouse_input_t::mouse_input_t::is_dragging(uint32_t mouse_btns) const
+    {
         auto d = drag_delta();
-        return mouse_button_states == mouse_button_bit(btn) 
+        return ((mouse_button_states & mouse_btns) > 0)
             && (glm::abs(d.x) > drag_threshold_px || glm::abs(d.y) > drag_threshold_px);
     }
 
@@ -51,6 +56,14 @@ namespace asdf
         mouse_position = mouse_pos;
 
         receiver->on_mouse_up(event);
+    }
+
+    void mouse_input_t::mouse_drag(mouse_motion_event_t& event, glm::ivec2 mouse_pos)
+    {
+        mouse_prev_position = mouse_position;
+        mouse_position = mouse_pos;
+
+        receiver->on_mouse_drag(event);
     }
 
     void mouse_input_t::mouse_move(mouse_motion_event_t& event, glm::ivec2 mouse_pos)

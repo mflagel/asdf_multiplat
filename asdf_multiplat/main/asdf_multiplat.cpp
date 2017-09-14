@@ -280,6 +280,11 @@ namespace asdf {
         LOG("Window Size: %d x %d", surface_width, surface_height);
     }
 
+    void asdf_multiplat_t::make_GL_current()
+    {
+        SDL_GL_MakeCurrent(main_window, gl_context);
+    }
+
 
     //todo: append date/time info so I get unique screenshot names
     //todo: save as png

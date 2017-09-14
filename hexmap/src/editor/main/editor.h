@@ -11,6 +11,7 @@
 #include "ui/terrain_brush_renderer.h"
 
 #include "editor/main/input.h"
+#include "editor/main/editor_workspace.h"
 #include "editor/command_actions/command_actions.h"
 
 namespace asdf {
@@ -96,8 +97,8 @@ namespace editor
         uint64_t current_tile_id = 0;
         tile_coord_dict_t painted_terrain_coords;
 
-        std::vector<data::terrain_brush_t> terrain_brushes;
-        size_t current_terrain_brush_index = 0;
+        data::terrain_brush_t terrain_brush;
+        std::vector<data::terrain_brush_t> saved_terrain_brushes;
         std::unique_ptr<ui::terrain_brush_renderer_t> terrain_brush_renderer;
         glm::vec2 brush_pos;
 
@@ -114,6 +115,7 @@ namespace editor
         data::spline_selection_t spline_selection;
 
         ///
+        editor_workspace_t workspace;
         std::string map_filepath;
         bool map_is_dirty = false;
         std::function<void()> map_changed_callback;
@@ -136,6 +138,9 @@ namespace editor
         void render_current_brush();
 
         void on_event(SDL_Event*) override;
+
+        void save_workspace(std::string const& filepath);
+        void load_workspace(std::string const& filepath);
 
         void new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style = data::hex_grid_cell_t{});
         void save_action();
@@ -163,10 +168,10 @@ namespace editor
         void push_and_execute_action(std::unique_ptr<editor_action_t>&&);
 
         void set_custom_terrain_brush(data::terrain_brush_t const& new_brush);
-        inline data::terrain_brush_t const& current_terrain_brush() const { 
-            ASSERT(terrain_brushes.size() > 0, "Cannot get current terrain brushes when there are no brushes");
-            return terrain_brushes[current_terrain_brush_index]; 
+        inline data::terrain_brush_t const& current_terrain_brush() const {
+            return terrain_brush;
         }
+        void save_current_terrain_brush();
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

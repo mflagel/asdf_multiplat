@@ -81,11 +81,14 @@ public:
 
     void import_terrain();
     void remove_selected_terrain();
+    void load_terrain();
     void save_terrain();
 
 
 signals:
     void terrain_add(QStringList const& terrain_filepaths);
+    void terrain_load(QString const& filepath);
+    void terrain_save(QString const& filepath);
 
 public slots:
     void build_from_terrain_bank(asdf::hexmap::data::terrain_bank_t const&);

@@ -14,6 +14,10 @@
 		},
 		{
 			"path": "../build/linux"
+		},
+		{
+			"path": "../hexmap_qt/hexmap_widgets/",
+			"file_exclude_patterns":["*.ui"]
 		}
 	]
 }

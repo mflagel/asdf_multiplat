@@ -91,7 +91,7 @@ namespace ui
         };
         
         data::hex_grid_t& grid_data;
-        std::shared_ptr<data::terrain_bank_t> terrain_bank;
+        data::terrain_bank_t& terrain_bank;
 
         std::shared_ptr<shader_t> shader;
         rendered_multi_polygon_<hexagon_vertex_t> hexagon;  //multi-polyogn because we need to track info for non-instanced rendering
@@ -102,7 +102,7 @@ namespace ui
         bool are_hexagons_instanced = false;
 
     public:
-        hex_grid_t(data::hex_grid_t&);
+        hex_grid_t(data::hex_grid_t&, data::terrain_bank_t&);
 
         void render_chunk(data::hex_grid_chunk_t const&, render_flags_e = everything);
         void render_hexagons(glm::uvec2 grid_size, GLuint draw_mode) const;

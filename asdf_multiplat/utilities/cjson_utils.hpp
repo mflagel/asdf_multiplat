@@ -1,5 +1,9 @@
 #pragma once
-#include "asdf_defs.h"
+#include "main/asdf_defs.h"
+
+#include <array>
+
+#include "utilities/utilities.h"
 
 
 DIAGNOSTIC_PUSH
@@ -9,8 +13,6 @@ DIAGNOSTIC_IGNORE(-Wsign-conversion)
 DIAGNOSTIC_IGNORE(-Wdouble-promotion)
 #include "cJSON/cJSON.h"
 DIAGNOSTIC_POP
-
-#include <array>
 
 DIAGNOSTIC_PUSH
 DIAGNOSTIC_IGNORE(-Wunused-macros);
@@ -93,6 +95,20 @@ constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
     }
 //---
 
+
+#define CJSON_FOR_EACH_ITEM_VECTOR(container, obj_from_json_func) \
+    { \
+        cJSON* container##_json = cJSON_GetObjectItem(root, #container);     \
+        size_t len = cJSON_GetArraySize(container##_json);                   \
+                                                                             \
+        for(size_t i = 0; i < len; ++i)                                      \
+        {                                                                    \
+            obj_from_json_func(cJSON_GetArrayItem(container##_json, i));     \
+        }                                                                    \
+    }
+//---
+
+
 #define CJSON_GET_ITEM_VECTOR(container) \
     { \
         cJSON* container##_json = cJSON_GetObjectItem(root, #container);     \
@@ -134,7 +150,37 @@ constexpr std::array<char const*, cJSON_Object+2> cJSON_type_strings =
 #define CJSON_ADD_ITEM_ARRAY(container_name)      \
     CJSON_ITEM_ARRAY(container_name);                       \
     cJSON_AddItemToObject(root, #container_name, container_name##_json);
-//---
-
-
 DIAGNOSTIC_POP
+
+
+namespace asdf
+{
+    inline std::string json_to_string(cJSON* j)
+    {
+        char* cjson_cstr = cJSON_Print(j);
+        std::string str(cjson_cstr);
+        free(cjson_cstr);
+
+        return str;
+    }
+
+    inline std::string json_to_string_unformatted(cJSON* j)
+    {
+        char* cjson_cstr = cJSON_PrintUnformatted(j);
+        std::string str(cjson_cstr);
+        free(cjson_cstr);
+
+        return str;
+    }
+
+    inline void json_to_file(cJSON* j, std::string const& filepath)
+    {
+        util::write_text_file(filepath, json_to_string(j));
+    }
+
+    inline cJSON* json_from_file(std::string const& filepath)
+    {
+        std::string json_str = util::read_text_file(filepath);
+        return cJSON_Parse(json_str.c_str());
+    }
+}

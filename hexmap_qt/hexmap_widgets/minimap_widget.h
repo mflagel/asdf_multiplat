@@ -9,6 +9,8 @@ namespace Ui {
 class minimap_widget_t;
 }
 
+class hexmap_widget_t;
+
 
 /*
 Because this is a seperate QOpenGLWidget, an entirely separate openGL context is created
@@ -50,6 +52,7 @@ protected:
     void wheelEvent(QWheelEvent*) override;
 
 private:
+    hexmap_widget_t* hexmap_widget = nullptr;
     std::unique_ptr<asdf::gl_state_t> gl_state;
     Ui::minimap_widget_t *ui;
 };

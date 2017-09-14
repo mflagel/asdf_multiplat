@@ -27,6 +27,7 @@ namespace plant_printer
 
         while(true)
         {
+
             pos = print_string.find(string_var_delimiter, endpos);
             if(pos == string::npos)
                 break;
@@ -40,6 +41,7 @@ namespace plant_printer
 
             ASSERT(endpos > pos, "");
             ASSERT(endpos-pos >= 1, "");
+
             std::string key = print_string.substr(pos+1, endpos-pos-1);
             var_locations.insert({key,pos});
 
@@ -85,11 +87,13 @@ namespace plant_printer
         std::sort(sorted_values.begin(), sorted_values.end(),
             [](sorted_range_value_t const& lhs, sorted_range_value_t const& rhs)
             {
+                // return true if the left should be ordered before the second
                 return lhs.percentage > rhs.percentage;
             });
 
         return sorted_values;
     }
+
 
 
     string print_range_value(generated_node_t const& range)
@@ -98,9 +102,13 @@ namespace plant_printer
 
         ASSERT(sorted_values.size() > 0, "");
 
+        if(sorted_values.size() == 1)
+        {
+            return sorted_values[0].range_string;
+        }
+
+
         size_t div = 100 / sorted_values.size();
-
-
         int largest_diff = 0;
         for(auto const& sorted : sorted_values)
         {
@@ -138,6 +146,11 @@ namespace plant_printer
             }
 
             return ret;
+        }
+        else if(sorted_values[0].percentage >= 45
+            && (sorted_values.size() > 0 && sorted_values[1].percentage > 30))
+        {
+            return sorted_values[0].range_string + " and " + sorted_values[1].range_string;
         }
         else
         {
@@ -256,6 +269,15 @@ namespace plant_printer
         return print_property_with_string(node, node.print_string);
     }
 
+
+    enum print_string_modifiers_e
+    {
+          no_modifier = 0
+        , use_node_first_value = 1
+        // = 2
+        // = 4
+    };
+
     string print_property_with_string(generated_node_t const& node, string const& print_string)
     {
         if(print_string.empty())
@@ -272,6 +294,13 @@ namespace plant_printer
 
         for(auto const& var_loc : sorted_locs)
         {
+            uint32_t modifiers = 0;
+            if(var_loc.second.size() > 0)
+            {
+                modifiers |= (use_node_first_value * (var_loc.second[0] == '$'));
+            }
+
+
             std::string var_str;
             auto prev_size = final_string.size();
 
@@ -281,11 +310,48 @@ namespace plant_printer
             }
             else
             {
+                /// TODO: reorganize this
+                ///       maybe move the handling of the '$' into
+                ///       parse_print_string() instead of dealing with it here
                 for(generated_node_t const& child : node.children)
                 {
-                    if(var_loc.second == child.name)
+                    bool use_node_val = (modifiers & use_node_first_value) > 0;
+                    string cmp;
+
+                    if(use_node_val)
                     {
-                        string str = print_sub_property(child, 0, print_flags_skip_name);
+                        ASSERT(var_loc.second[0] == '$', "Expected $ at start of print string variable name");
+                        cmp = var_loc.second.substr(1);
+                    }
+                    else
+                    {
+                        cmp = var_loc.second;
+                    }
+
+
+                    if(cmp == child.name)
+                    {
+                        string str;
+
+                        if(use_node_val)
+                        {
+                            if(child.generated_values.size() > 0)
+                                str = print_basic_property(child);
+                            else if(child.value_nodes.size() > 0)
+                            {
+                                auto const* leaf_vn = leaf_value_node(child);
+                                str = print_basic_property(*leaf_vn);
+                            }
+                            else
+                            {
+                                EXPLODE("asdf");
+                            }
+                        }
+                        else
+                        {
+                            str = print_sub_property(child, 0, print_flags_skip_name);
+                        }
+
                         final_string.replace(var_loc.first + adjust, var_loc.second.size()+2, str);
                         break;
                     }
@@ -301,6 +367,6 @@ namespace plant_printer
 
     string print_plant(generated_node_t const& plant_node)
     {
-        return "This " + plant_node.name + " " + print_sub_property(plant_node);
+        return "A " + plant_node.name + " " + print_sub_property(plant_node);
     }
 }

@@ -20,18 +20,21 @@ class spline_settings_widget_t;
 class object_properties_widget_t;
 class minimap_widget_t;
 class terrain_brush_selector_t;
+class hexmap_widget_t;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
     friend class hexmap_widget_t;
+    friend class minimap_widget_t;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
     void set_scrollbar_stuff(asdf::camera_t const&);
+
 
 public slots:
     void scrollbar_changed();
@@ -50,10 +53,17 @@ protected:
     void mouseReleaseEvent(QMouseEvent *) override;
 
 private:
+    QDir get_initial_save_load_dir();
+    void set_recent_documents(std::vector<std::experimental::filesystem::path> const&);
+    std::string workspace_path() const;
+    void load_workspace_create_if_not_exists();
+    void save_workspace();
     void save_status_message();
 
 private slots:
-    void hex_map_initialized(asdf::hexmap::editor::editor_t&);
+    void _open_map(std::string const& filepath);
+    void init();
+    //void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void minimap_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
     void object_selection_changed(asdf::hexmap::editor::editor_t&);
@@ -66,6 +76,7 @@ private:
 
     asdf::hexmap::editor::editor_t* editor = nullptr;
 
+    hexmap_widget_t* hexmap_widget = nullptr;
     QDockWidget* palette_dock = nullptr;
     QDockWidget* minimap_dock = nullptr;
 

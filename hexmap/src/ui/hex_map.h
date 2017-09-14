@@ -35,15 +35,12 @@ namespace ui
         asdf::camera_t camera;
         asdf::input_handler_sdl2_t camera_controller;
 
-        std::unique_ptr<asdf::data::texture_atlas_t> objects_atlas;
         spline_renderer_t spline_renderer;
         
         spritebatch_t spritebatch; //used to render map objects
 
     public:
         hex_map_t(data::hex_map_t& _map_data);
-
-        void load_terrain_assets(std::string const& data_dir);
         
         void update(float dt);
         void render(render_flags_e = everything);

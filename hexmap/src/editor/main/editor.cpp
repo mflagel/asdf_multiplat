@@ -11,6 +11,8 @@
 using namespace std;
 using namespace glm;
 
+namespace stdfs = std::experimental::filesystem;
+
 namespace asdf
 {
     using namespace util;
@@ -58,11 +60,6 @@ namespace editor
     {
         hexmap_t::init();
 
-        //load default terrain and map objects
-        auto data_dir = find_folder("data");
-        rendered_map->load_terrain_assets(data_dir + "/" + string(terrain_types_json_filename));
-        rendered_map->objects_atlas = make_unique<texture_atlas_t>(string(data_dir + "/../assets/Objects/objects_atlas_data.json"));
-
 #ifdef DEBUG
         new_map_action("", uvec2(16,16));
 #else
@@ -72,24 +69,25 @@ namespace editor
         input = make_unique<input_handler_t>(*this);
         app.mouse_state.receiver = input.get();
 
-
         {
             using namespace data;
-            terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
-            terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
-            terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
-            terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
-            // terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
-            // terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
-            // terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
-            terrain_brushes.push_back(terrain_brush_hexagon(1));
-            terrain_brushes.push_back(terrain_brush_hexagon(2));
-            terrain_brushes.push_back(terrain_brush_hexagon(3));
-            terrain_brushes.push_back(terrain_brush_hexagon(5));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(0));   //default point brush
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(3,3));   //default small rect
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(5,5));   //default medium rect
+            saved_terrain_brushes.push_back(terrain_brush_rectangle(10,10)); //default large rect
+            // saved_terrain_brushes.push_back(terrain_brush_circle(1.0f));     //default small circle
+            // saved_terrain_brushes.push_back(terrain_brush_circle(3.0f));     //default medium circle
+            // saved_terrain_brushes.push_back(terrain_brush_circle(5.0f));     //default large circle
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(1));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(2));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(3));
+            saved_terrain_brushes.push_back(terrain_brush_hexagon(5));
+
+            terrain_brush = saved_terrain_brushes[0];
 
             terrain_brush_renderer = std::make_unique<ui::terrain_brush_renderer_t>();
             terrain_brush_renderer->init(Content.create_shader_highest_supported("passthrough"));
-            terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+            terrain_brush_renderer->set_brush(&terrain_brush);
         }
     }
 
@@ -97,6 +95,7 @@ namespace editor
     {
         hexmap_t::resize(w, h);
     }
+
 
     void editor_t::render()
     {
@@ -108,7 +107,7 @@ namespace editor
         {
             std::vector<size_t> inds;
             inds.emplace_back(map_data.splines.size() - 1);
-            rendered_map->spline_renderer.render_some_spline_handles(inds);
+            rendered_map.spline_renderer.render_some_spline_handles(inds);
         }
 
         render_selection();
@@ -123,13 +122,13 @@ namespace editor
         {
             auto const& sel_obj = map_data.objects[sel_obj_ind];
 
-            auto& spritebatch = rendered_map->spritebatch;
-            auto const& shader = rendered_map->shader;
+            auto& spritebatch = rendered_map.spritebatch;
+            auto const& shader = rendered_map.shader;
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = rendered_map->objects_atlas->atlas_entries[sel_obj.id].size_px;
-            auto scale = vec2(obj_size_px) / pixel_texture->get_size(); //scale overlay texture to match object texture size
+            auto const& obj_size_px = map_data.objects_atlas->atlas_entries[sel_obj.id].size_px;
+            vec2 scale = vec2(uvec2(obj_size_px) / pixel_texture->get_size()); //scale overlay texture to match object texture size
             auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
 
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
@@ -142,7 +141,7 @@ namespace editor
         {
             auto const& box = app.renderer->box; //no sense making a new one
 
-            auto& shader = rendered_map->shader;
+            auto& shader = rendered_map.shader;
 
             glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
             glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
@@ -152,7 +151,7 @@ namespace editor
             shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
             
 
-            auto const& camera = rendered_map->camera;
+            auto const& camera = rendered_map.camera;
             shader->view_matrix       = camera.view_matrix();
             shader->projection_matrix = camera.projection_ortho();
 
@@ -178,10 +177,10 @@ namespace editor
                 shader->world_matrix = glm::mat4();
 
                 shader->world_matrix[3][0] = brush_pos.x;
-                shader->world_matrix[3][1] = brush_pos.y;
+                shader->world_matrix[3][1] = brush_pos.y + hex_height_d2;
 
-                shader->view_matrix       = rendered_map->shader->view_matrix ;
-                shader->projection_matrix = rendered_map->shader->projection_matrix;
+                shader->view_matrix       = rendered_map.shader->view_matrix ;
+                shader->projection_matrix = rendered_map.shader->projection_matrix;
 
                 terrain_brush_renderer->render();
 
@@ -193,16 +192,18 @@ namespace editor
 
     void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
-        map_data = data::hex_map_t(map_name, size, default_cell_style);
-        action_stack.clear();
-
-        //reset camera
-        rendered_map->camera_controller.position = default_camera_position;
-        rendered_map->update(0.0f);
-        rendered_map->camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map->camera.aspect_ratio);
+        map_data.map_name = map_name;
+        map_data.hex_grid = data::hex_grid_t(size, default_cell_style);
 
         map_filepath = "";
         map_is_dirty = false;
+
+        action_stack.clear();
+
+        //reset camera
+        rendered_map.camera_controller.position = default_camera_position;
+        rendered_map.update(0.0f);
+        rendered_map.camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map.camera.aspect_ratio);
 
         signal_data_changed();
     }
@@ -218,15 +219,24 @@ namespace editor
         map_data.save_to_file(filepath);
         map_is_dirty = false;
         LOG("map saved to %s", filepath.c_str());
+
+        workspace.update_recently_opened_with(filepath);
     }
 
     void editor_t::load_action(std::string const& filepath)
     {
-        map_filepath = filepath;
         map_data.load_from_file(filepath);
+        
+        map_filepath = filepath;
         map_is_dirty = false;
         action_stack.clear();
         LOG("map loaded from %s", filepath.c_str());
+
+        workspace.update_recently_opened_with(filepath);
+
+        rendered_map.camera_controller.position = default_camera_position;
+        rendered_map.update(0.0f);
+        rendered_map.camera.viewport = viewport_for_size_aspect(map_data.hex_grid.size_units(), rendered_map.camera.aspect_ratio);
 
         signal_data_changed();
     }
@@ -271,7 +281,22 @@ namespace editor
             }
         }
 
-        rendered_map->on_event(event); //for camera controller
+        rendered_map.on_event(event); //for camera controller
+    }
+
+
+    void editor_t::save_workspace(std::string const& filepath)
+    {
+        json_to_file(workspace.to_JSON(), filepath);
+    }
+
+    void editor_t::load_workspace(std::string const& filepath)
+    {
+        ASSERT(stdfs::exists(stdfs::path(filepath)), "workspace filepath does not exist");
+        
+        cJSON* root = json_from_file(filepath);
+        workspace.from_JSON(root);
+        cJSON_Delete(root);
     }
 
 
@@ -414,25 +439,23 @@ namespace editor
     }
 
 
-    /// Terrain
+    /// Terrain Brushes
     void editor_t::set_custom_terrain_brush(data::terrain_brush_t const& new_brush)
     {
-        //0th brush is custom brush
-        if(terrain_brushes.size() == 0)
-        {
-            terrain_brushes.push_back(new_brush);
-        }
-        else
-        {
-            terrain_brushes[0] = new_brush;
-        }
+        terrain_brush = new_brush;        
+        terrain_brush_renderer->set_brush(&terrain_brush);
+    }
 
-        current_terrain_brush_index = 0;
-        
-        terrain_brush_renderer->set_brush(&(terrain_brushes[current_terrain_brush_index]));
+    void editor_t::save_current_terrain_brush()
+    {
+        if(saved_terrain_brushes.empty())
+            saved_terrain_brushes.push_back(terrain_brush);
+        else if(terrain_brush != saved_terrain_brushes.back())
+            saved_terrain_brushes.push_back(terrain_brush);
     }
 
 
+    /// Terrain
     void editor_t::paint_terrain_start()
     {
         painted_terrain_coords.clear();
@@ -516,7 +539,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = rendered_map->objects_atlas->atlas_entries;
+        auto const& atlas_entries = map_data.objects_atlas->atlas_entries;
         ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
         auto const& atlas_entry = atlas_entries[current_object_id];
         glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
@@ -588,7 +611,7 @@ namespace editor
         wip_spline->nodes.back().position = position;
 
         ptrdiff_t spline_ind = wip_spline - map_data.splines.data();
-        rendered_map->spline_renderer.dirty_splines.insert(spline_ind);
+        rendered_map.spline_renderer.dirty_splines.insert(spline_ind);
 
         if(wip_spline->spline_type == spline_t::bezier)
         {

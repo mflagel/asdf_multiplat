@@ -1,0 +1,32 @@
+{
+  "Name": "CreatureEncounter",
+  "Values":[
+    {
+      "Name":"Neutral Creature",
+      "Include":"Creatures/NeutralCreatures.json" 
+    },
+    {
+      "Name":"Hostile Creature",
+      "Weight":10,
+      "Values":[
+        "%20 Trivial Monster",
+        {
+          "Name":"Mundane Monster",
+          "Weight":20,
+          "Properties":[
+            {
+              "Name": "Fight Result",
+              "Values":[
+                "%2 Crit Fail: PCs expend resources to survive",
+                "%10 Soft Fail: Combat Successful, but spend time to recover and no loot gained (-1 hex traveled)",
+                "%48 Mild Success: Loot gained, but some time spent recovering (-1 hex traveled)",
+                "%40 Total Success: Loot gained, no time spent recovering"
+              ]
+            }
+          ]
+        },
+        "%10 Difficult Monster. PCs roll attack skills"
+      ]
+    }
+  ]
+}
