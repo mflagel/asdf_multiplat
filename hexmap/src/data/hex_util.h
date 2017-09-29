@@ -9,6 +9,19 @@ namespace asdf
 {
 namespace hexmap
 {
+    enum hex_region_e
+    {
+          hex_no_region
+        , hex_top_left
+        , hex_top_right
+        , hex_left
+        , hex_right
+        , hex_bottom_left
+        , hex_bottom_right
+        , hex_center
+        , num_hex_regions
+    };
+    
 
     //big collection of util functions from
     //http://www.redblobgames.com/grids/hexagons/
@@ -16,7 +29,6 @@ namespace hexmap
     using cube_coord_t  = glm::ivec3;
     using axial_coord_t = glm::ivec2;
     using hex_coord_t   = glm::ivec2;
-    using grid_coord_t  = hex_coord_t;
 
 
     /// Coord Translations

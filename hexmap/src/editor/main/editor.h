@@ -21,19 +21,7 @@ namespace editor
     using spline_index_t = data::spline_index_t;
     using spline_node_index_t = data::spline_node_index_t;
 
-    enum hex_region_e
-    {
-          hex_no_region
-        , hex_top_left
-        , hex_top_right
-        , hex_left
-        , hex_right
-        , hex_bottom_left
-        , hex_bottom_right
-        , hex_center
-        , num_hex_regions
-    };
-
+    
     struct base_selection_t
     {
         glm::vec2 upper_bound;
