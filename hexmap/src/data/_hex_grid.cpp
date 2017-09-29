@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "hex_grid.h"
+#include "data/hex_util.h"
 #include "ui/hex_map.h"
 
 //#include "to_from_json.h"
@@ -379,92 +380,7 @@ namespace data
         auto chunk_coord = chunk_coord_from_hex_coord(hex_coord);
         return chunks[chunk_coord.x][chunk_coord.y];
     }
+
 }
-
-
-
-    /*        __
-    \  0,1  /   
-     \ ___ /  1,1
-     /     \    
-  hex  0,0  \ __
-world  0,0  /
-     \ ___ /  1,0
-           \
-            \ __
-          
-    world (0,0) is the center of the (0,0)th hexagon. add hexagon halfsize to the world pos to make world 0,0 the bottom left of the hexagon
-    hex coords range from (-0.5,-0.5) to (0.5,0.5)
-
-    everything within the angled slashes could be in the left or right hex depending
-    on the y coord. the edges are at 60 degree angles (60 and 180-60)
-
-    relevant edge can be determined by y position
-            
-    */
-    glm::ivec2 world_to_hex_coord(glm::vec2 world_pos)
-    {
-        //adjust so that world 0,0 is the bottom left of hexagon 0,0
-        world_pos += vec2(hex_width_d2, hex_height_d2);
-
-        //convert mouse world coords to a hexagon coord
-        float sub_column = world_pos.x / hex_width_d4;
-        float sub_row    = world_pos.y / hex_height_d2;
-
-        //LOG("subcol: %f   subrow: %f", sub_column, sub_row);
-
-        int column = static_cast<int>(glm::floor(sub_column / 3.0f));
-        int row    = static_cast<int>(glm::floor(world_pos.y / hex_height));
-
-        //if column is within hex_width_d4 of the column center (ie: fraction is +- 0.25) then it's only one column
-        if(static_cast<int>(glm::floor(sub_column)) % 3 == 0) //horizontal overlap every 3 sub-columns (with a width of one sub-column)
-        {
-            //todo: handle column overlap
-
-            bool even = static_cast<int>(std::abs(floor(sub_row))) % 2 == 0;
-            //even rows slant right  '/'
-            //odd rows slant left    '\'
-
-            vec2 line;
-
-            auto angle = (even * 1.0f + PI) / 3.0f;
-            line.x = cos(angle);
-            line.y = sin(angle);
-            line *= hex_edge_length;
-
-            vec2 p0(floor(sub_column) * hex_width_d4, floor(sub_row) * hex_height_d2); //bottom point of slant
-
-            auto p1 = p0 + line;
-            auto const& p2 = world_pos;
-            auto side = (p1.x - p0.x)*(p2.y - p0.y) - (p1.y - p0.y)*(p2.x - p0.x);  //FIXME
-            //((b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x))
-            
-            
-            //LOG("side: %f", side);
-            column -= 1 * (side < 0);
-        }
-
-        //if odd column, adjust row down
-        if(column % 2 == 1)
-        {
-            row = static_cast<int>(glm::floor((world_pos.y + hex_height_d2) / hex_height));
-        }
-
-        return ivec2(column, row);
-    }
-
-    glm::vec2 hex_to_world_coord(glm::ivec2 hex_coord, bool odd_q)
-    {
-        vec2 world_coord{hex_coord};
-
-        world_coord.x -= hex_width_d4 * hex_coord.x; //horizontal overlap
-        world_coord.y *= hex_height; //scale vertically since hexes aren't one unit tall
-
-        world_coord.y -= hex_height_d2 * !odd_q * (hex_coord.x & 1); //vertical offset for even hexes
-        world_coord.y -= hex_height_d2 *  odd_q * (hex_coord.x+1 & 1); //vertical offset for odd hexes
-
-        return world_coord;
-    }
-
 }
 }
