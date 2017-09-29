@@ -21,7 +21,7 @@ namespace hexmap
         , hex_center
         , num_hex_regions
     };
-    
+
 
     //big collection of util functions from
     //http://www.redblobgames.com/grids/hexagons/
@@ -88,5 +88,20 @@ namespace hexmap
     std::vector<cube_coord_t> cube_ring(cube_coord_t center, int radius);
     std::vector<cube_coord_t> cube_spiral(cube_coord_t center, int radius);
 
+
+    enum hex_snap_points_e
+    {
+          hex_snap_none         = 0
+        , hex_snap_center       = 1
+        , hex_snap_vertex       = 2
+        // , hex_snap_edge_nearest = 4
+        // , hex_snap_edge_center  = 8
+
+        , hex_snap_center_and_verts = hex_snap_center | hex_snap_vertex
+        , hex_snap_all         = 0xFFFFFFFF
+    };
+    using hex_snap_flags_t = uint32_t;
+
+    glm::vec2 nearest_snap_point(glm::vec2 const& pos_world, hex_snap_flags_t);
 }
 }

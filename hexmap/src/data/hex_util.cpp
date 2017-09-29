@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <asdf_multiplat/main/asdf_defs.h>
 
+#include "data/hex_grid.h"
+#include "ui/hex_grid.h"
+
 namespace asdf
 {
 namespace hexmap
@@ -134,6 +137,67 @@ namespace hexmap
         }
 
         return results;
+    }
+
+
+
+    glm::vec2 nearest_snap_point(glm::vec2 const& world_pos, hex_snap_flags_t snap_flags)
+    {
+        using namespace glm;
+
+        if(snap_flags == hex_snap_none)
+            return world_pos;
+
+        
+        //get the center point of the current hex
+        ivec2 hx = world_to_hex_coord(world_pos);
+         vec2 hex_world = hex_to_world_coord(hx);
+
+        /// get all possible snap points and return the closest one
+        /// could optimize by ignoring snap points beyond threshhold
+        std::vector<vec2> snap_points;
+
+        /// center
+        if((snap_flags & hex_snap_center) > 0)
+        {
+            snap_points.push_back(hex_world);
+        }
+
+        /// vertex
+        if((snap_flags & hex_snap_vertex) > 0)
+        {
+            for(size_t vert_ind = 0; vert_ind < 6; ++vert_ind)
+            {
+                //local space
+                vec2 vert_pos(hexagon_points[vert_ind*3 + 0]
+                            , hexagon_points[vert_ind*3 + 1]
+                            );
+
+                vert_pos += hex_world; //push into world space
+
+                snap_points.push_back(vert_pos);
+            }
+        }
+
+        /// edge nearest
+
+        /// edge center
+
+
+        if(snap_points.empty())
+            return world_pos;
+
+
+        std::sort(snap_points.begin(), snap_points.end(), 
+            [world_pos](vec2 const& lhs, vec2 const& rhs) -> bool
+            {
+                auto ldist = abs(distance(lhs, world_pos));
+                auto rdist = abs(distance(rhs, world_pos));
+
+                return ldist < rdist;
+            });
+
+        return snap_points[0];
     }
 
 }
