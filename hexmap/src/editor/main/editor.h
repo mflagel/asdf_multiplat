@@ -6,6 +6,7 @@
 
 #include "main/hexmap.h"
 #include "data/hex_map.h"
+#include "data/hex_util.h"
 #include "data/terrain_brush.h"
 #include "ui/minimap.h"
 #include "ui/terrain_brush_renderer.h"
@@ -92,7 +93,6 @@ namespace editor
 
         //objects
         uint64_t current_object_id = 0;
-        hex_region_e current_snap_point = hex_no_region;
         object_selection_t object_selection;
 
         //spline
@@ -101,6 +101,11 @@ namespace editor
         data::spline_t* wip_spline = nullptr; //the last node will follow the mouse
         data::line_node_t* wip_spline_node = nullptr;
         data::spline_selection_t spline_selection;
+
+        ///
+        hex_snap_points_e snap_mode = hex_snap_center;
+        float snap_threshold = 0.04f;
+
 
         ///
         editor_workspace_t workspace;
@@ -114,7 +119,6 @@ namespace editor
 
     private:
         action_stack_t action_stack; //private to ensure signal_data_changed() gets called
-
 
     public:
         editor_t();
@@ -168,6 +172,8 @@ namespace editor
 
         void place_object(glm::vec2 position);
         void delete_object(size_t object_index);
+        data::map_object_t& wip_object();
+        data::map_object_t const& wip_object() const;
 
         void spline_click(glm::vec2 position);
         void start_spline(data::line_node_t start);
@@ -179,6 +185,11 @@ namespace editor
         bool is_placing_spline() const { return wip_spline != nullptr; }
 
         void cancel_action();
+
+    private:
+        data::map_object_t __placeable_object(glm::vec2 position);
+        void enable_wip_object();
+        void disable_wip_object();
     };
 
 

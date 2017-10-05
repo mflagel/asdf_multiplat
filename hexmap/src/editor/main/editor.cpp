@@ -49,6 +49,7 @@ namespace editor
     }
     //--
 
+
     editor_t::editor_t()
     : hexmap_t()
     , action_stack(*this)
@@ -186,14 +187,30 @@ namespace editor
 
                 break;
             }
+
+            case place_objects:
+            {
+
+
+                break;
+            }
         };
     }
 
 
     void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
-        map_data.map_name = map_name;
-        map_data.hex_grid = data::hex_grid_t(size, default_cell_style);
+        map_data.reset(map_name, size, default_cell_style);
+        
+        /// (re)-add the WIP object at the start of the list
+        data::map_object_t obj = __placeable_object(vec2(0.0f));
+        map_data.objects.insert(map_data.objects.begin(), std::move(obj));
+
+        if(current_tool == place_objects) {
+            enable_wip_object();
+        } else {
+            disable_wip_object();
+        }
 
         map_filepath = "";
         map_is_dirty = false;
@@ -316,6 +333,7 @@ namespace editor
             }
             case place_objects:
             {
+                disable_wip_object();
                 break;
             }
             case place_splines:
@@ -327,6 +345,14 @@ namespace editor
         };
 
         current_tool = new_tool;
+
+        switch(new_tool)
+        {
+            case place_objects:
+                enable_wip_object();
+                break;
+        };
+
 
         LOG("current tool: %s", tool_type_strings[current_tool]);
     }
@@ -348,6 +374,10 @@ namespace editor
         }
 
         current_object_id = new_id;
+
+        if(current_tool == place_objects)
+            wip_object().id = new_id;
+
         LOG("current object_id: %ld", current_object_id);
     }
 
@@ -539,13 +569,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = map_data.objects_atlas->atlas_entries;
-        ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
-        auto const& atlas_entry = atlas_entries[current_object_id];
-        glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
-
-        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
-
+        auto obj = __placeable_object(position);
         push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
@@ -553,6 +577,18 @@ namespace editor
     {
         auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
         push_and_execute_action(std::move(cmd));
+    }
+
+    data::map_object_t& editor_t::wip_object()
+    {
+        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+        return map_data.objects[0];
+    }
+
+    data::map_object_t const& editor_t::wip_object() const
+    {
+        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+        return this->map_data.objects[0];
     }
 
 
@@ -736,6 +772,33 @@ namespace editor
         };
     }
 
+
+    data::map_object_t editor_t::__placeable_object(glm::vec2 position)
+    {
+        auto const& atlas_entries = map_data.objects_atlas->atlas_entries;
+        ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
+        auto const& atlas_entry = atlas_entries[current_object_id];
+        glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
+
+        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
+
+        return obj;
+    }
+
+    void editor_t::enable_wip_object()
+    {
+        WARN_IF(current_tool != place_objects, "Enabling WIP object when using a different tool");
+        wip_object().color = selection_overlay_color;
+    }
+
+    void editor_t::disable_wip_object()
+    {
+        wip_object().color = color_t(0.0f);
+    }
+
+
+
+    /// Object Selection
     object_selection_t::object_selection_t(editor_t& _e)
     : base_selection_t{vec2{}, vec2{},_e}
     {
@@ -794,6 +857,9 @@ namespace editor
         }
     }
 
+
+
+    /// Spline Node Selection
     spline_node_selection_t::spline_node_selection_t(editor_t& _editor)
     : base_selection_t{vec2{}, vec2{},_editor}
     {

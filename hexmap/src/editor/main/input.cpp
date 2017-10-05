@@ -4,7 +4,10 @@
 #include "asdf_multiplat/main/mouse.h"
 #include "asdf_multiplat/main/input_sdl.h"
 
+#include "hexmap/data/hex_util.h"
+
 #include "editor.h"
+
 
 using namespace std;
 using namespace glm;
@@ -13,21 +16,33 @@ namespace asdf {
 namespace hexmap {
 namespace editor
 {
+
     input_handler_t::input_handler_t(editor_t& _editor)
     : editor(_editor)
     {
     }
 
 
-    glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords)
+    glm::vec2 input_handler_t::world_coords(glm::ivec2 screen_coords) const
     {
         return vec2(editor.rendered_map.camera.screen_to_world_coord(vec2(screen_coords)));
     }
 
+    glm::vec2 input_handler_t::get_snap_position(glm::vec2 world_coord) const
+    {
+        auto nearest_snap = nearest_snap_point(world_coord, editor.snap_mode);
+        if(glm::abs(glm::distance(nearest_snap, world_coord)) <= editor.snap_threshold)
+            return nearest_snap;
+
+        return world_coord;
+    }
+
     bool input_handler_t::on_mouse_down(mouse_button_event_t& event)
     {
-        auto mw = world_coords(event.mouse_state.mouse_position);
-        auto hx = world_to_hex_coord(mw);
+         vec2 mw = world_coords(event.mouse_state.mouse_position);
+        ivec2 hx = world_to_hex_coord(mw);
+         vec2 snap_pos = get_snap_position(mw);
+
 
         switch(editor.current_tool)
         {
@@ -47,7 +62,7 @@ namespace editor
 
             case editor_t::place_objects:
             {
-                editor.place_object(mw);
+                editor.place_object(snap_pos);
                 return true;
             }
 
@@ -55,7 +70,7 @@ namespace editor
             {
                 if(event.button == mouse_left)
                 {
-                    editor.spline_click(mw);
+                    editor.spline_click(snap_pos);
                 }
                 else if(event.button == mouse_right)
                 {
@@ -64,7 +79,7 @@ namespace editor
                         editor.finish_spline();
                     }
                 }
-                
+
                 break;
             }
 
@@ -117,8 +132,9 @@ namespace editor
 
     bool input_handler_t::on_mouse_move(mouse_motion_event_t& event)
     {
-        auto mw = world_coords(event.mouse_state.mouse_position);
-        auto hx = world_to_hex_coord(mw);
+         vec2 mw = world_coords(event.mouse_state.mouse_position);
+        ivec2 hx = world_to_hex_coord(mw);
+         vec2 snap_pos = get_snap_position(mw);
 
         switch(editor.current_tool)
         {
@@ -136,8 +152,8 @@ namespace editor
 
             case editor_t::place_objects:
             {
-                editor.brush_pos = mw;
-
+                editor.brush_pos = snap_pos;
+                editor.wip_object().position = snap_pos;
                 break;
             }
 
@@ -145,7 +161,7 @@ namespace editor
             {
                 if(editor.is_placing_spline())
                 {
-                    editor.update_WIP_node(mw);
+                    editor.update_WIP_node(snap_pos);
                 }
                 break;
             }
@@ -234,7 +250,7 @@ namespace editor
         bool is_alt  = (modifier_keys & KMOD_ALT)>0;
 
 
-        bool mod_ctrl_only = modifier_keys == KMOD_LCTRL 
+        bool mod_ctrl_only = modifier_keys == KMOD_LCTRL
                           || modifier_keys == KMOD_RCTRL;
 
         if(key == SDLK_p)
@@ -283,7 +299,7 @@ namespace editor
             {
                 case SDLK_z:
                     editor.redo();
-                    return; 
+                    return;
             }
         }
         else if ((keysm.mod & KMOD_ALT) > 0)
@@ -302,7 +318,7 @@ namespace editor
             {
                 ASSERT(uint64_t(key) >= uint64_t(SDLK_0), "");
                 uint64_t num_from_key = uint64_t(key) - uint64_t(SDLK_0);
-            
+
                 switch(editor.current_tool)
                 {
                     case editor_t::terrain_paint:
@@ -329,7 +345,7 @@ namespace editor
                     }
                 }
             }
-                
+
 
             switch(key)
             {
