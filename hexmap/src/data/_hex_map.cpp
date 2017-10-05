@@ -47,6 +47,20 @@ namespace data
     {}
 
 
+    void hex_map_t::clear()
+    {
+        reset(map_name, hex_grid.size);
+    }
+
+    void hex_map_t::reset(std::string const& _map_name, glm::uvec2 _grid_size, hex_grid_cell_t const& _default_cell_style)
+    {
+        map_name = _map_name;
+        hex_grid = hex_grid_t(_grid_size, _default_cell_style);
+        objects.clear();
+        splines.clear();
+    }
+
+
     ///OPTIMIZE: iterate from end to start and grab the first one that intersects
     size_t hex_map_t::object_index_at(glm::vec2 const& world_pos) const
     {
