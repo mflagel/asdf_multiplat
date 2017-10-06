@@ -62,8 +62,8 @@ private:
     void save_status_message();
 
 private slots:
-    void _open_map(std::string const& filepath);
     void init();
+    void _open_map(std::string const& filepath);
     //void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void minimap_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
