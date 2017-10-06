@@ -28,6 +28,7 @@
 #include "object_properties_widget.h"
 #include "minimap_widget.h"
 #include "terrain_brush_selector.h"
+#include "snap_points_widget.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -145,43 +146,20 @@ MainWindow::MainWindow(QWidget *parent) :
                 });
     }
 
-    /// Minimap Dock
+
+    /// Docks
     minimap_dock = new QDockWidget(tr("Minimap"));
+    minimap_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, minimap_dock);
 
-    ///Brush Settings
-    {
-        auto brush_setings_dock = new QDockWidget(tr("Brush Settings"));
+    tool_settings_dock = new QDockWidget(tr("Tool Settings"));
+    tool_settings_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, tool_settings_dock);
 
-        brush_settings = new terrain_brush_selector_t();
-        brush_setings_dock->setWidget(brush_settings);
+    palette_dock = new QDockWidget();
+    palette_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
 
-        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, brush_setings_dock);
-
-        connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
-    }
-
-    /// Terrain / Object Palette
-    {
-        palette_dock = new QDockWidget();
-        addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
-
-        palette_widget = new palette_widget_t();
-
-        palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
-        //palette_widget->setMinimumSize(200, 300);
-        palette_widget->updateGeometry();
-
-        connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
-                        ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
-
-        connect(palette_widget, &palette_widget_t::terrain_add,  ui->hexmap_widget, &hexmap_widget_t::add_terrain);
-        connect(palette_widget, &palette_widget_t::terrain_save, ui->hexmap_widget, &hexmap_widget_t::save_terrain);
-        connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
-
-
-        palette_dock->setWidget(palette_widget);
-    }
 }
 
 MainWindow::~MainWindow()
@@ -522,7 +500,27 @@ void MainWindow::init()
     }
 
 
-    //must connect initialized before handing this tot he minimap_dock
+    /// Terrain / Object Palette
+    {
+        palette_widget = new palette_widget_t();
+
+        palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
+        //palette_widget->setMinimumSize(200, 300);
+        palette_widget->updateGeometry();
+
+        connect(palette_widget->list_view, SIGNAL(pressed(const QModelIndex&)),
+                        ui->hexmap_widget, SLOT(set_palette_item(const QModelIndex&)));
+
+        connect(palette_widget, &palette_widget_t::terrain_add,  ui->hexmap_widget, &hexmap_widget_t::add_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_save, ui->hexmap_widget, &hexmap_widget_t::save_terrain);
+        connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
+
+
+        palette_dock->setWidget(palette_widget);
+    }
+
+
+    //must connect initialized before handing this to the minimap_dock
     //otherwise the minimap initialize signal will have already fired before connecting
     connect(minimap, &minimap_widget_t::initialized, this, &MainWindow::minimap_initialized);
     connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
@@ -532,7 +530,7 @@ void MainWindow::init()
         });
 
 
-
+    /// Minimap
     {
         minimap = new minimap_widget_t(*editor, this);
         minimap->setMinimumSize(200, 200);
@@ -559,6 +557,17 @@ void MainWindow::init()
         connect(ui->hexmap_widget, &hexmap_widget_t::terrain_added, palette_widget, &palette_widget_t::build_from_terrain_bank);
 
         editor_tool_changed(editor->current_tool);
+    }
+
+
+    ///Tool Settings
+    {
+        /// brush settings
+        brush_settings = new terrain_brush_selector_t();
+        connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
+
+        /// Snap Settings
+        snap_point_settings = new snap_points_widget_t(*editor);
     }
 
 
@@ -602,6 +611,8 @@ void MainWindow::init()
     glm::uvec2 map_size(default_map_width, default_map_height);
     ui->hexmap_widget->editor->new_map_action(default_map_name, map_size, cell);
     ui->hexmap_widget->zoom_extents();
+
+    ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);
 }
 
 
@@ -613,32 +624,39 @@ void MainWindow::minimap_initialized()
 
 void MainWindow::editor_tool_changed(tool_type_e new_tool)
 {
-    auto* dock = palette_dock;
-
     switch(new_tool)
     {
         case tool_type_e::select:
-            dock->setWidget(object_properties);
+            palette_dock->setWidget(nullptr);
+
+            tool_settings_dock->setWidget(object_properties);
             break;
 
         case tool_type_e::terrain_paint:
             palette_widget->list_view->setModel(terrain_palette_model);
-            dock->setWidget(palette_widget);
-            dock->setWindowTitle(tr("Terrain"));
+            palette_dock->setWidget(palette_widget);
+            palette_dock->setWindowTitle(tr("Terrain"));
+
+            tool_settings_dock->setWidget(brush_settings);
             break;
 
         case tool_type_e::place_objects:
             palette_widget->list_view->setModel(objects_palette_model);
-            dock->setWidget(palette_widget);
-            dock->setWindowTitle(tr("Objects"));
+            palette_dock->setWidget(palette_widget);
+            palette_dock->setWindowTitle(tr("Objects"));
+
+            tool_settings_dock->setWidget(snap_point_settings);
             break;
 
         case tool_type_e::place_splines:
-            dock->setWidget(spline_settings_widget);
+            palette_dock->setWidget(spline_settings_widget);
+
+            tool_settings_dock->setWidget(snap_point_settings);
             break;
 
         default:
-            dock->setWidget(nullptr);
+            palette_dock->setWidget(nullptr);
+            tool_settings_dock->setWidget(nullptr);
             //palette_widget->list_view->setModel(nullptr);
             break;
     }

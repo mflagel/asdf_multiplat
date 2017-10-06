@@ -21,6 +21,7 @@ class object_properties_widget_t;
 class minimap_widget_t;
 class terrain_brush_selector_t;
 class hexmap_widget_t;
+class snap_points_widget_t;
 
 class MainWindow : public QMainWindow
 {
@@ -79,6 +80,7 @@ private:
     hexmap_widget_t* hexmap_widget = nullptr;
     QDockWidget* palette_dock = nullptr;
     QDockWidget* minimap_dock = nullptr;
+    QDockWidget* tool_settings_dock = nullptr;
 
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
@@ -87,6 +89,7 @@ private:
     minimap_widget_t* minimap = nullptr;
     object_properties_widget_t* object_properties = nullptr;
     terrain_brush_selector_t* brush_settings = nullptr;
+    snap_points_widget_t* snap_point_settings = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
 
