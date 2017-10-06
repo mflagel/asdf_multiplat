@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     minimap_widget.cpp \
     dialogs/map_properties_dialog.cpp \
     dialogs/export_image_dialog.cpp \
-    terrain_brush_selector.cpp
+    terrain_brush_selector.cpp \
+    snap_points_widget.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -45,7 +46,8 @@ HEADERS  += mainwindow.h \
     minimap_widget.h \
     dialogs/map_properties_dialog.h \
     dialogs/export_image_dialog.h \
-    terrain_brush_selector.h
+    terrain_brush_selector.h \
+    snap_points_widget.h
 
 FORMS    += mainwindow.ui \
     tools_panel.ui \
@@ -56,7 +58,8 @@ FORMS    += mainwindow.ui \
     object_properties_widget.ui \
     dialogs/map_properties_dialog.ui \
     dialogs/export_image_dialog.ui \
-    terrain_brush_selector.ui
+    terrain_brush_selector.ui \
+    snap_points_widget.ui
 
 
 # hexmap shaders
