@@ -64,7 +64,7 @@ namespace hexmap
           hex_snap_none         = 0
         , hex_snap_center       = 1
         , hex_snap_vertex       = 2
-        // , hex_snap_edge_center  = 4
+        , hex_snap_edge_center  = 4
         // , hex_snap_edge_nearest = 8
 
         , hex_snap_center_and_verts = hex_snap_center | hex_snap_vertex

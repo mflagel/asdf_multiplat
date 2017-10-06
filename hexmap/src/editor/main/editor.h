@@ -103,7 +103,7 @@ namespace editor
         data::spline_selection_t spline_selection;
 
         ///
-        hex_snap_points_e snap_mode = hex_snap_center;
+        hex_snap_flags_t snap_mode = hex_snap_center;
         float snap_threshold = 0.04f;
 
 
