@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QDockWidget>
 
 #include <memory>
 
@@ -29,6 +30,7 @@
 #include "minimap_widget.h"
 #include "terrain_brush_selector.h"
 #include "snap_points_widget.h"
+#include "tools_panel.h"
 
 using namespace std;
 //using namespace glm;  //causes namespace collision with uint
@@ -126,30 +128,12 @@ MainWindow::MainWindow(QWidget *parent) :
         //                     this, &MainWindow::set_scrollbar_stuff);
     }
 
-    {
-        auto* tools_ui = ui->tools_panel->ui;
-        auto pressed = &QToolButton::pressed;
-
-        connect(tools_ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
-        connect(tools_ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
-        connect(tools_ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
-        connect(tools_ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
-    }
-
-
     /// Docks
-    minimap_dock = new QDockWidget(tr("Minimap"));
-    minimap_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, minimap_dock);
-
-    tool_settings_dock = new QDockWidget(tr("Tool Settings"));
-    tool_settings_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, tool_settings_dock);
-
-    palette_dock = new QDockWidget();
-    palette_dock->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-    addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, palette_dock);
-
+    /// Must pass 'this' to the dock ctor or else it won't lay out properly
+    tools_dock = new QDockWidget(this);
+    minimap_dock = new QDockWidget(tr("Minimap"), this);
+    tool_settings_dock = new QDockWidget(tr("Tool Settings"), this);
+    palette_dock = new QDockWidget(this);
 }
 
 MainWindow::~MainWindow()
@@ -187,12 +171,24 @@ void MainWindow::init()
         connect_thing(ui->actionHex_Coords, rflags::hex_coords);
     }
 
+    /// Tools Panel
+    {
+        tools_panel = new tools_panel_t();
+
+        auto pressed = &QToolButton::pressed;
+
+        connect(tools_panel->ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
+        connect(tools_panel->ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
+        connect(tools_panel->ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
+        connect(tools_panel->ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
+    }
+
 
     /// Terrain / Object Palette
     {
         palette_widget = new palette_widget_t();
 
-        palette_widget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
+        //palette_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
         //palette_widget->setMinimumSize(200, 300);
         palette_widget->updateGeometry();
 
@@ -202,9 +198,6 @@ void MainWindow::init()
         connect(palette_widget, &palette_widget_t::terrain_add,  ui->hexmap_widget, &hexmap_widget_t::add_terrain);
         connect(palette_widget, &palette_widget_t::terrain_save, ui->hexmap_widget, &hexmap_widget_t::save_terrain);
         connect(palette_widget, &palette_widget_t::terrain_load, ui->hexmap_widget, &hexmap_widget_t::load_terrain);
-
-
-        palette_dock->setWidget(palette_widget);
     }
 
 
@@ -221,19 +214,12 @@ void MainWindow::init()
     /// Minimap
     {
         minimap = new minimap_widget_t(*editor, this);
-        minimap->setMinimumSize(200, 200);
-        minimap->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-        minimap_dock->setWidget(minimap);
 
         connect(ui->hexmap_widget, &hexmap_widget_t::map_data_changed,
             [this](){
                 minimap->is_dirty = true;
                 minimap->update();
             });
-
-        using qd = QDockWidget;
-        minimap_dock->setFeatures(qd::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
 
         terrain_palette_model = new palette_item_model_t();
         objects_palette_model = new palette_item_model_t();
@@ -252,10 +238,12 @@ void MainWindow::init()
     {
         /// brush settings
         brush_settings = new terrain_brush_selector_t();
+        //brush_settings->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
         connect(brush_settings, &terrain_brush_selector_t::custom_brush_changed, this, &MainWindow::custom_terrain_brush_changed);
 
         /// Snap Settings
         snap_point_settings = new snap_points_widget_t(*editor);
+        //snap_point_settings->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     }
 
     /// Object Properties
@@ -303,13 +291,52 @@ void MainWindow::init()
                 });
     }
 
-    asdf::hexmap::data::hex_grid_cell_t cell;
-    cell.tile_id = 0;
-    glm::uvec2 map_size(default_map_width, default_map_height);
-    ui->hexmap_widget->editor->new_map_action(default_map_name, map_size, cell);
-    ui->hexmap_widget->zoom_extents();
 
-    ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);
+    /// Dock Stuff
+    {
+        //setCentralWidget(ui->hexmap_widget);
+
+        /// Left Dock
+        tools_dock->setWidget(tools_panel);
+        addDockWidget(Qt::LeftDockWidgetArea, tools_dock);
+
+
+        /// Right Dock
+        minimap->setMinimumSize(minimap->sizeHint());
+        minimap->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+        minimap_dock->setFeatures(QDockWidget::DockWidgetClosable); //dont allow DockWidgetFloatable or DockWidgetMovable or else it'll break the GL context for the minimap widget when it's moved
+        minimap_dock->setAllowedAreas(Qt::RightDockWidgetArea);
+        minimap_dock->setWidget(minimap);
+        addDockWidget(Qt::RightDockWidgetArea, minimap_dock);
+
+
+        tool_settings_dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        tool_settings_dock->setWidget(brush_settings);
+        addDockWidget(Qt::RightDockWidgetArea, tool_settings_dock);
+
+        palette_dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+        palette_dock->setWidget(palette_widget);
+        addDockWidget(Qt::RightDockWidgetArea, palette_dock,       Qt::Vertical);
+
+
+        ui->menuView->addSeparator();
+        ui->menuView->addAction(minimap_dock->toggleViewAction());
+        ui->menuView->addAction(tool_settings_dock->toggleViewAction());
+        ui->menuView->addAction(palette_dock->toggleViewAction());
+    }
+
+
+    /// Init Hex Map
+    {
+        asdf::hexmap::data::hex_grid_cell_t cell;
+        cell.tile_id = 0;
+        glm::uvec2 map_size(default_map_width, default_map_height);
+        ui->hexmap_widget->editor->new_map_action(default_map_name, map_size, cell);
+        ui->hexmap_widget->zoom_extents();
+
+        ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);
+    }
 }
 
 
