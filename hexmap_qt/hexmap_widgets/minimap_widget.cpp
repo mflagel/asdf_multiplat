@@ -19,6 +19,11 @@ minimap_widget_t::~minimap_widget_t()
 {
 }
 
+QSize minimap_widget_t::sizeHint() const
+{
+    return QSize(150, 150);
+}
+
 void minimap_widget_t::initializeGL()
 {
     using namespace asdf;

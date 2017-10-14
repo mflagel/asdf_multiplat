@@ -38,6 +38,8 @@ public:
     explicit minimap_widget_t(asdf::hexmap::editor::editor_t&, QWidget *parent = 0);
     ~minimap_widget_t();
 
+    QSize sizeHint() const override;
+
 signals:
     void initialized();
 

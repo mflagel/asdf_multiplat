@@ -22,6 +22,7 @@ class minimap_widget_t;
 class terrain_brush_selector_t;
 class hexmap_widget_t;
 class snap_points_widget_t;
+class tools_panel_t;
 
 class MainWindow : public QMainWindow
 {
@@ -78,10 +79,12 @@ private:
     asdf::hexmap::editor::editor_t* editor = nullptr;
 
     hexmap_widget_t* hexmap_widget = nullptr;
+    QDockWidget* tools_dock = nullptr;
     QDockWidget* palette_dock = nullptr;
     QDockWidget* minimap_dock = nullptr;
     QDockWidget* tool_settings_dock = nullptr;
 
+    tools_panel_t* tools_panel = nullptr;
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
