@@ -128,19 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
         //                     this, &MainWindow::set_scrollbar_stuff);
     }
 
-<<<<<<< 922e782c4e18f5bac03b6a34259c762ca38b78e7
-    {
-        auto pressed = &QToolButton::pressed;
-
-        connect(tools_panel->ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
-        connect(tools_panel->ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
-        connect(tools_panel->ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
-        connect(tools_panel->ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
-    }
-
     /// Docks
     /// Must pass 'this' to the dock ctor or else it won't lay out properly
-    tools_dock = new QDockWidget(this);
     minimap_dock = new QDockWidget(tr("Minimap"), this);
     tool_settings_dock = new QDockWidget(tr("Tool Settings"), this);
     palette_dock = new QDockWidget(this);
