@@ -127,10 +127,11 @@ namespace editor
             auto const& shader = rendered_map.shader;
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
+            //scale the pixel texture to the size of the object
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = map_data.objects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto obj_size_px = sel_obj.size_d2 * 2.0f * px_per_unit;
             vec2 scale = vec2(uvec2(obj_size_px) / pixel_texture->get_size()); //scale overlay texture to match object texture size
-            auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
+            auto sprite_scale = scale * sel_obj.scale * units_per_px;
 
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
 
