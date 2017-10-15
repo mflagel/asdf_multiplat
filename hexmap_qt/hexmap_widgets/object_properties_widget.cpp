@@ -13,10 +13,18 @@ template <typename QtType, typename ValType>
 QtType* add_component_to_layout(QLayout* layout, object_properties_widget_t* op_wgt = nullptr)
 {
     QtType* thing = new QtType();
+
     if(op_wgt)
-        QObject::connect(thing, static_cast<void(QtType::*)(ValType)>(&QtType::valueChanged), [op_wgt](ValType v){
-            Q_UNUSED(v);
-            op_wgt->property_changed();});
+    {
+        QObject::connect(thing, static_cast<void(QtType::*)(ValType)>(&QtType::valueChanged),
+            [op_wgt](ValType v)
+            {
+                Q_UNUSED(v);
+                op_wgt->property_changed();
+            }
+        );
+    }
+
     layout->addWidget(thing);
     return thing;
 }
