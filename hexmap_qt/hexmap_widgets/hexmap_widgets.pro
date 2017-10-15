@@ -50,7 +50,6 @@ HEADERS  += mainwindow.h \
     snap_points_widget.h
 
 FORMS    += mainwindow.ui \
-    tools_panel.ui \
     layers_widget.ui \
     palette_widget.ui \
     dialogs/new_map_dialog.ui \
