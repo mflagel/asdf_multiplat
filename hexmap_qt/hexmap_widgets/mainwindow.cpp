@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     /// Must pass 'this' to the dock ctor or else it won't lay out properly
     minimap_dock = new QDockWidget(tr("Minimap"), this);
     tool_settings_dock = new QDockWidget(tr("Tool Settings"), this);
-    palette_dock = new QDockWidget(this);
+    palette_dock = new QDockWidget(tr("Palette"), this);
 }
 
 MainWindow::~MainWindow()
@@ -173,13 +173,13 @@ void MainWindow::init()
     /// Tools Panel
     {
         tools_panel = new tools_panel_t();
+        tools_panel->setAllowedAreas(Qt::AllToolBarAreas);
+        addToolBar(Qt::LeftToolBarArea, tools_panel);
 
-        auto pressed = &QToolButton::pressed;
-
-        connect(tools_panel->ui->SelectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
-        connect(tools_panel->ui->BrushTool,  pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
-        connect(tools_panel->ui->ObjectTool, pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
-        connect(tools_panel->ui->LineTool,   pressed, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
+        connect(tools_panel->actions()[tool_type_e::select],        &QAction::triggered, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::select);});
+        connect(tools_panel->actions()[tool_type_e::terrain_paint], &QAction::triggered, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::terrain_paint);});
+        connect(tools_panel->actions()[tool_type_e::place_objects], &QAction::triggered, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_objects);});
+        connect(tools_panel->actions()[tool_type_e::place_splines], &QAction::triggered, [this](){ui->hexmap_widget->set_editor_tool(tool_type_e::place_splines);});
     }
 
 
@@ -293,11 +293,10 @@ void MainWindow::init()
 
     /// Dock Stuff
     {
-        //setCentralWidget(ui->hexmap_widget);
-
         /// Left Dock
-        tools_dock->setWidget(tools_panel);
-        addDockWidget(Qt::LeftDockWidgetArea, tools_dock);
+        //tools_dock->setWidget(tools_panel);
+        //tools_dock->setMaximumWidth(tools_panel->width());
+        //addDockWidget(Qt::LeftDockWidgetArea, tools_dock);
 
 
         /// Right Dock
@@ -320,6 +319,7 @@ void MainWindow::init()
 
 
         ui->menuView->addSeparator();
+        //ui->menuView->addAction(tools_dock->toggleViewAction());
         ui->menuView->addAction(minimap_dock->toggleViewAction());
         ui->menuView->addAction(tool_settings_dock->toggleViewAction());
         ui->menuView->addAction(palette_dock->toggleViewAction());
