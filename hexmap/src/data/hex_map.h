@@ -36,9 +36,13 @@ namespace data
         void reset(std::string const& map_name, glm::uvec2 grid_size, hex_grid_cell_t const& default_cell_style = hex_grid_cell_t{});
 
         object_index_t object_index_at(glm::vec2 const& world_pos) const;
-        spline_index_t spline_index_at(glm::vec2 const& world_pos) const;
         std::vector<object_index_t> object_indices_at(glm::vec2 const& world_pos) const;
+        std::vector<object_index_t> object_indices_within(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const;
+        std::vector<object_index_t> object_indices_intersecting(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const;
+        
         std::vector<spline_index_t> spline_indices_at(glm::vec2 const& world_pos) const;
+        spline_index_t spline_index_at(glm::vec2 const& world_pos) const;
+
 
         void save_to_file(std::string const& filepath);
         void load_from_file(std::string const& filepath);
