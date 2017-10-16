@@ -179,7 +179,7 @@ void object_properties_widget_t::set_from_map_object(asdf::hexmap::data::map_obj
     set_component_sub_value<QDoubleSpinBox>(obj_color, 0, obj.color.r);
     set_component_sub_value<QDoubleSpinBox>(obj_color, 1, obj.color.g);
     set_component_sub_value<QDoubleSpinBox>(obj_color, 2, obj.color.b);
-    set_component_sub_value<QDoubleSpinBox>(obj_color, 3, obj.color.a);
+//    set_component_sub_value<QDoubleSpinBox>(obj_color, 3, obj.color.a);
 
     set_component_value<QDoubleSpinBox>(obj_rotation, obj.rotation);
 }
@@ -195,7 +195,7 @@ void object_properties_widget_t::set_map_object_values(asdf::hexmap::data::map_o
     obj.color.r = get_component_sub_value<QDoubleSpinBox, float>(obj_color, 0);
     obj.color.g = get_component_sub_value<QDoubleSpinBox, float>(obj_color, 1);
     obj.color.b = get_component_sub_value<QDoubleSpinBox, float>(obj_color, 2);
-    obj.color.a = get_component_sub_value<QDoubleSpinBox, float>(obj_color, 3);
+//    obj.color.a = get_component_sub_value<QDoubleSpinBox, float>(obj_color, 3);
 
     obj.rotation = get_component_value<QDoubleSpinBox, float>(obj_rotation);
 }
