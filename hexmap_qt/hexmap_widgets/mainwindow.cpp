@@ -253,6 +253,8 @@ void MainWindow::init()
                 [this]() {
                     ui->hexmap_widget->update(); //repaint
                 });
+
+        object_properties->setMinimumWidth(brush_settings->width());
     }
 
 

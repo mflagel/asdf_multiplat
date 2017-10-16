@@ -57,7 +57,7 @@ constexpr std::array<editable_component_type_e, num_obj_components> obj_componen
 {
       component_vec2
     , component_vec2
-    , component_vec4
+    , component_vec3
     , component_float_32
 };
 
