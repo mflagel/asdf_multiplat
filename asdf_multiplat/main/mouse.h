@@ -30,22 +30,43 @@ namespace asdf
 
     struct mouse_input_t;
 
-    struct mouse_motion_event_t
+    struct mouse_event_t
     {
         mouse_input_t& mouse_state;
+        bool handled = false;
+
+        mouse_event_t(mouse_input_t& _ms)
+        : mouse_state(_ms)
+        {}
     };
 
-    struct mouse_button_event_t
+    struct mouse_motion_event_t : mouse_event_t
     {
-        mouse_input_t& mouse_state;
+        mouse_motion_event_t(mouse_input_t& _ms)
+        : mouse_event_t(_ms)
+        {}
+    };
+
+    struct mouse_button_event_t : mouse_event_t
+    {
         mouse_button_e button;
         bool double_clicked;
+
+        mouse_button_event_t(mouse_input_t& _ms, mouse_button_e _btn, size_t _num_clicks)
+        : mouse_event_t(_ms)
+        , button(_btn)
+        , double_clicked(_num_clicks > 1)
+        {}
     };
 
-    struct mouse_wheel_event_t
+    struct mouse_wheel_event_t : mouse_event_t
     {
-        mouse_input_t& mouse_state;
         int delta;
+
+        mouse_wheel_event_t(mouse_input_t& _ms, int _delta)
+        : mouse_event_t(_ms)
+        , delta(_delta)
+        {}
     };
 
 
