@@ -486,6 +486,32 @@ namespace editor
     }
 
 
+    /// Selection
+    void editor_t::start_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        selection_drag_start = world_pos;
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::update_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::end_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        update_drag_selection(world_pos);
+
+        //select all objects within bounds
+    }
+
+
     /// Terrain
     void editor_t::paint_terrain_start()
     {

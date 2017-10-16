@@ -48,7 +48,21 @@ namespace editor
         {
             case editor_t::select:
             {
-                //todo: start select box dragging
+                auto const& sel_objs = editor.object_selection;
+                vec2 const& ub = sel_objs.upper_bound;
+                vec2 const& lb = sel_objs.lower_bound;
+                
+                if(util::CheckBounds(mw.x, mw.y
+                                   , lb.x, lb.y
+                                   , ub.x, ub.y))
+                {
+                    editor.drag_type = editor_t::drag_selected_items;
+                }
+                else
+                {
+                    editor.drag_type = editor_t::drag_selection_box;
+                    editor.start_drag_selection(mw);
+                }
 
                 break;
             }
@@ -98,11 +112,29 @@ namespace editor
         {
             case editor_t::select:
             {
-                if(!event.mouse_state.is_dragging())
+                if(!event.mouse_state.is_dragging(mouse_left))
                 {
                     if(handle_click_selection(event, mw))
-                        return true;
+                        event.handled = true;
+                    break;
                 }
+
+                switch(editor.drag_type)
+                {
+                    case editor_t::drag_type_none:
+                    {
+
+                    }
+                    case editor_t::drag_selection_box:
+                    {
+                        editor.end_drag_selection(mw);
+                        break;
+                    }
+                    case editor_t::drag_selected_items:
+                    {
+                        break;
+                    }
+                };
 
                 break;
             }
@@ -126,6 +158,8 @@ namespace editor
 
             case editor_t::num_tool_types: break;
         }
+
+        editor.drag_type = editor_t::drag_type_none;
 
         return false;
     }
@@ -181,6 +215,22 @@ namespace editor
         {
             case editor_t::select:
             {
+                switch(editor.drag_type)
+                {
+                    case editor_t::drag_type_none:
+                    {
+                    }
+                    case editor_t::drag_selection_box:
+                    {
+                        editor.update_drag_selection(mw);
+                        break;
+                    }
+                    case editor_t::drag_selected_items:
+                    {
+                        break;
+                    }
+                };
+
                 break;
             }
 
