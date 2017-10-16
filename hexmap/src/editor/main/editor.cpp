@@ -138,29 +138,45 @@ namespace editor
             spritebatch.end();
         }
 
-        //render selection box
-        if(object_selection.object_indices.size() > 0)
+
+        /// Setup for drawing bounding boxes
+        auto& shader = rendered_map.shader;
+        GL_State->bind(shader);
+
+        auto const& camera = rendered_map.camera;
+        shader->view_matrix       = camera.view_matrix();
+        shader->projection_matrix = camera.projection_ortho();
+
+
+        auto draw_box = [&shader](glm::vec2 lb, glm::vec2 ub)
         {
-            auto const& box = app.renderer->box; //no sense making a new one
-
-            auto& shader = rendered_map.shader;
-
-            glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
-            glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
+            glm::vec2 bbox_size = ub - lb;
+            glm::vec2 trans = lb + bbox_size/2.0f;
 
             shader->world_matrix = mat4{};
             shader->world_matrix = glm::translate(shader->world_matrix, vec3(trans, 0.0f));
             shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
-            
 
-            auto const& camera = rendered_map.camera;
-            shader->view_matrix       = camera.view_matrix();
-            shader->projection_matrix = camera.projection_ortho();
-
-            GL_State->bind(shader);
             shader->update_wvp_uniform();
 
-            box.render(GL_LINE_LOOP);
+            app.renderer->box.render(GL_LINE_LOOP);
+        };
+
+
+
+        /// Bounding Boxes
+        if(object_selection.object_indices.size() > 0)
+        {
+            /// Selection
+            draw_box(object_selection.lower_bound, object_selection.upper_bound);
+        }
+
+        /// Drag Selection
+        if(drag_type == drag_selection_box)
+        {
+            auto sel_lb = glm::min(selection_drag_start, current_drag_position);
+            auto sel_ub = glm::max(selection_drag_start, current_drag_position);
+            draw_box(sel_lb, sel_ub);
         }
     }
 
