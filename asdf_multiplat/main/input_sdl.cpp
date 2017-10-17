@@ -30,7 +30,7 @@ namespace asdf
             {
                 auto asdf_event = mouse_event_from_sdl(mouse, event->motion);
 
-                if(mouse.is_dragging())
+                if(mouse.is_dragging_any_of())
                 {
                     mouse.mouse_drag(asdf_event, ivec2(event->button.x, event->button.y));
                 }
