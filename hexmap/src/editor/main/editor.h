@@ -46,6 +46,13 @@ namespace editor
         void clear_selection();
         bool is_empty() const { return object_indices.empty() && spline_indices.empty(); }
 
+        template<typename L>
+        void add_object_indices(L indices)
+        {
+            object_indices.insert(indices.begin(), indices.end());
+            recalc_bounds();
+        }
+
         void recalc_bounds();
     };
 
@@ -81,6 +88,14 @@ namespace editor
             , num_tool_types
         };
 
+        enum drag_type_e
+        {
+              drag_type_none = 0
+            , drag_selection_box
+            , drag_selected_items
+            , drag_type_count
+        };
+
 
         //terrain
         uint64_t current_tile_id = 0;
@@ -105,6 +120,9 @@ namespace editor
         ///
         hex_snap_flags_t snap_mode = hex_snap_center;
         float snap_threshold = 0.04f;
+        drag_type_e drag_type = drag_type_none;
+        glm::vec2 selection_drag_start;
+        glm::vec2 current_drag_position;
 
 
         ///
@@ -148,6 +166,7 @@ namespace editor
         void set_spline_node_style(data::line_node_t const& style);
         void set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type);
 
+        std::tuple<glm::vec2,glm::vec2> selection_box_bounds() const;
         bool select_object(size_t object_index);
         bool deselect_object(size_t object_index);
         void deselect_all();
@@ -164,6 +183,10 @@ namespace editor
             return terrain_brush;
         }
         void save_current_terrain_brush();
+
+        void start_drag_selection(glm::vec2 const& world_pos);
+        void update_drag_selection(glm::vec2 const& world_pos);
+        void end_drag_selection(glm::vec2 const& world_pos);
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

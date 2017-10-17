@@ -122,6 +122,52 @@ namespace data
         return spline_inds;
     }
 
+
+    std::vector<object_index_t> hex_map_t::object_indices_within(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const
+    {
+        std::vector<object_index_t> object_inds;
+
+        size_t obj_index = 0;
+        for(auto const& obj : objects)
+        {
+            auto obj_ub = obj.position + obj.size_d2;
+            auto obj_lb = obj.position - obj.size_d2;
+
+            if( (obj_lb.x >= lower_bounds.x && obj_lb.y >= lower_bounds.y)
+             && (obj_ub.x <= upper_bounds.x && obj_ub.y <= upper_bounds.y))
+            {
+                object_inds.push_back(obj_index);
+            }
+
+            ++obj_index;
+        }
+
+        return object_inds;
+    }
+
+    std::vector<object_index_t> hex_map_t::object_indices_intersecting(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const
+    {
+        std::vector<object_index_t> object_inds;
+
+        size_t obj_index = 0;
+        for(auto const& obj : objects)
+        {
+            auto obj_ub = obj.position + obj.size_d2;
+            auto obj_lb = obj.position - obj.size_d2;
+
+            if( (obj_ub.x > lower_bounds.x && obj_ub.y > lower_bounds.y)
+             && (obj_lb.x < upper_bounds.x && obj_lb.y < upper_bounds.y))
+            {
+                object_inds.push_back(obj_index);
+            }
+
+            ++obj_index;
+        }
+
+        return object_inds;
+    }
+
+
     constexpr const char* compressed_ext   = ".compressed";
     constexpr const char* map_data_ext     = ".map_data";
     constexpr const char* terrain_data_ext = ".terrain.json";

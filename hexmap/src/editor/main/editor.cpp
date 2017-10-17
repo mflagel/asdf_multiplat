@@ -138,29 +138,44 @@ namespace editor
             spritebatch.end();
         }
 
-        //render selection box
-        if(object_selection.object_indices.size() > 0)
+
+        /// Setup for drawing bounding boxes
+        auto& shader = rendered_map.shader;
+        GL_State->bind(shader);
+
+        auto const& camera = rendered_map.camera;
+        shader->view_matrix       = camera.view_matrix();
+        shader->projection_matrix = camera.projection_ortho();
+
+
+        auto draw_box = [&shader](glm::vec2 const& lb, glm::vec2 const& ub)
         {
-            auto const& box = app.renderer->box; //no sense making a new one
-
-            auto& shader = rendered_map.shader;
-
-            glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
-            glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
+            glm::vec2 bbox_size = ub - lb;
+            glm::vec2 trans = lb + bbox_size/2.0f;
 
             shader->world_matrix = mat4{};
             shader->world_matrix = glm::translate(shader->world_matrix, vec3(trans, 0.0f));
             shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
-            
 
-            auto const& camera = rendered_map.camera;
-            shader->view_matrix       = camera.view_matrix();
-            shader->projection_matrix = camera.projection_ortho();
-
-            GL_State->bind(shader);
             shader->update_wvp_uniform();
 
-            box.render(GL_LINE_LOOP);
+            app.renderer->box.render(GL_LINE_LOOP);
+        };
+
+
+
+        /// Bounding Boxes
+        if(object_selection.object_indices.size() > 0)
+        {
+            /// Selection
+            draw_box(object_selection.lower_bound, object_selection.upper_bound);
+        }
+
+        /// Drag Selection
+        if(drag_type == drag_selection_box)
+        {
+            auto sel_bounds = selection_box_bounds();
+            draw_box(get<0>(sel_bounds), get<1>(sel_bounds));
         }
     }
 
@@ -412,23 +427,31 @@ namespace editor
 
 
     /// Selection
+    std::tuple<glm::vec2,glm::vec2> editor_t::selection_box_bounds() const
+    {
+        auto sel_lb = glm::min(selection_drag_start, current_drag_position);
+        auto sel_ub = glm::max(selection_drag_start, current_drag_position);
+
+        return std::tuple<glm::vec2,glm::vec2>(sel_lb, sel_ub);
+    }
+
     bool editor_t::select_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
         return object_selection.add_object_index(object_index);
     }
 
     bool editor_t::deselect_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
         return object_selection.remove_object_index(object_index);
     }
 
     void editor_t::deselect_all()
     {
-        object_selection.clear_selection(); ///FIXME rename to be consistent?
+        object_selection.clear_selection(); ///TODO rename to be consistent?
         spline_selection.deselect_all();
     }
 
@@ -436,7 +459,7 @@ namespace editor
     {
         size_t ind = map_data.object_index_at(position);
 
-        if(ind != size_t(-1))
+        if(ind != nullindex)
         {
             select_object(ind);
             return true;
@@ -483,6 +506,34 @@ namespace editor
             saved_terrain_brushes.push_back(terrain_brush);
         else if(terrain_brush != saved_terrain_brushes.back())
             saved_terrain_brushes.push_back(terrain_brush);
+    }
+
+
+    /// Selection
+    void editor_t::start_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        selection_drag_start = world_pos;
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::update_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::end_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        update_drag_selection(world_pos);
+
+        auto bounds = selection_box_bounds();
+        auto inds = map_data.object_indices_within(get<0>(bounds), get<1>(bounds));
+        object_selection.add_object_indices(inds);
     }
 
 

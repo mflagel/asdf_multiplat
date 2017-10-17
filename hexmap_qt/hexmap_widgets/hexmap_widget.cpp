@@ -197,7 +197,7 @@ void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
 
     auto coords = adjusted_screen_coords(event->x(), event->y());
 
-    if(mouse.is_dragging())
+    if(mouse.is_dragging_any_of())
     {
         mouse.mouse_drag(asdf_event, coords);
     }
