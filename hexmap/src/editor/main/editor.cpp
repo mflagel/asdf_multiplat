@@ -148,7 +148,7 @@ namespace editor
         shader->projection_matrix = camera.projection_ortho();
 
 
-        auto draw_box = [&shader](glm::vec2 lb, glm::vec2 ub)
+        auto draw_box = [&shader](glm::vec2 const& lb, glm::vec2 const& ub)
         {
             glm::vec2 bbox_size = ub - lb;
             glm::vec2 trans = lb + bbox_size/2.0f;
@@ -174,9 +174,8 @@ namespace editor
         /// Drag Selection
         if(drag_type == drag_selection_box)
         {
-            auto sel_lb = glm::min(selection_drag_start, current_drag_position);
-            auto sel_ub = glm::max(selection_drag_start, current_drag_position);
-            draw_box(sel_lb, sel_ub);
+            auto sel_bounds = selection_box_bounds();
+            draw_box(get<0>(sel_bounds), get<1>(sel_bounds));
         }
     }
 
@@ -428,23 +427,31 @@ namespace editor
 
 
     /// Selection
+    std::tuple<glm::vec2,glm::vec2> editor_t::selection_box_bounds() const
+    {
+        auto sel_lb = glm::min(selection_drag_start, current_drag_position);
+        auto sel_ub = glm::max(selection_drag_start, current_drag_position);
+
+        return std::tuple<glm::vec2,glm::vec2>(sel_lb, sel_ub);
+    }
+
     bool editor_t::select_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
         return object_selection.add_object_index(object_index);
     }
 
     bool editor_t::deselect_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
         return object_selection.remove_object_index(object_index);
     }
 
     void editor_t::deselect_all()
     {
-        object_selection.clear_selection(); ///FIXME rename to be consistent?
+        object_selection.clear_selection(); ///TODO rename to be consistent?
         spline_selection.deselect_all();
     }
 
@@ -452,7 +459,7 @@ namespace editor
     {
         size_t ind = map_data.object_index_at(position);
 
-        if(ind != size_t(-1))
+        if(ind != nullindex)
         {
             select_object(ind);
             return true;
@@ -524,7 +531,9 @@ namespace editor
 
         update_drag_selection(world_pos);
 
-        //select all objects within bounds
+        auto bounds = selection_box_bounds();
+        auto inds = map_data.object_indices_within(get<0>(bounds), get<1>(bounds));
+        object_selection.add_object_indices(inds);
     }
 
 
