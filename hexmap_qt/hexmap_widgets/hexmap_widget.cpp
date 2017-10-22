@@ -245,7 +245,18 @@ void hexmap_widget_t::keyPressEvent(QKeyEvent* event)
     keyboard_mods = event->modifiers();
 
     SDL_Keysym sdl_key_event; //being lazy and reusing sdl event for now
-    sdl_key_event.sym = event->nativeVirtualKey(); //supposedly virtual keys are a standard
+
+    /// Seems most keysm codes are standard, but Qt gives different ones for certain things (ex: Delete)
+    /// Not sure which others
+    switch(event->key())
+    {
+    case Qt::Key_Delete:
+        sdl_key_event.sym = SDLK_DELETE;
+        break;
+
+    default:
+        sdl_key_event.sym = event->nativeVirtualKey();
+    };
 
     sdl_key_event.mod = 0;
     sdl_key_event.mod |= KMOD_SHIFT * (event->modifiers() & Qt::ShiftModifier) > 0;
