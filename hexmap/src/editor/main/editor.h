@@ -109,6 +109,7 @@ namespace editor
         //objects
         uint64_t current_object_id = 0;
         object_selection_t object_selection;
+        data::map_object_t wip_object;
 
         //spline
         data::line_node_t new_node_style;
@@ -204,8 +205,8 @@ namespace editor
 
         void place_object(glm::vec2 position);
         void delete_object(size_t object_index);
-        data::map_object_t& wip_object();
-        data::map_object_t const& wip_object() const;
+        // data::map_object_t& wip_object();
+        // data::map_object_t const& wip_object() const;
 
         void spline_click(glm::vec2 position);
         void start_spline(data::line_node_t start);

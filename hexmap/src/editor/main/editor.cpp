@@ -55,6 +55,7 @@ namespace editor
     , action_stack(*this)
     , object_selection(*this)
     , new_node_style{default_spline_style}
+    , wip_object(__placeable_object(vec2(0.0f)))
     {}
 
     void editor_t::init()
@@ -100,9 +101,21 @@ namespace editor
 
     void editor_t::render()
     {
-        hexmap_t::render();
+        if(wip_object.color.a > 0)
+        {
+            map_data.objects.push_back(std::move(wip_object));
+            hexmap_t::render();
+            wip_object = std::move(map_data.objects.back());
+            map_data.objects.pop_back();
+        }
+        else
+        {
+            hexmap_t::render();
+        }
 
+        
         render_current_brush();
+
 
         if(wip_spline)
         {
@@ -217,10 +230,6 @@ namespace editor
     void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
         map_data.reset(map_name, size, default_cell_style);
-        
-        /// (re)-add the WIP object at the start of the list
-        data::map_object_t obj = __placeable_object(vec2(0.0f));
-        map_data.objects.insert(map_data.objects.begin(), std::move(obj));
 
         if(current_tool == place_objects) {
             enable_wip_object();
@@ -392,7 +401,7 @@ namespace editor
         current_object_id = new_id;
 
         if(current_tool == place_objects)
-            wip_object().id = new_id;
+            wip_object.id = new_id;
 
         LOG("current object_id: %ld", current_object_id);
     }
@@ -691,17 +700,17 @@ namespace editor
         push_and_execute_action(std::move(cmd));
     }
 
-    data::map_object_t& editor_t::wip_object()
-    {
-        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
-        return map_data.objects[0];
-    }
+    // data::map_object_t& editor_t::wip_object()
+    // {
+    //     ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+    //     return map_data.objects[0];
+    // }
 
-    data::map_object_t const& editor_t::wip_object() const
-    {
-        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
-        return this->map_data.objects[0];
-    }
+    // data::map_object_t const& editor_t::wip_object() const
+    // {
+    //     ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+    //     return this->map_data.objects[0];
+    // }
 
 
     void editor_t::spline_click(glm::vec2 position)
@@ -900,12 +909,12 @@ namespace editor
     void editor_t::enable_wip_object()
     {
         WARN_IF(current_tool != place_objects, "Enabling WIP object when using a different tool");
-        wip_object().color = selection_overlay_color;
+        wip_object.color = selection_overlay_color;
     }
 
     void editor_t::disable_wip_object()
     {
-        wip_object().color = color_t(0.0f);
+        wip_object.color = color_t(0.0f);
     }
 
 

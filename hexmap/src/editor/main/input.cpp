@@ -187,7 +187,7 @@ namespace editor
             case editor_t::place_objects:
             {
                 editor.brush_pos = snap_pos;
-                editor.wip_object().position = snap_pos;
+                editor.wip_object.position = snap_pos;
                 break;
             }
 
