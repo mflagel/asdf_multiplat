@@ -687,7 +687,7 @@ namespace editor
 
     void editor_t::delete_object(size_t object_index)
     {
-        auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
+        auto cmd = make_unique<delete_map_objects_action_t>(map_data, object_index);
         push_and_execute_action(std::move(cmd));
     }
 

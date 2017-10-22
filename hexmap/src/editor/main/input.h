@@ -22,6 +22,8 @@ namespace editor
         , set_tool_place_object
         , set_tool_place_spline
 
+        , delete_selected_objects
+
         , num_actions
     };
 
@@ -32,6 +34,8 @@ namespace editor
         , SDLK_b // terrain_paint (b for brush)
         , SDLK_o // place_object
         , SDLK_s // place_spline
+
+        , SDLK_DELETE // delete_selected_objects
     };
 
     struct input_handler_t : mouse_event_receiver_t

@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <type_traits>
 
 #include <asdf_multiplat/utilities/utilities.h>
 #include <glm/glm.hpp>
@@ -81,24 +82,37 @@ namespace editor
         void unexecute() override;
     };
 
-    struct modify_map_object_action_t : editor_action_t
+    struct modify_map_objects_action_t : editor_action_t
     {
         data::map_object_t& obj;
         data::map_object_t old_state;
 
-        modify_map_object_action_t(data::map_object_t&, data::map_object_t old_state);
+        modify_map_objects_action_t(data::map_object_t&, data::map_object_t old_state);
 
         void execute() override;
         void unexecute() override;
     };
 
-    struct delete_map_object_action_t : editor_action_t
+    struct delete_map_objects_action_t : editor_action_t
     {
         data::hex_map_t& map_data;
-        data::map_object_t old_object;
-        size_t old_index;
+        std::unordered_map<data::object_index_t, data::map_object_t> old_objects;
 
-        delete_map_object_action_t(data::hex_map_t&, size_t old_index);
+        delete_map_objects_action_t(data::hex_map_t&, data::object_index_t old_index);
+        // delete_map_objects_action_t(data::hex_map_t&, std::vector<data::object_index_t> old_indices);
+
+        template <typename L>
+        delete_map_objects_action_t(data::hex_map_t& _map_data, L _old_indices)
+        : map_data(_map_data)
+        {
+            // static_assert(std::is_same_v<L::value_type, data::object_index_t>
+            //             , "_old_indices must contain objects of type 'data::object_index_t'");
+
+            for(auto const& obj_ind : _old_indices)
+            {
+                old_objects.insert({obj_ind, map_data.objects[obj_ind]});
+            }
+        }
 
         void execute() override;
         void unexecute() override;

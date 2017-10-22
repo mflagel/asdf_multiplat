@@ -4,7 +4,10 @@
 #include "editor/main/editor.h"
 
 namespace asdf {
-namespace hexmap {
+namespace hexmap
+{
+    using object_index_t = data::object_index_t;
+
 namespace editor
 {
     action_stack_t::action_stack_t(editor_t& _editor)
@@ -115,39 +118,57 @@ namespace editor
     }
 
     /// Modify Map Object
-    modify_map_object_action_t::modify_map_object_action_t(data::map_object_t& _obj, data::map_object_t _old_state)
+    modify_map_objects_action_t::modify_map_objects_action_t(data::map_object_t& _obj, data::map_object_t _old_state)
     : obj(_obj)
     , old_state(_old_state)
     {
     }
 
-    void modify_map_object_action_t::execute()
+    void modify_map_objects_action_t::execute()
     {
         EXPLODE("todo");
     }
 
-    void modify_map_object_action_t::unexecute()
+    void modify_map_objects_action_t::unexecute()
     {
         EXPLODE("todo");
     }
 
 
-    /// Delete Map Object
-    delete_map_object_action_t::delete_map_object_action_t(data::hex_map_t& _map_data, size_t _old_index)
-    : map_data(_map_data)
-    , old_object(_map_data.objects[_old_index])
-    , old_index(_old_index)
+    /// Delete Map Object(s)
+    delete_map_objects_action_t::delete_map_objects_action_t(data::hex_map_t& _map_data, object_index_t _old_index)
+    : delete_map_objects_action_t(_map_data, std::array<object_index_t, 1>({_old_index}))
     {
     }
 
-    void delete_map_object_action_t::execute()
+    // delete_map_objects_action_t::delete_map_objects_action_t(data::hex_map_t& _map_data, std::vector<object_index_t> _old_indices)
+    // : map_data(_map_data)
+    // {
+    //     for(auto const& obj_ind : _old_indices)
+    //     {
+    //         old_objects.insert({obj_ind, map_data.objects[obj_ind]});
+    //     }
+    // }
+
+    void delete_map_objects_action_t::execute()
     {
-        map_data.objects.erase(map_data.objects.begin() + old_index);
+        for(auto const& old_obj_with_ind : old_objects)
+        {
+            auto const& old_index = old_obj_with_ind.first;
+            map_data.objects.erase(map_data.objects.begin() + old_index);
+        }
     }
 
-    void delete_map_object_action_t::unexecute()
+    void delete_map_objects_action_t::unexecute()
     {
-        map_data.objects.insert(map_data.objects.begin() + old_index, old_object);
+        map_data.objects.reserve(map_data.objects.size() + old_objects.size());
+
+        for(auto const& old_obj_with_ind : old_objects)
+        {
+            auto const& old_index = old_obj_with_ind.first;
+            auto const& old_object = old_obj_with_ind.second;
+            map_data.objects.insert(map_data.objects.begin() + old_index, old_object);
+        }
     }
 
 
