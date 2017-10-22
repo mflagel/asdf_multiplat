@@ -429,8 +429,8 @@ namespace editor
     /// Selection
     std::tuple<glm::vec2,glm::vec2> editor_t::selection_box_bounds() const
     {
-        auto sel_lb = glm::min(selection_drag_start, current_drag_position);
-        auto sel_ub = glm::max(selection_drag_start, current_drag_position);
+        auto sel_lb = glm::min(drag_start, current_drag_position);
+        auto sel_ub = glm::max(drag_start, current_drag_position);
 
         return std::tuple<glm::vec2,glm::vec2>(sel_lb, sel_ub);
     }
@@ -509,12 +509,12 @@ namespace editor
     }
 
 
-    /// Selection
+    /// Drag Selection
     void editor_t::start_drag_selection(glm::vec2 const& world_pos)
     {
         ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
 
-        selection_drag_start = world_pos;
+        drag_start = world_pos;
         current_drag_position = world_pos;
     }
 
@@ -535,6 +535,66 @@ namespace editor
         auto inds = map_data.object_indices_within(get<0>(bounds), get<1>(bounds));
         object_selection.add_object_indices(inds);
     }
+
+
+    /// Drag Movement
+    void editor_t:: start_drag_movement(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selected_items, "Incorrect drag type for dragging selected items");
+        ASSERT(!object_selection.is_empty(), "Dragging an empty selection box?");
+
+        movement_drag_start_lower_bound = object_selection.lower_bound;
+        prev_lower_bound = movement_drag_start_lower_bound;
+    }
+
+    void editor_t:: update_drag_movement(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selected_items, "Incorrect drag type for dragging selected items");
+
+        //auto dist = movement_drag_start_lower_bound
+        auto drag_dist = current_drag_position - drag_start;
+        auto new_lb = movement_drag_start_lower_bound + drag_dist;
+
+        transform_selection(new_lb);
+    }
+
+    void editor_t:: end_drag_movement(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selected_items, "Incorrect drag type for dragging selected items");
+
+        update_drag_movement(world_pos);
+
+        //todo: push command to action stack
+    }
+
+
+    /// Object Manipulation
+    void editor_t::transform_selection(glm::vec2 const& new_lower_bounds/*, glm::vec2 const& new_upper_bounds*/)
+    {
+        /// Translate using lower bounds
+        auto translation = new_lower_bounds - object_selection.lower_bound;
+
+        object_selection.lower_bound = new_lower_bounds;
+        //object_selection.upper_bound = new_upper_bounds;
+        object_selection.upper_bound += translation;
+
+        for(auto const& obj_ind : object_selection.object_indices)
+        {
+            map_data.objects[obj_ind].position += translation;
+        }
+
+        ///TODO: support scaling objects (using diff between bound sizes
+    }
+
+    void editor_t::delete_selected_objects()
+    {
+        if(!object_selection.is_empty())
+        {
+            auto cmd = make_unique<delete_map_objects_action_t>(map_data, object_selection.object_indices);
+            push_and_execute_action(std::move(cmd));
+        }
+    }
+
 
 
     /// Terrain

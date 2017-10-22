@@ -121,8 +121,10 @@ namespace editor
         hex_snap_flags_t snap_mode = hex_snap_center;
         float snap_threshold = 0.04f;
         drag_type_e drag_type = drag_type_none;
-        glm::vec2 selection_drag_start;
+        glm::vec2 drag_start;
         glm::vec2 current_drag_position;
+        glm::vec2 movement_drag_start_lower_bound; //lower bound of selection box
+        glm::vec2 prev_lower_bound;
 
 
         ///
@@ -187,6 +189,13 @@ namespace editor
         void start_drag_selection(glm::vec2 const& world_pos);
         void update_drag_selection(glm::vec2 const& world_pos);
         void end_drag_selection(glm::vec2 const& world_pos);
+
+        void start_drag_movement(glm::vec2 const& world_pos);
+        void update_drag_movement(glm::vec2 const& world_pos);
+        void end_drag_movement(glm::vec2 const& world_pos);
+
+        void transform_selection(glm::vec2 const& new_lower_bounds/*, glm::vec2 const& new_upper_bounds*/);
+        void delete_selected_objects();
 
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);

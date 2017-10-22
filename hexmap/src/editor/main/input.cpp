@@ -362,7 +362,7 @@ namespace editor
                 case SDLK_4: editor.set_tool(editor_t::place_splines);      break;
             }
         }
-        else
+        else //no modifier keys
         {
             if(key >= SDLK_0 && key <= SDLK_9)
             {
