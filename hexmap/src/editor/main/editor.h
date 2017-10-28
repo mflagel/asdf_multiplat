@@ -120,7 +120,7 @@ namespace editor
 
         ///
         hex_snap_flags_t snap_mode = hex_snap_center;
-        float snap_threshold = 0.04f;
+        float snap_threshold = 0.0f;
         drag_type_e drag_type = drag_type_none;
         glm::vec2 drag_start;
         glm::vec2 current_drag_position;

@@ -12,6 +12,14 @@ snap_points_widget_t::snap_points_widget_t(asdf::hexmap::editor::editor_t& _edit
 {
     ui->setupUi(this);
 
+    ///defaults
+    ui->btn_toggle_snap->setChecked(true);
+    ui->btn_snap_center->setChecked(true);
+    ui->btn_snap_verts->setChecked(true);
+    ui->sld_snap_threshold->setValue(50);
+    ui->dsb_snap_threshold->setValue(0.5);
+    ///
+
     connect(ui->btn_toggle_snap, &QPushButton::toggled, this, &snap_points_widget_t::toggle_snap);
 
     connect(ui->btn_toggle_snap,        &QPushButton::toggled, this, &snap_points_widget_t::snap_settings_changed);
@@ -24,9 +32,9 @@ snap_points_widget_t::snap_points_widget_t(asdf::hexmap::editor::editor_t& _edit
                 ui->dsb_snap_threshold->setValue(val/100.0f);
             });
     connect(ui->dsb_snap_threshold, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-            this, &snap_settings_changed);
+            this, &snap_points_widget_t::snap_settings_changed);
 
-    ui->btn_toggle_snap->setEnabled(true);
+    toggle_snap(ui->btn_toggle_snap->isChecked());
 }
 
 snap_points_widget_t::~snap_points_widget_t()
@@ -61,5 +69,5 @@ void snap_points_widget_t::toggle_snap(bool checked)
     ui->sld_snap_threshold->setEnabled(checked);
     ui->dsb_snap_threshold->setEnabled(checked);
 
-    editor.snap_mode = snap_flags_from_button_states();
+    snap_settings_changed();
 }
