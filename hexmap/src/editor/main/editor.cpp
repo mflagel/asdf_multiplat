@@ -433,6 +433,17 @@ namespace editor
         LOG("current interp type: %s", data::spline_interpolation_names[new_interp_type]);
     }
 
+    void editor_t::set_snap_settings(hex_snap_flags_t flags)
+    {
+        set_snap_settings(snap_mode, snap_threshold);
+    }
+
+    void editor_t::set_snap_settings(hex_snap_flags_t flags, float _snap_threshold)
+    {
+        snap_mode = flags;
+        snap_threshold = _snap_threshold;
+    }
+
 
 
     /// Selection

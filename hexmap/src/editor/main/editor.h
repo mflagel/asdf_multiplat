@@ -168,6 +168,8 @@ namespace editor
         void set_current_object_id(uint64_t new_id);
         void set_spline_node_style(data::line_node_t const& style);
         void set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type);
+        void set_snap_settings(hex_snap_flags_t flags);
+        void set_snap_settings(hex_snap_flags_t flags, float snap_threshold);
 
         std::tuple<glm::vec2,glm::vec2> selection_box_bounds() const;
         bool select_object(size_t object_index);
