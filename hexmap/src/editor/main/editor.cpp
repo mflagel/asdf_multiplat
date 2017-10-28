@@ -566,6 +566,8 @@ namespace editor
 
         movement_drag_start_lower_bound = object_selection.lower_bound;
         prev_lower_bound = movement_drag_start_lower_bound;
+
+        current_drag_position = world_pos;
     }
 
     void editor_t:: update_drag_movement(glm::vec2 const& world_pos)
@@ -577,6 +579,8 @@ namespace editor
         auto new_lb = movement_drag_start_lower_bound + drag_dist;
 
         transform_selection(new_lb);
+
+        current_drag_position = world_pos;
     }
 
     void editor_t:: end_drag_movement(glm::vec2 const& world_pos)

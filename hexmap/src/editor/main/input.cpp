@@ -57,6 +57,10 @@ namespace editor
                                    , ub.x, ub.y))
                 {
                     editor.drag_type = editor_t::drag_selected_items;
+
+                    // start with snap_pos instead of movement
+                    // otherwise dragging to a snap point will be offset
+                    editor.start_drag_movement(snap_pos);
                 }
                 else
                 {
@@ -105,8 +109,9 @@ namespace editor
 
     bool input_handler_t::on_mouse_up(mouse_button_event_t& event)
     {
-        auto mw = world_coords(event.mouse_state.mouse_position);
-        auto hx = world_to_hex_coord(mw);
+         vec2 mw = world_coords(event.mouse_state.mouse_position);
+        ivec2 hx = world_to_hex_coord(mw);
+         vec2 snap_pos = get_snap_position(mw);
 
         switch(editor.current_tool)
         {
@@ -123,7 +128,7 @@ namespace editor
                 {
                     case editor_t::drag_type_none:
                     {
-
+                        break;
                     }
                     case editor_t::drag_selection_box:
                     {
@@ -132,7 +137,8 @@ namespace editor
                     }
                     case editor_t::drag_selected_items:
                     {
-                        break;
+                        editor.end_drag_movement(snap_pos)
+;                       break;
                     }
                 };
 
@@ -208,8 +214,9 @@ namespace editor
 
     bool input_handler_t::on_mouse_drag(mouse_motion_event_t& event)
     {
-        auto mw = world_coords(event.mouse_state.mouse_position);
-        auto hx = world_to_hex_coord(mw);
+         vec2 mw = world_coords(event.mouse_state.mouse_position);
+        ivec2 hx = world_to_hex_coord(mw);
+         vec2 snap_pos = get_snap_position(mw);
 
         switch(editor.current_tool)
         {
@@ -227,6 +234,7 @@ namespace editor
                     }
                     case editor_t::drag_selected_items:
                     {
+                        editor.update_drag_movement(snap_pos);
                         break;
                     }
                 };
