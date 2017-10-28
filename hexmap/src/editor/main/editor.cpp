@@ -21,6 +21,7 @@ namespace asdf
 namespace hexmap {
 
     using spline_t = data::spline_t;
+    using object_index_t = data::object_index_t;
 
 namespace editor
 {
@@ -610,8 +611,8 @@ namespace editor
     {
         if(!object_selection.is_empty())
         {
-            auto cmd = make_unique<delete_map_objects_action_t>(map_data, object_selection.object_indices);
-            push_and_execute_action(std::move(cmd));
+            delete_objects(object_selection.object_indices);
+            object_selection.clear_selection();   
         }
     }
 
@@ -703,12 +704,21 @@ namespace editor
     {
         auto obj = __placeable_object(position);
         push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
+
+        signal_data_changed();
     }
 
-    void editor_t::delete_object(size_t object_index)
+    void editor_t::delete_object(object_index_t object_index)
     {
-        auto cmd = make_unique<delete_map_objects_action_t>(map_data, object_index);
+        delete_objects({object_index});
+    }
+
+    void editor_t::delete_objects(std::unordered_set<object_index_t> const& object_indices)
+    {
+        auto cmd = make_unique<delete_map_objects_action_t>(map_data, object_indices);
         push_and_execute_action(std::move(cmd));
+
+        signal_data_changed();
     }
 
     // data::map_object_t& editor_t::wip_object()

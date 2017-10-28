@@ -206,7 +206,8 @@ namespace editor
         void paint_terrain_end();
 
         void place_object(glm::vec2 position);
-        void delete_object(size_t object_index);
+        void delete_object(data::object_index_t object_index);
+        void delete_objects(std::unordered_set<data::object_index_t> const& object_indices);
         // data::map_object_t& wip_object();
         // data::map_object_t const& wip_object() const;
 
