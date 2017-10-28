@@ -28,6 +28,7 @@ private:
     asdf::hexmap::hex_snap_flags_t snap_flags_from_button_states() const;
 
 private slots:
+    void snap_settings_changed();
     void toggle_snap(bool checked);
 };
 
