@@ -54,6 +54,7 @@ void hexmap_widget_t::initializeGL()
     // hex_map = &(editor.rendered_map);
 
     editor->map_changed_callback = [this](){
+        update();
         emit map_data_changed(editor->map_data);
     };
 
