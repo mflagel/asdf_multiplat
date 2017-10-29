@@ -567,6 +567,7 @@ namespace editor
         movement_drag_start_lower_bound = object_selection.lower_bound;
         prev_lower_bound = movement_drag_start_lower_bound;
 
+        drag_start = world_pos;
         current_drag_position = world_pos;
     }
 
