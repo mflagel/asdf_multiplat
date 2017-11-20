@@ -316,7 +316,7 @@ QDir MainWindow::get_initial_save_load_dir()
     if(editor->map_filepath.size() > 0)
         return QDir(QString::fromStdString(editor->map_filepath));
     else if(editor->workspace.recently_opened.size() > 0)
-        return QDir(QString::fromStdString(editor->workspace.recently_opened.back()));
+        return QDir(QString::fromStdString(editor->workspace.recently_opened.back().string()));
     else
         return QDir::homePath();
 }
