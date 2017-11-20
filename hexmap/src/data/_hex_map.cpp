@@ -216,7 +216,7 @@ namespace data
     void hex_map_t::_load_from_file(stdfs::path const& filepath)
     {
         //SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
-        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "wb");
+        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "rb");
 
         if (!io)
         {
