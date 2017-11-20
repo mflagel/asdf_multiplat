@@ -161,7 +161,11 @@ namespace data
     // https://wiki.libsdl.org/SDL_RWwrite?highlight=%28%5CbCategoryIO%5Cb%29%7C%28CategoryEnum%29%7C%28CategoryStruct%29
     void hex_map_t::_save_to_file(stdfs::path const& filepath)
     {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+        //SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+
+        //stdfs::path::c_str() returns a wchar_t array on windows. 
+        //so I'll be lazy and conver to std::string first
+        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "wb");
 
         if(!io)
         {
@@ -211,7 +215,8 @@ namespace data
 
     void hex_map_t::_load_from_file(stdfs::path const& filepath)
     {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        //SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "wb");
 
         if (!io)
         {
@@ -267,6 +272,8 @@ namespace data
     ///       will require copying over terrain json before loading
     ///       or modifying load code to specify a directory that paths
     ///       should be relative to
+    /// Also, I should probably TAR first and then compress the result
+    ///       since this is how tarballs usually work
     void hex_map_t::package_map(std::vector<stdfs::path> const& map_filepaths, stdfs::path const& package_filepath)
     {
         /// write to a slightly-different path

@@ -32,7 +32,7 @@ namespace editor
         std::vector<const char*> recent_files_cstrs;
         recent_files_cstrs.reserve(recently_opened.size());
         for(auto const& p : recently_opened)
-            recent_files_cstrs.push_back(p.c_str());
+            recent_files_cstrs.push_back(p.string().c_str());
 
         cJSON* str_arr = cJSON_CreateStringArray(recent_files_cstrs.data(), recent_files_cstrs.size());
         cJSON_AddItemToObject(root, "recently_opened", str_arr);
