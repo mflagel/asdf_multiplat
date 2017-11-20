@@ -106,9 +106,9 @@
     <TargetName>$(ProjectName)_static</TargetName>
     <TargetExt>.lib</TargetExt>
     <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
-    <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:/Users/Mathias/Documents/Programming/zlib-1.2.11;main;$(ProjectDir)/data;ui;utilities;.;../include;../include/zlib;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(ProjectDir)/../bin/win32;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <LibraryPath>../lib;../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <LibraryPath>../lib;../lib/win32/x86;C:\Users\Mathias\Documents\Programming\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllDebug;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'">
     <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
@@ -127,8 +127,8 @@
     <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH);</ExecutablePath>
     <LibraryPath>../../lib;../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-    <OutDir>..\lib\win32\$(PlatformShortName)\</OutDir>
-    <IntDir>..\obj\asdf_multiplat\win32\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)\..\lib\win32\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)\obj\win32\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -150,6 +150,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -215,6 +216,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ext\microtar\microtar.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="data\content_manager.cpp" />
     <ClCompile Include="data\gl_resources.cpp" />
     <ClCompile Include="data\gl_state.cpp" />
