@@ -20,6 +20,8 @@
 #include <microtar/microtar.h>
 #define USING_MICROTAR 1
 
+#define STRDUP _strdup
+
 namespace std
 {
     enum class byte : unsigned char {};
@@ -32,6 +34,8 @@ namespace std
 #include <libtar.h>
 #include <fcntl.h>    //for O_RDONLY AND O_WRONLY, used with tar_open()
 #define USING_LIBTAR 1
+
+#define STRDUP strdup
 #endif
 
 DIAGNOSTIC_IGNORE(-Wcomment)
@@ -357,14 +361,15 @@ namespace asdf {
     {
         ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
 
-        /// MSVC
-        //FILE* source = fopen(src_filepath.c_str(),  "r");
-        //FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#ifdef _MSC_VER
         FILE* source;
         FILE* dest;
         auto errsrc  = fopen_s(&source, src_filepath.string().c_str(),  "r");
         auto errdest = fopen_s(&dest,  dest_filepath.string().c_str(),  "w");
-
+#else
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#endif
 
         int compress_result = compress_file(source, dest, compression_level);
 
@@ -438,13 +443,15 @@ namespace asdf {
     {
         ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
 
-        /// MSVC
-        //FILE* source = fopen(src_filepath.c_str(),  "r");
-        //FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#ifdef _MSC_VER
         FILE* source;
         FILE* dest;
         auto errsrc  = fopen_s(&source, src_filepath.string().c_str(),  "r");
         auto errdest = fopen_s(&dest,  dest_filepath.string().c_str(),  "w");
+#else
+        FILE* source = fopen(src_filepath.c_str(),  "r");
+        FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#endif
 
         int decompress_result = decompress_file(source, dest);
 
@@ -685,7 +692,7 @@ namespace asdf {
 
         /// MSVC
         //char* str = strdup(_str);
-        char* str = _strdup(_str);
+        char* str = STRDUP(_str);
 
 #ifdef _MSC_VER
         char* next_token = nullptr;
