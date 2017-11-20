@@ -121,7 +121,7 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\AsdfMultiplat_static_D.lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\hexmap_static_D.lib;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\debug\ColorWidgets-qt51.lib;$(QTDIR)\lib\Qt5OpenGLd.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\AsdfMultiplat_static_D.lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\hexmap_static_D.lib;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\debug\ColorWidgets-qt51.lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\zlibwapi.lib;$(QTDIR)\lib\Qt5OpenGLd.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\debug;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -140,6 +140,16 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;WIN64;DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)..\..\lib\win32\$(PlatformShortName)\*.dll" "$(OutDir)" &amp;
+copy /y "$(QTDIR)\bin\Qt5OpenGLd.dll" "$(OutDir)\Qt5OpenGLd.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Widgetsd.dll" "$(OutDir)\Qt5Widgetsd.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Guid.dll" "$(OutDir)\Qt5Guid.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy Dependancies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\win32\Debug\moc_hexmap_widget.cpp" />

@@ -76,7 +76,7 @@ INCLUDEPATH += $$PWD/../../include
 
 # libasdfm
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_static_D
+win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_static_D -lzlibwapi
 
 INCLUDEPATH += $$PWD/../../asdf_multiplat
 DEPENDPATH += $$PWD/../../asdf_multiplat
@@ -84,6 +84,8 @@ DEPENDPATH += $$PWD/../../asdf_multiplat
 #TODO: handle Debug vs Release
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/AsdfMultiplat_static_D.lib
 else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libAsdfMultiplat_static_D.a
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
 ###
 
 
@@ -105,7 +107,7 @@ else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libhexmap_static_D.a
 
 # apparently this is required
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += glew ftgl sdl2
+unix: PKGCONFIG += glew ftgl sdl2 zlib
 
 
 
