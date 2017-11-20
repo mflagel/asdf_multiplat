@@ -27,6 +27,12 @@
 
 #include "microtar.h"
 
+/// Added by MFlagel because MSVC is obnoxious
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+///
+
 typedef struct {
   char name[100];
   char mode[8];
