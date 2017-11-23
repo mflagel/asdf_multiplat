@@ -272,43 +272,56 @@ namespace data
     ///       will require copying over terrain json before loading
     ///       or modifying load code to specify a directory that paths
     ///       should be relative to
-    /// Also, I should probably TAR first and then compress the result
-    ///       since this is how tarballs usually work
     void hex_map_t::package_map(std::vector<stdfs::path> const& map_filepaths, stdfs::path const& package_filepath)
     {
-        /// write to a slightly-different path
-        /// once writing/packaging is done, move the file at
-        /// [working_filepath] to [filepath]
-        /// supposedly this prevents accidental corruption
-        /// if there is already a file at [filepath]
-        stdfs::path working_filepath = make_temp_path(package_filepath);
+        stdfs::path archive_filepath = package_filepath;
+        archive_filepath += ".tar";
 
-        std::vector<stdfs::path> compressed_filepaths;
-        for(auto const& p : map_filepaths)
-        {
-            compressed_filepaths.emplace_back(p.string() + compressed_ext);
-            int r = asdf::util::compress_file(p, compressed_filepaths.back());
-            if(r != 0)
-                EXPLODE("failed to compress file [%s]", compressed_filepaths.back().c_str());
-            stdfs::remove(p); //remove uncompressed temp file
-        }
-
-        int tar_result = archive_files(compressed_filepaths, working_filepath);
+        int tar_result = archive_files(map_filepaths, archive_filepath);
         if(tar_result != 0)
         {
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
             EXPLODE("error archiving map");
         }
+        
 
-        stdfs::rename(working_filepath, package_filepath);
+        /// write to a .compressed file rather than writing directly over
+        /// a file that might already exist at package_filepath
+        stdfs::path compressed_filepath = archive_filepath;
+        archive_filepath += ".compressed";
 
-        //clean up temp files
-        for(auto const& p : compressed_filepaths)
-        {
-            stdfs::remove(p);
-        }
+        int r = asdf::util::compress_file(archive_filepath, compressed_filepath);
+        if(r != 0)
+            EXPLODE("failed to compress file [%s]", compressed_filepath.c_str());
+        
+
+        /// move/overwrite package_filepath with compressed package and clean up temp archive
+        stdfs::rename(compressed_filepath, package_filepath);
+        stdfs::remove(archive_filepath);
     }
 
+    void hex_map_t::unpackage_map(stdfs::path const& filepath)
+    {
+        stdfs::path decompressed_path = filepath;
+        decompressed_path += ".tar";
+
+        int r = asdf::util::decompress_file(filepath, decompressed_path);
+        if(r != 0)
+        {
+            EXPLODE("failed to decompress package: %s", filepath.string().c_str());
+        }
+
+        int tar_result = unarchive_files(filepath, filepath.parent_path());
+        if(tar_result != 0)
+        {
+            fprintf(stderr, "tar_open(): %s\n", strerror(errno));
+            EXPLODE("error extracting package data from archive");
+        }
+
+        stdfs::remove(decompressed_path);
+    }
+
+    /*
     void hex_map_t::unpackage_map(stdfs::path const& filepath)
     {
         int tar_result = unarchive_files(filepath, filepath.parent_path());
@@ -339,6 +352,7 @@ namespace data
             stdfs::remove(compressed);
         }
     }
+    */
 
 }
 }
