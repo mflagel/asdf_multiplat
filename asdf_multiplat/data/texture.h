@@ -32,8 +32,8 @@ namespace asdf {
         GLint types[5];
 
         inline GLuint     get_textureID() const { return texture_id; }
-        inline uint       get_width()     const { return width;      }
-        inline uint       get_height()    const { return height;     }
+        inline uint32_t       get_width()     const { return width;      }
+        inline uint32_t       get_height()    const { return height;     }
         inline glm::uvec2 get_size()      const { return glm::uvec2(width, height); }
 
         texture_t();
