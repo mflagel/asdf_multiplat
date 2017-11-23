@@ -122,10 +122,6 @@ namespace data
         _save_to_file(map_data_filepath);
         map_filepaths.emplace_back(std::move(map_data_filepath));
 
-        // path compressed_map_filepath(map_data_filepath + compressed_ext);
-        // compress_file(compressed_map_filepath);
-        // map_filepaths.emplace_back(compressed_map_filepath);
-
         /// Save terrain_bank as a separate file
         /// Will get compressed with the rest of the save file at some point
         stdfs::path terrain_path(filepath + terrain_data_ext);
@@ -133,6 +129,9 @@ namespace data
         map_filepaths.emplace_back(std::move(terrain_path));
 
         package_map(map_filepaths, stdfs::path(filepath));
+
+        for(auto const& p : map_filepaths)
+            stdfs::remove(p);        
     }
 
     void hex_map_t::load_from_file(std::string const& filepath)
@@ -288,7 +287,7 @@ namespace data
         /// write to a .compressed file rather than writing directly over
         /// a file that might already exist at package_filepath
         stdfs::path compressed_filepath = archive_filepath;
-        archive_filepath += ".compressed";
+        compressed_filepath += ".compressed";
 
         int r = asdf::util::compress_file(archive_filepath, compressed_filepath);
         if(r != 0)
@@ -311,7 +310,7 @@ namespace data
             EXPLODE("failed to decompress package: %s", filepath.string().c_str());
         }
 
-        int tar_result = unarchive_files(filepath, filepath.parent_path());
+        int tar_result = unarchive_files(decompressed_path, decompressed_path.parent_path());
         if(tar_result != 0)
         {
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
