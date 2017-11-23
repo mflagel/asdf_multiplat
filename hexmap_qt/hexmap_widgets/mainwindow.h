@@ -21,6 +21,8 @@ class object_properties_widget_t;
 class minimap_widget_t;
 class terrain_brush_selector_t;
 class hexmap_widget_t;
+class snap_points_widget_t;
+class tools_panel_t;
 
 class MainWindow : public QMainWindow
 {
@@ -61,8 +63,8 @@ private:
     void save_status_message();
 
 private slots:
-    void _open_map(std::string const& filepath);
     void init();
+    void _open_map(std::string const& filepath);
     //void hex_map_initialized(asdf::hexmap::editor::editor_t&);
     void minimap_initialized();
     void editor_tool_changed(asdf::hexmap::editor::editor_t::tool_type_e);
@@ -77,9 +79,12 @@ private:
     asdf::hexmap::editor::editor_t* editor = nullptr;
 
     hexmap_widget_t* hexmap_widget = nullptr;
+    QDockWidget* tools_dock = nullptr;
     QDockWidget* palette_dock = nullptr;
     QDockWidget* minimap_dock = nullptr;
+    QDockWidget* tool_settings_dock = nullptr;
 
+    tools_panel_t* tools_panel = nullptr;
     palette_widget_t* palette_widget = nullptr;
     palette_item_model_t* terrain_palette_model = nullptr;
     palette_item_model_t* objects_palette_model = nullptr;
@@ -87,6 +92,7 @@ private:
     minimap_widget_t* minimap = nullptr;
     object_properties_widget_t* object_properties = nullptr;
     terrain_brush_selector_t* brush_settings = nullptr;
+    snap_points_widget_t* snap_point_settings = nullptr;
 
     spline_settings_widget_t* spline_settings_widget = nullptr;
 

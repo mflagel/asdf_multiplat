@@ -96,7 +96,7 @@ namespace data
         return num_empty;
     }
 
-    std::vector<glm::ivec2> get_brush_grid_overlap(terrain_brush_t const& brush, hex_grid_t const& grid, grid_coord_t overlap_center)
+    std::vector<glm::ivec2> get_brush_grid_overlap(terrain_brush_t const& brush, hex_grid_t const& grid, hex_coord_t overlap_center)
     {
         auto brush_halfsize = glm::ivec2(brush.size()) / 2;
         auto brush_coord_to_grid_coord = [&grid, &overlap_center, brush_halfsize](glm::ivec2 const& brush_coord) -> glm::ivec2

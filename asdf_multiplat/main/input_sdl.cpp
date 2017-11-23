@@ -30,7 +30,7 @@ namespace asdf
             {
                 auto asdf_event = mouse_event_from_sdl(mouse, event->motion);
 
-                if(mouse.is_dragging())
+                if(mouse.is_dragging_any_of())
                 {
                     mouse.mouse_drag(asdf_event, ivec2(event->button.x, event->button.y));
                 }
@@ -53,26 +53,26 @@ namespace asdf
 
     mouse_button_event_t mouse_event_from_sdl(mouse_input_t& mouse, SDL_MouseButtonEvent const& event)
     {
-        return mouse_button_event_t {
+        return mouse_button_event_t(
               mouse
             , mouse_button_from_sdl_btn(event.button)
-            , event.clicks > 1
-            };
+            , event.clicks
+            );
     }
 
     mouse_motion_event_t mouse_event_from_sdl(mouse_input_t& mouse, SDL_MouseMotionEvent const& event)
     {
         ASDF_UNUSED(event);
 
-        return mouse_motion_event_t{ mouse };
+        return mouse_motion_event_t( mouse );
     }
 
     mouse_wheel_event_t  mouse_event_from_sdl(mouse_input_t& mouse, SDL_MouseWheelEvent const& event)
     {
-        return mouse_wheel_event_t{
+        return mouse_wheel_event_t(
               mouse
             , event.y  // the amount scrolled vertically, positive away from the user and negative toward the user
-        };
+        );
     }
 
 

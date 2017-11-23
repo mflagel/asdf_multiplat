@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     minimap_widget.cpp \
     dialogs/map_properties_dialog.cpp \
     dialogs/export_image_dialog.cpp \
-    terrain_brush_selector.cpp
+    terrain_brush_selector.cpp \
+    snap_points_widget.cpp
 
 HEADERS  += mainwindow.h \
     hexmap_widget.h \
@@ -45,10 +46,10 @@ HEADERS  += mainwindow.h \
     minimap_widget.h \
     dialogs/map_properties_dialog.h \
     dialogs/export_image_dialog.h \
-    terrain_brush_selector.h
+    terrain_brush_selector.h \
+    snap_points_widget.h
 
 FORMS    += mainwindow.ui \
-    tools_panel.ui \
     layers_widget.ui \
     palette_widget.ui \
     dialogs/new_map_dialog.ui \
@@ -56,7 +57,8 @@ FORMS    += mainwindow.ui \
     object_properties_widget.ui \
     dialogs/map_properties_dialog.ui \
     dialogs/export_image_dialog.ui \
-    terrain_brush_selector.ui
+    terrain_brush_selector.ui \
+    snap_points_widget.ui
 
 
 # hexmap shaders
@@ -76,7 +78,7 @@ INCLUDEPATH += $$PWD/../../include
 
 # libasdfm
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_static_D
+win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_static_D -lzlibwapi
 
 INCLUDEPATH += $$PWD/../../asdf_multiplat
 DEPENDPATH += $$PWD/../../asdf_multiplat
@@ -84,6 +86,8 @@ DEPENDPATH += $$PWD/../../asdf_multiplat
 #TODO: handle Debug vs Release
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/AsdfMultiplat_static_D.lib
 else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libAsdfMultiplat_static_D.a
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
 ###
 
 
@@ -105,7 +109,7 @@ else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libhexmap_static_D.a
 
 # apparently this is required
 unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += glew ftgl sdl2
+unix: PKGCONFIG += glew ftgl sdl2 zlib
 
 
 

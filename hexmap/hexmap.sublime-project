@@ -10,6 +10,9 @@
 			"folder_exclude_patterns":["bin","obj"]
 		},
 		{
+			"path": "../ext"
+		},
+		{
 			"path": "../shaders"
 		},
 		{

@@ -197,7 +197,7 @@ void hexmap_widget_t::mouseMoveEvent(QMouseEvent* event)
 
     auto coords = adjusted_screen_coords(event->x(), event->y());
 
-    if(mouse.is_dragging())
+    if(mouse.is_dragging_any_of())
     {
         mouse.mouse_drag(asdf_event, coords);
     }
@@ -303,10 +303,10 @@ void hexmap_widget_t::set_palette_item(QModelIndex const& index)
     switch(editor->current_tool)
     {
         case tool_type_e::terrain_paint:
-            editor->current_tile_id = index.row();
+            editor->set_current_tile_id(index.row());
             break;
         case tool_type_e::place_objects:
-            editor->current_object_id = index.row();
+            editor->set_current_object_id(index.row());
             break;
 
     default:

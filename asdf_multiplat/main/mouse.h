@@ -21,31 +21,54 @@ namespace asdf
         , num_mouse_buttons
     };
 
-    constexpr uint32_t mouse_button_bit(mouse_button_e btn)
+    using mouse_button_flags_t = uint32_t;
+
+    constexpr mouse_button_flags_t mouse_button_bit(mouse_button_e btn)
     {
-        return 1u << static_cast<uint8_t>(btn);
+        return 1u << static_cast<uint32_t>(btn);
     }
 
-    constexpr uint32_t mouse_buttons_all = UINT_MAX;
+    constexpr mouse_button_flags_t mouse_buttons_all = UINT_MAX;
 
     struct mouse_input_t;
 
-    struct mouse_motion_event_t
+    struct mouse_event_t
     {
         mouse_input_t& mouse_state;
+        bool handled = false;
+
+        mouse_event_t(mouse_input_t& _ms)
+        : mouse_state(_ms)
+        {}
     };
 
-    struct mouse_button_event_t
+    struct mouse_motion_event_t : mouse_event_t
     {
-        mouse_input_t& mouse_state;
+        mouse_motion_event_t(mouse_input_t& _ms)
+        : mouse_event_t(_ms)
+        {}
+    };
+
+    struct mouse_button_event_t : mouse_event_t
+    {
         mouse_button_e button;
         bool double_clicked;
+
+        mouse_button_event_t(mouse_input_t& _ms, mouse_button_e _btn, size_t _num_clicks)
+        : mouse_event_t(_ms)
+        , button(_btn)
+        , double_clicked(_num_clicks > 1)
+        {}
     };
 
-    struct mouse_wheel_event_t
+    struct mouse_wheel_event_t : mouse_event_t
     {
-        mouse_input_t& mouse_state;
         int delta;
+
+        mouse_wheel_event_t(mouse_input_t& _ms, int _delta)
+        : mouse_event_t(_ms)
+        , delta(_delta)
+        {}
     };
 
 
@@ -63,10 +86,18 @@ namespace asdf
 
     struct mouse_input_t
     {
-        uint32_t mouse_button_states = 0;
+        struct drag_state_t
+        {
+            glm::ivec2 mouse_down_pos;
+            bool is_dragging = false;
+
+            drag_state_t() = default;
+        };
+
+        mouse_button_flags_t mouse_button_states = 0;
         glm::ivec2 mouse_prev_position;
         glm::ivec2 mouse_position;
-        glm::ivec2 mouse_down_pos;
+        std::array<drag_state_t, num_mouse_buttons> drag_states;
 
         mouse_event_receiver_t* receiver = nullptr;
 
@@ -85,7 +116,9 @@ namespace asdf
         
         glm::ivec2 move_delta() const;
         bool is_dragging(mouse_button_e btn) const;
-        bool is_dragging(uint32_t mouse_btns = mouse_buttons_all) const;
-        glm::ivec2 drag_delta() const;
+        bool is_dragging(mouse_button_flags_t mouse_btns) const;
+        bool is_dragging_any_of(mouse_button_flags_t mouse_btns = mouse_buttons_all) const;
+        glm::ivec2 drag_delta(mouse_button_e btn) const;
+        int drag_dist(mouse_button_e btn) const;
     };
 }

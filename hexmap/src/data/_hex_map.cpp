@@ -47,6 +47,20 @@ namespace data
     {}
 
 
+    void hex_map_t::clear()
+    {
+        reset(map_name, hex_grid.size);
+    }
+
+    void hex_map_t::reset(std::string const& _map_name, glm::uvec2 _grid_size, hex_grid_cell_t const& _default_cell_style)
+    {
+        map_name = _map_name;
+        hex_grid = hex_grid_t(_grid_size, _default_cell_style);
+        objects.clear();
+        splines.clear();
+    }
+
+
     ///OPTIMIZE: iterate from end to start and grab the first one that intersects
     size_t hex_map_t::object_index_at(glm::vec2 const& world_pos) const
     {
@@ -108,6 +122,52 @@ namespace data
         return spline_inds;
     }
 
+
+    std::vector<object_index_t> hex_map_t::object_indices_within(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const
+    {
+        std::vector<object_index_t> object_inds;
+
+        size_t obj_index = 0;
+        for(auto const& obj : objects)
+        {
+            auto obj_ub = obj.position + obj.size_d2;
+            auto obj_lb = obj.position - obj.size_d2;
+
+            if( (obj_lb.x >= lower_bounds.x && obj_lb.y >= lower_bounds.y)
+             && (obj_ub.x <= upper_bounds.x && obj_ub.y <= upper_bounds.y))
+            {
+                object_inds.push_back(obj_index);
+            }
+
+            ++obj_index;
+        }
+
+        return object_inds;
+    }
+
+    std::vector<object_index_t> hex_map_t::object_indices_intersecting(glm::vec2 const& lower_bounds, glm::vec2 const& upper_bounds) const
+    {
+        std::vector<object_index_t> object_inds;
+
+        size_t obj_index = 0;
+        for(auto const& obj : objects)
+        {
+            auto obj_ub = obj.position + obj.size_d2;
+            auto obj_lb = obj.position - obj.size_d2;
+
+            if( (obj_ub.x > lower_bounds.x && obj_ub.y > lower_bounds.y)
+             && (obj_lb.x < upper_bounds.x && obj_lb.y < upper_bounds.y))
+            {
+                object_inds.push_back(obj_index);
+            }
+
+            ++obj_index;
+        }
+
+        return object_inds;
+    }
+
+
     constexpr const char* compressed_ext   = ".compressed";
     constexpr const char* map_data_ext     = ".map_data";
     constexpr const char* terrain_data_ext = ".terrain.json";
@@ -122,10 +182,6 @@ namespace data
         _save_to_file(map_data_filepath);
         map_filepaths.emplace_back(std::move(map_data_filepath));
 
-        // path compressed_map_filepath(map_data_filepath + compressed_ext);
-        // compress_file(compressed_map_filepath);
-        // map_filepaths.emplace_back(compressed_map_filepath);
-
         /// Save terrain_bank as a separate file
         /// Will get compressed with the rest of the save file at some point
         stdfs::path terrain_path(filepath + terrain_data_ext);
@@ -133,6 +189,9 @@ namespace data
         map_filepaths.emplace_back(std::move(terrain_path));
 
         package_map(map_filepaths, stdfs::path(filepath));
+
+        for(auto const& p : map_filepaths)
+            stdfs::remove(p);        
     }
 
     void hex_map_t::load_from_file(std::string const& filepath)
@@ -161,7 +220,11 @@ namespace data
     // https://wiki.libsdl.org/SDL_RWwrite?highlight=%28%5CbCategoryIO%5Cb%29%7C%28CategoryEnum%29%7C%28CategoryStruct%29
     void hex_map_t::_save_to_file(stdfs::path const& filepath)
     {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+        //SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+
+        //stdfs::path::c_str() returns a wchar_t array on windows. 
+        //so I'll be lazy and conver to std::string first
+        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "wb");
 
         if(!io)
         {
@@ -211,7 +274,8 @@ namespace data
 
     void hex_map_t::_load_from_file(stdfs::path const& filepath)
     {
-        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        //SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        SDL_RWops* io = SDL_RWFromFile(filepath.string().c_str(), "rb");
 
         if (!io)
         {
@@ -269,39 +333,54 @@ namespace data
     ///       should be relative to
     void hex_map_t::package_map(std::vector<stdfs::path> const& map_filepaths, stdfs::path const& package_filepath)
     {
-        /// write to a slightly-different path
-        /// once writing/packaging is done, move the file at
-        /// [working_filepath] to [filepath]
-        /// supposedly this prevents accidental corruption
-        /// if there is already a file at [filepath]
-        stdfs::path working_filepath = make_temp_path(package_filepath);
+        stdfs::path archive_filepath = package_filepath;
+        archive_filepath += ".tar";
 
-        std::vector<stdfs::path> compressed_filepaths;
-        for(auto const& p : map_filepaths)
-        {
-            compressed_filepaths.emplace_back(p.string() + compressed_ext);
-            int r = asdf::util::compress_file(p, compressed_filepaths.back());
-            if(r != 0)
-                EXPLODE("failed to compress file [%s]", compressed_filepaths.back().c_str());
-            stdfs::remove(p); //remove uncompressed temp file
-        }
-
-        int tar_result = archive_files(compressed_filepaths, working_filepath);
+        int tar_result = archive_files(map_filepaths, archive_filepath);
         if(tar_result != 0)
         {
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
             EXPLODE("error archiving map");
         }
+        
 
-        stdfs::rename(working_filepath, package_filepath);
+        /// write to a .compressed file rather than writing directly over
+        /// a file that might already exist at package_filepath
+        stdfs::path compressed_filepath = archive_filepath;
+        compressed_filepath += ".compressed";
 
-        //clean up temp files
-        for(auto const& p : compressed_filepaths)
-        {
-            stdfs::remove(p);
-        }
+        int r = asdf::util::compress_file(archive_filepath, compressed_filepath);
+        if(r != 0)
+            EXPLODE("failed to compress file [%s]", compressed_filepath.c_str());
+        
+
+        /// move/overwrite package_filepath with compressed package and clean up temp archive
+        stdfs::rename(compressed_filepath, package_filepath);
+        stdfs::remove(archive_filepath);
     }
 
+    void hex_map_t::unpackage_map(stdfs::path const& filepath)
+    {
+        stdfs::path decompressed_path = filepath;
+        decompressed_path += ".tar";
+
+        int r = asdf::util::decompress_file(filepath, decompressed_path);
+        if(r != 0)
+        {
+            EXPLODE("failed to decompress package: %s", filepath.string().c_str());
+        }
+
+        int tar_result = unarchive_files(decompressed_path, decompressed_path.parent_path());
+        if(tar_result != 0)
+        {
+            fprintf(stderr, "tar_open(): %s\n", strerror(errno));
+            EXPLODE("error extracting package data from archive");
+        }
+
+        stdfs::remove(decompressed_path);
+    }
+
+    /*
     void hex_map_t::unpackage_map(stdfs::path const& filepath)
     {
         int tar_result = unarchive_files(filepath, filepath.parent_path());
@@ -332,6 +411,7 @@ namespace data
             stdfs::remove(compressed);
         }
     }
+    */
 
 }
 }

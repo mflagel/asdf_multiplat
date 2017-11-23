@@ -49,6 +49,7 @@ namespace editor
     }
     //--
 
+
     editor_t::editor_t()
     : hexmap_t()
     , action_stack(*this)
@@ -126,39 +127,55 @@ namespace editor
             auto const& shader = rendered_map.shader;
             spritebatch.begin(shader->view_matrix, shader->projection_matrix);
 
+            //scale the pixel texture to the size of the object
             auto const& pixel_texture = Content.textures["pixel"];
-            auto const& obj_size_px = map_data.objects_atlas->atlas_entries[sel_obj.id].size_px;
+            auto obj_size_px = sel_obj.size_d2 * 2.0f * px_per_unit;
             vec2 scale = vec2(uvec2(obj_size_px) / pixel_texture->get_size()); //scale overlay texture to match object texture size
-            auto sprite_scale = scale * sel_obj.scale / glm::vec2(px_per_unit);
+            auto sprite_scale = scale * sel_obj.scale * units_per_px;
 
             spritebatch.draw(pixel_texture, sel_obj.position, selection_overlay_color, sprite_scale, sel_obj.rotation);
 
             spritebatch.end();
         }
 
-        //render selection box
-        if(object_selection.object_indices.size() > 0)
+
+        /// Setup for drawing bounding boxes
+        auto& shader = rendered_map.shader;
+        GL_State->bind(shader);
+
+        auto const& camera = rendered_map.camera;
+        shader->view_matrix       = camera.view_matrix();
+        shader->projection_matrix = camera.projection_ortho();
+
+
+        auto draw_box = [&shader](glm::vec2 const& lb, glm::vec2 const& ub)
         {
-            auto const& box = app.renderer->box; //no sense making a new one
-
-            auto& shader = rendered_map.shader;
-
-            glm::vec2 bbox_size = object_selection.upper_bound - object_selection.lower_bound;
-            glm::vec2 trans = object_selection.lower_bound + bbox_size/2.0f;
+            glm::vec2 bbox_size = ub - lb;
+            glm::vec2 trans = lb + bbox_size/2.0f;
 
             shader->world_matrix = mat4{};
             shader->world_matrix = glm::translate(shader->world_matrix, vec3(trans, 0.0f));
             shader->world_matrix = glm::scale(shader->world_matrix, vec3(bbox_size, 0.0f));
-            
 
-            auto const& camera = rendered_map.camera;
-            shader->view_matrix       = camera.view_matrix();
-            shader->projection_matrix = camera.projection_ortho();
-
-            GL_State->bind(shader);
             shader->update_wvp_uniform();
 
-            box.render(GL_LINE_LOOP);
+            app.renderer->box.render(GL_LINE_LOOP);
+        };
+
+
+
+        /// Bounding Boxes
+        if(object_selection.object_indices.size() > 0)
+        {
+            /// Selection
+            draw_box(object_selection.lower_bound, object_selection.upper_bound);
+        }
+
+        /// Drag Selection
+        if(drag_type == drag_selection_box)
+        {
+            auto sel_bounds = selection_box_bounds();
+            draw_box(get<0>(sel_bounds), get<1>(sel_bounds));
         }
     }
 
@@ -186,14 +203,30 @@ namespace editor
 
                 break;
             }
+
+            case place_objects:
+            {
+
+
+                break;
+            }
         };
     }
 
 
     void editor_t::new_map_action(std::string const& map_name, glm::uvec2 const& size, data::hex_grid_cell_t const& default_cell_style)
     {
-        map_data.map_name = map_name;
-        map_data.hex_grid = data::hex_grid_t(size, default_cell_style);
+        map_data.reset(map_name, size, default_cell_style);
+        
+        /// (re)-add the WIP object at the start of the list
+        data::map_object_t obj = __placeable_object(vec2(0.0f));
+        map_data.objects.insert(map_data.objects.begin(), std::move(obj));
+
+        if(current_tool == place_objects) {
+            enable_wip_object();
+        } else {
+            disable_wip_object();
+        }
 
         map_filepath = "";
         map_is_dirty = false;
@@ -316,6 +349,7 @@ namespace editor
             }
             case place_objects:
             {
+                disable_wip_object();
                 break;
             }
             case place_splines:
@@ -327,6 +361,14 @@ namespace editor
         };
 
         current_tool = new_tool;
+
+        switch(new_tool)
+        {
+            case place_objects:
+                enable_wip_object();
+                break;
+        };
+
 
         LOG("current tool: %s", tool_type_strings[current_tool]);
     }
@@ -348,6 +390,10 @@ namespace editor
         }
 
         current_object_id = new_id;
+
+        if(current_tool == place_objects)
+            wip_object().id = new_id;
+
         LOG("current object_id: %ld", current_object_id);
     }
 
@@ -381,23 +427,31 @@ namespace editor
 
 
     /// Selection
+    std::tuple<glm::vec2,glm::vec2> editor_t::selection_box_bounds() const
+    {
+        auto sel_lb = glm::min(selection_drag_start, current_drag_position);
+        auto sel_ub = glm::max(selection_drag_start, current_drag_position);
+
+        return std::tuple<glm::vec2,glm::vec2>(sel_lb, sel_ub);
+    }
+
     bool editor_t::select_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("selected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()+1);
         return object_selection.add_object_index(object_index);
     }
 
     bool editor_t::deselect_object(size_t object_index)
     {
-        ASSERT(object_index != size_t(-1), "");
-        LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
+        ASSERT(object_index != nullindex, "");
+        // LOG("deselected object: %zu;  %zu objects selected", object_index, object_selection.object_indices.size()-1);
         return object_selection.remove_object_index(object_index);
     }
 
     void editor_t::deselect_all()
     {
-        object_selection.clear_selection(); ///FIXME rename to be consistent?
+        object_selection.clear_selection(); ///TODO rename to be consistent?
         spline_selection.deselect_all();
     }
 
@@ -405,7 +459,7 @@ namespace editor
     {
         size_t ind = map_data.object_index_at(position);
 
-        if(ind != size_t(-1))
+        if(ind != nullindex)
         {
             select_object(ind);
             return true;
@@ -452,6 +506,34 @@ namespace editor
             saved_terrain_brushes.push_back(terrain_brush);
         else if(terrain_brush != saved_terrain_brushes.back())
             saved_terrain_brushes.push_back(terrain_brush);
+    }
+
+
+    /// Selection
+    void editor_t::start_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        selection_drag_start = world_pos;
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::update_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        current_drag_position = world_pos;
+    }
+
+    void editor_t::end_drag_selection(glm::vec2 const& world_pos)
+    {
+        ASSERT(drag_type == drag_selection_box, "Incorrect drag type for dragging selection box");
+
+        update_drag_selection(world_pos);
+
+        auto bounds = selection_box_bounds();
+        auto inds = map_data.object_indices_within(get<0>(bounds), get<1>(bounds));
+        object_selection.add_object_indices(inds);
     }
 
 
@@ -539,13 +621,7 @@ namespace editor
     /// Map Objects
     void editor_t::place_object(glm::vec2 position)
     {
-        auto const& atlas_entries = map_data.objects_atlas->atlas_entries;
-        ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
-        auto const& atlas_entry = atlas_entries[current_object_id];
-        glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
-
-        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
-
+        auto obj = __placeable_object(position);
         push_and_execute_action(make_unique<add_map_object_action_t>(map_data, std::move(obj)));
     }
 
@@ -553,6 +629,18 @@ namespace editor
     {
         auto cmd = make_unique<delete_map_object_action_t>(map_data, object_index);
         push_and_execute_action(std::move(cmd));
+    }
+
+    data::map_object_t& editor_t::wip_object()
+    {
+        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+        return map_data.objects[0];
+    }
+
+    data::map_object_t const& editor_t::wip_object() const
+    {
+        ASSERT(map_data.objects.size() > 0, "The WIP object has been deleted (or was never added)");
+        return this->map_data.objects[0];
     }
 
 
@@ -736,6 +824,33 @@ namespace editor
         };
     }
 
+
+    data::map_object_t editor_t::__placeable_object(glm::vec2 position)
+    {
+        auto const& atlas_entries = map_data.objects_atlas->atlas_entries;
+        ASSERT(current_object_id < atlas_entries.size(), "object ID does not exist in atlas");
+        auto const& atlas_entry = atlas_entries[current_object_id];
+        glm::vec2 size = glm::vec2(atlas_entry.size_px) * units_per_px;
+
+        data::map_object_t obj{current_object_id, position, size / 2.0f, glm::vec4(1), glm::vec2(1,1), 0.0f};
+
+        return obj;
+    }
+
+    void editor_t::enable_wip_object()
+    {
+        WARN_IF(current_tool != place_objects, "Enabling WIP object when using a different tool");
+        wip_object().color = selection_overlay_color;
+    }
+
+    void editor_t::disable_wip_object()
+    {
+        wip_object().color = color_t(0.0f);
+    }
+
+
+
+    /// Object Selection
     object_selection_t::object_selection_t(editor_t& _e)
     : base_selection_t{vec2{}, vec2{},_e}
     {
@@ -794,6 +909,9 @@ namespace editor
         }
     }
 
+
+
+    /// Spline Node Selection
     spline_node_selection_t::spline_node_selection_t(editor_t& _editor)
     : base_selection_t{vec2{}, vec2{},_editor}
     {

@@ -10,6 +10,8 @@
 #include "asdf_multiplat/data/gl_resources.h"
 #include "asdf_multiplat/data/content_manager.h"
 
+#include "data/hex_util.h"
+
 using namespace std;
 using namespace glm;
 

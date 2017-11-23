@@ -1,14 +1,11 @@
 #ifndef TOOLS_PANEL_H
 #define TOOLS_PANEL_H
 
-#include <QWidget>
-
-namespace Ui {
-class tools_panel;
-}
+#include <QToolBar>
+#include <hexmap/editor/main/editor.h>
 
 
-class tools_panel_t : public QWidget
+class tools_panel_t : public QToolBar
 {
     Q_OBJECT
 
@@ -16,9 +13,9 @@ public:
     explicit tools_panel_t(QWidget* parent = 0);
     ~tools_panel_t();
 
-private:
-    Ui::tools_panel *ui;
+    std::array<QAction*,asdf::hexmap::editor::editor_t::num_tool_types> tool_actions;
 
+private:
     friend class MainWindow;
 };
 

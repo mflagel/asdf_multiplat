@@ -83,6 +83,9 @@ int terrain_brush_selector_t::get_brush_size() const
             return convert_integer<float,int>(ui->sld_circle_radius->value());
             break;
     }
+
+    EXPLODE("invalid brush type");
+    return 0;
 }
 
 void terrain_brush_selector_t::set_brush_size(int _size)

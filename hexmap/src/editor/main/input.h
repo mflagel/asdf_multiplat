@@ -42,7 +42,8 @@ namespace editor
 
         input_handler_t(editor_t& editor);
 
-        glm::vec2 world_coords(glm::ivec2 screen_coords);
+        glm::vec2 world_coords(glm::ivec2 screen_coords) const;
+        glm::vec2 get_snap_position(glm::vec2 world_coord) const;
 
         bool on_mouse_down(mouse_button_event_t&) override;
         bool on_mouse_up(mouse_button_event_t&) override;

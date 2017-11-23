@@ -6,6 +6,7 @@
 
 #include "main/hexmap.h"
 #include "data/hex_map.h"
+#include "data/hex_util.h"
 #include "data/terrain_brush.h"
 #include "ui/minimap.h"
 #include "ui/terrain_brush_renderer.h"
@@ -21,19 +22,7 @@ namespace editor
     using spline_index_t = data::spline_index_t;
     using spline_node_index_t = data::spline_node_index_t;
 
-    enum hex_region_e
-    {
-          hex_no_region
-        , hex_top_left
-        , hex_top_right
-        , hex_left
-        , hex_right
-        , hex_bottom_left
-        , hex_bottom_right
-        , hex_center
-        , num_hex_regions
-    };
-
+    
     struct base_selection_t
     {
         glm::vec2 upper_bound;
@@ -56,6 +45,13 @@ namespace editor
         bool remove_object_index(size_t);
         void clear_selection();
         bool is_empty() const { return object_indices.empty() && spline_indices.empty(); }
+
+        template<typename L>
+        void add_object_indices(L indices)
+        {
+            object_indices.insert(indices.begin(), indices.end());
+            recalc_bounds();
+        }
 
         void recalc_bounds();
     };
@@ -92,6 +88,14 @@ namespace editor
             , num_tool_types
         };
 
+        enum drag_type_e
+        {
+              drag_type_none = 0
+            , drag_selection_box
+            , drag_selected_items
+            , drag_type_count
+        };
+
 
         //terrain
         uint64_t current_tile_id = 0;
@@ -104,7 +108,6 @@ namespace editor
 
         //objects
         uint64_t current_object_id = 0;
-        hex_region_e current_snap_point = hex_no_region;
         object_selection_t object_selection;
 
         //spline
@@ -113,6 +116,14 @@ namespace editor
         data::spline_t* wip_spline = nullptr; //the last node will follow the mouse
         data::line_node_t* wip_spline_node = nullptr;
         data::spline_selection_t spline_selection;
+
+        ///
+        hex_snap_flags_t snap_mode = hex_snap_center;
+        float snap_threshold = 0.04f;
+        drag_type_e drag_type = drag_type_none;
+        glm::vec2 selection_drag_start;
+        glm::vec2 current_drag_position;
+
 
         ///
         editor_workspace_t workspace;
@@ -126,7 +137,6 @@ namespace editor
 
     private:
         action_stack_t action_stack; //private to ensure signal_data_changed() gets called
-
 
     public:
         editor_t();
@@ -156,6 +166,7 @@ namespace editor
         void set_spline_node_style(data::line_node_t const& style);
         void set_current_spline_interpolation(data::spline_t::interpolation_e new_interp_type);
 
+        std::tuple<glm::vec2,glm::vec2> selection_box_bounds() const;
         bool select_object(size_t object_index);
         bool deselect_object(size_t object_index);
         void deselect_all();
@@ -173,6 +184,10 @@ namespace editor
         }
         void save_current_terrain_brush();
 
+        void start_drag_selection(glm::vec2 const& world_pos);
+        void update_drag_selection(glm::vec2 const& world_pos);
+        void end_drag_selection(glm::vec2 const& world_pos);
+
         void paint_terrain_start();
         bool paint_terrain_at_coord(glm::ivec2 coord);
         bool paint_terrain_along_line(glm::vec2 const& p1_world, glm::vec2 const& p2_world, float sample_tick = 0.25f);
@@ -180,6 +195,8 @@ namespace editor
 
         void place_object(glm::vec2 position);
         void delete_object(size_t object_index);
+        data::map_object_t& wip_object();
+        data::map_object_t const& wip_object() const;
 
         void spline_click(glm::vec2 position);
         void start_spline(data::line_node_t start);
@@ -191,6 +208,11 @@ namespace editor
         bool is_placing_spline() const { return wip_spline != nullptr; }
 
         void cancel_action();
+
+    private:
+        data::map_object_t __placeable_object(glm::vec2 position);
+        void enable_wip_object();
+        void disable_wip_object();
     };
 
 

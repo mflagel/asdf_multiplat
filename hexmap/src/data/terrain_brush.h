@@ -6,6 +6,7 @@
 #include "asdf_multiplat/ui/polygon.h"
 
 #include "data/hex_grid.h"
+#include "data/hex_util.h"
 
 namespace asdf
 {
@@ -38,7 +39,7 @@ namespace data
     //terrain_brush_t terrain_brush_from_bitmap(std::string const& filepath);
 
 
-    std::vector<glm::ivec2> get_brush_grid_overlap(terrain_brush_t const& brush, hex_grid_t const& grid, glm::ivec2 grid_coord);
+    std::vector<glm::ivec2> get_brush_grid_overlap(terrain_brush_t const& brush, hex_grid_t const& grid, hex_coord_t grid_coord);
 }
 }
 }
