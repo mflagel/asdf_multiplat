@@ -342,8 +342,11 @@ namespace data
             fprintf(stderr, "tar_open(): %s\n", strerror(errno));
             EXPLODE("error archiving map");
         }
-        
 
+#ifdef _MSC_VER
+        /// TODO fix package compression/decompression on windows
+        stdfs::rename(archive_filepath, package_filepath);
+#else
         /// write to a .compressed file rather than writing directly over
         /// a file that might already exist at package_filepath
         stdfs::path compressed_filepath = archive_filepath;
@@ -357,10 +360,15 @@ namespace data
         /// move/overwrite package_filepath with compressed package and clean up temp archive
         stdfs::rename(compressed_filepath, package_filepath);
         stdfs::remove(archive_filepath);
+#endif MSC_VER
     }
 
     void hex_map_t::unpackage_map(stdfs::path const& filepath)
     {
+#ifdef _MSC_VER
+        int tar_result = unarchive_files(filepath, filepath.parent_path());
+        ASSERT(tar_result == 0, "TAR extract fail");
+#else
         stdfs::path decompressed_path = filepath;
         decompressed_path += ".tar";
 
@@ -378,6 +386,7 @@ namespace data
         }
 
         stdfs::remove(decompressed_path);
+#endif
     }
 
     /*
