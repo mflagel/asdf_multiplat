@@ -4,7 +4,7 @@
 #include "asdf_multiplat/main/mouse.h"
 #include "asdf_multiplat/main/input_sdl.h"
 
-#include "hexmap/data/hex_util.h"
+#include "data/hex_util.h"
 
 #include "editor.h"
 
