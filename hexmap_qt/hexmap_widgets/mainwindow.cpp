@@ -23,7 +23,6 @@
 #include "palette_widget.h"
 #include "spline_settings_widget.h"
 #include "ui_spline_settings_widget.h"
-#include "ui_tools_panel.h"
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
