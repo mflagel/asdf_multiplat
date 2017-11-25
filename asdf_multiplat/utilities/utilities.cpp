@@ -137,6 +137,46 @@ namespace asdf {
         }
     }
 
+    /// https://wiki.libsdl.org/SDL_RWread
+    size_t read_binary_file(std::string const& filepath, char** data)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        ASSERT(io, "File could not be opened for reading: %s", filepath.c_str());
+
+        Sint64 res_size = SDL_RWsize(io);
+        char* res = (char*)malloc(res_size + 1);
+
+        Sint64 nb_read_total = 0, nb_read = 1;
+        char* buf = res;
+        while (nb_read_total < res_size && nb_read != 0) {
+                nb_read = SDL_RWread(io, buf, 1, (res_size - nb_read_total));
+                nb_read_total += nb_read;
+                buf += nb_read;
+        }
+
+        SDL_RWclose(io);
+        if (nb_read_total != res_size) {
+                free(res);
+                return NULL;
+        }
+
+        res[nb_read_total] = '\0';
+
+        *data = res;
+        return res_size;
+    }
+
+    void write_binary_file(std::string const& filepath, char* data, size_t n)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+        ASSERT(io, "File could not be opened for writing: %s", filepath.c_str());
+
+        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(data), n, 1);
+        ASSERT(num_written == 1, "Error writing data to file %s", filepath.c_str());
+
+        SDL_RWclose(io);
+    }
+
     [[deprecated("use std::filesystem")]]
     bool is_directory(std::string const& filepath)
     {
@@ -613,12 +653,13 @@ namespace asdf {
         {
             for(auto const& filepath : filepaths)
             {
-                std::string file_data = read_text_file(filepath.string());
+                char* file_data;
+                size_t size = read_binary_file(filepath.string(), &file_data);
 
-                status |= mtar_write_file_header(&tar, filepath.string().c_str(), file_data.size());
+                status |= mtar_write_file_header(&tar, filepath.string().c_str(), size);
                 ASSERT(status == MTAR_ESUCCESS, "Error Writing TAR: %s", mtar_strerror(status));
             
-                status |= mtar_write_data(&tar, file_data.c_str(), file_data.size());
+                status |= mtar_write_data(&tar, file_data, size);
                 ASSERT(status == MTAR_ESUCCESS, "Error Writing TAR: %s", mtar_strerror(status));
             }
         }
@@ -653,9 +694,9 @@ namespace asdf {
         for(auto& header : headers)
         {
             mtar_find(&tar, header.name, &header);
-            std::string data(header.size + 1, '0');
-            status |= mtar_read_data(&tar, (void*)data.data(), header.size);
-            write_text_file(header.name, data);
+            char* data = (char*)malloc(header.size);
+            status |= mtar_read_data(&tar, (void*)data, header.size);
+            write_binary_file(header.name, data, header.size);
         }
 
         /* Close archive */
