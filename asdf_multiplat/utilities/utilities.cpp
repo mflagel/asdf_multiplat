@@ -351,8 +351,8 @@ namespace asdf {
 
 
 
-    // constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
-    constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K
+    constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
+    // constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K  causes stackoverflow on msvc
 
 
     int compress_file(std::experimental::filesystem::path const& src_filepath
@@ -362,8 +362,8 @@ namespace asdf {
         ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
 
 #ifdef _MSC_VER
-        FILE* source;
-        FILE* dest;
+        FILE* source = nullptr;
+        FILE* dest = nullptr;
         auto errsrc  = fopen_s(&source, src_filepath.string().c_str(),  "r");
         auto errdest = fopen_s(&dest,  dest_filepath.string().c_str(),  "w");
 #else
@@ -380,7 +380,7 @@ namespace asdf {
     }
 
     /// http://www.zlib.net/zlib_how.html
-    int compress_file(FILE* source, FILE* dest, int compression_level) noexcept
+    int compress_file(FILE* source, FILE* dest, int compression_level)// noexcept
     {
         using byte_t = std::byte;
 
@@ -454,6 +454,7 @@ namespace asdf {
 #endif
 
         int decompress_result = decompress_file(source, dest);
+        ASSERT(decompress_result == Z_OK, "Error decompressing file %s", src_filepath.string().c_str());
 
         fclose(source);
         fclose(dest);
@@ -614,7 +615,7 @@ namespace asdf {
             {
                 std::string file_data = read_text_file(filepath.string());
 
-                status |= mtar_write_file_header(&tar, "test1.txt", file_data.size());
+                status |= mtar_write_file_header(&tar, filepath.string().c_str(), file_data.size());
                 ASSERT(status == MTAR_ESUCCESS, "Error Writing TAR: %s", mtar_strerror(status));
             
                 status |= mtar_write_data(&tar, file_data.c_str(), file_data.size());
@@ -646,18 +647,19 @@ namespace asdf {
             mtar_next(&tar);
         }
         headers.pop_back(); //drop the empty blank at the end
+        status = MTAR_ESUCCESS; //reset status
 
 
         for(auto& header : headers)
         {
             mtar_find(&tar, header.name, &header);
             std::string data(header.size + 1, '0');
-            mtar_read_data(&tar, (void*)data.data(), header.size);
+            status |= mtar_read_data(&tar, (void*)data.data(), header.size);
             write_text_file(header.name, data);
         }
 
         /* Close archive */
-        mtar_close(&tar);
+        status |= mtar_close(&tar);
 
         return status;
     }
