@@ -15,14 +15,15 @@ namespace editor
     {
         auto it = std::find(recently_opened.begin(), recently_opened.end(), path);
 
-        /// if path is already in recents and it's not at the end
-        /// erase it from recents (it'll get re-added)
-        if((recently_opened.end() - it) > 1)
-        {
-            recently_opened.erase(it);
-        }
+        bool exists = it != recently_opened.end();
+        bool exists_at_end = (recently_opened.end() - it) == 1;
 
-        recently_opened.push_back(path);
+        /// if the file exists but isnt at the end, pull it out and re-add
+        if(exists && !exists_at_end)
+            recently_opened.erase(it);
+
+        if(!exists || !exists_at_end)
+            recently_opened.push_back(path);
     }
 
     cJSON* editor_workspace_t::to_JSON() const
