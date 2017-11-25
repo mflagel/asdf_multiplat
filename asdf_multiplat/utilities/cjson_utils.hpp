@@ -183,4 +183,44 @@ namespace asdf
         std::string json_str = util::read_text_file(filepath);
         return cJSON_Parse(json_str.c_str());
     }
+
+    /// Based on cJSON_CreateStringArray in cJSON.c
+    inline cJSON* cJSON_CreateStringArray(std::vector<std::string> const& strings)
+    {
+        int i;
+        cJSON *n=0,*p=0,*a=cJSON_CreateArray();
+        for(i=0;a && i<strings.size();i++)
+        {
+            n=cJSON_CreateString(strings[i].c_str());
+            if(!i)
+                a->child=n;
+            else
+            {
+                p->next=n;
+                n->prev=n;
+            }
+            p=n;
+        }
+        return a;
+    }
+
+    /// Based on cJSON_CreateStringArray in cJSON.c
+    inline cJSON* cJSON_CreatePathArray(std::vector<std::experimental::filesystem::path> const& paths)
+    {
+        int i;
+        cJSON *n=0,*p=0,*a=cJSON_CreateArray();
+        for(i=0;a && i<paths.size();i++)
+        {
+            n=cJSON_CreateString(paths[i].string().c_str());
+            if(!i)
+                a->child=n;
+            else
+            {
+                p->next=n;
+                n->prev=n;
+            }
+            p=n;
+        }
+        return a;
+    }
 }
