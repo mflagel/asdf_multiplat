@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <type_traits>
 
+#include "asdf_dll.h"
+
 #define PI 3.14159265359f
 // #define nullindex 4294967295
 // #define nullindex std::numeric_limits<size_t>::max()

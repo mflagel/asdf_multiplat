@@ -7,6 +7,7 @@
 #include "data/gl_resources.h"
 #include "shader.h"
 #include "texture.h"
+#include "main/asdf_dll.h"
 
  
 #define PIXEL_TEX ContentManager::GetTexture("pixel")
@@ -56,5 +57,5 @@ namespace asdf {
         return loaded_font;
     }
 
-    extern content_manager_t Content;
+    extern ASDFM_API content_manager_t Content;
 }

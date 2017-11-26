@@ -7,7 +7,7 @@
 
 namespace asdf
 {
-    gl_state_proxy_t GL_State;
+    ASDFM_API gl_state_proxy_t GL_State;
     
     gl_state_t* gl_state_proxy_t::operator->()
     {

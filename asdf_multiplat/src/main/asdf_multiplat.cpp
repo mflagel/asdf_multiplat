@@ -19,7 +19,7 @@ using namespace glm;
 
 namespace asdf {
 
-    asdf_multiplat_t app;
+    ASDFM_API asdf_multiplat_t app;
 
     asdf_multiplat_t::asdf_multiplat_t()
         : WINDOW_TITLE("Asdf Multiplat Application Thing")
@@ -334,7 +334,7 @@ namespace asdf {
     /// Asdf Renderer
     ///
 
-    gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
+    ASDFM_API gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
 
 
     asdf_renderer_t::asdf_renderer_t(void* _gl_context)

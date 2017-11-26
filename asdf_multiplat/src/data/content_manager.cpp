@@ -15,7 +15,7 @@ namespace asdf
     using namespace util;
 
     ///
-    content_manager_t Content;
+    ASDFM_API content_manager_t Content;
     ///
 
     content_load_exception::content_load_exception(std::string const& _filepath, std::string const& _loadError) 
