@@ -8,6 +8,6 @@
 //#include "targetver.h"
 
 //std includes
-#include "../../../asdf_multiplat/stdafx.h"
+#include "asdf_multiplat/stdafx.h"
 
 //#include "hexmap.h"
