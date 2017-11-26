@@ -244,6 +244,7 @@
     <OutDir>$(ProjectDir)../../lib/win32/$(PlatformShortName)/</OutDir>
     <IntDir>$(ProjectDir)obj\$(PlatformShortName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_D</TargetName>
+    <ExtensionsToDeleteOnClean>*.def;*.cdf;*.cache;*.obj;*.obj.enc;*.ilk;*.ipdb;*.iobj;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -363,11 +364,12 @@ cmake -E __create_def $(IntermediateOutputPath)exportall.def $(IntermediateOutpu
       <Message>generate export defintion for all symbols</Message>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>AsdfMultiplat_D.lib;glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AsdfMultiplat_D.lib;glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>$(IntDir)exportall.def</ModuleDefinitionFile>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>ASDFM_DLL;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
