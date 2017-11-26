@@ -26,6 +26,64 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ext\cJSON\cJSON.c" />
+    <ClCompile Include="..\ext\microtar\microtar.c" />
+    <ClCompile Include="src\data\content_manager.cpp" />
+    <ClCompile Include="src\data\gl_resources.cpp" />
+    <ClCompile Include="src\data\gl_state.cpp" />
+    <ClCompile Include="src\data\shader.cpp" />
+    <ClCompile Include="src\data\texture.cpp" />
+    <ClCompile Include="src\data\texture_atlas.cpp" />
+    <ClCompile Include="src\data\texture_bank.cpp" />
+    <ClCompile Include="src\main\asdf_multiplat.cpp" />
+    <ClCompile Include="src\main\input_controller.cpp" />
+    <ClCompile Include="src\main\input_sdl.cpp" />
+    <ClCompile Include="src\main\keyboard.cpp" />
+    <ClCompile Include="src\main\main.cpp" />
+    <ClCompile Include="src\main\mouse.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\ui\polygon.cpp" />
+    <ClCompile Include="src\utilities\camera.cpp" />
+    <ClCompile Include="src\utilities\spritebatch.cpp" />
+    <ClCompile Include="src\utilities\thread_pool.cpp" />
+    <ClCompile Include="src\utilities\utilities.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\data\content_manager.h" />
+    <ClInclude Include="src\data\gl_enums.h" />
+    <ClInclude Include="src\data\gl_resources.h" />
+    <ClInclude Include="src\data\gl_state.h" />
+    <ClInclude Include="src\data\gl_vertex_spec.h" />
+    <ClInclude Include="src\data\interpolator.h" />
+    <ClInclude Include="src\data\lines_path.h" />
+    <ClInclude Include="src\data\resource_depot.h" />
+    <ClInclude Include="src\data\settings.h" />
+    <ClInclude Include="src\data\shader.h" />
+    <ClInclude Include="src\data\texture.h" />
+    <ClInclude Include="src\data\texture_atlas.h" />
+    <ClInclude Include="src\data\texture_bank.h" />
+    <ClInclude Include="src\main\asdf_defs.h" />
+    <ClInclude Include="src\main\asdf_multiplat.h" />
+    <ClInclude Include="src\main\input_controller.h" />
+    <ClInclude Include="src\main\input_sdl.h" />
+    <ClInclude Include="src\main\keyboard.h" />
+    <ClInclude Include="src\main\mouse.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\ui\polygon.h" />
+    <ClInclude Include="src\utilities\camera.h" />
+    <ClInclude Include="src\utilities\cjson_utils.hpp" />
+    <ClInclude Include="src\utilities\macro_overloading.h" />
+    <ClInclude Include="src\utilities\reflected_struct.h" />
+    <ClInclude Include="src\utilities\spritebatch.h" />
+    <ClInclude Include="src\utilities\str_const.h" />
+    <ClInclude Include="src\utilities\thread_pool.h" />
+    <ClInclude Include="src\utilities\utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\ui\.tags" />
+    <None Include="src\ui\.tags_sorted_by_file" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{11A6884D-C620-4EFE-B98A-B548747774A0}</ProjectGuid>
     <RootNamespace>AsdfMultiplat_fixed</RootNamespace>
@@ -39,7 +97,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -93,28 +151,30 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
-    <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <SourcePath>src/main;src/data;src/ui;src/utilities;(VC_SourcePath)</SourcePath>
+    <IncludePath>src/main;src/data;src/ui;src/utilities;src;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(ProjectDir)/../bin/win32;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <LibraryPath>../lib;../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
-    <OutDir>..\lib\win32\x86\</OutDir>
-    <IntDir>..\obj\asdf_multiplat\win32\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)_static</TargetName>
+    <LibraryPath>$(ProjectDir)../lib;$(ProjectDir)../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <OutDir>$(ProjectDir)..\lib\win32\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(PlatformShortName)\</IntDir>
+    <TargetName>$(ProjectName)_static_D</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)_static</TargetName>
-    <TargetExt>.lib</TargetExt>
-    <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
-    <IncludePath>C:/Users/Mathias/Documents/Programming/zlib-1.2.11;main;$(ProjectDir)/data;ui;utilities;.;../include;../include/zlib;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <ExecutablePath>$(ProjectDir)/../bin/win32;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <LibraryPath>../lib;../lib/win32/x86;C:\Users\Mathias\Documents\Programming\zlib-1.2.11\contrib\vstudio\vc14\x64\ZlibDllDebug;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <TargetName>$(ProjectName)_D</TargetName>
+    <TargetExt>.dll</TargetExt>
+    <SourcePath>src/main;src/data;src/ui;src/utilities;(VC_SourcePath)</SourcePath>
+    <IncludePath>$(ProjectDir)src/main;$(ProjectDir)src/data;$(ProjectDir)src/ui;$(ProjectDir)src/utilities;$(ProjectDir)src;../include;../include/zlib;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH);</ExecutablePath>
+    <LibraryPath>$(ProjectDir)../lib;$(ProjectDir)../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <IntDir>$(ProjectDir)obj\$(PlatformShortName)\$(ConfigurationType)</IntDir>
+    <OutDir>$(ProjectDir)..\lib\win32\$(PlatformShortName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'">
     <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
     <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(ProjectDir)/../bin/win32;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <LibraryPath>../lib;../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
+    <LibraryPath>../../lib;../../lib/win32/x86;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86)</LibraryPath>
     <OutDir>..\lib\win32\$(PlatformShortName)\</OutDir>
     <IntDir>..\obj\asdf_multiplat\win32\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_static_D</TargetName>
@@ -123,12 +183,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|x64'">
     <TargetName>$(ProjectName)_static_D</TargetName>
     <TargetExt>.lib</TargetExt>
-    <SourcePath>/main;/data;/ui;/utilities;(VC_SourcePath);</SourcePath>
-    <IncludePath>main;$(ProjectDir)/data;ui;utilities;.;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <SourcePath>src/main;src/data;src/ui;src/utilities;(VC_SourcePath)</SourcePath>
+    <IncludePath>$(ProjectDir)/src/main;$(ProjectDir)/src/data;$(ProjectDir)/src/ui;$(ProjectDir)/src/utilities;$(ProjectDir)/src;../include;../ext;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH);</ExecutablePath>
-    <LibraryPath>../../lib;../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-    <OutDir>$(ProjectDir)\..\lib\win32\$(PlatformShortName)\</OutDir>
-    <IntDir>$(ProjectDir)\obj\win32\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <LibraryPath>$(ProjectDir)../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <OutDir>$(ProjectDir)..\lib\win32\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(PlatformShortName)\$(ConfigurationType)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,7 +201,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;Box2D.lib;ftgl_static.lib;freetype2410MT.lib;glew32.lib;libboost_filesystem-vc120-mt-1_55.lib;SDL2.lib;SDL2main.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -154,9 +214,10 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;Box2D.lib;ftgl_static.lib;freetype2410MT.lib;glew32.lib;libboost_filesystem-vc120-mt-1_55.lib;SDL2.lib;SDL2main.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;Box2D.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'">
@@ -184,7 +245,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -215,53 +276,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\ext\microtar\microtar.c">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="data\content_manager.cpp" />
-    <ClCompile Include="data\gl_resources.cpp" />
-    <ClCompile Include="data\gl_state.cpp" />
-    <ClCompile Include="data\shader.cpp" />
-    <ClCompile Include="data\texture.cpp" />
-    <ClCompile Include="data\texture_atlas.cpp" />
-    <ClCompile Include="data\texture_bank.cpp" />
-    <ClCompile Include="main\asdf_multiplat.cpp" />
-    <ClCompile Include="main\input_controller.cpp" />
-    <ClCompile Include="main\input_sdl.cpp" />
-    <ClCompile Include="main\keyboard.cpp" />
-    <ClCompile Include="main\mouse.cpp" />
-    <ClCompile Include="ui\polygon.cpp" />
-    <ClCompile Include="utilities\camera.cpp" />
-    <ClCompile Include="utilities\spritebatch.cpp" />
-    <ClCompile Include="utilities\utilities.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="data\content_manager.h" />
-    <ClInclude Include="data\gl_enums.h" />
-    <ClInclude Include="data\gl_resources.h" />
-    <ClInclude Include="data\gl_state.h" />
-    <ClInclude Include="data\gl_vertex_spec.h" />
-    <ClInclude Include="data\resource_depot.h" />
-    <ClInclude Include="data\settings.h" />
-    <ClInclude Include="data\shader.h" />
-    <ClInclude Include="data\texture.h" />
-    <ClInclude Include="data\texture_atlas.h" />
-    <ClInclude Include="data\texture_bank.h" />
-    <ClInclude Include="main\asdf_multiplat.h" />
-    <ClInclude Include="main\input_controller.h" />
-    <ClInclude Include="main\input_sdl.h" />
-    <ClInclude Include="main\keyboard.h" />
-    <ClInclude Include="main\mouse.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ui\polygon.h" />
-    <ClInclude Include="utilities\camera.h" />
-    <ClInclude Include="utilities\cjson_utils.hpp" />
-    <ClInclude Include="utilities\macro_overloading.h" />
-    <ClInclude Include="utilities\spritebatch.h" />
-    <ClInclude Include="utilities\str_const.h" />
-    <ClInclude Include="utilities\utilities.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
