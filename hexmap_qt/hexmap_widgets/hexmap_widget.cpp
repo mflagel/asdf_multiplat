@@ -49,6 +49,9 @@ void hexmap_widget_t::initializeGL()
     auto shader = Content.create_shader_highest_supported("hexmap");
     Content.shaders.add_resource(shader);
 
+    hexmap::editor::editor_t test_editor;
+    test_editor.set_current_object_id(0);
+
     editor = std::make_unique<hexmap::editor::editor_t>();
     editor->init();
     // hex_map = &(editor.rendered_map);

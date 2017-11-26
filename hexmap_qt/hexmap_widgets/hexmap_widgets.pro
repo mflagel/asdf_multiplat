@@ -77,33 +77,41 @@ INCLUDEPATH += $$PWD/../../include
 
 
 # libasdfm
+win32: DEFINES += ASDFM_DLL
+
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_static_D -lzlibwapi
+win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_D -lglu32 -lopengl32 -lglew64 -lSDL2 -lSDL2main -lSOIL_static_D -lzlibwapi
 
-INCLUDEPATH += $$PWD/../../asdf_multiplat
-DEPENDPATH += $$PWD/../../asdf_multiplat
 
-#TODO: handle Debug vs Release
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/AsdfMultiplat_static_D.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libAsdfMultiplat_static_D.a
+INCLUDEPATH += $$PWD/../../include/asdf_multiplat
+DEPENDPATH += $$PWD/../../asdf_multiplat/src
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
+
+
+#glu32.lib
+#opengl32.lib
+#glew64.lib
+#SDL2.lib
+#SDL2main.lib
+#SOIL_static_D.lib
+#zlibwapi.lib
+
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
 ###
 
 
 # libhexmap
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lhexmap
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lhexmap_static_D
+win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lhexmap_D
 
 # WIN32 *MUST* include hexmap via the junction link in asdf_multiplat/include/
 # otherwise it will break #pragma once, since the compiler will think the file is
 # from a different location (because Windows is stupid and can't make proper links)
 INCLUDEPATH += $$PWD/../../include/hexmap
-#INCLUDEPATH += $$PWD/../../hexmap/src
 DEPENDPATH += $$PWD/../../hexmap/src
 
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/hexmap_static_D.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libhexmap_static_D.a
+#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/hexmap_D.lib
+#else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libhexmap_D.a
 ###
 
 
