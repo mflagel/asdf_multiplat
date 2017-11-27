@@ -5,9 +5,9 @@
 
 #include <glm/gtx/norm.hpp>
 
-#include "asdf_multiplat/main/asdf_multiplat.h"
-#include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/content_manager.h"
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/gl_resources.h>
+#include <asdfm/data/content_manager.h>
 
 
 #define ENABLE_MAP_PACKAGE_COMPRESSION 0

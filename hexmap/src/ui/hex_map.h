@@ -3,10 +3,10 @@
 #include <glm/glm.hpp>
 
 
-#include "asdf_multiplat/main/input_controller.h"
-#include "asdf_multiplat/ui/ui_base.h"
-#include "asdf_multiplat/data/texture_atlas.h"
-#include "asdf_multiplat/utilities/spritebatch.h"
+#include <asdfm/main/input_controller.h>
+#include <asdfm/ui/ui_base.h>
+#include <asdfm/data/texture_atlas.h>
+#include <asdfm/utilities/spritebatch.h>
 
 #include "data/hex_map.h"
 #include "data/terrain_bank.h"
@@ -14,9 +14,9 @@
 #include "ui/spline_renderer.h"
 
 //for whatever reason Qt requires this, but libhexmap.mk does not somehow
-#include "asdf_multiplat/main/input_controller.h"
-#include "asdf_multiplat/ui/polygon.h"
-#include "asdf_multiplat/utilities/camera.h"
+#include <asdfm/main/input_controller.h>
+#include <asdfm/ui/polygon.h>
+#include <asdfm/utilities/camera.h>
 
 using color_t = glm::vec4;
 

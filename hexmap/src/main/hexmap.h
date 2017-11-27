@@ -1,9 +1,9 @@
 #pragma once
 
-#include "asdf_multiplat/main/asdf_multiplat.h"
-#include "asdf_multiplat/utilities/camera.h"
-#include "asdf_multiplat/main/input_controller.h"
-#include "asdf_multiplat/utilities/utilities.h"
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/utilities/camera.h>
+#include <asdfm/main/input_controller.h>
+#include <asdfm/utilities/utilities.h>
 
 #include "data/hex_map.h"
 #include "ui/hex_map.h"

@@ -1,6 +1,6 @@
 #include "command_actions.h"
 
-#include "asdf_multiplat/main/asdf_defs.h"
+#include <asdfm/main/asdf_defs.h>
 #include "editor/main/editor.h"
 
 namespace asdf {

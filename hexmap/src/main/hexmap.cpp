@@ -3,9 +3,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "asdf_multiplat/data/content_manager.h"
-#include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/utilities/spritebatch.h"
+#include <asdfm/data/content_manager.h>
+#include <asdfm/data/gl_resources.h>
+#include <asdfm/utilities/spritebatch.h>
 
 
 using namespace std;

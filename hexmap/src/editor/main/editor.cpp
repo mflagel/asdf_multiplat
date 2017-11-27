@@ -4,7 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "asdf_multiplat/data/content_manager.h"
+#include <asdfm/data/content_manager.h>
 
 #include "data/spline.h"
 

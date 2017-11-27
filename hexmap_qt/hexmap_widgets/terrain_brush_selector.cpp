@@ -1,7 +1,7 @@
 #include "terrain_brush_selector.h"
 #include "ui_terrain_brush_selector.h"
 
-#include <asdf_multiplat/main/asdf_defs.h>
+#include <asdfm/main/asdf_defs.h>
 
 namespace
 {

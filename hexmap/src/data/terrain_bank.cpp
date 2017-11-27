@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "terrain_bank.h"
 
-#include "asdf_multiplat/data/content_manager.h"
-#include "asdf_multiplat/data/gl_state.h"
+#include <asdfm/data/content_manager.h>
+#include <asdfm/data/gl_state.h>
 
 using namespace std;
 using namespace std::experimental::filesystem;

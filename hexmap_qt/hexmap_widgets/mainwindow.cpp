@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include <asdf_multiplat/main/asdf_multiplat.h>
-#include <asdf_multiplat/data/content_manager.h>
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/content_manager.h>
 #include <hexmap/data/hex_grid.h>
 #include <hexmap/data/spline.h>
 #include <hexmap/ui/hex_map.h>

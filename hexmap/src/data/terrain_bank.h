@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "asdf_multiplat/data/texture_bank.h"
+#include <asdfm/data/texture_bank.h>
 
 namespace asdf {
 namespace hexmap {

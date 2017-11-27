@@ -2,8 +2,8 @@
 
 #include <QMouseEvent>
 
-#include <asdf_multiplat/main/asdf_multiplat.h>
-#include <asdf_multiplat/data/content_manager.h>
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/content_manager.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"

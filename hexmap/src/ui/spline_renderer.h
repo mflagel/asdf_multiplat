@@ -8,9 +8,9 @@
 #include <glm/core/type_half.hpp>
 #include <glm/core/type_vec.hpp>
 
-#include "asdf_multiplat/main/asdf_defs.h"
-#include "asdf_multiplat/data/gl_vertex_spec.h"
-#include "asdf_multiplat/ui/polygon.h"
+#include <asdfm/main/asdf_defs.h>
+#include <asdfm/data/gl_vertex_spec.h>
+#include <asdfm/ui/polygon.h>
 #include "data/spline.h"
 
 namespace asdf

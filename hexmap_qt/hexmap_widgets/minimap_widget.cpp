@@ -1,6 +1,6 @@
 #include "minimap_widget.h"
 
-#include <asdf_multiplat/main/asdf_multiplat.h>
+#include <asdfm/main/asdf_multiplat.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "mainwindow.h"

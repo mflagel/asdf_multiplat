@@ -3,9 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "asdf_multiplat/main/asdf_multiplat.h"
-#include "asdf_multiplat/data/gl_vertex_spec.h"
-#include "asdf_multiplat/data/gl_state.h"
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/gl_vertex_spec.h>
+#include <asdfm/data/gl_state.h>
 
 #include "ui/hex_map.h"
 
