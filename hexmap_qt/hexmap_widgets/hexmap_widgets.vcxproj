@@ -57,7 +57,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <SourcePath>.\..\win32\$(ConfigurationName); $(VC_SourcePath);</SourcePath>
-    <IncludePath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\include\asdf_multiplat;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\include\asdfm;$(ProjectDir)..\..\include\hexmap;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -151,6 +151,9 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
     <PostBuildEvent>
       <Message>Copy Dependancies</Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>mklink /D $(ProjectDir)..\..\include\asdfm $(ProjectDir)..\..\asdf_multiplat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\win32\Debug\moc_hexmap_widget.cpp">

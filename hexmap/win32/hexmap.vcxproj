@@ -239,7 +239,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
     <TargetExt>.dll</TargetExt>
-    <IncludePath>../src/main;../src;../../;../../include/;../../include/asdf_multiplat;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>../src/main;../src;../../;../../include/;../../include/asdfm;../../ext/;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>../../lib;../../lib/win32/x64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <OutDir>$(ProjectDir)../../lib/win32/$(PlatformShortName)/</OutDir>
     <IntDir>$(ProjectDir)obj\$(PlatformShortName)\$(Configuration)\</IntDir>
