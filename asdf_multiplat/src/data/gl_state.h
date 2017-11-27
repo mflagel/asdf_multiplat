@@ -4,6 +4,7 @@
 
 #include "gl_resources.h"
 #include "texture.h"
+#include "main/asdf_dll.h"
 
 namespace asdf
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <FTGL/ftgl.h>
+// #include <FTGL/ftgl.h>
 #include "resource_depot.h"
 #include "utilities/utilities.h"
 #include "data/gl_resources.h"
@@ -25,7 +25,7 @@ namespace asdf {
         resource_depot_t<std::shared_ptr<texture_t>> textures;
         resource_depot_t<std::shared_ptr<shader_t>> shaders;
         resource_depot_t<GLuint> samplers;
-        resource_depot_t<FTFont*> fonts; //use raw ptr, as FTGL explodes if I use shared ptr for some reason. might try unique_ptr
+        // resource_depot_t<FTFont*> fonts; //use raw ptr, as FTGL explodes if I use shared ptr for some reason. might try unique_ptr
 
         void init();
 
@@ -44,18 +44,18 @@ namespace asdf {
         void AddSamplers();
     };
 
-    template <class FNT = FTPixmapFont>
-    FTFont* load_font(const char* font_file_path)
-    {
-        FTFont* loaded_font = new FNT(font_file_path);
+    // template <class FNT = FTPixmapFont>
+    // FTFont* load_font(const char* font_file_path)
+    // {
+    //     FTFont* loaded_font = new FNT(font_file_path);
 
-        if(auto error = loaded_font->Error())
-        {
-            throw content_load_exception(font_file_path, "font load error: " + std::to_string(error)); //todo: spit out error message from fterrdefs.h
-        }
+    //     if(auto error = loaded_font->Error())
+    //     {
+    //         throw content_load_exception(font_file_path, "font load error: " + std::to_string(error)); //todo: spit out error message from fterrdefs.h
+    //     }
 
-        return loaded_font;
-    }
+    //     return loaded_font;
+    // }
 
     extern ASDFM_API content_manager_t Content;
 }

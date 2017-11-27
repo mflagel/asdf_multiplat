@@ -13,4 +13,6 @@
     #else
         #define ASDFM_API
     #endif
+#else
+    #define ASDFM_API
 #endif
