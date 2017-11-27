@@ -152,7 +152,8 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <Message>Copy Dependancies</Message>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>mklink /D $(ProjectDir)..\..\include\asdfm $(ProjectDir)..\..\asdf_multiplat</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
