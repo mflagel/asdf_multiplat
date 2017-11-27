@@ -8,8 +8,19 @@ QT       += core gui widgets opengl
 
 CONFIG += debug c++14 console
 
-#!win32: QMAKE_CXXFLAGS += -fms-extensions -Wno-missing-braces -Wno-writable-strings
-!win32: QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces -Wno-writable-strings -Wno-expansion-to-defined
+!win32: QMAKE_CXXFLAGS += \
+    -Werror=uninitialized \
+    -Werror=return-type
+
+!win32: QMAKE_CXXFLAGS_WARN_ON += \
+    -Wno-missing-braces \
+    -Wno-writable-strings \
+    -Wno-write-strings \
+    -Wno-format-zero-length
+    -Wno-expansion-to-defined \
+    -Wno-reorder \
+    -Wno-unused-parameter \
+    -Wno-comment
 
 
 debug: DEFINES += DEBUG
