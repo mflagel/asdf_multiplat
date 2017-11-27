@@ -1,0 +1,1 @@
+D:\Qt\5.7\msvc2015_64\bin\windeployqt.exe --release --dir D:\Hexmap\test_qt_deployment C:\Users\Mathias\Documents\Programming\AsdfMultiplat\hexmap_qt\win32\x64\Release\hexmap_widgets.exe

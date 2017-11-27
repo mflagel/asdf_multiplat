@@ -45,19 +45,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\win32\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\win32\$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">hexmap_widgets</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\win32\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\win32\obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\win32\$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">hexmap_widgets</TargetName>
     <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <SourcePath>.\..\win32\$(ConfigurationName); $(VC_SourcePath);</SourcePath>
     <IncludePath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\include\asdfm;$(ProjectDir)..\..\include\hexmap;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <SourcePath>.\..\win32\$(ConfigurationName);$(VC_SourcePath);</SourcePath>
+    <IncludePath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\include\asdfm;$(ProjectDir)..\..\include\hexmap;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -70,7 +74,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;WIN64;DEBUG;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ASDFM_DLL;_CONSOLE;UNICODE;WIN32;WIN64;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -80,7 +84,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\AsdfMultiplat_static_D.lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64\hexmap_static_D.lib;ColorWidgets-qt51.lib;$(QTDIR)\lib\Qt5OpenGL.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AsdfMultiplat.lib;hexmap.lib;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Release\release\ColorWidgets-qt51.lib;glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static.lib;zlibwapi.lib;$(QTDIR)\lib\Qt5OpenGL.lib;$(QTDIR)\lib\Qt5Widgets.lib;$(QTDIR)\lib\Qt5Gui.lib;$(QTDIR)\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\release;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -100,6 +104,17 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_CONSOLE;UNICODE;WIN32;WIN64;DEBUG;QT_NO_DEBUG;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)..\..\lib\win32\$(PlatformShortName)\*.dll" "$(OutDir)" &amp;
+copy /y "$(SolutionDir)..\..\lib\win32\$(PlatformShortName)\Release\*.dll" "$(OutDir)" &amp;
+copy /y "$(QTDIR)\bin\Qt5OpenGL.dll" "$(OutDir)\Qt5OpenGL.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Widgets.dll" "$(OutDir)\Qt5Widgets.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Gui.dll" "$(OutDir)\Qt5Gui.dll" &amp;
+copy /y "$(QTDIR)\bin\Qt5Core.dll" "$(OutDir)\Qt5Core.dll" </Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copy Dependencies</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -143,13 +158,14 @@
     </ResourceCompile>
     <PostBuildEvent>
       <Command>copy /y "$(SolutionDir)..\..\lib\win32\$(PlatformShortName)\*.dll" "$(OutDir)" &amp;
+copy /y "$(SolutionDir)..\..\lib\win32\$(PlatformShortName)\Debug\*.dll" "$(OutDir)" &amp;
 copy /y "$(QTDIR)\bin\Qt5OpenGLd.dll" "$(OutDir)\Qt5OpenGLd.dll" &amp;
 copy /y "$(QTDIR)\bin\Qt5Widgetsd.dll" "$(OutDir)\Qt5Widgetsd.dll" &amp;
 copy /y "$(QTDIR)\bin\Qt5Guid.dll" "$(OutDir)\Qt5Guid.dll" &amp;
 copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Message>Copy Dependancies</Message>
+      <Message>Copy Dependencies</Message>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -157,31 +173,17 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\win32\Debug\moc_hexmap_widget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\win32\Debug\moc_layers_widget.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_mainwindow.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\win32\Debug\moc_minimap_widget.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_new_map_dialog.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_object_properties_widget.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_palette_widget.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_snap_points_widget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\win32\Debug\moc_spline_settings_widget.cpp" />
-    <ClCompile Include="..\win32\Debug\moc_terrain_brush_selector.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\win32\Debug\moc_tools_panel.cpp" />
-    <ClCompile Include="..\win32\Release\moc_snap_points_widget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\win32\Release\moc_terrain_brush_selector.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\win32\Release\moc_hexmap_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_layers_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_mainwindow.cpp" />
+    <ClCompile Include="..\win32\Release\moc_minimap_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_new_map_dialog.cpp" />
+    <ClCompile Include="..\win32\Release\moc_object_properties_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_palette_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_snap_points_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_spline_settings_widget.cpp" />
+    <ClCompile Include="..\win32\Release\moc_terrain_brush_selector.cpp" />
+    <ClCompile Include="..\win32\Release\moc_tools_panel.cpp" />
     <ClCompile Include="hexmap_widget.cpp" />
     <ClCompile Include="layers_widget.cpp" />
     <ClCompile Include="main.cpp" />
@@ -197,7 +199,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="hexmap_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing hexmap_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing hexmap_widget.h...</Message>
@@ -207,7 +209,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="layers_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing layers_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing layers_widget.h...</Message>
@@ -217,7 +219,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="mainwindow.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing mainwindow.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing mainwindow.h...</Message>
@@ -227,7 +229,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="minimap_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing minimap_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing minimap_widget.h...</Message>
@@ -237,7 +239,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="dialogs\new_map_dialog.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing new_map_dialog.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing new_map_dialog.h...</Message>
@@ -247,7 +249,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="object_properties_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing object_properties_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing object_properties_widget.h...</Message>
@@ -257,7 +259,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="palette_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing palette_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing palette_widget.h...</Message>
@@ -267,7 +269,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="spline_settings_widget.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing spline_settings_widget.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing spline_settings_widget.h...</Message>
@@ -277,7 +279,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="tools_panel.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing tools_panel.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing tools_panel.h...</Message>
@@ -380,8 +382,6 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\win32\GeneratedFiles\ui_snap_points_widget.h" />
-    <ClInclude Include="..\win32\GeneratedFiles\ui_terrain_brush_selector.h" />
     <CustomBuild Include="snap_points_widget.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing snap_points_widget.h...</Message>
@@ -390,7 +390,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing snap_points_widget.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\win32\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
     </CustomBuild>
     <CustomBuild Include="terrain_brush_selector.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing terrain_brush_selector.h...</Message>
@@ -398,7 +398,7 @@ copy /y "$(QTDIR)\bin\Qt5Cored.dll" "$(OutDir)\Qt5Cored.dll" </Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing terrain_brush_selector.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\..\win32\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DDEBUG -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\..\win32\$(ConfigurationName)\moc_%(Filename).cpp"  -DASDFM_DLL -D_CONSOLE -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG  "-I." "-I.\..\..\..\AsdfMultiplat" "-I.\..\..\ext" "-I.\..\..\include" "-I.\..\..\asdf_multiplat" "-I.\..\..\include\hexmap" "-I.\..\..\..\Qt-Color-Widgets\include" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtANGLE" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2015" "-I.\..\win32\$(ConfigurationName)\." "-I.\..\win32\GeneratedFiles"</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
