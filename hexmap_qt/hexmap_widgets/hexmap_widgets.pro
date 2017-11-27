@@ -4,32 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets opengl
-
-CONFIG += debug c++14 console
-
-!win32: QMAKE_CXXFLAGS += \
-    -Werror=uninitialized \
-    -Werror=return-type
-
-!win32: QMAKE_CXXFLAGS_WARN_ON += \
-    -Wno-missing-braces \
-    -Wno-writable-strings \
-    -Wno-write-strings \
-    -Wno-format-zero-length
-    -Wno-expansion-to-defined \
-    -Wno-reorder \
-    -Wno-unused-parameter \
-    -Wno-comment
-
-
-debug: DEFINES += DEBUG
-
-#include( ../../../Qt-Color-Widgets/color_widgets.pri )
-
-
 TARGET = hexmap_widgets
 TEMPLATE = app
+
+QT += core gui widgets opengl
+
+CONFIG += release c++14 console
+
+debug: DEFINES += DEBUG
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -71,7 +53,6 @@ FORMS    += mainwindow.ui \
     terrain_brush_selector.ui \
     snap_points_widget.ui
 
-
 # hexmap shaders
 DISTFILES += \
     ../../shaders/330/hexmap_330.frag \
@@ -87,47 +68,49 @@ INCLUDEPATH += $$PWD/../../include
 #INCLUDEPATH += $$PWD/../../hexmap/src
 
 
-# libasdfm
+# GCC / Clang Compiler Flags
+!win32: QMAKE_CXXFLAGS += \
+    -Werror=uninitialized \
+    -Werror=return-type
+
+!win32: QMAKE_CXXFLAGS_WARN_ON += \
+    -Wno-missing-braces \
+    -Wno-writable-strings \
+    -Wno-write-strings \
+    -Wno-format-zero-length \
+    -Wno-expansion-to-defined \
+    -Wno-reorder \
+    -Wno-unused-parameter \
+    -Wno-comment \
+
+
+
+
+### Libraries ###
+# Windows
 win32: DEFINES += ASDFM_DLL
+win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lglu32 -lopengl32 -lglew64 -lSDL2 -lSDL2main -lSOIL_static_D -lzlibwapi
+win32:debug:   LIBS += -lAsdfMultiplat_D
+win32:release: LIBS += -lAsdfMultiplat
+win32:debug:   LIBS += -lhexmap_D
+win32:release: LIBS += -lhexmap
+win32:CONFIG(release, debug|release):    LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/release/ -lColorWidgets-qt51
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/debug/   -lColorWidgets-qt51
 
-unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_D -lglu32 -lopengl32 -lglew64 -lSDL2 -lSDL2main -lSOIL_static_D -lzlibwapi
+# Linux
+unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm -lhexmap
+unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
+unix:!macx: CONFIG += link_pkgconfig
+unix:!macx: PKGCONFIG += glew ftgl sdl2 zlib
 
 
-INCLUDEPATH += $$PWD/../../include/asdfm
-DEPENDPATH += $$PWD/../../asdf_multiplat/src
-
-#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
-###
-
-
-# libhexmap
-unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lhexmap
-win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lhexmap_D
-
-# WIN32 *MUST* include hexmap via the junction link in asdf_multiplat/include/
+# Lib includes/depends
+# WIN32 *MUST* include asdfm and hexmap via the junction link in asdf_multiplat/include/
 # otherwise it will break #pragma once, since the compiler will think the file is
 # from a different location (because Windows is stupid and can't make proper links)
+INCLUDEPATH += $$PWD/../../include/asdfm
 INCLUDEPATH += $$PWD/../../include/hexmap
-DEPENDPATH += $$PWD/../../hexmap/src
-
-#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/hexmap_D.lib
-#else:win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/libhexmap_D.a
-###
-
-
-# apparently this is required
-unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += glew ftgl sdl2 zlib
-
-
-
-
-# Qt-Color-Widgets
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/release/ -lColorWidgets-qt51
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug/debug/ -lColorWidgets-qt51
-
-unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
-
 INCLUDEPATH += $$PWD/../../../Qt-Color-Widgets/include
-DEPENDPATH += $$PWD/../../../Qt-Color-Widgets/include
+#DEPENDPATH += $$PWD/../../asdf_multiplat/src
+#DEPENDPATH += $$PWD/../../hexmap/src
+#DEPENDPATH += $$PWD/../../../Qt-Color-Widgets/include
