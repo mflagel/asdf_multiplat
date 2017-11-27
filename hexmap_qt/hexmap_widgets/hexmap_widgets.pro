@@ -8,8 +8,8 @@ QT       += core gui widgets opengl
 
 CONFIG += debug c++14 console
 
-!win32: QMAKE_CXXFLAGS += -fms-extensions -Wno-missing-braces -Wno-writable-strings
-#QMAKE_CXXFLAGS_WARN_OFF += -Wno-missing-braces -Wno-writable-strings
+#!win32: QMAKE_CXXFLAGS += -fms-extensions -Wno-missing-braces -Wno-writable-strings
+!win32: QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces -Wno-writable-strings -Wno-expansion-to-defined
 
 
 debug: DEFINES += DEBUG
@@ -83,18 +83,8 @@ unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm
 win32: LIBS += -L$$PWD/../../lib/win32/x64/ -lAsdfMultiplat_D -lglu32 -lopengl32 -lglew64 -lSDL2 -lSDL2main -lSOIL_static_D -lzlibwapi
 
 
-INCLUDEPATH += $$PWD/../../include/asdf_multiplat
+INCLUDEPATH += $$PWD/../../include/asdfm
 DEPENDPATH += $$PWD/../../asdf_multiplat/src
-
-
-
-#glu32.lib
-#opengl32.lib
-#glew64.lib
-#SDL2.lib
-#SDL2main.lib
-#SOIL_static_D.lib
-#zlibwapi.lib
 
 #win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../lib/win32/x64/zlibwapi.lib
 ###
