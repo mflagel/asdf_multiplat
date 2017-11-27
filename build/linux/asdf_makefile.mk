@@ -143,11 +143,12 @@ intro:
 	@echo CPPFLAGS: $(CPPFLAGS)
 	printf "\n"
 	@echo LINK_FLAGS: $(LINK_FLAGS)
+	printf "\n"
 
 	# @echo Objs: $(OBJECTS)
 	# @echo Srcs: $(SOURCES)
 	# @echo Includes: $(_INCLUDES)
-	# @echo SysIncludes: $(SYSINCLUDES)
+	@echo SysIncludes: $(SYSINCLUDES)
 	@echo -e '\e[1;32m'-------------------------------- $(ENDCOLOR)
 	@echo -e $(CYAN)------ GENERATING DEPENDANCIES ------ $(ENDCOLOR)
 
@@ -198,6 +199,7 @@ $$(OBJPATH)/%.o: $(SRCPATH)/$(1)/%.cc | intro deps
 	@$$(CC) -c $(CFLAGS) -I $$(_INCLUDES) $$(_SYSINCLUDES) -o $$@ $$<
 
 $$(OBJPATH)/%.o: $$(SRCPATH)/$(1)/%.cpp | intro deps
+	# $(info ${OBJPATH} :: ${SRCPATH} / ${1})
 	@echo -e $$(CYAN) $$(CXX) $$(addprefix $$(PROJNAME)/$(1)/,$$(notdir $$<)) $$(ENDCOLOR)
 	# use $(CXX) to compile with $CPPFLAGS $_INCLUDES AND $_SYSINCLUDES
 	# output an object file with a name equal to the rule's name (using $@)
