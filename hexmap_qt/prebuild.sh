@@ -21,6 +21,7 @@ echo "useful links"
 #    a directory to put another link into
 
 # easier than adding the hexmap src as an include path in the settings
+ln -sTv "$DIR/../asdf_multiplat/src"    "$DIR/../include/asdfm"
 ln -sTv "$DIR/../hexmap/src"    "$DIR/../include/hexmap"
 
 # allows hexmap to just search upwards form the binary to find folders
