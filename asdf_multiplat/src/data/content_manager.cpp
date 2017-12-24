@@ -70,15 +70,6 @@ namespace asdf
 
         shaders.default_resource = shaders["passthrough"];
 
-
-        //fonts
-        //fonts.add_resource( "arial",   new FTPixmapFont(FONT_PATH("arial.ttf")) );
-        //fonts.add_resource( "consolas", new FTPixmapFont(FONT_PATH("Consolas.ttf")) );
-
-        //fonts["arial"]->FaceSize(72);
-        //fonts["consolas"]->FaceSize(72);
-        //fonts.default_resource = fonts["consolas"];
-
         AddSamplers();
 
         LOG("Content Initialized");

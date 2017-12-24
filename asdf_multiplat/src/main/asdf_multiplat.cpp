@@ -410,16 +410,11 @@ namespace asdf {
         
         //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
 
-
         glClearColor(gl_clear_color.r
                    , gl_clear_color.g
                    , gl_clear_color.b
                    , gl_clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-
-        //GL_State->unbind_shader();
-        //Content.fonts["arial"]->Render("TEST POST PLEASE IGNORE", -1, FTPoint(0, 500));
         
         glDisable(GL_CULL_FACE); //keep this off until I want to start optimizing things, otherwise I may wonder why things aren't rendering
     }
