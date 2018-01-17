@@ -1,8 +1,10 @@
 ###############################
-SELF_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 include $(SELF_DIR)/hexmap_common.mk
 
 # INVOCATION = 1
+
+BIN_OUT = $(BINPATH)/$(PROJNAME)
 ###############################
 
 ########## INCLUDES ###########
@@ -14,4 +16,5 @@ SOURCES += $(SRCPATH)/main/main.cpp
 ###############################
 
 
-include $(PROJPATH)/build/linux/asdf_makefile.mk
+$(info self-dir ${SELF_DIR})
+include $(SELF_DIR)/../build/linux/asdf_makefile.mk

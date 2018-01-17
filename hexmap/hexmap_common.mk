@@ -6,7 +6,7 @@ ifndef SELF_DIR
 $(error SELF_DIR is not defined)
 endif
 
-BINPATH = $(SELF_DIR)/bin/linux
+BINPATH := $(SELF_DIR)/bin/linux
 LIBPATH := $(SELF_DIR)/../lib/linux
 OBJPATH := $(SELF_DIR)/obj
 

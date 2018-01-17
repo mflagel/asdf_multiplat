@@ -17,6 +17,7 @@ SRCPATH := $(SELF_DIR)/src
 
 SO_NAME := libasdfm.so
 BIN_OUT := $(LIBPATH)/$(SO_NAME)
+# BIN_OUT := $(BINPATH)/asdfm
 
 include $(SELF_DIR)/../build/linux/asdf_makefile.inc
 ###############################
@@ -25,7 +26,7 @@ include $(SELF_DIR)/../build/linux/asdf_makefile.inc
 LIBS += sdl2 gl glew zlib
 
 CFLAGS += -Iusr/include/SOIL
-LINK_FLAGS += -L$(LIBPATH) -lSOIL -ltar
+LINK_FLAGS += -L$(LIBPATH) -lSOIL -ltar -lstdc++fs
 ###############################
 
 ########## INCLUDES ###########
