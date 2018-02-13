@@ -7,8 +7,9 @@
 #include <numeric>
 #include <random>
 #include <type_traits>
+#include <sstream>
 
-#include <asdf_multiplat/main/asdf_defs.h>
+//#include <asdf_multiplat/main/asdf_defs.h>
 
 #include "from_json.h"
 

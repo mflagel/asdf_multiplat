@@ -2,8 +2,9 @@
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 
-#include "asdf_multiplat/main/asdf_defs.h"
+//#include <asdf_multiplat/main/asdf_defs.h>
 #include "asdf_multiplat/utilities/utilities.h"
 
 using namespace std;

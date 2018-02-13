@@ -15,7 +15,7 @@
 #endif
 
 
-#include <asdfm/main/asdf_defs.h>
+#include <asdf_multiplat/main/asdf_defs.h>
 
 
 namespace stdfs = std::experimental::filesystem;
@@ -129,7 +129,8 @@ namespace plantgen
     }
     inline bool operator==(stdfs::path path, const char* const c)
     {
-        return strcmp(path.c_str(), c) == 0;
+        //return strcmp(path.c_str(), c) == 0;  /// MSVC USING OLD FILESYSTEM TS
+        return strcmp(path.string().c_str(), c) == 0;
     }
     ///
     
