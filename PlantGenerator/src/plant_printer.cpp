@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include "asdf_multiplat/main/asdf_defs.h"
-#include "asdf_multiplat/utilities/utilities.h"
+#include <asdfm/main/asdf_defs.h>
+#include <asdfm/utilities/utilities.h>
 
 using namespace std;
 using namespace plantgen;
@@ -367,6 +367,6 @@ namespace plant_printer
 
     string print_plant(generated_node_t const& plant_node)
     {
-        return "A " + plant_node.name + " " + print_sub_property(plant_node);
+        return /*"A " + plant_node.name + " " + */print_sub_property(plant_node);
     }
 }

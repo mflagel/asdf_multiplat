@@ -2,8 +2,11 @@
 
 cmake_minimum_required (VERSION 3.0.2)
 
-set(CMAKE_C_COMPILER /usr/local/bin/gcc)
-set(CMAKE_CXX_COMPILER /usr/local/bin/g++)
+# TODO check for minimum complier version
+# or more specifically, check for c++17
+
+set(CMAKE_C_COMPILER gcc)
+set(CMAKE_CXX_COMPILER g++)
 
 
 project(plantgen)
@@ -11,8 +14,8 @@ set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_BUILD_TYPE Release)
 
 include_directories(..)
-include_directories(../asdf_multiplat)
-include_directories(../include)
+include_directories(../asdf_multiplat/src)
+include_directories(SYSTEM ../include)
 
 
 include_directories(src)
