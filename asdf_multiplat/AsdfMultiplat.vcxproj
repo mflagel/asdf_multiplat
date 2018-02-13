@@ -92,7 +92,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{11A6884D-C620-4EFE-B98A-B548747774A0}</ProjectGuid>
     <RootNamespace>AsdfMultiplat_fixed</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'" Label="Configuration">
@@ -279,9 +279,10 @@
       <AdditionalDependencies>opengl32.lib;Box2D.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib</AdditionalDependencies>
     </Lib>
     <PreLinkEvent>
-      <Command>dir $(IntermediateOutputPath)*.obj /b /s &gt; $(IntermediateOutputPath)objects.txt
+      <Command>dir "$(IntermediateOutputPath)*.obj" /b /s &gt; "$(IntermediateOutputPath)objects.txt
 
-cmake -E __create_def $(IntermediateOutputPath)exportall.def $(IntermediateOutputPath)objects.txt</Command>
+"
+cmake -E __create_def "$(IntermediateOutputPath)exportall.def" "$(IntermediateOutputPath)objects.txt"</Command>
       <Message>generate export defintion for all symbols</Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
