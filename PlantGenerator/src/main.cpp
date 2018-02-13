@@ -40,7 +40,7 @@ enum flag_e
 };
 
 using str_lit_vec = std::initializer_list<char const*>; //vector of string literals (stored as char const*)
-constexpr std::initializer_list<str_lit_vec> flag_string_sets =
+/*constexpr*/ std::initializer_list<str_lit_vec> flag_string_sets =   /// MSVC can't handle this being constexpr
 {
       str_lit_vec{}
     , str_lit_vec{"-q", "--quiet", ""}
@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
     flags |= (flag_print_simplified * (flags == 0));
 
 
-    auto has_flag = [flags](uint _flags) -> bool
+    auto has_flag = [flags](uint32_t _flags) -> bool
     {
         return (flags & _flags) > 0;
     };

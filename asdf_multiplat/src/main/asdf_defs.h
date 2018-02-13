@@ -1,4 +1,6 @@
 #pragma once
+#ifndef ASDF_DEFS_H
+#define ASDF_DEFS_H
 
 #include <limits>
 #include <cstdint>
@@ -297,3 +299,5 @@ namespace std {
     DELETE_COPY_ASSIGNMENT(_obj_name_) \
     DEFAULT_MOVE(_obj_name_) 
 /*--------*/
+
+#endif

@@ -14,7 +14,7 @@
 #include <vector>
 #include <variant>
 
-#include <asdfm/main/asdf_defs.h>
+//#include <asdfm/main/asdf_defs.h>
 
 #include "value_types.hpp"
 
