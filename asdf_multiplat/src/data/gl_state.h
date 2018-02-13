@@ -4,6 +4,7 @@
 
 #include "gl_resources.h"
 #include "texture.h"
+#include "main/asdf_dll.h"
 
 namespace asdf
 {
@@ -85,7 +86,7 @@ namespace asdf
         void set_current_state_machine(gl_state_t& state_machine);
         gl_state_t* operator->();
     };
-    extern gl_state_proxy_t GL_State;
+    extern ASDFM_API gl_state_proxy_t GL_State;
 
     ///GL Utility Function Declarations
     size_t get_highest_glsl_ver();

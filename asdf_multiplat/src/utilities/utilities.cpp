@@ -4,9 +4,7 @@
 #include <cstring>  //for std::strtok
 
 #include <stdio.h>
-#include <zlib.h>
-#include <fcntl.h>    //for O_RDONLY AND O_WRONLY, used with tar_open()
-#include <libtar.h>
+
 
 // #include "reflected_struct.h"
 
@@ -18,9 +16,26 @@
 
 #ifdef _MSC_VER
 #include <windows.h>
+#include <zlib/zlib.h>
+#include <microtar/microtar.h>
+#define USING_MICROTAR 1
+
+#define STRDUP _strdup
+
+namespace std
+{
+    enum class byte : unsigned char {};
+}
+
 #else
 #include <sys/stat.h>
 #include <dirent.h>
+#include <zlib.h>
+#include <libtar.h>
+#include <fcntl.h>    //for O_RDONLY AND O_WRONLY, used with tar_open()
+#define USING_LIBTAR 1
+
+#define STRDUP strdup
 #endif
 
 DIAGNOSTIC_IGNORE(-Wcomment)
@@ -78,7 +93,8 @@ namespace asdf {
         }
     };
 
-    std::string read_text_file(std::string const& filepath) {
+    std::string read_text_file(std::string const& filepath)
+    {
         if(!is_file(filepath))
         {
             throw file_open_exception(filepath);
@@ -119,6 +135,46 @@ namespace asdf {
             os << data;
             os.close();
         }
+    }
+
+    /// https://wiki.libsdl.org/SDL_RWread
+    size_t read_binary_file(std::string const& filepath, char** data)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "rb");
+        ASSERT(io, "File could not be opened for reading: %s", filepath.c_str());
+
+        Sint64 res_size = SDL_RWsize(io);
+        char* res = (char*)malloc(res_size + 1);
+
+        Sint64 nb_read_total = 0, nb_read = 1;
+        char* buf = res;
+        while (nb_read_total < res_size && nb_read != 0) {
+                nb_read = SDL_RWread(io, buf, 1, (res_size - nb_read_total));
+                nb_read_total += nb_read;
+                buf += nb_read;
+        }
+
+        SDL_RWclose(io);
+        if (nb_read_total != res_size) {
+                free(res);
+                return NULL;
+        }
+
+        res[nb_read_total] = '\0';
+
+        *data = res;
+        return res_size;
+    }
+
+    void write_binary_file(std::string const& filepath, char* data, size_t n)
+    {
+        SDL_RWops* io = SDL_RWFromFile(filepath.c_str(), "wb");
+        ASSERT(io, "File could not be opened for writing: %s", filepath.c_str());
+
+        size_t num_written = SDL_RWwrite(io, reinterpret_cast<const void*>(data), n, 1);
+        ASSERT(num_written == 1, "Error writing data to file %s", filepath.c_str());
+
+        SDL_RWclose(io);
     }
 
     [[deprecated("use std::filesystem")]]
@@ -166,7 +222,7 @@ namespace asdf {
             }
 
             //search upwards
-            if(is_directory(path))
+            if(stdfs::is_directory(stdfs::path(path)))
             {
                 return path;
             }
@@ -176,28 +232,6 @@ namespace asdf {
                 ++search_dist;
             }
         }
-    }
-
-    [[deprecated("use std::filesystem")]]
-    void create_dir(std::string const& path)
-    {
-        ASSERT(!is_directory(path), "Directory already exists at %s", path.c_str());
-        ASSERT(!is_file(path), "Cannot create directory, File already exists at %s", path.c_str());
-
-
-#ifdef MSVC
-        ASSERT(path.length() < 248, "Windows CreateDirectory() does not support paths longer than 248 chars. Tell a programmer to use the Unicode version");
-        bool status = CreateDirectory(path.c_str());
-
-        /*
-        if(status == ERROR_ALREADY_EXISTS)
-            todo: throw exception?
-        else if(status == ERROR_PATH_NOT_FOUND)
-            todo: throw exception?
-        */
-#else
-        EXPLODE("todo: posix version of create_dir()");
-#endif
     }
 
 
@@ -230,6 +264,7 @@ namespace asdf {
             return path();
 
         using namespace stdfs;
+        using path = stdfs::path;
 
         path con_a = canonical(a);
 
@@ -356,8 +391,8 @@ namespace asdf {
 
 
 
-    // constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
-    constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K
+    constexpr size_t zlib_chunk_size = 262144; /// 2^20 = 256K
+    // constexpr size_t zlib_chunk_size = 1048576; /// 2^20 = 256K  causes stackoverflow on msvc
 
 
     int compress_file(std::experimental::filesystem::path const& src_filepath
@@ -366,8 +401,15 @@ namespace asdf {
     {
         ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
 
+#ifdef _MSC_VER
+        FILE* source = nullptr;
+        FILE* dest = nullptr;
+        auto errsrc  = fopen_s(&source, src_filepath.string().c_str(),  "r");
+        auto errdest = fopen_s(&dest,  dest_filepath.string().c_str(),  "w");
+#else
         FILE* source = fopen(src_filepath.c_str(),  "r");
         FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#endif
 
         int compress_result = compress_file(source, dest, compression_level);
 
@@ -378,7 +420,7 @@ namespace asdf {
     }
 
     /// http://www.zlib.net/zlib_how.html
-    int compress_file(FILE* source, FILE* dest, int compression_level) noexcept
+    int compress_file(FILE* source, FILE* dest, int compression_level)// noexcept
     {
         using byte_t = std::byte;
 
@@ -441,10 +483,18 @@ namespace asdf {
     {
         ASSERT(stdfs::exists(src_filepath), "file does not exist [%s]", src_filepath.c_str());
 
+#ifdef _MSC_VER
+        FILE* source;
+        FILE* dest;
+        auto errsrc  = fopen_s(&source, src_filepath.string().c_str(),  "r");
+        auto errdest = fopen_s(&dest,  dest_filepath.string().c_str(),  "w");
+#else
         FILE* source = fopen(src_filepath.c_str(),  "r");
         FILE* dest   = fopen(dest_filepath.c_str(), "w");
+#endif
 
         int decompress_result = decompress_file(source, dest);
+        ASSERT(decompress_result == Z_OK, "Error decompressing file %s", src_filepath.string().c_str());
 
         fclose(source);
         fclose(dest);
@@ -519,6 +569,7 @@ namespace asdf {
         return inflate_status == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
     }
 
+#if USING_LIBTAR
     int archive_files(std::vector<stdfs::path> const& filepaths, stdfs::path const& combined_filepath)
     {
         /// if the file doesn't exist yet, create an empty file
@@ -588,7 +639,72 @@ namespace asdf {
         tar_status = tar_close(t);
         return tar_status;
     }
+#endif
 
+#if USING_MICROTAR
+    int archive_files(std::vector<std::experimental::filesystem::path> const& filepaths
+                    , std::experimental::filesystem::path const& combined_filepath)
+    {
+        mtar_t tar;
+        int status = mtar_open(&tar, combined_filepath.string().c_str(), "w");
+        ASSERT(status == MTAR_ESUCCESS, "Error opening TAR output file for writing: %s", combined_filepath.string().c_str());
+
+        if(status == MTAR_ESUCCESS)
+        {
+            for(auto const& filepath : filepaths)
+            {
+                char* file_data;
+                size_t size = read_binary_file(filepath.string(), &file_data);
+
+                status |= mtar_write_file_header(&tar, filepath.string().c_str(), size);
+                ASSERT(status == MTAR_ESUCCESS, "Error Writing TAR: %s", mtar_strerror(status));
+            
+                status |= mtar_write_data(&tar, file_data, size);
+                ASSERT(status == MTAR_ESUCCESS, "Error Writing TAR: %s", mtar_strerror(status));
+            }
+        }
+        
+        status |= mtar_finalize(&tar);
+        status |= mtar_close(&tar);
+
+        return status;
+    }
+
+    int unarchive_files(std::experimental::filesystem::path const& tar_path,
+                        std::experimental::filesystem::path const& extract_dir)
+    {
+        mtar_t tar;
+
+        /* Open archive for reading */
+        int status = mtar_open(&tar, tar_path.string().c_str(), "r");
+        
+        std::vector<mtar_header_t> headers;
+
+        while ( status != MTAR_ENULLRECORD )
+        {
+            //push a blank and write directly to it
+            headers.push_back(mtar_header_t{});
+            status = mtar_read_header(&tar, &(headers.back()));
+            mtar_next(&tar);
+        }
+        headers.pop_back(); //drop the empty blank at the end
+        status = MTAR_ESUCCESS; //reset status
+
+
+        for(auto& header : headers)
+        {
+            mtar_find(&tar, header.name, &header);
+            char* data = (char*)malloc(header.size);
+            status |= mtar_read_data(&tar, (void*)data, header.size);
+            write_binary_file(header.name, data, header.size);
+        }
+
+        /* Close archive */
+        status |= mtar_close(&tar);
+
+        return status;
+    }
+#endif
 
 
     bool CheckBounds(int x, int y, int minX, int maxX, int minY, int maxY){
@@ -616,7 +732,10 @@ namespace asdf {
     std::vector<std::string> tokenize(const char* _str, const char* delimiters)
     {
         std::vector<std::string> tokens;
-        char* str = strdup(_str);
+
+        /// MSVC
+        //char* str = strdup(_str);
+        char* str = STRDUP(_str);
 
 #ifdef _MSC_VER
         char* next_token = nullptr;

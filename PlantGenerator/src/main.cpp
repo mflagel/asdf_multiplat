@@ -3,8 +3,8 @@
 #include <unordered_map>
 #include <string>
 
-#include "asdf_multiplat/main/asdf_defs.h"
-#include "asdf_multiplat/utilities/utilities.h"
+#include <asdfm/main/asdf_defs.h>
+#include <asdfm/utilities/utilities.h>
 
 #include "plant_generator.h"
 #include "plant_printer.h"
@@ -35,18 +35,20 @@ enum flag_e
   , flag_print_generated   = 4
   , flag_print_simplified  = 8
   , flag_stress_test       = 16
+  // , flag_verbose           = 32
   , flag_all               = 0xFFFFFFFF
 };
 
 using str_lit_vec = std::initializer_list<char const*>; //vector of string literals (stored as char const*)
-constexpr std::initializer_list<str_lit_vec> flag_string_sets =
+/*constexpr*/ std::initializer_list<str_lit_vec> flag_string_sets =   /// MSVC can't handle this being constexpr
 {
       str_lit_vec{}
-    , str_lit_vec{"-q", "--quiet"}
-    , str_lit_vec{"-p", "--print-pregen"}
-    , str_lit_vec{"-g", "--print-generated"}
-    , str_lit_vec{"-s", "--print-simplified"}
-    , str_lit_vec{"-t", "--stress_test"}
+    , str_lit_vec{"-q", "--quiet", ""}
+    , str_lit_vec{"-p", "--print-pregen", "prints all data that has been loaded from JSON"}
+    , str_lit_vec{"-g", "--print-generated", "Print the generated tree, ignoring print_strings"}
+    , str_lit_vec{"-s", "--print-simplified", "Simplify the generated tree before printing. This is the default"}
+    , str_lit_vec{"-t", "--stress_test", "Run the generator a thousand times to test for weird exception issues"}
+    // , str_lit_vec{"-v", "--verbose", "Print errors and warnings"}
 };
 
 
@@ -84,7 +86,7 @@ args_t load_args(int argc, char* argv[])
 
 flags_t load_flags(args_t const& args)
 {
-    flags_t flags;
+    flags_t flags = flag_none;
 
     for(auto const& arg : args)
     {
@@ -109,6 +111,32 @@ flags_t load_flags(args_t const& args)
 }
 
 
+void print_usage()
+{
+    printf("PlantGenerator [flags] data_file.json\n");
+    printf("----\n");
+
+    for(auto const& flag : flag_string_sets)
+    {
+        for(auto const& flag_str : flag)
+        {
+            printf("%s", flag_str);
+        }
+        printf("\n");
+    }
+}
+
+void print_active_flags(flags_t flags)
+{
+    for(size_t i = 1; i < flag_string_sets.size(); ++i)
+    {
+        if((flags & (1 << i)) > 0)
+        {
+            char const* flag_str = *((flag_string_sets.begin() + i)->begin());
+            printf("%s\n", flag_str);
+        }
+    }
+}
 
 
 int main(int argc, char* argv[])
@@ -116,12 +144,18 @@ int main(int argc, char* argv[])
     using namespace std;
     if(argc < 2)
     {
-        cout << "TODO: output helpful message when there are no arguments\n";
+        print_usage();
         return 0;
     }
 
     args_t args = load_args(argc, argv);
     flags_t flags = load_flags(args);
+
+    // if(flags != flag_none)
+    // {
+    //     printf("flags: %d", flags);
+    //     print_active_flags(flags);
+    // }
 
     std::string filepath = std::string(argv[argc-1]);
 
@@ -144,7 +178,7 @@ int main(int argc, char* argv[])
     flags |= (flag_print_simplified * (flags == 0));
 
 
-    auto has_flag = [flags](uint _flags) -> bool
+    auto has_flag = [flags](uint32_t _flags) -> bool
     {
         return (flags & _flags) > 0;
     };

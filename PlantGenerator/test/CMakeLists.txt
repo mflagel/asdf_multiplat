@@ -2,14 +2,14 @@
 
 cmake_minimum_required (VERSION 3.0.2)
 
-set(CMAKE_C_COMPILER /usr/local/bin/gcc)
-set(CMAKE_CXX_COMPILER /usr/local/bin/g++)
+set(CMAKE_C_COMPILER gcc)
+set(CMAKE_CXX_COMPILER g++)
 
 project(plantgen_test)
 set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(../..)
-include_directories(../../asdf_multiplat)
+include_directories(../../asdf_multiplat/src)
 include_directories(../../include)
 include_directories(../../ext)
 

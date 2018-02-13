@@ -42,7 +42,7 @@ namespace asdf {
 
         struct quad_vertex_t
         {
-            static gl_vertex_spec_<vertex_attrib::position3_t> vertex_spec;
+            static ASDFM_API gl_vertex_spec_<vertex_attrib::position3_t> vertex_spec;
             glm::vec3 position;
         };
         rendered_polygon_<quad_vertex_t> quad;
@@ -115,5 +115,5 @@ namespace asdf {
         glm::uvec2 render_target_size() const { return renderer->render_target_size(); }
     };
 
-    extern asdf_multiplat_t app;
+    extern ASDFM_API asdf_multiplat_t app;
 }

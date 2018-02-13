@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include <asdf_multiplat/main/asdf_multiplat.h>
-#include <asdf_multiplat/data/content_manager.h>
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/content_manager.h>
 #include <hexmap/data/hex_grid.h>
 #include <hexmap/data/spline.h>
 #include <hexmap/ui/hex_map.h>
@@ -23,7 +23,6 @@
 #include "palette_widget.h"
 #include "spline_settings_widget.h"
 #include "ui_spline_settings_widget.h"
-#include "ui_tools_panel.h"
 #include "dialogs/new_map_dialog.h"
 #include "ui_new_map_dialog.h"
 #include "object_properties_widget.h"
@@ -473,7 +472,7 @@ QDir MainWindow::get_initial_save_load_dir()
     if(editor->map_filepath.size() > 0)
         return QDir(QString::fromStdString(editor->map_filepath));
     else if(editor->workspace.recently_opened.size() > 0)
-        return QDir(QString::fromStdString(editor->workspace.recently_opened.back()));
+        return QDir(QString::fromStdString(editor->workspace.recently_opened.back().string()));
     else
         return QDir::homePath();
 }

@@ -6,9 +6,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "asdf_multiplat/main/asdf_multiplat.h"
-#include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/content_manager.h"
+#include <asdfm/main/asdf_multiplat.h>
+#include <asdfm/data/gl_resources.h>
+#include <asdfm/data/content_manager.h>
 
 #include "data/hex_util.h"
 

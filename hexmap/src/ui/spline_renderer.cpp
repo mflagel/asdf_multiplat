@@ -5,8 +5,8 @@
 #include <glm/gtx/spline.hpp>
 #include <glm/gtx/compatibility.hpp> //for lerp
 
-#include "asdf_multiplat/utilities/utilities.h"
-#include "asdf_multiplat/data/gl_state.h"
+#include <asdfm/utilities/utilities.h>
+#include <asdfm/data/gl_state.h>
 
 using namespace glm;
 

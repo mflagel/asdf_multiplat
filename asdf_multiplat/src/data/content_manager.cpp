@@ -15,7 +15,7 @@ namespace asdf
     using namespace util;
 
     ///
-    content_manager_t Content;
+    ASDFM_API content_manager_t Content;
     ///
 
     content_load_exception::content_load_exception(std::string const& _filepath, std::string const& _loadError) 
@@ -69,15 +69,6 @@ namespace asdf
         shaders.add_resource(create_shader_highest_supported("spritebatch"));
 
         shaders.default_resource = shaders["passthrough"];
-
-
-        //fonts
-        //fonts.add_resource( "arial",   new FTPixmapFont(FONT_PATH("arial.ttf")) );
-        //fonts.add_resource( "consolas", new FTPixmapFont(FONT_PATH("Consolas.ttf")) );
-
-        //fonts["arial"]->FaceSize(72);
-        //fonts["consolas"]->FaceSize(72);
-        //fonts.default_resource = fonts["consolas"];
 
         AddSamplers();
 

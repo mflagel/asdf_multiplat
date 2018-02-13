@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_keycode.h>
 
-#include "asdf_multiplat/main/mouse.h"
+#include <asdfm/main/mouse.h>
 
 namespace asdf {
 namespace hexmap {

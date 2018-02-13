@@ -3,7 +3,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/data/texture_atlas.h"
+#include <asdfm/data/texture_atlas.h>
 
 #include "data/hex_grid.h"
 #include "data/map_objects.h"

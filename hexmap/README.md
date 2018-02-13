@@ -6,6 +6,9 @@ Hexmap uses OpenGL for rendering. It requires at least OpenGL 3.0, but can take 
 Hexmap uses Qt for a cross-platform user interface, and is currently being developed on Windows and Linux (Mint/Ubuntu)
 
 
+![Hexmap Screenshot](https://raw.githubusercontent.com/mflagel/asdf_multiplat/master/docs/screenshots/hexmap/hexmap_qt_colored_thick_splines.png)
+
+
 Current Features
 ------------
 * Painting textured hexagons from a list of loaded textures

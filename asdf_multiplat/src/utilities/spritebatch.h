@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 
-//#include "asdf_multiplat/data/gl_resources.h"
+//#include "data/gl_resources.h"
 
 DIAGNOSTIC_PUSH
 DIAGNOSTIC_IGNORE(-Wcomment)

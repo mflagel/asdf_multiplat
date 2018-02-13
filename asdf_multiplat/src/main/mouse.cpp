@@ -51,7 +51,7 @@ namespace asdf
 
     int mouse_input_t::drag_dist(mouse_button_e btn) const
     {
-        return glm::length(drag_delta(btn));
+        return glm::length(glm::vec2(drag_delta(btn)));
     }
 
 

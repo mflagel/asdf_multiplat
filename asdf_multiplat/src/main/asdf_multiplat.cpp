@@ -19,7 +19,7 @@ using namespace glm;
 
 namespace asdf {
 
-    asdf_multiplat_t app;
+    ASDFM_API asdf_multiplat_t app;
 
     asdf_multiplat_t::asdf_multiplat_t()
         : WINDOW_TITLE("Asdf Multiplat Application Thing")
@@ -334,7 +334,7 @@ namespace asdf {
     /// Asdf Renderer
     ///
 
-    gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
+    ASDFM_API gl_vertex_spec_<vertex_attrib::position3_t> asdf_renderer_t::quad_vertex_t::vertex_spec;
 
 
     asdf_renderer_t::asdf_renderer_t(void* _gl_context)
@@ -410,16 +410,11 @@ namespace asdf {
         
         //glBindRenderbufferEXT(GL_RENDERBUFFER, renderDepthBuffer);
 
-
         glClearColor(gl_clear_color.r
                    , gl_clear_color.g
                    , gl_clear_color.b
                    , gl_clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-
-        //GL_State->unbind_shader();
-        //Content.fonts["arial"]->Render("TEST POST PLEASE IGNORE", -1, FTPoint(0, 500));
         
         glDisable(GL_CULL_FACE); //keep this off until I want to start optimizing things, otherwise I may wonder why things aren't rendering
     }

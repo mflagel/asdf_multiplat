@@ -1,12 +1,35 @@
 #pragma once
+#ifndef ASDF_DEFS_H
+#define ASDF_DEFS_H
 
 #include <limits>
 #include <cstdint>
 #include <type_traits>
 
+#include "asdf_dll.h"
+
+#define ASDF_SDL2 1
+
+#ifdef __llvm__
+    #define LAX_MACROS 0
+#else
+    #define LAX_MACROS 1
+#endif
+
+
+
+#ifndef _MSC_VER
+#define STRERROR(errno, buffer, buffsize) strerror_r(errno, buffer, buffsize); //UNIX
+#define SNPRINTF(str, size, msg, ...) snprintf(str, size, msg, __VA_ARGS__);
+#else
+#define STRERROR(errno, buffer, buffsize) strerror_s(buffer, buffsize, errno); //MSVC
+#define SNPRINTF(str, size, msg, ...) sprintf_s(str, size, msg, __VA_ARGS__);
+#endif
+
+
+
 #define PI 3.14159265359f
-// #define nullindex 4294967295
-// #define nullindex std::numeric_limits<size_t>::max()
+
 
 struct nullindex_t
 {
@@ -276,3 +299,5 @@ namespace std {
     DELETE_COPY_ASSIGNMENT(_obj_name_) \
     DEFAULT_MOVE(_obj_name_) 
 /*--------*/
+
+#endif

@@ -146,6 +146,8 @@ namespace asdf {
     /************************************************************************/
     std::string read_text_file(std::string const& filepath);
     void write_text_file(std::string const& filepath, std::string const& data);
+    size_t read_binary_file(std::string const& filepath, char** data);
+    void write_binary_file(std::string const& filepath, char* data, size_t n);
 
     // rapidjson::Document read_json_file(std::string const& filepath);
     // void write_json_file(rapidjson::Document&, std::string const& filepath);
@@ -172,7 +174,7 @@ namespace asdf {
     int compress_file(std::experimental::filesystem::path const& src_filepath
                     , std::experimental::filesystem::path const& dest_filepath
                     , int compression_level = -1) noexcept;
-    int compress_file(FILE* src, FILE* dest, int compression_level) noexcept;
+    int compress_file(FILE* src, FILE* dest, int compression_level);// noexcept;
 
 
     int decompress_file(std::experimental::filesystem::path const& src_filepath

@@ -4,8 +4,8 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/ui/polygon.h"
-#include "asdf_multiplat/data/shader.h"
+#include <asdfm/ui/polygon.h>
+#include <asdfm/data/shader.h>
 
 #include "data/terrain_brush.h"
 

@@ -74,17 +74,32 @@ ifndef PROJNAME
 $(error PROJNAME not defined)
 endif
 
-#Useful Paths
 
-ifndef PROJPATH
-# PROJPATH 	:= ~/gdrive/Programming/AsdfMultiplat
-$(error PROJPATH must be defined);
+define ERROR_NOT_DEFINED
+$(error $(1) is not defined)
+endef
+
+
+ifndef PROJNAME
+$(call ERROR_NOT_DEFINED, PROJNAME)
+endif
+ifndef BINPATH
+$(call ERROR_NOT_DEFINED, BINPATH)
+endif
+ifndef LIBPATH
+$(call ERROR_NOT_DEFINED, LIBPATH)
+endif
+ifndef OBJPATH
+$(call ERROR_NOT_DEFINED, OBJPATH)
+endif
+ifndef INCLUDEPATH
+$(call ERROR_NOT_DEFINED, INCLUDEPATH)
+endif
+ifndef SRCPATH
+$(call ERROR_NOT_DEFINED, SRCPATH)
 endif
 
-BINPATH		:= $(PROJPATH)/bin/linux
-LIBPATH		:= $(PROJPATH)/lib/linux
-EXTPATH		:= $(PROJPATH)/ext
-OBJPATH		:= $(PROJPATH)/obj/$(PROJNAME)/linux
+
 
 SHELL	= /bin/sh
 

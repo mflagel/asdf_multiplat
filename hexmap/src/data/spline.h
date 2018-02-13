@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/main/asdf_defs.h"
+#include <asdfm/main/asdf_defs.h>
 // #include "map_objects.h"
 
 struct SDL_RWops;

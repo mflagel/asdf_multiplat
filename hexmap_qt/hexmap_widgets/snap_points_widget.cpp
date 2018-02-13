@@ -50,8 +50,9 @@ void snap_points_widget_t::snap_settings_changed()
 
 hex_snap_flags_t snap_points_widget_t::snap_flags_from_button_states() const
 {
-    using namespace asdf::hexmap;
     hex_snap_flags_t flags = 0;
+
+    using namespace asdf::hexmap;
 
     flags |= hex_snap_center      * ui->btn_snap_center->isChecked();
     flags |= hex_snap_vertex      * ui->btn_snap_verts->isChecked();

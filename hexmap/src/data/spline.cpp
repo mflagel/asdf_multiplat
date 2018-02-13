@@ -3,7 +3,7 @@
 
 #include <glm/gtx/norm.hpp>
 
-#include "asdf_multiplat/data/gl_vertex_spec.h"
+#include <asdfm/data/gl_vertex_spec.h>
 
 namespace asdf {
     using namespace vertex_attrib;

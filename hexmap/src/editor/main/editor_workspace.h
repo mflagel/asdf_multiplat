@@ -2,7 +2,7 @@
 
 #include <experimental/filesystem>
 
-#include <asdf_multiplat/utilities/cjson_utils.hpp>
+#include <asdfm/utilities/cjson_utils.hpp>
 
 namespace asdf {
 namespace hexmap {

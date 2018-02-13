@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 
-#include "asdf_multiplat/data/gl_resources.h"
-#include "asdf_multiplat/data/gl_vertex_spec.h"
+#include <asdfm/data/gl_resources.h>
+#include <asdfm/data/gl_vertex_spec.h>
 
 #include "ui/hex_map.h"
 
