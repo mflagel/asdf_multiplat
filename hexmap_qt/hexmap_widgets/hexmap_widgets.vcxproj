@@ -14,7 +14,7 @@
     <ProjectGuid>{27BB160A-4A80-3DD2-AFB9-9021079F5526}</ProjectGuid>
     <RootNamespace>hexmap_widgets</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -58,6 +58,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <SourcePath>.\..\win32\$(ConfigurationName); $(VC_SourcePath);</SourcePath>
     <IncludePath>$(ProjectDir)..\..\include;$(ProjectDir)..\..\include\asdfm;$(ProjectDir)..\..\include\hexmap;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\..\lib\win32\$(PlatformShortName)\$(Configuration);$(ProjectDir)..\..\lib\win32\$(PlatformShortName);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <SourcePath>.\..\win32\$(ConfigurationName);$(VC_SourcePath);</SourcePath>
@@ -137,7 +138,7 @@ copy /y "$(QTDIR)\bin\Qt5Core.dll" "$(OutDir)\Qt5Core.dll" </Command>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>AsdfMultiplat_D.lib;hexmap_D.lib;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\debug\ColorWidgets-qt51.lib;glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;$(QTDIR)\lib\Qt5OpenGLd.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AsdfMultiplat_D.lib;hexmap_D.lib;ColorWidgets-qt51.lib;glu32.lib;opengl32.lib;glew64.lib;SDL2.lib;SDL2main.lib;SOIL_static_D.lib;zlibwapi.lib;$(QTDIR)\lib\Qt5OpenGLd.lib;$(QTDIR)\lib\Qt5Widgetsd.lib;$(QTDIR)\lib\Qt5Guid.lib;$(QTDIR)\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;C:\Users\Mathias\Documents\Programming\AsdfMultiplat\lib\win32\x64;C:\Users\Mathias\Documents\Programming\Qt-Color-Widgets\build-color_widgets-Desktop_Qt_5_7_0_MSVC2015_64bit-Debug\debug;$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>

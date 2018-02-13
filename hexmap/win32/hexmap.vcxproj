@@ -96,7 +96,7 @@
     <ProjectGuid>{379181A8-C1E5-4B27-8679-551DABDCB435}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>hexmap</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -384,8 +384,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
     <PreLinkEvent>
-      <Command>dir $(IntermediateOutputPath)*.obj /b /s &gt; $(IntermediateOutputPath)objects.txt
-cmake -E __create_def $(IntermediateOutputPath)exportall.def $(IntermediateOutputPath)objects.txt</Command>
+      <Command>dir "$(IntermediateOutputPath)*.obj" /b /s &gt; "$(IntermediateOutputPath)objects.txt"
+
+cmake -E __create_def "$(IntermediateOutputPath)exportall.def" "$(IntermediateOutputPath)objects.txt"</Command>
       <Message>generate export defintion for all symbols</Message>
     </PreLinkEvent>
     <Link>
@@ -399,8 +400,9 @@ cmake -E __create_def $(IntermediateOutputPath)exportall.def $(IntermediateOutpu
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">
     <PreLinkEvent>
-      <Command>dir $(IntermediateOutputPath)*.obj /b /s &gt; $(IntermediateOutputPath)objects.txt
- cmake -E __create_def $(IntermediateOutputPath)exportall.def $(IntermediateOutputPath)objects.txt</Command>
+      <Command>dir "$(IntermediateOutputPath)*.obj" /b /s &gt; "$(IntermediateOutputPath)objects.txt"
+
+cmake -E __create_def "$(IntermediateOutputPath)exportall.def" "$(IntermediateOutputPath)objects.txt"</Command>
       <Message>generate export defintion for all symbols</Message>
     </PreLinkEvent>
     <Link>
