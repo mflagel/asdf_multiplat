@@ -1,6 +1,7 @@
 #include "hexmap_widget.h"
 
 #include <QMouseEvent>
+#include <QModelIndex>
 
 #include <asdfm/main/asdf_multiplat.h>
 #include <asdfm/data/content_manager.h>

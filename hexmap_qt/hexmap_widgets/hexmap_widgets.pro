@@ -99,7 +99,8 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Qt-Color-Widge
 
 # Linux
 unix:!macx: LIBS += -L$$PWD/../../lib/linux/ -lasdfm -lhexmap
-unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
+# unix:!macx: LIBS += -L$$PWD/../../../build-color_widgets-Desktop_Qt_5_7_0_Clang_64bit-Debug/ -lColorWidgets-qt5
+unix:!macx: LIBS += -L$$PWD/../../../Qt-Color-Widgets/build-color_widgets-Desktop-Debug -lColorWidgets-qt5
 unix:!macx: CONFIG += link_pkgconfig
 unix:!macx: PKGCONFIG += glew ftgl sdl2 zlib
 
@@ -109,7 +110,9 @@ unix:!macx: PKGCONFIG += glew ftgl sdl2 zlib
 # otherwise it will break #pragma once, since the compiler will think the file is
 # from a different location (because Windows is stupid and can't make proper links)
 INCLUDEPATH += $$PWD/../../include/asdfm
+INCLUDEPATH += $$PWD/../include/asdfm
 INCLUDEPATH += $$PWD/../../include/hexmap
+INCLUDEPATH += $$PWD/../include/hexmap
 INCLUDEPATH += $$PWD/../../../Qt-Color-Widgets/include
 #DEPENDPATH += $$PWD/../../asdf_multiplat/src
 #DEPENDPATH += $$PWD/../../hexmap/src
