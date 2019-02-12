@@ -1,7 +1,7 @@
 
 sudo: required
 # sudo: false
-dist: trusty
+dist: xenial
 
 language: c++
 compiler: clang
@@ -14,28 +14,27 @@ compiler: clang
 
 addons:
   apt:
-    sources:
-      - llvm-toolchain-precise-3.8
-      - ubuntu-toolchain-r-test
+    # sources:
+      # - ubuntu-toolchain-r-test
 
     packages:
-      - clang-3.8
-      - g++-6
+      - clang-7.0
+      # - g++-6
       - libsdl2-dev
       - libglew-dev
       - libftgl-dev
       - libsoil-dev
       - libgl1-mesa-dev
+      - libtar-dev
 
 env:
-  - COMPILER=clang++-3.8
+  - COMPILER=clang++-7
 
 
 # safelist
 branches:
   only:
   - master
-  - map_objects
   - hexmap_qt
   - ogl_compatability
   - travis-ci
