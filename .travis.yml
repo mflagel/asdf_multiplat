@@ -6,7 +6,7 @@ dist: xenial
 language: c++
 compiler:
   - clang
-  - gcc
+  # - gcc
 
 # os:
 #     - linux
@@ -30,7 +30,7 @@ addons:
       - zlib1g-dev
 
 env:
-  - COMPILER=clang++-7
+  - COMPILER=clang++
 
 
 # safelist
