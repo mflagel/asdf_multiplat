@@ -4,9 +4,9 @@ sudo: required
 dist: xenial
 
 language: c++
-compiler: clang
-  # - clang
-  # - gcc
+compiler:
+  - clang
+  - gcc
 
 # os:
 #     - linux
@@ -14,18 +14,20 @@ compiler: clang
 
 addons:
   apt:
-    # sources:
-      # - ubuntu-toolchain-r-test
+    sources:
+      - ubuntu-toolchain-r-test
 
     packages:
-      - clang-7.0
-      # - g++-6
+      # - clang-7.0
+      - gcc-7
+      # - gcc-8
       - libsdl2-dev
       - libglew-dev
       - libftgl-dev
       - libsoil-dev
       - libgl1-mesa-dev
       - libtar-dev
+      - zlib1g-dev
 
 env:
   - COMPILER=clang++-7
@@ -45,7 +47,7 @@ branches:
 # before_script:
 
 script:
-  make -j4 CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk && make -j4 CXX=$COMPILER TRAVIS=1 -f hexmap/hexmap.mk
+  make -j4 CXX=$COMPILER TRAVIS=1 -f asdf_multiplat/asdf_multiplat.mk && make -j4 CXX=$COMPILER TRAVIS=1 -f hexmap/libhexmap.mk
 
 # after_success:
 
