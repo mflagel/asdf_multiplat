@@ -129,6 +129,9 @@ intro:
 	# $(CC) --version
 	$(CXX) --version
 	@echo
+	$(CXX) -v
+	@echo
+	@echo
 	mkdir -pv $(BINPATH)
 	mkdir -pv $(OBJPATH)
 	@echo 
